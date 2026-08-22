@@ -11,4 +11,4 @@ git clone https://github.�����M���х���������
 ### Available Scripts
 �(��������х�р��P��ո�ѡ�����������ٕ�������r��FP����FW7F(	B�V�6�F�RFW7B'V��W)H�H�[��Z[8�%�Z[H\�܈��'uction to the `build` folder
 
-<!-- sync-marker-1 -->
+<!-- sync-marker-2 -->
