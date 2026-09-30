@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderToStaticMarkup as toMarkup } from 'react-dom/server';
+import { SettingsProvider } from '../settings/SettingsProvider';
 import { setUrl } from '../test/nextNavigation';
 import RootLayout, { metadata } from './layout';
 import HomePage from './page';
@@ -9,12 +10,14 @@ import SearchPage from './search/page';
 import BooksPage from './books/page';
 import TopicsPage from './topics/page';
 import NotFoundPage from './not-found';
+import SettingsRoute from './settings/page';
 
 const pages = [
   ['/', HomePage],
   ['/search', SearchPage],
   ['/books', BooksPage],
   ['/topics', TopicsPage],
+  ['/settings', SettingsRoute],
 ];
 
 beforeEach(() => {
@@ -28,7 +31,7 @@ afterEach(() => {
 test.each(pages)('page %s renders without React warnings', (path, Page) => {
   const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
   setUrl(path);
-  render(<Page />);
+  render(<SettingsProvider><Page /></SettingsProvider>);
   const messages = errors.mock.calls.map((call) => String(call[0]));
   errors.mockRestore();
   expect(messages).toEqual([]);
@@ -41,9 +44,10 @@ test.each([
   ['/books', 'হাদীসের বই - BoiKotha', BooksPage],
   ['/topics', 'বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
   ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
+  ['/settings', 'পড়ার সেটিংস - BoiKotha', SettingsRoute],
 ])('%s is titled %s', (route, title, Page) => {
   setUrl(route);
-  render(<Page />);
+  render(<SettingsProvider><Page /></SettingsProvider>);
   expect(document.title).toBe(title);
 });
 
@@ -69,6 +73,8 @@ test('the layout sets the language and wraps each page with the navigation', () 
   expect(html).toContain('href="/search"');
   expect(html).toContain('PAGE BODY');
   expect(html).toContain('Back to top');
+  expect(html).toContain('aria-label="নিচের মেনু"');
+  expect(html).toContain('ছয়টি প্রধান গ্রন্থ');
 });
 
 test('site metadata names the site and describes it in Bengali', () => {
@@ -81,5 +87,5 @@ test('site metadata names the site and describes it in Bengali', () => {
 test('the layout loads every global stylesheet, in the order the pages were designed with', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Search/Search.css', '../Search/suggestions.css', '../Navbar/Navbar.css', '../Books/Book.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../Home/Home.css', '../styles/tokens.css', '../styles/base.css']);
+  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Search/Search.css', '../Search/suggestions.css', '../Books/Book.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../Home/Home.css', '../styles/tokens.css', '../styles/base.css', '../styles/ui.css']);
 });

@@ -34,8 +34,8 @@ export const BOOKS = [
   { id: 'bukhari', slug: 'bukhari', code: 'BUK', folder: 'Bukhari', name: 'বুখারী', full: 'বুখারী শরীফ', cite: 'সহীহ বুখারী', badge: 'বু', legacyName: 'বুখারি শরীফ', colorVar: '--bk-bukhari', total: 7053, missing: BUKHARI_MISSING },
   { id: 'muslim', slug: 'muslim', code: 'MUS', folder: 'Muslim', name: 'মুসলিম', full: 'মুসলিম শরীফ', cite: 'সহীহ মুসলিম', badge: 'মু', legacyName: 'মুসলিম শরীফ', colorVar: '--bk-muslim', total: 7281, missing: [] },
   { id: 'tirmidhi', slug: 'tirmidhi', code: 'TIR', folder: 'Tirmiji', name: 'তিরমিযী', full: 'তিরমিযী শরীফ', cite: 'জামে‘ তিরমিযী', badge: 'তি', legacyName: 'তিরমিজি শরীফ', colorVar: '--bk-tirmidhi', total: 3608, missing: [] },
-  { id: 'abudawud', slug: 'abudawud', code: 'DAU', folder: 'Daud', name: 'আবু দাউদ', full: 'আবু দাউদ শরীফ', cite: 'সুনান আবু দাউদ', badge: 'আ', legacyName: 'আবু দাউদ শরীফ', colorVar: '--bk-abudawud', total: 5184, missing: [] },
-  { id: 'ibnmajah', slug: 'ibnmajah', code: 'MAJ', folder: 'Majah', name: 'ইবনে মাজাহ', full: 'ইবনে মাজাহ শরীফ', cite: 'সুনান ইবনে মাজাহ', badge: 'ই', legacyName: 'সুনানু ইবনে মাজাহ', colorVar: '--bk-ibnmajah', total: 4341, missing: [] },
+  { id: 'abudawud', slug: 'abudawud', code: 'DAU', folder: 'Daud', name: 'আবু দাউদ', full: 'আবু দাউদ শরীফ', cite: 'সুনান আবু দাউদ', badge: 'দা', legacyName: 'আবু দাউদ শরীফ', colorVar: '--bk-abudawud', total: 5184, missing: [] },
+  { id: 'ibnmajah', slug: 'ibnmajah', code: 'MAJ', folder: 'Majah', name: 'ইবনে মাজাহ', full: 'ইবনে মাজাহ শরীফ', cite: 'সুনান ইবনে মাজাহ', badge: 'মা', legacyName: 'সুনানু ইবনে মাজাহ', colorVar: '--bk-ibnmajah', total: 4341, missing: [] },
   { id: 'nasai', slug: 'nasai', code: 'NAS', folder: 'Nasae', name: 'নাসাঈ', full: 'নাসাঈ শরীফ', cite: 'সুনান নাসাঈ', badge: 'না', legacyName: 'সুনানু নাসাঈ শরীফ', colorVar: '--bk-nasai', total: 5758, missing: NASAI_MISSING },
 ];
 

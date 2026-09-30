@@ -1,0 +1,84 @@
+/* UI pieces and the page shell, ported from the D2 design. Names are prefixed (ui-, shell-,
+   settings-) so they never collide with the legacy stylesheets. The phone / desktop switch is
+   a media query at 640px. */
+
+/* ---------- buttons, chips, badges ---------- */
+.ui-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:99px;font:inherit;font-weight:600;background:var(--surface2);color:var(--ink);min-height:42px;border:1px solid transparent;cursor:pointer;transition:transform .12s,background .2s}
+.ui-btn:active{transform:scale(.96)}
+.ui-btn.primary{background:var(--accent);color:var(--on-accent)}
+.ui-btn.ghost{background:transparent;border-color:var(--line)}
+.ui-btn.sm{padding:6px 14px;min-height:36px;font-size:14px}
+.ui-btn[disabled]{opacity:.5;cursor:not-allowed}
+.ui-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font:inherit;font-weight:500;white-space:nowrap;color:var(--ink);cursor:pointer;transition:all .18s}
+.ui-chip:hover{border-color:var(--accent)}
+.ui-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.ui-chip-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.ui-badge{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:12px;background:var(--bk);color:var(--on-bk);font-weight:700;font-size:14px;flex:none}
+.ui-badge.sm{width:26px;height:26px;border-radius:9px;font-size:12px}
+.ui-icon{flex:none}
+
+/* ---------- toast and back-to-top ---------- */
+.ui-toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);z-index:60;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.ui-toast.show{opacity:1;transform:translate(-50%,0)}
+.ui-fab{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:45;width:44px;height:44px;border-radius:50%;background:var(--surface);box-shadow:var(--shadow),0 0 0 1px var(--line);display:grid;place-items:center;color:var(--accent2);cursor:pointer;transform:translateY(12px) scale(.8);opacity:0;pointer-events:none;transition:all .25s}
+.ui-fab.show{transform:none;opacity:1;pointer-events:auto}
+
+/* ---------- top navigation ---------- */
+.shell-nav{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.shell-nav-in{display:flex;align-items:center;gap:12px;padding:10px 16px;max-width:1120px;margin:0 auto}
+.shell-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);min-width:0}
+.shell-logo{width:36px;height:36px;border-radius:12px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;flex:none}
+.shell-logo.small{width:32px;height:32px;border-radius:10px}
+.shell-brand b{display:block;font:800 16px/1.1 var(--f-lat),system-ui,sans-serif;letter-spacing:-.01em}
+.shell-brand small{display:block;font-size:11.5px;color:var(--ink2);line-height:1.2}
+.shell-links{display:none;margin-left:12px;gap:2px;align-items:center}
+.shell-links a{padding:8px 12px;border-radius:99px;font-weight:600;color:var(--ink2);white-space:nowrap;text-decoration:none}
+.shell-links a:hover{background:var(--surface2)}
+.shell-links a[aria-current="page"]{background:var(--accent-soft);color:var(--accent2)}
+.shell-iconbtn{margin-left:auto;width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:var(--surface);box-shadow:var(--shadow);color:var(--ink2);text-decoration:none;flex:none}
+.shell-iconbtn b{font-size:16px}
+
+/* ---------- bottom tab bar (phones) ---------- */
+.shell-tabbar{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:45;margin:12px 12px 10px;display:none;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface);border-radius:26px;box-shadow:var(--shadow),0 0 0 1px var(--line)}
+.shell-tabbar a,.shell-tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;border-radius:18px;font:inherit;font-size:11.5px;font-weight:600;color:var(--ink3);text-decoration:none;background:none;border:0;cursor:pointer;min-height:48px;transition:color .2s,background .2s}
+.shell-tabbar [aria-current="page"]{color:var(--accent2);background:var(--accent-soft)}
+.shell-tabbar .mid{flex:none;width:58px;height:58px;min-height:0;margin-top:-26px;border-radius:50%;background:var(--accent);color:var(--on-accent);box-shadow:0 8px 18px color-mix(in srgb,var(--accent) 45%,transparent);border:4px solid var(--bg);padding:0}
+.shell-tabbar .mid[aria-current="page"]{background:var(--accent2);color:var(--on-accent)}
+.shell-more{position:fixed;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--surface);border-radius:18px;box-shadow:var(--shadow),0 0 0 1px var(--line);padding:6px}
+.shell-more a{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;color:var(--ink);font-weight:600;text-decoration:none}
+.shell-more a:hover{background:var(--surface2)}
+
+@media (max-width: 640px){
+  .shell-tabbar{display:flex}
+}
+@media (min-width: 641px){
+  .shell-links{display:flex}
+  .shell-more{display:none}
+  .ui-fab{bottom:24px}
+  .ui-toast{bottom:24px}
+}
+
+/* ---------- footer ---------- */
+.shell-footer{margin:26px 16px 10px;padding:18px 16px;border-radius:22px;background:var(--surface2);display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--ink2);max-width:1088px}
+@media (min-width: 1152px){ .shell-footer{margin-inline:auto} }
+.shell-footer-brand{display:flex;align-items:center;gap:10px}
+.shell-footer .lat{font-family:var(--f-lat),system-ui,sans-serif}
+.shell-footer .tiny{font-size:12.5px;color:var(--ink3)}
+.shell-footer-links{display:flex;flex-wrap:wrap;gap:6px 14px;font-weight:600}
+.shell-footer-links a{color:var(--accent2);text-decoration:none}
+.shell-footer-links a:hover{text-decoration:underline}
+
+/* ---------- page basics used by the new pages ---------- */
+.screen{padding:16px 16px 20px;display:flex;flex-direction:column;gap:12px;max-width:1120px;margin:0 auto}
+.h1{font-size:26px;line-height:1.25;font-weight:700;letter-spacing:-.01em;text-wrap:balance;margin:0}
+.h3{font-size:15.5px;font-weight:700;margin:0}
+.muted{color:var(--ink2);margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- reading settings page ---------- */
+.settings{max-width:640px}
+.settings-section{display:flex;flex-direction:column;gap:12px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:18px 16px}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.settings-stepper{display:flex;align-items:center;gap:10px}
+.settings-stepper output{min-width:3ch;text-align:center;font-weight:700}
+.settings-preview{margin:0;padding:14px;border-radius:14px;background:var(--surface2);font-family:var(--f-read),serif;font-size:var(--rs);line-height:var(--rlh);max-width:var(--rw)}

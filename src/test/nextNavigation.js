@@ -51,11 +51,11 @@ export function useRouter() {
 }
 
 export function usePathname() {
-  useSyncExternalStore(subscribe, () => url.href);
+  useSyncExternalStore(subscribe, () => url.href, () => url.href);
   return url.pathname;
 }
 
 export function useSearchParams() {
-  useSyncExternalStore(subscribe, () => url.href);
+  useSyncExternalStore(subscribe, () => url.href, () => url.href);
   return new URLSearchParams(url.search);
 }

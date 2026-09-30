@@ -8,15 +8,18 @@ import '../Helpers/Loading.css';
 import '../Helpers/NextPrev.css';
 import '../Search/Search.css';
 import '../Search/suggestions.css';
-import '../Navbar/Navbar.css';
 import '../Books/Book.css';
 import '../Topics/HadisIndex.css';
 import '../Topics/Topics.css';
 import '../Home/Home.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
+import '../styles/ui.css';
 import { uiFont, readFont, latinFont } from '../fonts';
-import NavBar from '../Navbar/Navbar';
+import TopNav from '../shell/TopNav';
+import TabBar from '../shell/TabBar';
+import Footer from '../shell/Footer';
+import { ToastProvider } from '../ui/Toast';
 import BackToTop from '../Helpers/BackToTop';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { themeScript } from '../settings/themeScript';
@@ -38,9 +41,13 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <SettingsProvider>
-          <NavBar />
-          {children}
-          <BackToTop />
+          <ToastProvider>
+            <TopNav />
+            {children}
+            <Footer />
+            <TabBar />
+            <BackToTop />
+          </ToastProvider>
         </SettingsProvider>
       </body>
     </html>
