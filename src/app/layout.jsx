@@ -13,6 +13,7 @@ import '../Books/Book.css';
 import '../Topics/HadisIndex.css';
 import '../Topics/Topics.css';
 import '../Home/Home.css';
+import { uiFont, readFont, latinFont } from '../fonts';
 import NavBar from '../Navbar/Navbar';
 import BackToTop from '../Helpers/BackToTop';
 
@@ -27,7 +28,7 @@ export const viewport = { themeColor: '#000000' };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="bn">
+    <html lang="bn" className={`${uiFont.variable} ${readFont.variable} ${latinFont.variable}`}>
       <body>
         <NavBar />
         {children}
