@@ -8,6 +8,9 @@ The decisions made so far, and the plan for rebuilding the site from them. The i
 - **D5 "Quiet Minimal" vibes in two places only:** the **hadis full page** and the **search results**. D2 still dominates there (same colours, fonts, tab bar and buttons), but they feel calmer and more minimal. See section 3.
 - **Every existing feature stays** (search, topics, books, hadis card, copy, paging, states, not-found page, back-to-top, keyboard access, page titles).
 - **The new features to build are the ones you kept** from the ideas list: 24 ideas, with 23 (reminders and channels) as future scope.
+- **Next.js first, redesign second.** The site is migrated to Next.js before any design work (phase 0A).
+- **Self-contained.** Everything lives in the application: no database and no outside services (no CDN fonts, analytics, third-party APIs or hosted storage). The data files stay in the repo and ship with the app. See section 11.
+- **The designs are a blueprint, not a rulebook.** Where a design is weak, unfinished or not up to the mark, I improve it, and every deviation is logged in section 12.
 - **Work stays local.** No pushing and no deploying, until you say otherwise.
 - **Reference files** (saved copies, so they don't depend on the private links):
   - [docs/design/d2-modern-app.html](design/d2-modern-app.html), the blueprint. Open it in a browser and switch on "Labels" to see component codes.
@@ -59,7 +62,7 @@ The decisions made so far, and the plan for rebuilding the site from them. The i
 I'm making these unless you object.
 
 - **Drop Bootstrap and react-bootstrap.** D2 is its own design system, so Bootstrap would fight it. This also shrinks the CSS (236 KB today).
-- **Keep React 18, Vite and Vitest, pending the Next.js decision in section 9.** New code is written test-first, and the existing 104 tests are updated as screens change.
+- **Next.js 16 (App Router) with React 19.** Vitest stays for tests (Vite is used only as its test tooling). New code is written test-first, and the existing 104 tests are updated as screens change.
 - **Plain CSS with design tokens** as CSS variables, one file for tokens and one per area. No CSS framework.
 - **Routes:** `/` home, `/search?q=&page=&book=`, `/hadis/:book/:number`, `/books` and `/books/:book?page=`, `/topics?topic=&page=`, `/compare?ids=`, `/daily`, `/settings`, and `*` for not-found. Everything stays shareable from the address bar.
 - **Saved on the device only** (no accounts): theme, reading settings and digit style. Reading-plan progress too, if you agree (see section 9).
@@ -73,7 +76,8 @@ Each phase ends with passing tests, lint and build, and a screenshot check again
 
 | Phase | What | Features |
 |---|---|---|
-| 0 | **Foundations:** design tokens and three themes, fonts, remove Bootstrap, base components (button, chip, field, icon), shell (top bar, phone tab bar, footer, back-to-top, not-found), settings store, route skeleton | 1, 6, 5 (colours) |
+| 0A | **Next.js migration** with no change in behavior: App Router, React 19, routes and links, test harness for the Next router, build and lint, self-contained check. All existing features and tests keep working | - |
+| 0B | **Foundations:** design tokens and three themes, fonts, remove Bootstrap, base components (button, chip, field, icon), shell (top bar, phone tab bar, footer, back-to-top, not-found), settings store, route skeleton | 1, 6, 5 (colours) |
 | 1 | **Home:** hero with search entry, tiles, bookshelf, daily hadis card | 5, 22 (basic) |
 | 2 | **Hadis full page** with the D5 softening | 7, 2, 3, 25 (copy, cite), previous/next, swipe |
 | 3 | **Search and results** with the D5 softening; typing helper; filters and snippets | 13, 14, 18 |
@@ -113,21 +117,29 @@ Each phase ends with passing tests, lint and build, and a screenshot check again
 2. **Reading-plan progress:** OK to store it on the device? It's separate from the rejected bookmarks and history.
 3. **Curated content:** who writes the start-here lists per topic, the seasonal picks and the plans? I can draft a first version from keyword searches for you to edit.
 4. **Phase order and review:** OK to build phase by phase, showing you screenshots after each, starting with phase 0 and 1?
-5. **Next.js (open decision):** stay on React with Vite, or move to Next.js? The plan above assumes Vite. See the next section.
 
-## 10. Open decision: Next.js
+## 10. Decision: Next.js first
 
-Nothing in the ✅ Easy features needs Next.js. It only matters for the ideas that can't be done in the front end alone (see [redesign-ideas.md](redesign-ideas.md)).
+Decided: migrate to Next.js before the redesign, so routing and data loading are built once.
 
-| If you want... | With Vite (now) | With Next.js |
-|---|---|---|
-| SEO pages (28) | Not possible without a separate prerender step | ✅ Render each hadis page on demand and cache it, with a sitemap |
-| Link previews (27) | Needs a small Netlify edge function | ⚠️ Per-hadis HTML is easy; preview *images* with Bengali text are risky |
-| Narrator index (11), reminders (23) | ❌ | ⚠️ Build-time compute, scheduled functions; still needs your curation or outside services |
-| Everything else in the plan | ✅ | ✅ (same UI) |
+- **Phase 0A keeps behavior identical.** It is a framework move only. Pages that work today keep working, and all tests stay green.
+- **Server rendering comes later,** when the hadis full page is built. That is what unlocks SEO pages (28), link previews (27) and the other ideas that needed a server or a build step.
+- **Server code must stay self-contained.** A server-rendered hadis page reads its text from inside the application: either files bundled with it or the same site's static files. Never a database or an outside service.
+- **One platform detail to decide later:** on Netlify, cached (incremental) rendering stores its cache in Netlify's own storage. That is part of the host, not something we add, but it is the one place "nothing external" gets grey. The options are pages rendered without caching (uses more free credits), pages generated ahead of time, or accepting the host's cache.
+- **Deploy later:** the current GitHub Actions deploy step builds a plain static folder and will need reworking for a Next.js site. It is not touched until deploys resume.
 
-**Costs of moving:** routing and data loading are rewritten (react-router becomes Next's router). Server-rendered pages use Netlify credits on the free plan, so pages would need caching. The UI components themselves mostly carry over.
+## 11. Self-contained rule and how it is checked
 
-**Where it would go in the plan:** if yes, it becomes **phase 0**, before the design work, because the route structure changes. That way nothing is ported twice. If you choose to add it later, it becomes a final phase after phase 9.
+- **No database, no outside services.** No CDN fonts (fonts are files in the repo, loaded with `next/font/local`), no analytics, no third-party scripts or APIs, no hosted storage or accounts.
+- **Only the visitor's own device stores anything** (theme, reading settings, digit style, plan progress).
+- **Check before each phase is done:** a script scans the built output for addresses on other domains, and a headless-Chrome run records every network request while the main pages load. Any host other than the site itself is a failure.
 
-**My lean:** stay on Vite for this redesign unless SEO pages or link previews matter to you. They are the main reasons to move. If they do matter, migrate first.
+## 12. Design deviations
+
+The designs are a blueprint. This is the running list of where the build departs from them and why. Known so far:
+
+- **Prototype-only parts are dropped:** label pills, the control bar, the screen switcher, the "নমুনা" sample notes and the sample-hadis chips.
+- **Previous/next:** the prototypes cycle through a handful of samples. The real pages go to the adjacent hadis number in the same book and skip numbers that have no file.
+- **Related hadis:** D2's match percentages are dropped, because there is no real score. Each item shows the reason instead (shared words, same report in another book).
+- **Counts and numbers:** placeholder figures are replaced by real ones from the data.
+- **Anything not up to the mark** found while building (spacing, contrast, weak states, unverified dark and sepia themes) is fixed in the build and added here.
