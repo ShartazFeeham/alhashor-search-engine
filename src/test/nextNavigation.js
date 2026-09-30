@@ -3,6 +3,7 @@ import { useSyncExternalStore } from 'react';
 // In-memory stand-in for next/navigation, used by every test (see setupTests.js).
 let url = new URL('http://localhost/');
 let history = [];
+let lastPushOptions;
 const listeners = new Set();
 
 const notify = () => listeners.forEach((listener) => listener());
@@ -24,13 +25,19 @@ export function getHistory() {
   return history;
 }
 
+export function getLastPushOptions() {
+  return lastPushOptions;
+}
+
 export function resetNavigation() {
   history = [];
+  lastPushOptions = undefined;
   setUrl('/');
 }
 
 const router = {
-  push(path) {
+  push(path, options) {
+    lastPushOptions = options;
     history = [...history, url.href];
     setUrl(path);
   },

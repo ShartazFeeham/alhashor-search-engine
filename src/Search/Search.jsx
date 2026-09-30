@@ -6,7 +6,7 @@ import NextPrev from "../Helpers/NextPrev";
 import getNum from "../Helpers/EngToBng";
 import Loading from "../Helpers/Loading";
 import { HADIS_PER_PAGE, pageFromParam, pageSlice } from "../Helpers/paging";
-import { usePageTitle } from "../Helpers/usePageTitle";
+import PageTitle from "../Helpers/PageTitle";
 import { useUrlParams } from "../Helpers/useUrlParams";
 import Suggestions from "./Suggestions";
 import { normalizeQuery, searchTags } from "./searchIndex";
@@ -25,7 +25,6 @@ function Search() {
     const [params, setParams] = useUrlParams();
     const query = params.get("q") || "";
     const words = useMemo(() => normalizeQuery(query), [query]);
-    usePageTitle(words.join(" "), "হাদীস সার্চ");
 
     const [text, setText] = useState(query);
     const [results, setResults] = useState([]);
@@ -71,6 +70,7 @@ function Search() {
     // RETURN
     return (
         <div>
+            <PageTitle parts={[words.join(" "), "হাদীস সার্চ"]} />
             <form onSubmit={search} className="sc">
                 <div className="info">হাদীসের ক্রম কিংবা বর্ণনাকারীর নাম দিয়ে হাদীস খুঁজুন। অথবা যেকোনো শব্দ/বিষয় কিংবা হাদীসের অংশ লিখে সার্চ করুন।
                 <br></br>

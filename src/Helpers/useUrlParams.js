@@ -11,7 +11,9 @@ export function useUrlParams() {
 
   function setParams(values) {
     const query = new URLSearchParams(values).toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    // scroll: false keeps the page where it is; Next would otherwise scroll to the page content
+    // and leave it below the navigation bar (the app scrolled to the top by itself before).
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }
 
   return [params, setParams];

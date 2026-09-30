@@ -72,7 +72,8 @@ test('the layout sets the language and wraps each page with the navigation', () 
 });
 
 test('site metadata names the site and describes it in Bengali', () => {
-  expect(metadata.title).toBe('BoiKotha - হাদীস সম্ভার');
+  // Every page sets its own <title> (see PageTitle); a layout title would overwrite it in the browser.
+  expect(metadata.title).toBeUndefined();
   expect(metadata.description).toContain('হাদীস');
   expect(metadata.manifest).toBe('/manifest.json');
 });

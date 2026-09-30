@@ -17,7 +17,6 @@ import NavBar from '../Navbar/Navbar';
 import BackToTop from '../Helpers/BackToTop';
 
 export const metadata = {
-  title: 'BoiKotha - হাদীস সম্ভার',
   description:
     'হাদীস খুঁজুন: বুখারি, মুসলিম, তিরমিজি, আবু দাউদ, ইবনে মাজাহ ও নাসাঈ শরীফের হাদীস বাংলায় সার্চ, বিষয়ভিত্তিক ও বই অনুযায়ী পড়ুন।',
   manifest: '/manifest.json',

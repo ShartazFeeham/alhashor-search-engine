@@ -5,7 +5,7 @@ import getNum from "../Helpers/EngToBng";
 import HadisView from "../Helpers/HadisView";
 import { clickable } from "../Helpers/clickable";
 import { HADIS_PER_PAGE } from "../Helpers/paging";
-import { usePageTitle } from "../Helpers/usePageTitle";
+import PageTitle from "../Helpers/PageTitle";
 import { BOOKS, hadisNumbers } from "./bookList";
 const NON_BREAKING_SPACE = " ";
 
@@ -14,7 +14,6 @@ function Books() {
     const [page, setPage] = useState(0);
 
     const book = selected === null ? null : BOOKS[selected];
-    usePageTitle(book && book.name, "হাদীসের বই");
     const numbers = useMemo(() => (book ? hadisNumbers(book) : []), [book]); // only hadis that exist
     const total = numbers.length;
     const lastPage = book ? Math.ceil(total / HADIS_PER_PAGE) - 1 : 0;
@@ -33,6 +32,7 @@ function Books() {
 
     return (
         <div>
+            <PageTitle parts={[book && book.name, "হাদীসের বই"]} />
             {book === null ? <div className="sel">নিচে থেকে যেকোনো একটি বই ক্লিক করুন</div> : ""}
             <div className="bcontainer">
                 {BOOKS.map((b, index) => (

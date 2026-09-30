@@ -1,12 +1,12 @@
 'use client';
 
 import Link from "next/link";
-import { usePageTitle } from "../Helpers/usePageTitle";
+import PageTitle from "../Helpers/PageTitle";
 
 function Home() {
-    usePageTitle();
     return (
         <div className="homeCont">
+            <PageTitle />
             <div className="row">
                 <div className="col-sm-6" >
                     <Link href={'/search'} className='link'>

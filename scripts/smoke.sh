@@ -24,6 +24,11 @@ expect_text() { # <route> <text> <what>
   if dump "$1" | grep -q "$2"; then echo "ok   $3"; else echo "FAIL $3"; fail=1; fi
 }
 
+expect_title() { # <route> <exact title> <what>
+  got="$(dump "$1" | grep -o '<title>[^<]*</title>' | head -1 | sed -e 's/<title>//' -e 's/<\/title>//')"
+  if [ "$got" = "$2" ]; then echo "ok   $3"; else echo "FAIL $3 (got: $got)"; fail=1; fi
+}
+
 expect_status /json/hadis/Bukhari/0001/text.txt 200
 expect_status "/json/tags/%E0%A6%B0%E0%A7%8B.json" 200
 expect_status /photos/copy.png 200
@@ -35,4 +40,10 @@ expect_text "/search?q=zzzz" "কোনো ফলাফল" "an unknown word sho
 expect_text "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "হাদীস নং" "a topic deep link renders hadis"
 expect_text /books "নিচে থেকে যেকোনো একটি বই ক্লিক করুন" "the books page renders"
 expect_text /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি" "the not-found page renders"
+# Page titles on a fresh load (Next.js used to overwrite the page title with the layout's title)
+expect_title / "BoiKotha - হাদীস সম্ভার" "home title"
+expect_title /books "হাদীসের বই - BoiKotha" "books title on a fresh load"
+expect_title "/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE&page=2" "রোজা - হাদীস সার্চ - BoiKotha" "search title on a fresh load of page 2"
+expect_title "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha" "topics title on a fresh load"
+expect_title /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha" "not-found title"
 exit $fail

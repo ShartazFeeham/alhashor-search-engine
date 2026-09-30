@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import HadisDisplay from "./HadisDisplay";
 import HadisIndex from "./HadisIndex";
 import { pageFromParam, pageSlice } from "../Helpers/paging";
-import { usePageTitle } from "../Helpers/usePageTitle";
+import PageTitle from "../Helpers/PageTitle";
 import { useUrlParams } from "../Helpers/useUrlParams";
 import { normalizeQuery, searchTags } from "../Search/searchIndex";
 const NO_TOPIC = "সূচিপত্র";
@@ -15,7 +15,6 @@ function Topics() {
     const [params, setParams] = useUrlParams();
     const topic = params.get("topic") || "";
     const words = useMemo(() => normalizeQuery(topic), [topic]);
-    usePageTitle(topic, "বিষয়ভিত্তিক হাদীস");
 
     const [results, setResults] = useState([]);
     const [searching, setSearching] = useState(words.length > 0);
@@ -50,6 +49,7 @@ function Topics() {
 
     return (
         <div>
+            <PageTitle parts={[topic, "বিষয়ভিত্তিক হাদীস"]} />
             <div className="row">
                 <div className="left">
                     <div className="idx">

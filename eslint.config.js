@@ -33,6 +33,15 @@ export default [
     },
   },
   {
+    // Node scripts and config files
+    files: ["**/*.mjs"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: { ...globals.node, WebSocket: "readonly" },
+    },
+  },
+  {
     files: ["**/*.test.{js,jsx}", "src/setupTests.js"],
     languageOptions: { globals: testGlobals },
     plugins: { "testing-library": testingLibrary },
