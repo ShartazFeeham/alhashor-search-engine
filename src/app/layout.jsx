@@ -18,6 +18,8 @@ import '../styles/base.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import NavBar from '../Navbar/Navbar';
 import BackToTop from '../Helpers/BackToTop';
+import { SettingsProvider } from '../settings/SettingsProvider';
+import { themeScript } from '../settings/themeScript';
 
 export const metadata = {
   description:
@@ -30,11 +32,16 @@ export const viewport = { themeColor: '#000000' };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="bn" className={`${uiFont.variable} ${readFont.variable} ${latinFont.variable}`}>
+    <html lang="bn" className={`${uiFont.variable} ${readFont.variable} ${latinFont.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
-        <NavBar />
-        {children}
-        <BackToTop />
+        <SettingsProvider>
+          <NavBar />
+          {children}
+          <BackToTop />
+        </SettingsProvider>
       </body>
     </html>
   );

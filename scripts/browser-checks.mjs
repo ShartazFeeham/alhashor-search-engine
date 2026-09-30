@@ -32,4 +32,21 @@ const report = (ok, what, detail = '') => {
   }
 }
 
+// A saved theme is applied on load (by the inline script, before first paint) and changes the colours.
+{
+  const page = await openPage(`${base}/`);
+  try {
+    await page.waitFor(`document.readyState === 'complete'`, 'the home page');
+    await page.eval(`localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }))`);
+    await page.eval('location.reload()');
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    await page.waitFor(`document.readyState === 'complete'`, 'the reloaded page');
+    report((await page.eval(`document.documentElement.getAttribute('data-theme')`)) === 'dark', 'a saved dark theme is set on the page');
+    const background = await page.eval(`getComputedStyle(document.body).backgroundColor`);
+    report(background === 'rgb(5, 12, 10)', 'the dark theme colours the page', background);
+  } finally {
+    await page.close();
+  }
+}
+
 process.exit(failed ? 1 : 0);
