@@ -11,7 +11,7 @@ const testGlobals = {
 };
 
 export default [
-  { ignores: ["build/**", "node_modules/**", "public/**"] },
+  { ignores: ["build/**", ".next/**", "node_modules/**", "public/**", "next-env.d.ts"] },
   js.configs.recommended,
   {
     files: ["**/*.{js,jsx}"],
