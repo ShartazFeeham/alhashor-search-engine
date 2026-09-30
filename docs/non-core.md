@@ -46,7 +46,7 @@ Everything outside the core search and hadis-display logic (see [core-improvemen
 
 These need a decision from you, or are bigger changes:
 
-- **Naming:** the page title is "BoiKotha - হাদীস সম্ভার", the repo is "alhashor-search-engine", the package is "hadis-engine". This is a brand decision.
+- **Visible brand:** the project is named `alhashor-search-engine` (repo, package and README now agree), but the site itself still shows "BoiKotha" in its title, manifest and logo image. Change those too if you want the site to carry the same name.
 - **Data delivery:** 35.7k tiny files in the repo make cloning, CI and deploys slow. Bundling the hadis into per-book or per-chunk files would help, but it changes the data layout and the deploy, so it needs your go-ahead. The real content is about 71 MiB.
 - **Major version upgrades:** React 19, react-router-dom 7, and newer testing-library majors. They can change behavior, so each needs its own pass.
 - **ESLint 9** is marked "no longer supported" by its maintainers (ESLint 10 exists). The plugins used here don't all support 10 yet.
