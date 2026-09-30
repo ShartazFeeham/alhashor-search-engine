@@ -77,10 +77,10 @@ Each phase ends with passing tests, lint and build, and a screenshot check again
 | Phase | What | Features |
 |---|---|---|
 | 0A | **Done:** **Next.js migration** with no change in behavior: App Router, React 19, routes and links, test harness for the Next router, build and lint, self-contained check. All existing features and tests keep working | - |
-| 0B | **Foundations:** design tokens and three themes, fonts, remove Bootstrap, base components (button, chip, field, icon), shell (top bar, phone tab bar, footer, back-to-top, not-found), settings store, route skeleton | 1, 6, 5 (colours) |
-| 1 | **Home:** hero with search entry, tiles, bookshelf, daily hadis card | 5, 22 (basic) |
-| 2 | **Hadis full page** with the D5 softening | 7, 2, 3, 25 (copy, cite), previous/next, swipe |
-| 3 | **Search and results** with the D5 softening; typing helper; filters and snippets | 13, 14, 18 |
+| 0B | **Done (in Phase 2 of the build):** **Foundations:** design tokens and three themes, fonts, remove Bootstrap, base components (button, chip, field, icon), shell (top bar, phone tab bar, footer, back-to-top, not-found), settings store, route skeleton | 1, 6, 5 (colours) |
+| 1 | **Done (in Phase 2 of the build, without the daily hadis card):** **Home:** hero with search entry, tiles, bookshelf, daily hadis card | 5, 22 (basic) |
+| 2 | **Done:** **Hadis full page** with the D5 softening | 7, 2, 3, 25 (copy, cite), previous/next, swipe |
+| 3 | **Done:** **Search and results** with the D5 softening; typing helper; filters and snippets | 13, 14, 18 |
 | 4 | **Books:** picker, colour header, range grid, jump box, paging | 8 |
 | 5 | **Topics:** chip index, results, curated "start here" pages | 12 |
 | 6 | **Share:** citation, share text, native share, quote-card image | 25, 26 |
@@ -147,3 +147,19 @@ The designs are a blueprint. This is the running list of where the build departs
 Phase 0A result: migrated to Next.js 16 and React 19. All five pages are pixel-identical to the Vite build, 124 tests pass, lint is clean, and the self-contained check (no request to any other host) and the 10 smoke checks pass.
 
 One thing the migration taught: the old single-bundle app let pages lean on each other's CSS (for example `Loading.css` centred the text in Home's cards, and `Topics.css` zeroed Bootstrap's row margins everywhere). Next.js loads CSS per page, which exposed this. All component stylesheets are therefore imported from `src/app/layout.jsx` in the old bundle's order, and a test pins that order. The redesign replaces these stylesheets, so this coupling goes away then.
+
+Phase 2 result (build Phase 2: design system, shell, Home, hadis page, search): tokens and three themes, self-hosted fonts, reading settings (with a small settings page), digit style, shell (top navigation, phone tab bar with a More menu, footer, back-to-top, toast), Home (hero, tiles, bookshelf), the hadis page at `/hadis/<book>/<number>` and the search page. About 300 tests pass, lint is clean, and the self-contained, smoke and real-browser checks pass (`scripts/theme-shots.mjs` screenshots every theme at 390 and 1200 px and checks for sideways overflow; `scripts/browser-checks.mjs` includes a keyboard walk).
+
+Departures from the designs made in this phase:
+
+- **Previous/next** stay inside one book and skip numbers with no file. They are plain hairline links (D5), not cards. Arrow keys and horizontal swipe move between hadis.
+- **No related-hadis list and no daily-hadis card yet** (Phase 4 and Phase 3 of the build). Home also leaves out the "new features" quick-link row until those pages exist.
+- **Real numbers everywhere:** the bookshelf spine heights follow the real hadis counts (Bukhari 6,719 because 334 numbers have no file), and the footer total is computed from the data (32,886).
+- **Badges:** Abu Dawud is "দা" and Ibn Majah "মা" as in D2, so the six badges are distinct.
+- **Settings:** a small `/settings` page (theme, text size, line gap, text width, digit style, reset) was built now so the settings link is never a 404. The theme is the `data-theme` attribute on the page, set before first paint by an inline script, so there is no flash.
+- **Search:** typing in Roman letters shows Bengali spellings (a curated list first, then the open-licence Avro phonetic library, loaded only when needed). Each result shows the text around the match, with spelling variants of a letter highlighted too. The book filter row shows a count per book for the whole search; a book with no hits is disabled.
+- **Tab bar:** the raised Search button sits in the centre as in D2. The "More" button opens a small menu holding the settings link.
+- **Phone layout uses media queries at 640 px** instead of D2's container queries (D2 needed those only to fake a phone in a frame).
+- **Copy toast** shows after the clipboard write succeeds, so a blocked clipboard says so instead of claiming success.
+- **Legacy look that remains until Phase 3 of the build:** Books and Topics still use the old Bootstrap styling (including a red scrollbar from `Topics.css`), and their stylesheets are still imported in the old order from the layout.
+- **Case-insensitive file systems:** `src/Home` and `src/Search` were renamed to lower case (`src/home`, `src/search`) with `git mv`; a stale import with the old case passed on macOS but would fail on Linux, so it was fixed.

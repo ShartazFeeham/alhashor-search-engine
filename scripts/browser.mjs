@@ -1,7 +1,7 @@
 // A tiny headless-Chrome driver (no dependencies; needs Node 22+ for the built-in WebSocket).
 // Usage in a script:  const page = await openPage(url);  await page.eval('...');  await page.close();
 import { spawn } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -61,6 +61,26 @@ export async function openPage(url, { width = 1200, height = 900, port = 9333 } 
         await sleep(200);
       }
       throw new Error(`timed out waiting for ${what}`);
+    },
+    // Go to another address and wait for it to finish loading.
+    async goto(address) {
+      await send('Page.navigate', { url: address });
+      await sleep(600);
+      await page.waitFor(`document.readyState === 'complete'`, 'the page to load');
+    },
+    // Change the viewport size (a phone is 390 x 844).
+    resize: (w, h) => send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: false }),
+    // Save a screenshot of the viewport as a PNG file.
+    async screenshot(file) {
+      const { result } = await send('Page.captureScreenshot', { format: 'png' });
+      writeFileSync(file, Buffer.from(result.data, 'base64'));
+    },
+    // Send a real key press (keydown and keyup) to the page.
+    async key(name, { shift = false } = {}) {
+      const codes = { Tab: 9, Enter: 13, ' ': 32, ArrowLeft: 37, ArrowRight: 39 };
+      const base = { key: name, code: name === ' ' ? 'Space' : name, windowsVirtualKeyCode: codes[name], modifiers: shift ? 8 : 0 };
+      await send('Input.dispatchKeyEvent', { type: name.length === 1 || name === 'Enter' ? 'keyDown' : 'rawKeyDown', ...base, text: name === 'Enter' ? '\r' : name.length === 1 ? name : undefined });
+      await send('Input.dispatchKeyEvent', { type: 'keyUp', ...base });
     },
     // Click the first element whose visible text contains the given text.
     click: (text, selector = 'button, a, [role=button]') =>
