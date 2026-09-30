@@ -1,5 +1,18 @@
+// All stylesheets are global and load in this order, exactly as the old single bundle did.
+// (Pages relied on each other's rules, e.g. Loading.css's .container, so the order is kept.)
 import '../index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../App.css';
+import '../Helpers/HadisView.css';
+import '../Helpers/Loading.css';
+import '../Helpers/NextPrev.css';
+import '../Search/Search.css';
+import '../Search/suggestions.css';
+import '../Navbar/Navbar.css';
+import '../Books/Book.css';
+import '../Topics/HadisIndex.css';
+import '../Topics/Topics.css';
+import '../Home/Home.css';
 import NavBar from '../Navbar/Navbar';
 import BackToTop from '../Helpers/BackToTop';
 

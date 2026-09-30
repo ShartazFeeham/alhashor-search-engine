@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderToStaticMarkup as toMarkup } from 'react-dom/server';
 import { setUrl } from '../test/nextNavigation';
@@ -33,14 +35,14 @@ test.each(pages)('page %s renders without React warnings', (path, Page) => {
 });
 
 test.each([
-  ['/', HomePage, 'BoiKotha - হাদীস সম্ভার'],
-  ['/search', SearchPage, 'হাদীস সার্চ - BoiKotha'],
-  ['/search?q=রোজা', SearchPage, 'রোজা - হাদীস সার্চ - BoiKotha'],
-  ['/books', BooksPage, 'হাদীসের বই - BoiKotha'],
-  ['/topics', TopicsPage, 'বিষয়ভিত্তিক হাদীস - BoiKotha'],
-  ['/topics?topic=ঈমান', TopicsPage, 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha'],
-])('%s is titled %s', (path, Page, title) => {
-  setUrl(path);
+  ['/', 'BoiKotha - হাদীস সম্ভার', HomePage],
+  ['/search', 'হাদীস সার্চ - BoiKotha', SearchPage],
+  ['/search?q=রোজা', 'রোজা - হাদীস সার্চ - BoiKotha', SearchPage],
+  ['/books', 'হাদীসের বই - BoiKotha', BooksPage],
+  ['/topics', 'বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
+  ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
+])('%s is titled %s', (route, title, Page) => {
+  setUrl(route);
   render(<Page />);
   expect(document.title).toBe(title);
 });
@@ -73,4 +75,10 @@ test('site metadata names the site and describes it in Bengali', () => {
   expect(metadata.title).toBe('BoiKotha - হাদীস সম্ভার');
   expect(metadata.description).toContain('হাদীস');
   expect(metadata.manifest).toBe('/manifest.json');
+});
+
+test('the layout loads every global stylesheet, in the order the pages were designed with', () => {
+  const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
+  const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
+  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Search/Search.css', '../Search/suggestions.css', '../Navbar/Navbar.css', '../Books/Book.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../Home/Home.css']);
 });

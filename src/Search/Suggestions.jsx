@@ -1,4 +1,3 @@
-import './suggestions.css'
 import { clickable } from '../Helpers/clickable'
 function Suggestions({setBox}) {
     const sug = [

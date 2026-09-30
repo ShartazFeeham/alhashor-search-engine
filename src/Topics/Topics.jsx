@@ -7,8 +7,6 @@ import { pageFromParam, pageSlice } from "../Helpers/paging";
 import { usePageTitle } from "../Helpers/usePageTitle";
 import { useUrlParams } from "../Helpers/useUrlParams";
 import { normalizeQuery, searchTags } from "../Search/searchIndex";
-import './Topics.css'
-
 const NO_TOPIC = "সূচিপত্র";
 
 // The address is the source of truth: /topics?topic=<name>&page=<n>

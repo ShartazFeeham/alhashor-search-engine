@@ -1,7 +1,6 @@
 'use client';
 
 import Link from "next/link";
-import './Home.css'
 import { usePageTitle } from "../Helpers/usePageTitle";
 
 function Home() {

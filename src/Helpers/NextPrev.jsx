@@ -1,4 +1,3 @@
-import './NextPrev.css';
 import { lastPageOf } from './paging';
 
 // Previous / next buttons. The parent owns the page and shows the right slice of the results.

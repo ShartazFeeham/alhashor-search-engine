@@ -1,4 +1,3 @@
-import './HadisIndex.css'
 import { clickable } from '../Helpers/clickable'
 import { normalizeBengali } from '../Helpers/bengali'
 

@@ -76,7 +76,7 @@ Each phase ends with passing tests, lint and build, and a screenshot check again
 
 | Phase | What | Features |
 |---|---|---|
-| 0A | **Next.js migration** with no change in behavior: App Router, React 19, routes and links, test harness for the Next router, build and lint, self-contained check. All existing features and tests keep working | - |
+| 0A | **Done:** **Next.js migration** with no change in behavior: App Router, React 19, routes and links, test harness for the Next router, build and lint, self-contained check. All existing features and tests keep working | - |
 | 0B | **Foundations:** design tokens and three themes, fonts, remove Bootstrap, base components (button, chip, field, icon), shell (top bar, phone tab bar, footer, back-to-top, not-found), settings store, route skeleton | 1, 6, 5 (colours) |
 | 1 | **Home:** hero with search entry, tiles, bookshelf, daily hadis card | 5, 22 (basic) |
 | 2 | **Hadis full page** with the D5 softening | 7, 2, 3, 25 (copy, cite), previous/next, swipe |
@@ -143,3 +143,7 @@ The designs are a blueprint. This is the running list of where the build departs
 - **Related hadis:** D2's match percentages are dropped, because there is no real score. Each item shows the reason instead (shared words, same report in another book).
 - **Counts and numbers:** placeholder figures are replaced by real ones from the data.
 - **Anything not up to the mark** found while building (spacing, contrast, weak states, unverified dark and sepia themes) is fixed in the build and added here.
+
+Phase 0A result: migrated to Next.js 16 and React 19. All five pages are pixel-identical to the Vite build, 124 tests pass, lint is clean, and the self-contained check (no request to any other host) and the 10 smoke checks pass.
+
+One thing the migration taught: the old single-bundle app let pages lean on each other's CSS (for example `Loading.css` centred the text in Home's cards, and `Topics.css` zeroed Bootstrap's row margins everywhere). Next.js loads CSS per page, which exposed this. All component stylesheets are therefore imported from `src/app/layout.jsx` in the old bundle's order, and a test pins that order. The redesign replaces these stylesheets, so this coupling goes away then.
