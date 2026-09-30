@@ -1,0 +1,1258 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>BoiKotha App Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+<style>
+/* Layout concept: a bright, card-based mobile app. Floating bottom tab bar, rounded 16-24px shapes, teal accent, serif Bengali for reading only. */
+:root{
+  --f-ui:'Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;
+  --f-read:'Noto Serif Bengali','Hind Siliguri',serif;
+  --f-lat:'Plus Jakarta Sans',system-ui,sans-serif;
+  --page:#d9e8e3; --bg:#f2f8f6; --surface:#ffffff; --surface2:#e7f1ee; --line:#d3e3dd;
+  --ink:#0f2d28; --ink2:#46655e; --ink3:#7b948d;
+  --accent:#0b8a78; --accent2:#096658; --on-accent:#ffffff; --accent-soft:#d6f0ea;
+  --hl:#ffe9a0; --hl-ink:#3a2a00;
+  --ok:#1f9d55; --warn:#b86e05; --bad:#cf4337; --link:#1a55c8;
+  --pill-e:#25994c; --pill-n:#2f6bdc; --pill-f:#7a8794;
+  --bk-bukhari:#0f8a66; --bk-muslim:#3a63c8; --bk-tirmidhi:#c08108; --bk-abudawud:#8a4bb8; --bk-ibnmajah:#d3582a; --bk-nasai:#c3387f; --on-bk:#ffffff;
+  --shadow:0 1px 2px rgba(10,50,44,.06),0 8px 22px rgba(10,50,44,.07);
+  --rs:18px; --rlh:1.9; --rw:34em;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]):not([data-skin]){
+  --page:#050c0a; --bg:#0c1714; --surface:#14231f; --surface2:#1b2f29; --line:#27423b;
+  --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#6f8c85;
+  --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
+  --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
+  --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-skin="dark"],:root[data-theme="dark"]:not([data-skin]){
+  --page:#050c0a; --bg:#0c1714; --surface:#14231f; --surface2:#1b2f29; --line:#27423b;
+  --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#6f8c85;
+  --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
+  --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
+  --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35); color-scheme:dark}
+:root[data-skin="sepia"]{
+  --page:#e2d3b3; --bg:#f4ead3; --surface:#fbf4e2; --surface2:#eee0c3; --line:#dccba6;
+  --ink:#382c19; --ink2:#675638; --ink3:#957f56;
+  --accent:#2a7a66; --accent2:#1d5a4b; --on-accent:#fffaf0; --accent-soft:#d8e5d2;
+  --hl:#f2d684; --hl-ink:#3a2a00; --link:#2f5aa8;
+  --shadow:0 1px 2px rgba(80,55,15,.08),0 8px 22px rgba(80,55,15,.09)}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.55;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+h1,h2,h3,p,ol,ul{margin:0}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 75%,transparent);outline-offset:2px}
+.ic{flex:none;display:block}
+.lat{font-family:var(--f-lat)}
+
+/* ---------- prototype control bar ---------- */
+.ctl{position:sticky;top:env(safe-area-inset-top,0px);z-index:70;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:center;padding:8px 16px;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);font-family:var(--f-lat);font-size:12.5px;font-weight:600}
+.ctl-brand{font-weight:800;letter-spacing:.02em;color:var(--accent2)}
+.sw{display:inline-flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.sw input{position:absolute;opacity:0;width:1px;height:1px}
+.sw-t{width:34px;height:20px;border-radius:99px;background:var(--line);position:relative;transition:background .2s}
+.sw-t::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.sw input:checked+.sw-t{background:var(--accent)}
+.sw input:checked+.sw-t::after{transform:translateX(14px)}
+.sw input:focus-visible+.sw-t{outline:3px solid color-mix(in srgb,var(--accent) 75%,transparent);outline-offset:2px}
+.seg{display:inline-flex;background:var(--surface2);border-radius:99px;padding:3px;gap:2px}
+.seg button{padding:5px 12px;border-radius:99px;font-weight:600;font-size:12.5px;color:var(--ink2);transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--accent2);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+.ctl select{font-family:var(--f-lat);font-weight:600;font-size:12.5px;padding:6px 10px;border-radius:99px;border:1px solid var(--line);background:var(--surface);max-width:190px}
+
+/* ---------- stage (the app frame) ---------- */
+.wrap{padding-inline:16px;padding-block:16px 48px}
+.stage{--sw:390px;container-type:inline-size;container-name:app;width:min(var(--sw),100%);margin-inline:auto;background:var(--bg);border-radius:30px;box-shadow:0 0 0 1px var(--line),0 24px 60px rgba(0,0,0,.14);overflow:clip;position:relative;min-height:70vh}
+.stage.desk{--sw:1120px;border-radius:20px}
+.tabstrip{display:flex;align-items:center;gap:8px;padding:8px 14px;font:600 11px/1.2 var(--f-lat);color:var(--ink3);background:var(--surface2);border-bottom:1px solid var(--line);min-width:0}
+.tabstrip span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabstrip .fav{width:10px;height:10px;border-radius:3px;background:var(--accent);flex:none}
+
+/* ---------- label pills ---------- */
+.cmp{position:relative;margin-top:16px}
+.pill{position:absolute;z-index:6;top:-10px;left:10px;display:inline-block;max-width:calc(100% - 20px);padding:3px 8px 4px;border-radius:99px;font:700 10px/1.25 var(--f-lat);letter-spacing:.01em;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 6px rgba(0,0,0,.25);pointer-events:none}
+.pill.e{background:var(--pill-e)}
+.pill.n{background:var(--pill-n)}
+.pill.mix{background:linear-gradient(90deg,var(--pill-e) 0 50%,var(--pill-n) 50% 100%)}
+.pill.f{background:var(--pill-f)}
+.pill.s{background:var(--surface);color:var(--ink2);box-shadow:inset 0 0 0 1.5px var(--ink3)}
+body.nolabels .pill{display:none}
+.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%,40%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 60%,transparent)}100%{box-shadow:0 0 0 0 transparent}}
+
+/* ---------- top nav (C01) ---------- */
+.nav{margin-top:0;position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--ctl-h,56px));z-index:40;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .pill{top:auto;bottom:-10px}
+.nav-in{display:flex;align-items:center;gap:12px;padding:10px 16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0}
+.logo{width:36px;height:36px;border-radius:12px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;flex:none}
+.brand b{display:block;font:800 16px/1.1 var(--f-lat);letter-spacing:-.01em}
+.brand small{display:block;font-size:11.5px;color:var(--ink2);line-height:1.2}
+.nav-links{display:none;margin-left:12px;gap:2px;align-items:center}
+.nav-links button{padding:8px 12px;border-radius:99px;font-weight:600;color:var(--ink2);white-space:nowrap;display:inline-flex;gap:6px;align-items:center}
+.nav-links button:hover{background:var(--surface2)}
+.nav-links button[aria-current="page"]{background:var(--accent-soft);color:var(--accent2)}
+.nav-links .new::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--pill-n)}
+.iconbtn{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:var(--surface);box-shadow:var(--shadow);color:var(--ink2);flex:none}
+.nav-in .iconbtn:first-of-type{margin-left:auto}
+.nav-links+.iconbtn{margin-left:8px}
+.rp{height:3px;background:transparent}
+.rp i{display:block;height:100%;width:0;background:var(--accent);border-radius:0 3px 3px 0;transition:width .12s linear}
+
+/* ---------- bottom tab bar (C02) ---------- */
+.fabrow{position:sticky;bottom:calc(92px + env(safe-area-inset-bottom,0px));height:0;z-index:45;display:flex;justify-content:flex-end;padding-right:16px}
+.fab{position:absolute;bottom:0;right:16px;width:44px;height:44px;border-radius:50%;background:var(--surface);box-shadow:var(--shadow),0 0 0 1px var(--line);display:grid;place-items:center;color:var(--accent2);transform:translateY(12px) scale(.8);opacity:0;pointer-events:none;transition:all .25s}
+.fab.show{transform:none;opacity:1;pointer-events:auto}
+.fab .pill{top:auto;bottom:calc(100% + 6px);left:auto;right:0}
+.tabbar{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:45;margin:12px 12px 10px;display:none;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface);border-radius:26px;box-shadow:var(--shadow),0 0 0 1px var(--line)}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:18px;font-size:11.5px;font-weight:600;color:var(--ink3);transition:color .2s,background .2s;min-height:48px;justify-content:center}
+.tabbar button[aria-current="page"]{color:var(--accent2);background:var(--accent-soft)}
+.tabbar .mid{flex:none;width:58px;height:58px;margin-top:-26px;border-radius:50%;background:var(--accent);color:var(--on-accent);box-shadow:0 8px 18px color-mix(in srgb,var(--accent) 45%,transparent);border:4px solid var(--bg);padding:0;min-height:0}
+.tabbar .mid[aria-current="page"]{background:var(--accent2);color:var(--on-accent)}
+@container app (max-width: 640px){
+  .tabbar{display:flex}
+}
+@container app (min-width: 641px){
+  .fabrow{bottom:20px}
+  .nav-links{display:flex}
+}
+
+/* ---------- generic ---------- */
+.screen{padding:6px 16px 20px;display:flex;flex-direction:column;gap:0}
+.h1{font-size:26px;line-height:1.25;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+.h2{font-size:19px;line-height:1.3;font-weight:700;text-wrap:balance}
+.h3{font-size:15.5px;font-weight:700}
+.muted{color:var(--ink2)}
+.tiny{font-size:12.5px;color:var(--ink3)}
+.eyebrow{font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--accent2)}
+.card{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:18px 16px 16px;min-width:0}
+.card.flat{box-shadow:none;border:1px solid var(--line)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row.nw{flex-wrap:nowrap}
+.sp{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 16px;border-radius:99px;font-weight:600;background:var(--surface2);color:var(--ink);min-height:42px;transition:transform .12s,background .2s;border:1px solid transparent}
+.btn:active{transform:scale(.96)}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.sm{padding:6px 14px;min-height:36px;font-size:14px}
+.btn.done{background:var(--ok);color:#fff}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;margin-inline:-16px;padding-inline:16px;scroll-snap-type:x proximity}
+.chip{padding:7px 14px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-weight:500;white-space:nowrap;color:var(--ink);transition:all .18s;scroll-snap-align:start;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"],.chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.chip .cnt{font-size:12.5px;opacity:.75}
+.field{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:5px 5px 5px 12px;transition:border-color .2s,box-shadow .2s}
+.field:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.field input{flex:1;min-width:0;border:0;background:transparent;outline:0;padding:9px 2px;font-size:16px}
+.field .ic{color:var(--ink3)}
+mark{background:var(--hl);color:var(--hl-ink);font-weight:700;border-radius:4px;padding:0 2px}
+ins{background:color-mix(in srgb,var(--warn) 28%,transparent);text-decoration:none;border-radius:4px;padding:0 2px}
+.note{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;color:var(--ink2);background:var(--accent-soft);border-radius:14px;padding:10px 12px}
+.note .ic{margin-top:2px;color:var(--accent2)}
+.hint{font-size:13.5px;color:var(--ink2)}
+.switch-line{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:10px 0}
+.tg{position:relative;width:46px;height:28px;border-radius:99px;background:var(--line);flex:none;transition:background .2s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s}
+.tg[aria-checked="true"]{background:var(--accent)}
+.tg[aria-checked="true"]::after{transform:translateX(18px)}
+.tg[disabled]{opacity:.55;cursor:not-allowed}
+.divider{height:1px;background:var(--line);margin:4px 0}
+.badge{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:12px;background:var(--bk);color:var(--on-bk);font-weight:700;font-size:14px;flex:none}
+.badge.sm{width:26px;height:26px;border-radius:9px;font-size:12px}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent2)}
+.tag.f{background:var(--surface2);color:var(--ink2)}
+.tag.n{background:color-mix(in srgb,var(--pill-n) 15%,var(--surface));color:var(--pill-n)}
+.lbl{font-size:12.5px;font-weight:600;color:var(--ink3);letter-spacing:.02em}
+.sec{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+.sec>.h2{padding-inline:2px}
+
+/* ---------- home ---------- */
+.hero{position:relative;overflow:hidden;border-radius:26px;padding:22px 18px 18px;background:linear-gradient(160deg,var(--accent-soft),var(--surface));box-shadow:var(--shadow);margin-top:10px}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:var(--accent);opacity:.1}
+.hero::before{width:170px;height:170px;right:-50px;top:-60px}
+.hero::after{width:90px;height:90px;right:40px;bottom:-40px}
+.hero>*{position:relative}
+.hero .lead{margin:8px 0 16px;color:var(--ink2);max-width:34em}
+.fake-search{width:100%;display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:18px;padding:14px 16px;text-align:left;color:var(--ink3);box-shadow:var(--shadow);border:2px solid transparent}
+.fake-search:hover{border-color:var(--accent)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;gap:6px;text-align:left;background:var(--surface);border-radius:20px;padding:14px;box-shadow:var(--shadow);transition:transform .18s;min-width:0}
+.tile:hover{transform:translateY(-3px)}
+.tile.wide{grid-column:span 2}
+.tile .ti{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent2);margin-bottom:4px}
+.tile b{font-size:16px}
+.tile span.d{font-size:13.5px;color:var(--ink2);line-height:1.4}
+.tile.soon{background:transparent;box-shadow:none;border:2px dashed var(--line);color:var(--ink3);justify-content:center;grid-column:span 2}
+.daily-c{display:flex;flex-direction:column;gap:10px;border-radius:22px;padding:18px 16px;background:var(--accent);color:var(--on-accent);box-shadow:var(--shadow)}
+.daily-c .rt{font-size:18px;line-height:1.8}
+.daily-c .btn{background:color-mix(in srgb,var(--on-accent) 18%,transparent);color:var(--on-accent)}
+.shelf-wrap{background:var(--surface);border-radius:22px;padding:18px 16px 0;box-shadow:var(--shadow);overflow:hidden}
+.shelf{display:flex;align-items:flex-end;justify-content:center;gap:7px;padding-top:8px}
+.spine{width:52px;flex:none;border-radius:8px 8px 3px 3px;background:var(--bk);color:var(--on-bk);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 0 12px;gap:8px;transition:transform .2s;box-shadow:inset -5px 0 0 rgba(0,0,0,.12),inset 3px 0 0 rgba(255,255,255,.16)}
+.spine:hover,.spine:focus-visible{transform:translateY(-10px)}
+.spine .sn{writing-mode:vertical-rl;font-weight:700;font-size:15px;letter-spacing:.02em;white-space:nowrap}
+.spine .sc{font-size:10.5px;opacity:.85;font-weight:600}
+.spine .bd{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center;font-size:12px;font-weight:700}
+.plank{height:14px;margin:0 -16px;background:linear-gradient(var(--surface2),var(--line));border-top:2px solid var(--line)}
+.qlinks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.qlinks button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;background:var(--surface);border-radius:18px;font-size:12.5px;font-weight:600;box-shadow:var(--shadow);color:var(--ink2)}
+.qlinks .ic{color:var(--accent2)}
+
+/* ---------- footer (C30) ---------- */
+.foot{margin:26px 16px 10px;padding:18px 16px;border-radius:22px;background:var(--surface2);display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--ink2)}
+.foot .links{display:flex;flex-wrap:wrap;gap:6px 14px;font-weight:600}
+.foot .links button{color:var(--accent2);font-weight:600}
+
+/* ---------- hadis card (C08) ---------- */
+.list{display:flex;flex-direction:column;gap:18px}
+.hcard{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;position:relative;min-width:0}
+.hc-h{display:flex;align-items:center;gap:10px;padding:12px 14px;background:color-mix(in srgb,var(--bk) 13%,var(--surface))}
+.hc-h b{font-size:15px;line-height:1.3}
+.hc-h .rank{margin-left:auto;font:700 11px var(--f-lat);color:var(--ink3)}
+.hc-b{padding:14px 14px 10px}
+.rt{font-family:var(--f-read);font-size:calc(var(--rs) - 1px);line-height:var(--rlh);overflow-wrap:anywhere}
+.hc-b .rt{max-width:var(--rw)}
+.more{display:inline-block;margin-top:4px;color:var(--link);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.hc-f{display:flex;align-items:center;gap:8px;padding:6px 10px 12px 14px;flex-wrap:wrap}
+.hc-f .sp{min-width:4px}
+.cpbtn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:99px;background:var(--surface2);font-weight:600;font-size:14px;transition:background .2s,color .2s}
+.cpbtn.done{background:var(--ok);color:#fff}
+.ibtn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);color:var(--ink2);transition:all .18s}
+.ibtn[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.ghost-card .hc-b{display:flex;flex-direction:column;gap:9px}
+.skl{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--surface2) 0,var(--line) 50%,var(--surface2) 100%);background-size:200% 100%;animation:sh 1.4s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+/* ---------- search ---------- */
+.sbox{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:6px 6px 6px 14px;transition:all .2s}
+.sbox:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.sbox input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:10px 2px;font-size:16px}
+.sbox .ic{color:var(--ink3)}
+.sbox input::-webkit-search-cancel-button{display:none}
+.srch-ind{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:14px;background:var(--accent-soft);color:var(--accent2);font-weight:600}
+.srch-ind .bar{flex:1;height:5px;border-radius:9px;background:color-mix(in srgb,var(--accent) 20%,transparent);overflow:hidden;position:relative}
+.srch-ind .bar i{position:absolute;inset:0 auto 0 0;width:35%;border-radius:9px;background:var(--accent);animation:slide 1.1s ease-in-out infinite}
+@keyframes slide{0%{left:-35%}100%{left:100%}}
+.spin{width:18px;height:18px;border-radius:50%;border:3px solid color-mix(in srgb,var(--accent) 25%,transparent);border-top-color:var(--accent);animation:rot .8s linear infinite;flex:none}
+.spin.lg{width:38px;height:38px;border-width:4px}
+@keyframes rot{to{transform:rotate(360deg)}}
+.sugg{display:flex;flex-direction:column;background:var(--surface);border-radius:16px;border:1px solid var(--line);overflow:hidden}
+.sugg button{display:flex;gap:10px;align-items:center;padding:11px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.sugg button:last-child{border-bottom:0}
+.sugg button:hover{background:var(--surface2)}
+.sugg .k{font:700 11px var(--f-lat);padding:3px 7px;border-radius:99px;background:var(--accent-soft);color:var(--accent2)}
+.dym{font-size:15px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.dym button{color:var(--link);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.exrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--surface2);flex-wrap:wrap}
+.exrow code{font:600 13px var(--f-lat);background:var(--surface);padding:3px 8px;border-radius:8px}
+.count-l{display:flex;flex-direction:column;gap:1px}
+.count-l b{font-size:17px}
+.pager{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.pager button{min-width:42px;height:42px;padding:0 12px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);font-weight:600}
+.pager button[aria-current="page"]{background:var(--accent);color:var(--on-accent)}
+.pager button[disabled]{opacity:.4;cursor:not-allowed}
+.fchip{display:inline-flex;align-items:center;gap:7px;padding:6px 12px 6px 6px;border-radius:99px;background:var(--surface);border:1px solid var(--line);white-space:nowrap;font-weight:500;scroll-snap-align:start;transition:all .18s}
+.fchip[aria-pressed="true"]{background:color-mix(in srgb,var(--bk,var(--accent)) 16%,var(--surface));border-color:var(--bk,var(--accent));font-weight:700}
+.fchip .cn{font-size:12.5px;color:var(--ink2)}
+
+/* ---------- hadis page ---------- */
+.crumbs{display:flex;flex-wrap:wrap;gap:4px 6px;list-style:none;padding:0;font-size:13.5px;color:var(--ink2);align-items:center}
+.crumbs li{display:flex;align-items:center;gap:6px}
+.crumbs li+li::before{content:"›";color:var(--ink3)}
+.crumbs button{color:var(--accent2);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.article{background:var(--surface);border-radius:24px;box-shadow:var(--shadow)}
+.ar-h{border-radius:24px 24px 0 0;padding:16px;display:flex;gap:12px;align-items:center;background:color-mix(in srgb,var(--bk) 13%,var(--surface))}
+.ar-h .t{display:flex;flex-direction:column;min-width:0}
+.ar-h .t b{font-size:17px;line-height:1.3}
+.ar-h .t small{color:var(--ink2);font-size:13px}
+.ar-b{padding:18px 16px 8px}
+.ar-b .rt{font-size:var(--rs);max-width:var(--rw)}
+.reading{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--ink2);flex-wrap:wrap}
+.rbar{flex:1;min-width:80px;height:6px;background:var(--surface2);border-radius:9px;overflow:hidden}
+.rbar i{display:block;height:100%;width:0;background:var(--accent);border-radius:9px;transition:width .15s linear}
+.fold{margin:6px 16px 0;border-radius:16px;background:var(--surface2);overflow:hidden}
+.fold-h{width:100%;display:flex;align-items:center;gap:8px;padding:12px 14px;text-align:left;font-size:14.5px;min-height:48px}
+.fold-h .fl{font-weight:700;color:var(--accent2);flex:none}
+.fold-h .fs{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink2)}
+.fold-h .ic{transition:transform .25s;color:var(--ink3)}
+.fold.open .fold-h .ic{transform:rotate(180deg)}
+.fold-b{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s}
+.fold.open .fold-b{grid-template-rows:1fr}
+.fold-b>div{overflow:hidden}
+.fold-b p{padding:0 14px 14px;font-family:var(--f-read);font-size:15px;line-height:1.8;color:var(--ink2)}
+.ar-f{padding:12px 16px 16px;display:flex;gap:8px;flex-wrap:wrap}
+.permalink{display:flex;align-items:center;gap:8px;margin:0 16px 14px;padding:8px 10px 8px 12px;border-radius:14px;border:1px dashed var(--line);font:600 12.5px var(--f-lat);color:var(--ink2);min-width:0}
+.permalink span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pn button{display:flex;flex-direction:column;gap:2px;padding:14px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);text-align:left;min-height:64px}
+.pn button:last-child{text-align:right;align-items:flex-end}
+.pn small{color:var(--ink3);font-weight:600}
+.pn b{font-size:16px;display:flex;align-items:center;gap:6px}
+.swipehint{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:12.5px;color:var(--ink3)}
+.slide-l{animation:sl .35s ease-out}
+.slide-r{animation:sr .35s ease-out}
+@keyframes sl{from{transform:translateX(40px);opacity:0}}
+@keyframes sr{from{transform:translateX(-40px);opacity:0}}
+.rel{display:flex;flex-direction:column}
+.rel button{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:12px 4px;border-bottom:1px solid var(--line);width:100%}
+.rel button:last-child{border-bottom:0}
+.rel .rtxt{font-family:var(--f-read);font-size:15.5px;line-height:1.7;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rel .rh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:600;font-size:14px}
+
+/* ---------- share ---------- */
+.sheet-demo{background:var(--surface);border-radius:26px 26px 18px 18px;box-shadow:var(--shadow);padding:10px 16px 18px;display:flex;flex-direction:column;gap:14px}
+.grab{width:42px;height:5px;border-radius:9px;background:var(--line);margin:0 auto}
+.citebox{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:16px;padding:10px 10px 10px 14px;font-weight:600}
+.sharetext{font-family:var(--f-read);font-size:15.5px;line-height:1.8;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:12px 14px;overflow-wrap:anywhere;color:var(--ink2)}
+.chan{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.chan button{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink2);padding:8px 2px}
+.chan .ci{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.qwrap{display:flex;justify-content:center}
+.qcard{position:relative;width:100%;max-width:340px;aspect-ratio:1/1;border-radius:18px;padding:8% 9%;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.18);transition:all .3s;container-type:inline-size}
+.qcard.story{aspect-ratio:9/16;max-width:230px}
+.qcard .qm{font:800 70px/0.7 var(--f-lat);opacity:.35}
+.qcard .qt{font-family:var(--f-read);font-weight:500;line-height:1.75;font-size:clamp(11px,4.6cqw,19px)}
+.qcard.story .qt{font-size:clamp(11px,6cqw,19px)}
+.qcard .qf{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;font-size:clamp(9px,3.3cqw,12px);font-weight:600;line-height:1.35}
+.qcard .qb{font:800 clamp(10px,3.6cqw,13px) var(--f-lat);letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+.qs0{background:linear-gradient(150deg,#0e8f7d,#0a5d6b);color:#f2fffb}
+.qs1{background:linear-gradient(160deg,#0f1f2e,#1c3a4a);color:#e8f4f2}
+.qs2{background:#f6ecd6;color:#3a2d1a;box-shadow:inset 0 0 0 7px #f6ecd6,inset 0 0 0 8px #b49a63,0 12px 30px rgba(0,0,0,.18)}
+.qs3{background:linear-gradient(160deg,#fff3dc,#ffd9c2 55%,#f7b7b0);color:#4a2218}
+.styles{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.sty{width:44px;height:44px;border-radius:14px;border:3px solid transparent;box-shadow:0 0 0 1px var(--line);transition:transform .15s}
+.sty[aria-pressed="true"]{border-color:var(--accent);transform:scale(1.1)}
+.chat{border-radius:20px;padding:16px 12px;display:flex;flex-direction:column;gap:8px}
+.chat.wa{background:#e5ddd5;background-image:radial-gradient(#d9d0c5 1px,transparent 1px);background-size:14px 14px}
+.chat.fb{background:#f0f2f5}
+.chat.tg{background:#9dc3da}
+.bubble{align-self:flex-end;max-width:92%;border-radius:14px 14px 4px 14px;padding:5px;color:#111;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.chat.wa .bubble{background:#d9fdd3}
+.chat.fb .bubble{background:#0a7cff;color:#fff}
+.chat.tg .bubble{background:#effdde}
+.og{border-radius:10px;overflow:hidden;background:rgba(255,255,255,.65);color:#111}
+.chat.fb .og{background:#fff}
+.og .img{aspect-ratio:1.91/1;width:100%;display:flex;align-items:center;justify-content:center;padding:8%;text-align:center;font-family:var(--f-read);font-size:12.5px;line-height:1.55;background:linear-gradient(150deg,#0e8f7d,#0a5d6b);color:#f2fffb;container-type:inline-size}
+.og .meta{padding:8px 10px 9px;display:flex;flex-direction:column;gap:2px}
+.og .dm{font:600 11px var(--f-lat);color:#667;text-transform:uppercase;letter-spacing:.04em}
+.og b{font-size:14px;line-height:1.35}
+.og .ds{font-size:12.5px;line-height:1.4;color:#444;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chat.tg .og{border-left:3px solid #2a8fbd;border-radius:4px 10px 10px 4px;background:transparent}
+.chat.tg .bubble{padding:6px 8px}
+.serp{background:#fff;color:#202124;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:3px;font-family:Arial,var(--f-ui),sans-serif;border:1px solid #dfe1e5}
+.serp .u{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#4d5156}
+.serp .u i{width:24px;height:24px;border-radius:50%;background:#0b8a78;display:grid;place-items:center;color:#fff;font-style:normal;font-weight:700;font-size:11px;flex:none}
+.serp .ttl{font-size:19px;line-height:1.3;color:#1a0dab}
+.serp .dsc{font-size:14px;line-height:1.55;color:#4d5156}
+.code{font:500 12.5px/1.6 ui-monospace,Menlo,monospace;background:var(--surface2);border-radius:14px;padding:12px;overflow-x:auto;white-space:pre;color:var(--ink2)}
+
+/* ---------- books ---------- */
+.bk-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bk-pick button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;border-radius:18px;background:var(--surface);border:2px solid transparent;box-shadow:var(--shadow);font-weight:600;font-size:14px;transition:all .18s;min-width:0}
+.bk-pick button small{font-weight:500;color:var(--ink3);font-size:12px}
+.bk-pick button[aria-pressed="true"]{border-color:var(--bk);background:color-mix(in srgb,var(--bk) 12%,var(--surface))}
+.bk-head{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:color-mix(in srgb,var(--bk) 14%,var(--surface))}
+.bk-ctl{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:center}
+.bk-ctl button{height:46px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);font-weight:700}
+.bk-ctl button[disabled]{opacity:.4}
+.rangelab{text-align:center;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:196px;overflow-y:auto;padding:2px}
+.rgrid button{padding:9px 4px;border-radius:12px;background:var(--surface2);font-weight:600;font-size:13.5px;font-variant-numeric:tabular-nums}
+.rgrid button.on{background:var(--bk);color:var(--on-bk)}
+.err{color:var(--bad);font-weight:600;font-size:14px}
+
+/* ---------- topics ---------- */
+.tindex{display:flex;flex-wrap:wrap;gap:8px;max-height:176px;overflow-y:auto;padding:2px}
+.empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:26px 16px;color:var(--ink2)}
+.empty .ei{width:56px;height:56px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;color:var(--ink3)}
+.empty b{color:var(--ink);font-size:16px}
+.start{display:flex;flex-direction:column;gap:10px}
+.start .st{display:flex;gap:12px;align-items:flex-start}
+.start .no{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:700;flex:none;margin-top:4px}
+.start .st>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.edn{font-size:13.5px;color:var(--ink2)}
+
+/* ---------- narrators ---------- */
+.nlist{display:flex;flex-direction:column;max-height:250px;overflow-y:auto}
+.nlist button{display:flex;align-items:center;gap:10px;padding:11px 8px;border-radius:14px;text-align:left}
+.nlist button[aria-pressed="true"]{background:var(--accent-soft)}
+.nlist .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);color:var(--accent2);font-weight:700;flex:none}
+.nlist small{margin-left:auto;color:var(--ink3);font-weight:600;font-variant-numeric:tabular-nums}
+.bars{display:flex;flex-direction:column;gap:9px}
+.barrow{display:grid;grid-template-columns:86px 1fr 52px;gap:8px;align-items:center;font-size:13.5px}
+.barrow .tr{height:12px;border-radius:9px;background:var(--surface2);overflow:hidden}
+.barrow .tr i{display:block;height:100%;border-radius:9px;background:var(--bk)}
+.barrow .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ---------- compare ---------- */
+.cols{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;margin-inline:-2px}
+.col{flex:0 0 78%;scroll-snap-align:center;background:var(--surface);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.col .rt{padding:12px 14px;font-size:16px;line-height:1.85}
+.col .cs{padding:0 14px 12px;font-size:12.5px;color:var(--ink2);font-weight:600}
+@container app (min-width: 720px){
+  .cols{overflow:visible;scroll-snap-type:none}
+  .col{flex:1 1 0}
+}
+
+/* ---------- daily / plans / khutbah ---------- */
+.dcard{border-radius:26px;padding:22px 20px;background:linear-gradient(155deg,var(--accent),var(--accent2));color:var(--on-accent);display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.dcard::after{content:"”";position:absolute;right:14px;top:-26px;font:800 150px/1 var(--f-lat);opacity:.12}
+.dcard .rt{font-size:calc(var(--rs) + 2px);line-height:1.85}
+.dcard .btn{background:color-mix(in srgb,var(--on-accent) 20%,transparent);color:var(--on-accent)}
+.dcard .btn.solid{background:var(--on-accent);color:var(--accent2)}
+.plan{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);text-align:left;border:2px solid transparent;min-width:0}
+.plan[aria-pressed="true"]{border-color:var(--accent)}
+.prog{height:8px;border-radius:9px;background:var(--surface2);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);border-radius:9px;transition:width .3s}
+.days{display:flex;flex-direction:column}
+.day{display:flex;gap:12px;align-items:flex-start;padding:12px 2px;border-bottom:1px solid var(--line)}
+.day:last-child{border-bottom:0}
+.ck{width:28px;height:28px;border-radius:9px;border:2px solid var(--line);display:grid;place-items:center;color:transparent;flex:none;transition:all .2s;margin-top:2px}
+.ck[aria-checked="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.day .dt{flex:1;min-width:0}
+.day .dn{font-size:12.5px;font-weight:700;color:var(--ink3)}
+.day .ds{font-family:var(--f-read);font-size:15.5px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pick{display:flex;gap:10px;align-items:center;padding:9px 4px;width:100%;text-align:left}
+.paper{background:#fffdf8;color:#1d1b16;border-radius:6px;padding:26px 22px;box-shadow:0 10px 30px rgba(0,0,0,.18),0 0 0 1px #e5dfd0;font-family:var(--f-read);position:relative}
+.paper h3{font-size:20px;text-align:center;border-bottom:2px solid #1d1b16;padding-bottom:10px;margin-bottom:4px}
+.paper .sub{text-align:center;font-size:13px;color:#6a6454;margin-bottom:14px}
+.paper ol{padding-left:22px;display:flex;flex-direction:column;gap:14px}
+.paper li{line-height:1.85;font-size:16px}
+.paper li cite{display:block;font-style:normal;font-size:13.5px;color:#6a6454;margin-top:2px}
+.paper .pf{margin-top:18px;border-top:1px solid #ddd;padding-top:8px;font:600 11px var(--f-lat);color:#8a8471;text-align:center}
+.paper.big{padding:34px 28px}
+
+/* ---------- settings ---------- */
+.prev-box{background:var(--surface2);border-radius:18px;padding:14px}
+.prev-box .rt{font-size:var(--rs);max-width:var(--rw)}
+.opt{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.opt:last-of-type{border-bottom:0}
+.opt .oh{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.opt .oh span{font-weight:600;color:var(--ink3);font-size:13px}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button{width:44px;height:44px;border-radius:14px;background:var(--surface2);font-weight:700}
+.stepper .dots{flex:1;display:flex;gap:6px;align-items:center;justify-content:center}
+.stepper .dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.stepper .dots i.on{background:var(--accent)}
+.opts3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.opts3 button,.opts2 button{padding:10px 6px;border-radius:14px;background:var(--surface2);font-weight:600;font-size:14px;border:2px solid transparent}
+.opts2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opts3 button[aria-pressed="true"],.opts2 button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent2)}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.themes button{display:flex;flex-direction:column;gap:8px;align-items:center;padding:8px;border-radius:18px;border:2px solid var(--line);font-weight:600;font-size:13.5px}
+.themes button[aria-pressed="true"]{border-color:var(--accent)}
+.themes .sw2{width:100%;height:56px;border-radius:12px;display:flex;flex-direction:column;gap:5px;padding:9px;justify-content:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.themes .sw2 i{display:block;height:6px;border-radius:4px}
+
+/* ---------- states ---------- */
+.stgrid{display:grid;grid-template-columns:1fr;gap:16px}
+@container app (min-width: 720px){.stgrid{grid-template-columns:1fr 1fr}}
+.center{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:14px 6px}
+.nf{border-radius:22px;background:var(--surface2);padding:22px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.nf .big{font:800 64px/1 var(--f-lat);color:var(--accent);letter-spacing:-.04em}
+
+/* ---------- future ---------- */
+.fut{filter:saturate(.25)}
+.chan-c{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:18px;background:var(--surface2);border:1px dashed var(--ink3)}
+.chan-c .ci{width:42px;height:42px;border-radius:14px;background:var(--surface);display:grid;place-items:center;color:var(--ink3);flex:none}
+.chan-c>div{flex:1;min-width:0}
+.tgmsg{align-self:flex-start;max-width:88%;background:var(--surface);border-radius:14px 14px 14px 4px;padding:10px 12px;font-family:var(--f-read);font-size:15px;line-height:1.75;box-shadow:var(--shadow)}
+
+/* ---------- map ---------- */
+.maprow{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
+.maprow .mh{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.maprow .code{font:800 13px var(--f-lat);padding:0;background:none;color:var(--ink)}
+.maprow .mn{font-weight:600;flex:1;min-width:140px}
+.maprow .lk{display:flex;flex-wrap:wrap;gap:6px}
+.maprow .lk button{padding:4px 11px;border-radius:99px;background:var(--accent-soft);color:var(--accent2);font-weight:600;font-size:13px}
+.mapgrid{display:grid;gap:10px;grid-template-columns:1fr}
+@container app (min-width: 720px){.mapgrid{grid-template-columns:1fr 1fr}}
+.mp{display:inline-block;padding:2px 9px;border-radius:99px;color:#fff;font:700 11px var(--f-lat)}
+
+/* ---------- more sheet / toast ---------- */
+#sheet{position:fixed;inset:0;z-index:90;display:none;align-items:flex-end;justify-content:center;background:rgba(5,20,16,.45);padding-top:env(safe-area-inset-top,0px)}
+#sheet.open{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+#sheet .panel{width:min(var(--sw,390px),100%);max-height:84vh;overflow-y:auto;background:var(--bg);color:var(--ink);border-radius:26px 26px 0 0;padding:10px 16px calc(20px + env(safe-area-inset-bottom,0px));animation:up .28s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.menu button{display:flex;align-items:center;gap:10px;padding:14px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);text-align:left;font-weight:600}
+.menu .ic{color:var(--accent2)}
+#toast{position:fixed;left:50%;bottom:calc(104px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;z-index:100;opacity:0;pointer-events:none;transition:all .25s;max-width:calc(100vw - 32px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- wide layouts ---------- */
+@container app (min-width: 720px){
+  .screen{padding:10px 40px 28px}
+  .tiles{grid-template-columns:repeat(4,1fr)}
+  .tile.wide,.tile.soon{grid-column:span 1}
+  .hero{padding:34px 34px 28px}
+  .h1{font-size:34px}
+  .spine{width:84px}
+  .spine .sn{font-size:18px}
+  .qlinks{max-width:560px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  .bk-pick{grid-template-columns:repeat(6,1fr)}
+  .rgrid{grid-template-columns:repeat(6,1fr)}
+  .foot{margin-inline:40px}
+  .chan{max-width:420px}
+}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="ctl" id="ctl">
+  <span class="ctl-brand">D2 · Modern App</span>
+  <label class="sw"><input type="checkbox" id="lab" checked role="switch"><span class="sw-t"></span>Labels</label>
+  <div class="seg" role="group" aria-label="Frame width" id="modeSeg">
+    <button type="button" data-act="mode" data-m="phone" aria-pressed="true">Phone</button>
+    <button type="button" data-act="mode" data-m="desk" aria-pressed="false">Desktop</button>
+  </div>
+  <div class="seg" role="group" aria-label="Theme" id="skinSeg">
+    <button type="button" data-act="skin" data-k="light" aria-pressed="true">Light</button>
+    <button type="button" data-act="skin" data-k="dark" aria-pressed="false">Dark</button>
+    <button type="button" data-act="skin" data-k="sepia" aria-pressed="false">Sepia</button>
+  </div>
+  <select id="scr" aria-label="Screen"></select>
+</div>
+<div class="wrap"><div class="stage" id="stage"></div></div>
+<div id="sheet" aria-hidden="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(()=>{
+'use strict';
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const BNd='০১২৩৪৫৬৭৮৯';
+const bn=s=>String(s).replace(/[0-9]/g,d=>BNd[d]);
+const en=s=>String(s).replace(/[০-৯]/g,d=>BNd.indexOf(d));
+const fmt=n=>bn(Number(n).toLocaleString('en-US'));
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* ---------------- icons ---------------- */
+const IC={
+home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+book:'<path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2z"/><path d="M12 6v14"/>',
+tag:'<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>',
+grid:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+share:'<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.8 7.6-3.6M8.2 13.2l7.6 3.6"/>',
+link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+cr:'<path d="m9 6 6 6-6 6"/>',cl:'<path d="m15 6-6 6 6 6"/>',cd:'<path d="m6 9 6 6 6-6"/>',
+check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+x:'<path d="M6 6l12 12M18 6 6 18"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>',
+up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+bell:'<path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+cols:'<rect x="3" y="4" width="8" height="16" rx="2"/><rect x="13" y="4" width="8" height="16" rx="2"/>',
+plan:'<path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>',
+sliders:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/>',
+alert:'<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>',
+img:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-8 8"/>',
+rss:'<path d="M5 19.5h.01M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/>',
+mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+tg:'<path d="M21 4 3 11l6 2 2 6 3-4 5 3z"/>',
+globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+print:'<path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><rect x="7" y="14" width="10" height="7" rx="1"/>',
+more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+star:'<path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6L12 16.7 6.6 19.6l1.1-6L3.2 9.4l6.1-.8z"/>',
+refresh:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+wifi:'<path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0M12 19.5h.01"/>',
+swipe:'<path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/>'
+};
+const ic=(n,s=20)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||''}</svg>`;
+
+/* ---------------- data ---------------- */
+const BOOKS={
+ bukhari:{name:'বুখারী',full:'বুখারী শরীফ',cite:'সহীহ বুখারী',badge:'বু',n:6719},
+ muslim:{name:'মুসলিম',full:'মুসলিম শরীফ',cite:'সহীহ মুসলিম',badge:'মু',n:7281},
+ tirmidhi:{name:'তিরমিযী',full:'তিরমিযী শরীফ',cite:'জামে’ তিরমিযী',badge:'তি',n:3608},
+ abudawud:{name:'আবু দাউদ',full:'আবু দাউদ শরীফ',cite:'সুনান আবু দাউদ',badge:'দা',n:5184},
+ ibnmajah:{name:'ইবনে মাজাহ',full:'ইবনে মাজাহ শরীফ',cite:'সুনান ইবনে মাজাহ',badge:'মা',n:4341},
+ nasai:{name:'নাসাঈ',full:'নাসাঈ শরীফ',cite:'সুনান নাসাঈ',badge:'না',n:5753}
+};
+const BK=Object.keys(BOOKS);
+const H={
+ b6628:{id:'b6628',bk:'bukhari',n:'৬৬২৮',first:'আদম ইবনু আবূ ইয়াস (রহঃ)',nar:'হুযায়ফা ইবনুু-ইয়ামান (রাঃ)',nid:'huzayfa',
+  chain:'আদম ইবনু আবূ ইয়াস (রহঃ) ... হুযায়ফা ইবনুু-ইয়ামান (রাঃ) থেকে বর্ণিত।',
+  body:'তিনি বলেন, বর্তমান যুগের মুনাফিকরা নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর যুগের মুনাফিকদের চাইতেও জঘন্য। কেননা, সে যুগে তারা (মুনাফিকী) করত গোপনে আর আজ করে প্রকাশ্যে।'},
+ m1069:{id:'m1069',bk:'muslim',n:'১০৬৯',first:'কুতায়বা ইবনু সাঈদ (রহঃ)',nar:'আবূ হুরায়রা (রাঃ)',nid:'hurayra',
+  chain:'কুতায়বা ইবনু সাঈদ (রহঃ) ... আবূ হুরায়রা (রাঃ) থেকে বর্ণিত।',
+  body:'তিনি বলেন, রাসুলূল্লাহ বলেছেন, ইয়াহুদী ও নাসারাদের প্রতি আল্লাহর অভিশাপ বর্ষিত হোক। তারা তাদের নবীদের কবরগুলোকে মসজিদ বানিয়ে নিয়েছে।'},
+ t987:{id:'t987',bk:'tirmidhi',n:'৯৮৭',first:'কুতায়বা (রহঃ)',nar:'আনাস (রাঃ)',nid:'anas',
+  chain:'কুতায়বা (রহঃ) ...... আনাস (রাঃ) থেকে বর্ণিত আছে যে,',
+  body:'রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, কষ্টের প্রথম অবস্থায়ই ধৈর্যধারণ করতে হয়।'},
+ a203:{id:'a203',bk:'abudawud',n:'২০৩',first:'হায়ওয়াত শুরায়হ্',nar:'আলী ইবনু আবূ তালিব (রাঃ)',nid:'ali',
+  chain:'হায়ওয়াত শুরায়হ্ .... আলী ইবনু আবূ তালিব (রাঃ) হতে বর্ণিত।',
+  body:'রাসূলুল্লাহ্ সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম বলেছেনঃ চক্ষু হল পাশ্চাদ্বারের সংরক্ষণকারী। অতএব যে ব্যক্তি চোখ মুদে নিদ্রা যায় সে যেন উযূ করে।'},
+ i201:{id:'i201',bk:'ibnmajah',n:'২০১',first:null,nar:'জাবির ইবনু আবদুল্লাহ (রাঃ)',nid:'jabir',
+  chain:'জাবির ইবনু আবদুল্লাহ (রাঃ) থেকে বর্ণিত।',
+  body:'তিনি বলেন, রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম হাজ্জের (হজ্জ) মৌসুমে নিজেকে লোকেদের সামনে পেশ করতেন এবং বলতেনঃ কুরায়শরা আমাকে আমার প্রভুর কালাম প্রচারে বাধা দিচ্ছে। তোমাদের মাঝে এমন কে আছে যে আমাকে তার গোত্রের কাছে নিরাপদে নিয়ে যাবে?'},
+ n202:{id:'n202',bk:'nasai',n:'২০২',first:'হিশাম ইবনু আম্মার (রহঃ)',nar:'আয়িশা (রাঃ)',nid:'aisha',
+  chain:'হিশাম ইবনু আম্মার (রহঃ) ... আয়িশা (রাঃ) থেকে বর্ণিত।',
+  body:'রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেনঃ যখন হায়য আরম্ভ হয় তখন সালাত (নামায/নামাজ) ছেড়ে দিবে আর যখন তা বন্ধ হয়ে যায় (অর্থাৎ যখন তা অতিবাহিত হয়) তখন গোসল করবে।'},
+ b307:{id:'b307',bk:'bukhari',n:'৩০৭',long:true,words:102,first:'আবদুল্লাহ ইবনু ’আবদুল ওয়াহহাব (রহঃ)',nar:'উম্মে ’আতিয়া (রাঃ)',nid:'atiyya',
+  chain:'আবদুল্লাহ ইবনু ’আবদুল ওয়াহহাব (রহঃ) ..... উম্মে ’আতিয়া (রাঃ) থেকে বর্ণিত,',
+  body:'তিনি বলেনঃ কোন মৃত ব্যাক্তির জন্য আমাদের তিন দিনের বেশী শোক পালন করা থেকে নিষেধ করা হত। কিন্তু স্বামীর ক্ষেত্রে চার মাস দশ দিন (শোক পালনের অনুমতি ছিল)। আমরা তখন সুরমা লাগাতাম না, সুগন্ধি ব্যাবহার করতাম না, ইয়েমেনের তৈরি রঙ্গিন কাপড় ছাড়া অন্য কোন রঙ্গিন কাপড় পরতাম না। তবে হায়য থেকে পবিত্রতার গোসলে আজফারের খোশবু মিশ্রিত বস্ত্রখন্ড ব্যাবহারের অনুমতি ছিল। আর আমাদের জানাযার পেছনে যাওয়া নিষিদ্ধ ছিল। এই বর্ণনা হিশাম ইবনু হাসসান (রহঃ) হাফসা (রাঃ) থেকে, তিনি উম্মে ’আতিয়্যা (রাঃ) থেকে এবং তিনি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম থেকে বিবৃত করেছেন।'}
+};
+const HLIST=['b6628','m1069','t987','a203','i201','n202','b307'];
+const SHORT=['b6628','m1069','t987','a203','n202'];
+const full=h=>h.chain+' '+h.body;
+const tail=h=>h.chain.split(/\s*\.{2,}\s*/).pop()+' '+h.body;
+const cite=h=>`${BOOKS[h.bk].cite}, হাদীস নং ${h.n}`;
+const hurl=h=>`boikotha.example/${h.bk}/${en(h.n)}`;
+const wcount=h=>h.words||full(h).split(/\s+/).length;
+const NAR=[
+ {id:'hurayra',name:'আবূ হুরায়রা (রাঃ)',total:5374,w:[.27,.31,.13,.13,.08,.08]},
+ {id:'aisha',name:'আয়িশা (রাঃ)',total:2210,w:[.29,.26,.12,.13,.09,.11]},
+ {id:'anas',name:'আনাস (রাঃ)',total:2286,w:[.28,.3,.14,.12,.08,.08]},
+ {id:'ali',name:'আলী ইবনু আবূ তালিব (রাঃ)',total:536,w:[.2,.15,.18,.2,.14,.13]},
+ {id:'jabir',name:'জাবির ইবনু আবদুল্লাহ (রাঃ)',total:1540,w:[.22,.36,.1,.12,.1,.1]},
+ {id:'huzayfa',name:'হুযায়ফা ইবনুু-ইয়ামান (রাঃ)',total:225,w:[.3,.34,.08,.1,.09,.09]},
+ {id:'atiyya',name:'উম্মে ’আতিয়া (রাঃ)',total:40,w:[.25,.2,.1,.25,.1,.1]}
+];
+function dist(total,w){const a=w.map(x=>Math.round(total*x));a[5]+=total-a.reduce((p,c)=>p+c,0);return a}
+const TOPICS=['ঈমান','ইসলাম','তাওহীদ','নামায','উযূ','গোসল','হায়য','রোজা','রমযান','যাকাত','হজ্জ','উমরা','জান্নাত','জাহান্নাম','দোয়া','যিকর','কুরআন','ধৈর্য','তাওবা','সত্যবাদিতা','মুনাফিক','কবর','জানাযা','শোক','বিবাহ','তালাক','পিতামাতা','প্রতিবেশী','ইলম','দান-সদাকা','ব্যবসা','হালাল-হারাম','সুদ','মসজিদ','জুমু’আ','ঈদ','সফর','খাদ্য','পোশাক','সালাম'];
+const CURATED={'নামায':{ids:['n202','a203'],notes:['নামায ও হায়যের বিধান দিয়ে শুরু করুন','এরপর উযূ ভঙ্গের একটি কারণ দেখুন']}};
+const COUNTS={bukhari:112,muslim:98,tirmidhi:57,abudawud:63,ibnmajah:38,nasai:35};
+const RES0=['t987','a203','i201','n202','m1069'];
+const RES1=['n202','i201','a203','t987','m1069'];
+
+/* ---------------- component catalogue ---------------- */
+const CMP={
+C01:['Top navigation bar','E',['home']],
+C02:['Bottom tab bar','N6',['home','search','books']],
+C03:['Home tiles + bookshelf','E+N5',['home']],
+C04:['Search box + chips','E',['search']],
+C05:['Search results list','E+N14',['results']],
+C06:['Filter by book','N13',['results']],
+C07:['Pagination','E',['results']],
+C08:['Hadis card','E',['results','books','topics','narrators']],
+C09:['Hadis full page','N7',['hadis']],
+C10:['Breadcrumb + book link','N7',['hadis']],
+C11:['Previous / next + swipe','N7',['hadis']],
+C12:['Related hadis panel','N9',['hadis']],
+C13:['Narrator chain folded','N2',['hadis']],
+C14:['Reading time + progress bar','N3',['hadis']],
+C15:['Book browser','E',['books']],
+C16:['Jump to number + range grid','N8',['books']],
+C17:['Topics index + curated page','E+N12',['topics']],
+C18:['Reading comfort settings','N1',['comfort']],
+C19:['Theme switcher','N1',['comfort']],
+C20:['Share sheet + quote-card','N25+N26',['share']],
+C21:['Compare view','N10',['compare']],
+C22:['Daily hadis card','N22',['daily','home']],
+C23:['Reading plans + khutbah sheet','N24',['daily']],
+C24:['Typing helpers','N15+N18',['search','results']],
+C25:['Advanced search extras','N17+N19',['search','results']],
+C26:['Loading / empty / error states','E',['states']],
+C27:['Not-found page','E',['states']],
+C28:['Back-to-top button','E',['states']],
+C29:['Reminders & channels','N23 · Future scope',['future']],
+C30:['Footer','Suggested',['home']],
+C31:['Narrator index','N11',['narrators']],
+C32:['Link preview + search snippet','N27+N28',['share']]
+};
+function pillHTML(code,cls=''){const [name,mark]=CMP[code];const k=/Future/.test(mark)?'f':/Suggested/.test(mark)?'s':/^E\+/.test(mark)?'mix':/^E/.test(mark)?'e':'n';return `<span class="pill ${k} ${cls}">D2·${code} ${name} · ${mark}</span>`}
+const cmp=(code,inner,cls='')=>`<div class="cmp ${cls}" data-cmp="${code}">${pillHTML(code)}${inner}</div>`;
+
+/* ---------------- state ---------------- */
+const SCREEN_LIST=[
+ ['home','Home'],['search','Search'],['results','Search results'],['hadis','Hadis full page'],['share','Share + preview'],['books','Books'],['topics','Topics'],['narrators','Narrator index'],['compare','Compare'],['daily','Daily + plans + khutbah'],['comfort','Reading comfort'],['states','States'],['future','Future scope'],['map','Component map']
+];
+const S={
+ screen:'home',mode:'phone',skin:'light',digits:'bn',
+ size:2,lh:1,width:1,
+ qDraft:'',q:'রাসুলুল্লাহ',filter:'all',page:1,prox:false,loading:false,
+ hid:'b6628',chainOpen:false,
+ book:'bukhari',start:301,jump:'',jumpMsg:'',
+ topic:'নামায',
+ nar:'hurayra',
+ compare:['t987','a203','n202','i201'],cmode:'diff',
+ dtab:'today',plan:'ram',planDone:{ram:[0,1],jum:[],sabr:[]},planOpen:false,
+ khut:['b6628','t987','n202'],paper:false,
+ shareLink:true,shareCite:true,qstyle:0,qratio:'sq',chat:'wa',qhid:'t987',
+ stErr:false,stRetry:false,mapf:'all',
+ sheet:null
+};
+const SIZES=[15,16.5,18,21,25], LHS=[1.65,1.9,2.25], WS=['24em','34em','44em'];
+function applySettings(){const r=document.documentElement.style;r.setProperty('--rs',SIZES[S.size]+'px');r.setProperty('--rlh',LHS[S.lh]);r.setProperty('--rw',WS[S.width]);document.documentElement.setAttribute('data-skin',S.skin);
+ store.set('d2',JSON.stringify({skin:S.skin,size:S.size,lh:S.lh,width:S.width,digits:S.digits}))}
+
+/* ---------------- helpers ---------------- */
+function makeRe(q){
+ const words=q.trim().split(/\s+/).filter(Boolean).map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&').replace(/[ুূ]/g,'[ুূ]').replace(/[িী]/g,'[িী]'));
+ if(!words.length)return null;return new RegExp('('+words.map(w=>w+'্?').join('|')+')','g');
+}
+const hlText=(t,re)=>{const e=esc(t);return re?e.replace(re,'<mark>$1</mark>'):e};
+function snippet(t,re){
+ if(!re)return t;const m=new RegExp(re.source).exec(t);if(!m)return t.slice(0,120);
+ let s=Math.max(0,m.index-46),e=Math.min(t.length,m.index+m[0].length+72);
+ if(s>0){const sp=t.indexOf(' ',s);if(sp>-1&&sp<m.index)s=sp+1}
+ if(e<t.length){const sp=t.lastIndexOf(' ',e);if(sp>m.index+m[0].length)e=sp}
+ return (s>0?'… ':'')+t.slice(s,e)+(e<t.length?' …':'');
+}
+const badge=(bk,cls='')=>`<span class="badge ${cls}" style="--bk:var(--bk-${bk})">${BOOKS[bk].badge}</span>`;
+const bkStyle=bk=>`style="--bk:var(--bk-${bk})"`;
+
+function hcard(h,o={}){
+ const b=BOOKS[h.bk];let text=full(h),more=false,re=o.hl?makeRe(o.hl):null;
+ if(o.snippet){text=snippet(text,re)}
+ else{const cut=text.length>600?600:(h.long?Math.floor(text.length*.6):0);if(cut){text=text.slice(0,cut).replace(/\s\S*$/,'')+' ...';more=true}}
+ const inCmp=S.compare.includes(h.id);
+ return `<article class="hcard" ${bkStyle(h.bk)} data-id="${h.id}">
+  <div class="hc-h">${badge(h.bk)}<b>${b.full} - হাদীস নং ${h.n}</b>${o.rank?`<span class="rank">#${o.rank}</span>`:''}</div>
+  <div class="hc-b"><p class="rt">${hlText(text,re)}</p>${more?`<button class="more" data-act="open" data-id="${h.id}">সম্পূর্ণ হাদীস দেখুন...</button>`:''}${o.snippet?`<div><button class="more" data-act="open" data-id="${h.id}">পুরো হাদীস পড়ুন</button></div>`:''}</div>
+  <div class="hc-f"><button class="cpbtn" data-act="copy" data-c="card:${h.id}">${ic('copy',17)}<span class="lbl2">কপি</span></button><span class="sp"></span>
+   <button class="ibtn" data-act="cmpTog" data-id="${h.id}" aria-pressed="${inCmp}" aria-label="তুলনায় যোগ করুন" title="তুলনায় যোগ করুন">${ic('cols',18)}</button>
+   <button class="ibtn" data-act="shareOf" data-id="${h.id}" aria-label="শেয়ার করুন" title="শেয়ার করুন">${ic('share',18)}</button></div>
+ </article>`;
+}
+const ghostCard=(bk,n)=>`<article class="hcard ghost-card" ${bkStyle(bk)}><div class="hc-h">${badge(bk)}<b>${BOOKS[bk].full} - হাদীস নং ${n}</b></div><div class="hc-b"><div class="skl" style="width:96%"></div><div class="skl" style="width:88%"></div><div class="skl" style="width:54%"></div><span class="tiny">নমুনা স্থান, প্রোটোটাইপে এই হাদীসের লেখা দেখানো হয়নি</span></div></article>`;
+
+function segBtns(arr,cur,act,key){return arr.map(([v,t])=>`<button type="button" data-act="${act}" data-${key}="${v}" aria-pressed="${cur===v}">${t}</button>`).join('')}
+function tg(on,act,extra=''){return `<button type="button" class="tg" role="switch" aria-checked="${on}" data-act="${act}" ${extra}></button>`}
+function footer(){return `<footer class="foot cmp" data-cmp="C30">${pillHTML('C30')}<div class="row"><div class="logo" style="width:32px;height:32px;border-radius:10px">${ic('book',18)}</div><div><b class="lat">BoiKotha</b> <b>বইকথা</b><div class="tiny">হাদীস সম্ভার</div></div></div>
+ <div>ছয়টি প্রধান গ্রন্থ, ${fmt(32886)} হাদীস। সম্পূর্ণ বাংলায়, বিনামূল্যে।</div>
+ <div class="links"><button data-act="go" data-s="home">হোম</button><button data-act="go" data-s="search">সার্চ</button><button data-act="go" data-s="books">হাদীস বই</button><button data-act="go" data-s="topics">বিষয়ভিত্তিক হাদীস</button></div></footer>`}
+
+/* ---------------- nav + tabs ---------------- */
+const TITLES={home:'হাদীস সম্ভার | বইকথা',search:'সার্চ | বইকথা',results:()=>`“${S.q}” খোঁজার ফলাফল | বইকথা`,hadis:()=>`${BOOKS[H[S.hid].bk].full} - হাদীস নং ${H[S.hid].n} | বইকথা`,share:'শেয়ার করুন | বইকথা',books:'হাদীস বই | বইকথা',topics:'বিষয়ভিত্তিক হাদীস | বইকথা',narrators:'বর্ণনাকারী | বইকথা',compare:'হাদীস তুলনা | বইকথা',daily:'আজকের হাদীস | বইকথা',comfort:'পড়ার সেটিংস | বইকথা',states:'অবস্থা ও ত্রুটি | বইকথা',future:'সতর্কবার্তা (শীঘ্রই) | বইকথা',map:'Component map'};
+const NAVMAP={home:'home',search:'search',results:'search',books:'books',topics:'topics',hadis:'books',narrators:'narrators',compare:'compare',daily:'daily'};
+function navHTML(){
+ const cur=NAVMAP[S.screen];const L=(s,t,n)=>`<button data-act="go" data-s="${s}" ${cur===s?'aria-current="page"':''} class="${n?'new':''}">${t}</button>`;
+ return `<header class="nav cmp" data-cmp="C01">${pillHTML('C01')}<div class="nav-in">
+  <button class="brand" data-act="go" data-s="home" aria-label="বইকথা হোম"><span class="logo">${ic('book',20)}</span><span><b>BoiKotha</b><small>বইকথা · হাদীস সম্ভার</small></span></button>
+  <nav class="nav-links" aria-label="প্রধান মেনু">${L('home','হোম')}${L('search','সার্চ')}${L('books','হাদীস বই')}${L('topics','বিষয়ভিত্তিক হাদীস')}${L('narrators','বর্ণনাকারী',1)}${L('compare','তুলনা',1)}${L('daily','আজকের হাদীস',1)}</nav>
+  <button class="iconbtn" data-act="openSettings" aria-label="পড়ার সেটিংস" title="পড়ার সেটিংস"><b style="font-size:16px">Aa</b></button>
+ </div><div class="rp"><i id="rpi"></i></div></header>`;
+}
+function tabHTML(){
+ const cur=NAVMAP[S.screen];
+ const T=(s,icn,t)=>`<button data-act="go" data-s="${s}" ${cur===s?'aria-current="page"':''}>${ic(icn,22)}<span>${t}</span></button>`;
+ return `<nav class="tabbar cmp" data-cmp="C02" aria-label="নিচের নেভিগেশন">${pillHTML('C02')}${T('home','home','হোম')}${T('books','book','বই')}<button class="mid" data-act="go" data-s="search" ${cur==='search'?'aria-current="page"':''} aria-label="সার্চ">${ic('search',26)}</button>${T('topics','tag','বিষয়')}<button data-act="openMore">${ic('grid',22)}<span>আরও</span></button></nav>`;
+}
+const fabHTML=()=>`<div class="fabrow"><button class="fab cmp" id="fab" data-cmp="C28" data-act="top" aria-label="উপরে যান">${pillHTML('C28')}${ic('up',20)}</button></div>`;
+
+/* ---------------- screens ---------------- */
+const SC={};
+
+SC.home=()=>`
+<section class="hero">
+ <p class="eyebrow">আসসালামু আলাইকুম</p>
+ <h1 class="h1">হাদীস সম্ভার</h1>
+ <p class="lead">বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, ${fmt(32886)} হাদীস, সম্পূর্ণ বিনামূল্যে।</p>
+ <button class="fake-search" data-act="go" data-s="search">${ic('search',22)}<span>শব্দ, বাক্য, নম্বর বা বর্ণনাকারী খুঁজুন</span></button>
+</section>
+${cmp('C03',`<div class="tiles">
+ <button class="tile wide" data-act="go" data-s="search"><span class="ti">${ic('search',22)}</span><b>সার্চ</b><span class="d">শব্দ, বাক্য, হাদীস নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন</span></button>
+ <button class="tile" data-act="go" data-s="topics"><span class="ti">${ic('tag',22)}</span><b>বিষয়ভিত্তিক হাদীস</b><span class="d">${bn(138)}টি বিষয়</span></button>
+ <button class="tile" data-act="go" data-s="books"><span class="ti">${ic('book',22)}</span><b>হাদীস বই</b><span class="d">${bn(6)}টি প্রধান গ্রন্থ</span></button>
+ <div class="tile soon"><b>আরও আসছে...</b><span class="d">নতুন সুবিধা শীঘ্রই যুক্ত হবে</span></div></div>`)}
+${cmp('C22',`<div class="daily-c"><div class="row"><span class="eyebrow" style="color:inherit;opacity:.85">আজকের হাদীস</span><span class="sp"></span><span class="tiny" style="color:inherit;opacity:.8">${bn('৩০')} সেপ্টেম্বর ${bn(2026)}</span></div>
+ <p class="rt">${esc(H.t987.body)}</p><div class="row"><span style="opacity:.85;font-weight:600">${cite(H.t987)}</span><span class="sp"></span><button class="btn sm" data-act="go" data-s="daily">আরও দেখুন ${ic('cr',16)}</button></div></div>`)}
+${cmp('C03',`<div class="shelf-wrap"><div class="row" style="margin-bottom:6px"><h2 class="h2">হাদীসের তাক</h2><span class="sp"></span><span class="tiny">গ্রন্থ বেছে নিন</span></div>
+ <div class="shelf">${BK.map((k,i)=>`<button class="spine" style="--bk:var(--bk-${k});height:${[176,156,166,146,160,150][i]}px" data-act="pickBook" data-b="${k}" aria-label="${BOOKS[k].full}, ${fmt(BOOKS[k].n)} হাদীস"><span class="bd">${BOOKS[k].badge}</span><span class="sn">${BOOKS[k].name}</span><span class="sc">${fmt(BOOKS[k].n)}</span></button>`).join('')}</div><div class="plank"></div></div>`)}
+<div class="sec"><h2 class="h2">নতুন সুবিধা</h2><div class="qlinks">
+ <button data-act="go" data-s="narrators">${ic('user',22)}বর্ণনাকারী</button>
+ <button data-act="go" data-s="compare">${ic('cols',22)}তুলনা</button>
+ <button data-act="go" data-s="daily">${ic('plan',22)}পরিকল্পনা</button>
+ <button data-act="openSettings">${ic('sliders',22)}সেটিংস</button></div></div>`;
+
+/* search helpers */
+const ROMAN={namaz:['নামায','নামাজ','নামাযে'],salat:['সালাত','সালাতে'],roza:['রোজা','রোযা'],roja:['রোজা','রোযা'],hajj:['হজ্জ','হাজ্জ'],haj:['হজ্জ','হাজ্জ'],zakat:['যাকাত'],iman:['ঈমান'],dua:['দোয়া','দু’আ'],jannat:['জান্নাত'],sabr:['ধৈর্য','সবর'],rasul:['রাসূল','রাসূলুল্লাহ'],ayesha:['আয়িশা'],aisha:['আয়িশা'],anas:['আনাস'],wudu:['উযূ','ওযু'],gosol:['গোসল'],tawba:['তাওবা'],sadaqah:['দান-সদাকা']};
+const TYPOS={'নমায':'নামায','রোযা':'রোজা','হাজ্জ':'হজ্জ','জাকাত':'যাকাত','ইমান':'ঈমান','দুআ':'দোয়া','রসুল':'রাসূল','আয়েশা':'আয়িশা','সবর':'ধৈর্য','রাসুলুল্লাহ':'রাসূলুল্লাহ','জান্নাত':'জান্নাত'};
+const BOOKKEYS={'বুখারী':'bukhari','মুসলিম':'muslim','তিরমিযী':'tirmidhi','আবু দাউদ':'abudawud','আবূ দাউদ':'abudawud','ইবনে মাজাহ':'ibnmajah','নাসাঈ':'nasai'};
+function parseJump(v){
+ const m=v.trim().match(/^(বুখারী|মুসলিম|তিরমিযী|আবু দাউদ|আবূ দাউদ|ইবনে মাজাহ|নাসাঈ)\s*([0-9০-৯]+)$/);
+ if(!m)return null;return {bk:BOOKKEYS[m[1]],n:parseInt(en(m[2]),10)};
+}
+function helpersHTML(v){
+ v=v.trim();if(!v)return '';let out='';
+ if(/^[A-Za-z][A-Za-z ]*$/.test(v)){
+  const k=v.toLowerCase().split(' ')[0];const s=ROMAN[k];
+  out=s?`<div class="sugg" role="listbox" aria-label="বাংলা প্রস্তাব">${s.map(x=>`<button data-act="pickQ" data-v="${x}"><span class="k lat">${esc(v)}</span><span>${x}</span><span class="sp"></span><span class="tiny">বাংলায় লিখুন</span></button>`).join('')}</div>`
+   :`<div class="dym">“${esc(v)}” এর বাংলা প্রস্তাব পাইনি। বাংলায় লিখে দেখুন।</div>`;
+ }else{
+  const j=parseJump(v);
+  if(j)out=`<div class="sugg"><button data-act="jumpTo" data-b="${j.bk}" data-n="${j.n}"><span class="k lat">নম্বর</span><span>${BOOKS[j.bk].name} ${bn(j.n)} নং হাদীসে যান</span><span class="sp"></span>${ic('cr',18)}</button></div>`;
+  else if(TYPOS[v])out=`<div class="dym">আপনি কি বোঝাতে চেয়েছেন: <button data-act="pickQ" data-v="${TYPOS[v]}">${TYPOS[v]}</button>?</div>`;
+ }
+ return out;
+}
+const srchInd=(id='',hid=true)=>`<div class="srch-ind" ${id?`id="${id}"`:''} ${hid?'hidden':''} role="status"><span class="spin"></span><span>খুঁজছি...</span><span class="bar"><i></i></span></div>`;
+
+SC.search=()=>`
+${cmp('C04',`<div class="stack">
+ <h2 class="h2">কী খুঁজছেন?</h2>
+ <form class="sbox" id="sform" autocomplete="off" role="search"><span>${ic('search',22)}</span>
+  <input id="q" type="search" inputmode="search" enterkeyhint="search" lang="bn" placeholder="বাংলায় শব্দ, বাক্য, নম্বর বা বর্ণনাকারী" value="${esc(S.qDraft)}" aria-label="খোঁজার বক্স">
+  <button type="button" class="ibtn" id="qclr" data-act="clearQ" aria-label="মুছুন" ${S.qDraft?'':'hidden'}>${ic('x',16)}</button>
+  <button type="submit" class="btn primary sm">খুঁজুন</button></form>
+ ${srchInd('sind')}
+ <div id="helpers">${helpersHTML(S.qDraft)}</div>
+ <p class="note">${ic('alert',17)}<span>খোঁজার সময় বাংলায় লিখুন। ইংরেজি অক্ষরে লিখলে (যেমন namaz) বাংলা শব্দ প্রস্তাব করা হবে।</span></p>
+ <div class="lbl">উদাহরণ, ছুঁয়ে দেখুন</div>
+ <div class="chips">${['রাসুলুল্লাহ','নামায','ধৈর্য','হজ্জ','বুখারী ৬৬২৮','আবূ হুরায়রা','সালাত (নামায/নামাজ)'].map(x=>`<button class="chip" data-act="sugg" data-v="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+</div>`)}
+${cmp('C24',`<div class="card stack"><h3 class="h3">টাইপিং সহায়তা</h3><p class="hint">বাংলা কীবোর্ড না থাকলে ইংরেজি অক্ষরে উচ্চারণ লিখুন। বানান ভুল হলে সংশোধন প্রস্তাব করা হবে। ওপরের বক্সে লিখে দেখুন।</p>
+ <div class="exrow"><code>namaz</code><span>${ic('cr',16)}</span><b>নামায</b><span class="sp"></span><button class="btn sm" data-act="tryQ" data-v="namaz">চেষ্টা করুন</button></div>
+ <div class="exrow"><code>roza</code><span>${ic('cr',16)}</span><b>রোজা / রোযা</b><span class="sp"></span><button class="btn sm" data-act="tryQ" data-v="roza">চেষ্টা করুন</button></div>
+ <div class="exrow"><code>রসুল</code><span>${ic('cr',16)}</span><span>আপনি কি বোঝাতে চেয়েছেন: <b>রাসূল</b></span><span class="sp"></span><button class="btn sm" data-act="tryQ" data-v="রসুল">চেষ্টা করুন</button></div></div>`)}
+${cmp('C25',`<div class="card stack"><h3 class="h3">আরও অপশন</h3>
+ <div class="switch-line"><div><b>শব্দগুলো কাছাকাছি</b><div class="hint">একাধিক শব্দ থাকলে শীর্ষ ${bn(50)}টি ফলাফলে কাছাকাছি থাকা হাদীস আগে আসবে</div></div>${tg(S.prox,'prox','aria-label="শব্দগুলো কাছাকাছি"')}</div>
+ <div class="divider"></div><div class="lbl">খোঁজার সূচক (মোবাইলেও মসৃণ)</div>${srchInd('sind2')}
+ <button class="btn ghost sm" data-act="demoInd" style="align-self:flex-start">সূচকটি আবার দেখুন</button></div>`)}`;
+
+SC.results=()=>{
+ const f=S.filter;const total=f==='all'?403:COUNTS[f];const pages=Math.ceil(total/20);
+ const s=(S.page-1)*20+1,e=Math.min(S.page*20,total);
+ const base=S.prox?RES1:RES0;const items=base.filter(id=>f==='all'||H[id].bk===f);
+ const re0=S.q;
+ const pg=[];for(let i=1;i<=Math.min(3,pages);i++)pg.push(i);if(pages>4)pg.push('…');if(pages>3)pg.push(pages);
+ const typo=TYPOS[S.q];
+ return `
+<div class="stack" style="margin-top:10px">
+ <form class="sbox" id="rform" autocomplete="off" role="search"><span>${ic('search',22)}</span><input id="rq" type="search" lang="bn" value="${esc(S.q)}" aria-label="খোঁজার বক্স"><button type="submit" class="btn primary sm">খুঁজুন</button></form>
+ ${srchInd('rind')}
+</div>
+${cmp('C24',`<div class="dym">আপনি কি বোঝাতে চেয়েছেন: <button data-act="pickQ2" data-v="রাসূলুল্লাহ">রাসূলুল্লাহ</button> <span class="tiny">(দুই বানানেই ফলাফল মিলছে)</span></div>`)}
+${cmp('C06',`<div class="chips scroll" role="group" aria-label="গ্রন্থ অনুযায়ী ছাঁকুন">
+ <button class="fchip" data-act="filter" data-f="all" aria-pressed="${f==='all'}" style="padding-left:12px">সব <span class="cn">${fmt(403)}</span></button>
+ ${BK.map(k=>`<button class="fchip" ${bkStyle(k)} data-act="filter" data-f="${k}" aria-pressed="${f===k}">${badge(k,'sm')}${BOOKS[k].name} <span class="cn">${fmt(COUNTS[k])}</span></button>`).join('')}</div>`)}
+${cmp('C25',`<div class="card flat row nw" style="padding:10px 14px"><div style="flex:1;min-width:0"><b>শব্দগুলো কাছাকাছি</b><div class="tiny">শীর্ষ ${bn(50)}টি ফলাফলে প্রযোজ্য</div></div>${tg(S.prox,'prox','aria-label="শব্দগুলো কাছাকাছি"')}</div>`)}
+${cmp('C05',`<div class="stack">
+ <div class="count-l"><b>মোট ${fmt(total)} টি হাদিস পাওয়া গেছে</b><span class="muted">${fmt(s)} - ${fmt(e)} পর্যন্ত দেখানো হচ্ছে · সেরা মিল আগে</span></div>
+ ${S.loading?`<div class="list">${[1,2,3].map(()=>`<div class="hcard"><div class="hc-b" style="display:flex;flex-direction:column;gap:10px;padding:18px 14px"><div class="skl" style="width:50%"></div><div class="skl"></div><div class="skl" style="width:80%"></div></div></div>`).join('')}</div>`
+ : items.length?`<div class="list">${items.map((id,i)=>cmp('C08',hcard(H[id],{snippet:true,hl:re0,rank:(S.page-1)*20+i+1}))).join('')}</div><p class="tiny">প্রোটোটাইপে ${fmt(total)} টির মধ্যে নমুনা হিসেবে কয়েকটি দেখানো হয়েছে।</p>`
+ :`<div class="empty"><span class="ei">${ic('search',26)}</span><b>এই গ্রন্থের নমুনা ফলাফল নেই</b><span>প্রোটোটাইপে শুধু কয়েকটি হাদীসের লেখা আছে। অন্য গ্রন্থ বেছে দেখুন।</span></div>`}</div>`)}
+${cmp('C07',`<nav class="pager" aria-label="পৃষ্ঠা"><button data-act="page" data-p="${S.page-1}" ${S.page<=1?'disabled':''}>${ic('cl',16)} আগের</button>
+ ${pg.map(p=>p==='…'?`<span class="muted">…</span>`:`<button data-act="page" data-p="${p}" ${p===S.page?'aria-current="page"':''}>${bn(p)}</button>`).join('')}
+ <button data-act="page" data-p="${S.page+1}" ${S.page>=pages?'disabled':''}>পরের ${ic('cr',16)}</button></nav>`)}
+<p class="tiny" style="margin-top:14px">ফলাফল না মিললে কী দেখা যাবে? <button class="more" data-act="go" data-s="states" style="margin:0">অবস্থা পাতা দেখুন</button></p>`;
+};
+
+function readTime(h){const w=wcount(h);return w<45?'আধা মিনিটেরও কম':`প্রায় ${bn(Math.ceil(w/150))} মিনিট`}
+SC.hadis=()=>{
+ const h=H[S.hid],b=BOOKS[h.bk];const i=HLIST.indexOf(h.id);
+ const pv=H[HLIST[(i+HLIST.length-1)%HLIST.length]],nx=H[HLIST[(i+1)%HLIST.length]];
+ const rel=HLIST.filter(x=>x!==h.id&&(H[x].bk!==h.bk)).slice(0,4);
+ const sum=h.first?`${h.first} … ${h.nar}`:h.nar;
+ return `
+<div class="stack" style="margin-top:10px">
+ ${cmp('C10',`<div class="stack" style="gap:8px"><ol class="crumbs"><li><button data-act="go" data-s="home">হোম</button></li><li><button data-act="pickBook" data-b="${h.bk}">${b.name}</button></li><li aria-current="page">হাদীস নং ${h.n}</li></ol>
+  <button class="btn ghost sm" data-act="pickBook" data-b="${h.bk}" style="align-self:flex-start">${ic('book',17)} ${b.full}-এর সূচিতে যান</button></div>`)}
+ <div class="chips scroll" role="group" aria-label="নমুনা হাদীস বদলান">${HLIST.map(x=>`<button class="chip" data-act="hid" data-id="${x}" aria-pressed="${S.hid===x}">${BOOKS[H[x].bk].name} ${H[x].n}</button>`).join('')}</div>
+</div>
+${cmp('C09',`<article class="article" id="article" ${bkStyle(h.bk)} data-id="${h.id}">
+ <div class="ar-h">${badge(h.bk)}<div class="t"><small>${b.name}</small><b>${b.full} - হাদীস নং ${h.n}</b></div><span class="sp"></span><button class="ibtn" data-act="copy" data-c="link:${h.id}" aria-label="লিঙ্ক কপি">${ic('link',18)}</button></div>
+ ${cmp('C14',`<div class="reading">${ic('clock',17)}<span>পড়তে ${readTime(h)} · ${bn(wcount(h))} শব্দ</span><span class="rbar" role="progressbar" aria-label="পড়ার অগ্রগতি" aria-valuemin="0" aria-valuemax="100"><i id="rbi"></i></span><b id="rpct" class="lat">${bn(0)}%</b></div>`)}
+ <div class="ar-b"><p class="rt">${esc(h.body)}</p></div>
+ ${cmp('C13',`<div class="fold ${S.chainOpen?'open':''}" id="fold"><button class="fold-h" data-act="fold" aria-expanded="${S.chainOpen}"><span class="fl">বর্ণনায়:</span><span class="fs">${esc(sum)}</span>${ic('cd',18)}</button>
+  <div class="fold-b"><div><p>${esc(h.chain)}</p></div></div></div>`)}
+ <div class="permalink">${ic('link',16)}<span>${hurl(h)}</span><button class="cpbtn" data-act="copy" data-c="link:${h.id}">${ic('copy',16)}<span class="lbl2">কপি</span></button></div>
+ <div class="ar-f"><button class="cpbtn" data-act="copy" data-c="card:${h.id}">${ic('copy',17)}<span class="lbl2">হাদীস কপি</span></button><button class="cpbtn" data-act="copy" data-c="cite:${h.id}">${ic('copy',17)}<span class="lbl2">উদ্ধৃতি কপি</span></button><button class="cpbtn" data-act="shareOf" data-id="${h.id}">${ic('share',17)} শেয়ার</button><button class="cpbtn" data-act="cmpTog" data-id="${h.id}">${ic('cols',17)} ${S.compare.includes(h.id)?'তুলনা থেকে সরান':'তুলনায় যোগ'}</button></div>
+</article>`)}
+${cmp('C11',`<div><div class="pn"><button data-act="nav" data-d="-1"><small>${ic('cl',14)} আগের</small><b>${BOOKS[pv.bk].name} ${pv.n}</b></button><button data-act="nav" data-d="1"><small>পরের ${ic('cr',14)}</small><b>${BOOKS[nx.bk].name} ${nx.n}</b></button></div>
+ <p class="swipehint">${ic('swipe',18)} ফোনে হাদীসের ওপর বাঁ বা ডানে সোয়াইপ করুন, কীবোর্ডে ← → চাপুন</p></div>`)}
+${cmp('C12',`<div class="card"><div class="row" style="margin-bottom:4px"><h3 class="h3">সম্পর্কিত হাদীস</h3><span class="sp"></span><span class="tag f">নমুনা তালিকা</span></div><p class="hint" style="margin-bottom:6px">একই ধরনের শব্দ আছে এমন হাদীস, অন্য গ্রন্থের বর্ণনাসহ</p>
+ <div class="rel">${rel.map((x,k)=>{const r=H[x];return `<button data-act="hid" data-id="${x}" ${bkStyle(r.bk)}>${badge(r.bk,'sm')}<div style="min-width:0;flex:1"><div class="rh">${BOOKS[r.bk].name} ${r.n} <span class="tag n">মিল ${bn(88-k*9)}%</span>${r.bk!==h.bk?'<span class="tag f">অন্য গ্রন্থ</span>':''}</div><div class="rtxt">${esc(r.body)}</div></div></button>`}).join('')}</div></div>`)}`;
+};
+
+SC.share=()=>{
+ const h=H[S.qhid],b=BOOKS[h.bk];
+ const txt=tail(h);
+ const stxt=txt+(S.shareCite?`\n\n— ${cite(h)}`:'')+(S.shareLink?`\nhttps://${hurl(h)}`:'');
+ const title=`${b.full} - হাদীস নং ${h.n} | বইকথা`;
+ const desc=(txt.length>120?txt.slice(0,118).replace(/\s\S*$/,'')+'…':txt)+` ${cite(h)}।`;
+ const qtxt=txt.length>190?txt.slice(0,188).replace(/\s\S*$/,'')+' …':txt;
+ const st=S.qstyle;
+ return `
+<div class="stack" style="margin-top:10px"><h2 class="h2">শেয়ার করুন</h2>
+ <div class="chips scroll" role="group" aria-label="হাদীস বাছুন">${SHORT.map(x=>`<button class="chip" data-act="qhid" data-id="${x}" aria-pressed="${S.qhid===x}">${BOOKS[H[x].bk].name} ${H[x].n}</button>`).join('')}</div></div>
+${cmp('C20',`<div class="sheet-demo"><div class="grab"></div><div class="row"><h3 class="h3">উদ্ধৃতি ও শেয়ারের লেখা</h3></div>
+ <div class="citebox"><span>${ic('book',18)}</span><span style="flex:1;min-width:0">${cite(h)}</span><button class="cpbtn" data-act="copy" data-c="cite:${h.id}">${ic('copy',16)}<span class="lbl2">কপি</span></button></div>
+ <div class="row"><span class="lbl" style="flex:1">শেয়ারের লেখা</span></div>
+ <div class="sharetext">${esc(stxt)}</div>
+ <div class="switch-line" style="padding:0"><span>উদ্ধৃতি যোগ করুন</span>${tg(S.shareCite,'shCite','aria-label="উদ্ধৃতি যোগ করুন"')}</div>
+ <div class="switch-line" style="padding:0"><span>লিঙ্ক যোগ করুন</span>${tg(S.shareLink,'shLink','aria-label="লিঙ্ক যোগ করুন"')}</div>
+ <div class="chan"><button data-act="chan" data-n="হোয়াটসঅ্যাপ"><span class="ci" style="background:#25d366">${ic('share',22)}</span>হোয়াটসঅ্যাপ</button><button data-act="chan" data-n="ফেসবুক"><span class="ci" style="background:#1877f2">${ic('share',22)}</span>ফেসবুক</button><button data-act="chan" data-n="টেলিগ্রাম"><span class="ci" style="background:#2a8fbd">${ic('tg',22)}</span>টেলিগ্রাম</button><button data-act="copy" data-c="share:${h.id}"><span class="ci" style="background:var(--accent);color:var(--on-accent)">${ic('copy',22)}</span><span class="lbl2">সব কপি</span></button></div>
+ <div class="divider"></div>
+ <div class="row"><h3 class="h3">কোট-কার্ড ছবি</h3><span class="sp"></span><div class="seg" role="group" aria-label="মাপ">${segBtns([['sq','বর্গ'],['story','স্টোরি']],S.qratio,'qratio','v')}</div></div>
+ <div class="qwrap"><div class="qcard qs${st} ${S.qratio==='story'?'story':''}"><div class="qm">“</div><div class="qt">${esc(qtxt)}</div><div class="qf"><span>${cite(h)}</span><span class="qb"><span>বইকথা</span></span></div></div></div>
+ <div class="styles" role="group" aria-label="কার্ডের ধরন">${['linear-gradient(150deg,#0e8f7d,#0a5d6b)','linear-gradient(160deg,#0f1f2e,#1c3a4a)','#f6ecd6','linear-gradient(160deg,#fff3dc,#f7b7b0)'].map((c,i)=>`<button class="sty" style="background:${c}" data-act="qstyle" data-v="${i}" aria-pressed="${st===i}" aria-label="ধরন ${bn(i+1)}"></button>`).join('')}</div>
+ <button class="btn primary" data-act="toast" data-m="প্রোটোটাইপ: এখানে ছবি তৈরি হয়ে সংরক্ষণ হবে">${ic('img',18)} ছবি হিসেবে সংরক্ষণ করুন</button></div>`)}
+${cmp('C32',`<div class="card stack"><div class="row"><h3 class="h3">লিঙ্ক প্রিভিউ</h3><span class="sp"></span><div class="seg" role="group" aria-label="অ্যাপ">${segBtns([['wa','WhatsApp'],['fb','Messenger'],['tg','Telegram']],S.chat,'chat','v')}</div></div>
+ <p class="hint">চ্যাটে লিঙ্ক পেস্ট করলে যেভাবে দেখা যাবে</p>
+ <div class="chat ${S.chat}"><div class="bubble"><div class="og"><div class="img">${esc(qtxt.length>110?qtxt.slice(0,108).replace(/\s\S*$/,'')+' …':qtxt)}</div><div class="meta"><span class="dm">boikotha.example</span><b>${esc(title)}</b><span class="ds">${esc(desc)}</span></div></div><div style="padding:4px 6px 2px;font:12.5px var(--f-lat);opacity:.8;overflow-wrap:anywhere">https://${hurl(h)}</div></div></div>
+ <div class="divider"></div>
+ <h3 class="h3">সার্চ ইঞ্জিনে যেমন দেখাবে</h3>
+ <div class="serp"><div class="u"><i>B</i><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">BoiKotha · https://${hurl(h).replace(/\//g,' › ')}</span></div><div class="ttl">${esc(title)}</div><div class="dsc">${esc(desc)}</div></div>
+ <div class="code">&lt;title&gt;${esc(title)}&lt;/title&gt;
+&lt;meta name="description"
+  content="${esc(desc)}"&gt;</div>
+ <div class="row"><span class="tag">শিরোনাম ${bn(title.length)} অক্ষর</span><span class="tag">বর্ণনা ${bn(desc.length)} অক্ষর</span></div></div>`)}`;
+};
+
+function bookList(bk,start){
+ const total=BOOKS[bk].n;const sample=HLIST.map(x=>H[x]).find(h=>h.bk===bk&&(()=>{const n=parseInt(en(h.n),10);return n>=start&&n<start+20})());
+ let out='';
+ if(sample){const n=parseInt(en(sample.n),10);if(n>start)out+=cmp('C08',ghostCard(bk,bn(n-1)));out+=cmp('C08',hcard(sample));if(n<Math.min(total,start+19))out+=cmp('C08',ghostCard(bk,bn(n+1)))}
+ else{for(let i=0;i<2;i++)if(start+i<=total)out+=cmp('C08',ghostCard(bk,bn(start+i)))}
+ return out;
+}
+SC.books=()=>{
+ const bk=S.book,b=BOOKS[bk],total=b.n;const st=S.start;const end=Math.min(st+19,total);
+ const ctl=`<div class="bk-ctl"><button data-act="bstep" data-d="-10" ${st<=1?'disabled':''}>−${bn(10)}</button><button data-act="bstep" data-d="-20" ${st<=1?'disabled':''}>${ic('cl',16)} আগের</button><button data-act="bstep" data-d="20" ${end>=total?'disabled':''}>পরের ${ic('cr',16)}</button><button data-act="bstep" data-d="10" ${end>=total?'disabled':''}>+${bn(10)}</button></div>`;
+ const ranges=[];for(let i=0;i<Math.ceil(total/100);i++)ranges.push(i);
+ return `
+<div class="stack" style="margin-top:10px"><h2 class="h2">হাদীস বই</h2></div>
+${cmp('C15',`<div class="stack" ${bkStyle(bk)}>
+ <div class="bk-pick" role="group" aria-label="গ্রন্থ বাছুন">${BK.map(k=>`<button ${bkStyle(k)} data-act="setBook" data-b="${k}" aria-pressed="${k===bk}">${badge(k)}<span>${BOOKS[k].name}</span><small>${fmt(BOOKS[k].n)}</small></button>`).join('')}</div>
+ <div class="bk-head">${badge(bk)}<div><b style="font-size:17px">${b.full}</b><div class="muted">মোট ${fmt(total)} হাদীস</div></div></div>
+ ${cmp('C16',`<div class="card stack"><h3 class="h3">নম্বরে যান</h3>
+  <form class="field" id="jform" autocomplete="off"><input id="jq" lang="bn" placeholder="যেমন: বুখারী ১২৩৪" value="${esc(S.jump)}" aria-label="হাদীস নম্বরে যান"><button class="btn primary sm" type="submit">যান</button></form>
+  ${S.jumpMsg?`<div class="${/^✓/.test(S.jumpMsg)?'tag':'err'}" style="align-self:flex-start">${esc(S.jumpMsg.replace(/^✓ /,''))}</div>`:''}
+  <div class="chips">${['বুখারী ১২৩৪','মুসলিম ১০৬৯','তিরমিযী ৯৮৭'].map(x=>`<button class="chip" data-act="jfill" data-v="${x}">${x}</button>`).join('')}</div>
+  <div class="lbl">অথবা পরিসর বেছে নিন</div>
+  <div class="rgrid" role="group" aria-label="পরিসর">${ranges.map(i=>{const a=i*100+1,z=Math.min((i+1)*100,total);const on=st>=a&&st<=z;return `<button data-act="brange" data-s="${a}" class="${on?'on':''}">${bn(a)}-${bn(z)}</button>`}).join('')}</div></div>`)}
+ <div class="rangelab" aria-live="polite">${bn(st)}-${bn(end)}/${fmt(total)}</div>
+ ${ctl}
+ <div class="list">${bookList(bk,st)}</div>
+ <p class="tiny">প্রতি পাতায় ${bn(20)}টি হাদীস থাকবে। প্রোটোটাইপে কয়েকটি দেখানো হয়েছে।</p>
+ ${ctl}</div>`)}`;
+};
+
+function topicHits(t){return HLIST.map(x=>H[x]).filter(h=>full(h).includes(t))}
+SC.topics=()=>{
+ const t=S.topic;const hits=t?topicHits(t):[];const cu=t&&CURATED[t];
+ let body='';
+ if(!t)body=`<div class="empty"><span class="ei">${ic('tag',26)}</span><b>একটি বিষয় বেছে নিন</b><span>ওপরের সূচি থেকে বিষয় ছুঁলে সেই শব্দ আছে এমন সব হাদীস এখানে আসবে।</span></div>`;
+ else{
+  body=`<div class="count-l"><b>${t}</b><span class="muted">${hits.length?`${t === 'নামায' ? fmt(2315) : fmt(hits.length)} টি হাদীস পাওয়া গেছে`:'কোনো হাদীস পাওয়া যায়নি'}</span></div>`;
+  if(cu)body+=`<div class="card flat stack"><div class="row"><h3 class="h3">${ic('star',18)} এখান থেকে শুরু করুন</h3><span class="sp"></span><span class="tag n">সম্পাদকের বাছাই</span></div><div class="start">${cu.ids.map((id,i)=>`<div class="st"><span class="no">${bn(i+1)}</span><div><span class="edn">${cu.notes[i]}</span>${cmp('C08',hcard(H[id]))}</div></div>`).join('')}</div></div>`;
+  if(hits.length)body+=(cu?`<h3 class="h3" style="margin-top:6px">সব হাদীস</h3>`:'')+`<div class="list">${hits.map(h=>cmp('C08',hcard(h,{hl:t}))).join('')}</div>`;
+  else body+=`<div class="empty"><span class="ei">${ic('search',26)}</span><b>কোনো হাদীস পাওয়া যায়নি</b><span>এই বিষয়ের শব্দ নমুনা হাদীসে নেই। অন্য বিষয় বেছে দেখুন।</span></div>`;
+ }
+ return `
+<div class="stack" style="margin-top:10px"><h2 class="h2">বিষয়ভিত্তিক হাদীস</h2></div>
+${cmp('C17',`<div class="stack"><div class="card stack"><div class="row"><h3 class="h3">বিষয়ের সূচি</h3><span class="sp"></span><span class="tiny">${bn(138)}টি বিষয়</span></div>
+ <div class="field">${ic('search',18)}<input id="tfilter" lang="bn" placeholder="বিষয় খুঁজুন" aria-label="বিষয় খুঁজুন"></div>
+ <div class="tindex" id="tindex" role="group" aria-label="বিষয়">${TOPICS.map(x=>`<button class="chip" data-act="topic" data-t="${x}" aria-pressed="${S.topic===x}">${x}</button>`).join('')}</div>
+ ${t?`<button class="btn ghost sm" data-act="topic" data-t="" style="align-self:flex-start">বাছাই মুছুন</button>`:''}</div>
+ ${body}
+ ${t&&hits.length?`<nav class="pager" aria-label="পৃষ্ঠা"><button disabled>${ic('cl',16)} আগের</button><button aria-current="page">${bn(1)}</button><button disabled>পরের ${ic('cr',16)}</button></nav>`:''}</div>`)}`;
+};
+
+SC.narrators=()=>{
+ const n=NAR.find(x=>x.id===S.nar);const per=dist(n.total,n.w);const max=Math.max(...per);
+ const hs=HLIST.map(x=>H[x]).filter(h=>h.nid===n.id);
+ return `
+<div class="stack" style="margin-top:10px"><h2 class="h2">বর্ণনাকারী সূচি</h2><p class="hint">বর্ণনাকারী বেছে নিন, তাঁর হাদীস ও গ্রন্থ অনুযায়ী সংখ্যা দেখুন।</p></div>
+${cmp('C31',`<div class="stack"><div class="card stack"><div class="field">${ic('search',18)}<input id="nfilter" lang="bn" placeholder="নাম খুঁজুন" aria-label="বর্ণনাকারী খুঁজুন"></div>
+ <div class="nlist" id="nlist">${NAR.map(x=>`<button data-act="nar" data-id="${x.id}" aria-pressed="${x.id===S.nar}" data-name="${esc(x.name)}"><span class="av">${x.name.charAt(0)}</span><span>${x.name}</span><small>${fmt(x.total)}</small></button>`).join('')}</div></div>
+ <div class="card stack"><div><h3 class="h2">${n.name}</h3><div class="muted">মোট ${fmt(n.total)} টি হাদীস</div></div>
+  <div class="bars" role="list" aria-label="গ্রন্থ অনুযায়ী সংখ্যা">${BK.map((k,i)=>`<div class="barrow" role="listitem" ${bkStyle(k)}><span>${BOOKS[k].name}</span><span class="tr"><i style="width:${Math.max(3,per[i]/max*100)}%"></i></span><span class="v">${fmt(per[i])}</span></div>`).join('')}</div>
+  <p class="tiny">সংখ্যাগুলো নমুনা মান।</p></div>
+ <h3 class="h3">${n.name}-এর হাদীস</h3>
+ <div class="list">${hs.map(h=>cmp('C08',hcard(h))).join('')}</div></div>`)}`;
+};
+
+const norm=w=>w.replace(/[,।ঃ:()?!‘’'"\/]/g,'').replace(/ূ/g,'ু').replace(/্$/,'');
+SC.compare=()=>{
+ const ids=S.compare.filter(x=>H[x]);const hs=ids.map(x=>H[x]);
+ const toks=h=>full(h).split(/\s+/).filter(w=>!/^\.+$/.test(w));
+ const cols=hs.map(h=>{
+  const others=hs.filter(o=>o!==h).map(o=>new Set(toks(o).map(norm)));
+  const ws=toks(h);let hit=0;
+  const html=ws.map(w=>{const shared=others.every(s=>s.has(norm(w)));const mark=S.cmode==='diff'?!shared:shared;if(!shared)hit++;return mark?`<ins>${esc(w)}</ins>`:esc(w)}).join(' ');
+  return `<section class="col" ${bkStyle(h.bk)}><div class="hc-h">${badge(h.bk)}<b>${BOOKS[h.bk].name} ${h.n}</b><span class="sp"></span><button class="ibtn" data-act="cmpTog" data-id="${h.id}" aria-label="সরান">${ic('x',16)}</button></div><p class="rt">${html}</p><div class="cs">${bn(ws.length)}টি শব্দের মধ্যে ${bn(ws.length-hit)}টি অন্যদের সাথে মিলেছে</div></section>`;
+ }).join('');
+ return `
+<div class="stack" style="margin-top:10px"><h2 class="h2">হাদীস তুলনা</h2><p class="hint">২ থেকে ৪টি হাদীস পাশাপাশি রেখে আলাদা শব্দ চিহ্নিত করুন।</p></div>
+${cmp('C21',`<div class="stack"><div class="lbl">তুলনার হাদীস (${bn(hs.length)}/${bn(4)})</div>
+ <div class="chips">${HLIST.map(x=>`<button class="chip" data-act="cmpTog" data-id="${x}" aria-pressed="${S.compare.includes(x)}">${S.compare.includes(x)?ic('check',15):ic('plus',15)}${BOOKS[H[x].bk].name} ${H[x].n}</button>`).join('')}</div>
+ <div class="row"><div class="seg" role="group" aria-label="হাইলাইট">${segBtns([['diff','পার্থক্য'],['same','মিল']],S.cmode,'cmode','v')}</div><span class="tiny"><ins>এই রং</ins> চিহ্নিত শব্দ ${S.cmode==='diff'?'অন্যগুলোতে নেই':'সবগুলোতে আছে'}</span></div>
+ ${hs.length>=2?`<div class="cols" tabindex="0" aria-label="তুলনা কলাম">${cols}</div>`:`<div class="empty"><span class="ei">${ic('cols',26)}</span><b>কমপক্ষে ২টি হাদীস বাছুন</b></div>`}
+ <p class="tiny">বড় স্ক্রিনে কলামগুলো পাশাপাশি বসে, ফোনে পাশে সরিয়ে দেখুন।</p></div>`)}`;
+};
+
+function dailyBody(tab){const m={today:'t987',ram:'t987',jum:'m1069'};return H[m[tab]]}
+function khutbahText(){const hs=S.khut.map(x=>H[x]);return `জুমু’আর খুতবা, হাদীস তালিকা\n\n`+hs.map((h,i)=>`${bn(i+1)}। ${tail(h)}\n— ${cite(h)}`).join('\n\n')}
+SC.daily=()=>{
+ const h=dailyBody(S.dtab);
+ const P=[{id:'ram',t:'রমযানের ৩০ হাদীস',d:'৩০ দিনে প্রতিদিন একটি',days:30},{id:'jum',t:'জুমু’আর ১০ হাদীস',d:'১০ সপ্তাহে প্রতি জুমু’আয় একটি',days:10},{id:'sabr',t:'ধৈর্য ও সহনশীলতা',d:'৭ দিনে ৭টি হাদীস',days:7}];
+ const p=P.find(x=>x.id===S.plan);const done=S.planDone[p.id];
+ const show=S.planOpen?Math.min(p.days,14):5;
+ const paperInner=`<h3>জুমু’আর খুতবা</h3><div class="sub">হাদীস তালিকা · ${bn('৩০')}.${bn('০৯')}.${bn(2026)}</div><ol>${S.khut.map(x=>H[x]).map(h=>`<li>${esc(tail(h))}<cite>— ${cite(h)}</cite></li>`).join('')||'<li>কোনো হাদীস বাছা হয়নি</li>'}</ol><div class="pf">boikotha.example · বইকথা</div>`;
+ return `
+<div class="stack" style="margin-top:10px"><h2 class="h2">আজকের হাদীস</h2></div>
+${cmp('C22',`<div class="stack"><div class="seg" role="group" aria-label="মৌসুম" style="align-self:flex-start">${segBtns([['today','আজকের'],['ram','রমযান'],['jum','জুমু’আ']],S.dtab,'dtab','v')}</div>
+ <div class="dcard"><div class="row"><span style="font-weight:700">${S.dtab==='today'?'আজকের হাদীস':S.dtab==='ram'?'রমযানের বাছাই':'জুমু’আর বাছাই'}</span><span class="sp"></span><span class="tiny" style="color:inherit;opacity:.85">${bn('৩০')} সেপ্টেম্বর ${bn(2026)} · বুধবার</span></div>
+ <p class="rt">${esc(h.chain.split(/\s*\.{2,}\s*/).pop())} ${esc(h.body)}</p>
+ <div style="font-weight:600;opacity:.9">${cite(h)}</div>
+ <div class="row"><button class="btn solid sm" data-act="open" data-id="${h.id}">পুরো হাদীস</button><button class="btn sm" data-act="copy" data-c="card:${h.id}">${ic('copy',16)}<span class="lbl2">কপি</span></button><button class="btn sm" data-act="shareOf" data-id="${h.id}">${ic('share',16)} শেয়ার</button></div></div>
+ ${S.dtab!=='today'?`<p class="tiny">এই ট্যাবে নমুনা হাদীস দেখানো হয়েছে।</p>`:''}</div>`)}
+${cmp('C23',`<div class="stack"><div class="row"><h2 class="h2">পাঠ-পরিকল্পনা</h2></div>
+ <div class="chips scroll">${P.map(x=>`<button class="plan" style="min-width:210px;flex:none" data-act="plan" data-id="${x.id}" aria-pressed="${S.plan===x.id}"><b>${x.t}</b><span class="hint">${x.d}</span><span class="prog"><i style="width:${S.planDone[x.id].length/x.days*100}%"></i></span><span class="tiny">${bn(S.planDone[x.id].length)}/${bn(x.days)} সম্পন্ন</span></button>`).join('')}</div>
+ <div class="card"><div class="row" style="margin-bottom:6px"><h3 class="h3">${p.t}</h3><span class="sp"></span><span class="tag">${bn(done.length)}/${bn(p.days)}</span></div>
+ <div class="days">${Array.from({length:show},(_,i)=>{const h=H[HLIST[i%HLIST.length]];const on=done.includes(i);return `<div class="day"><button class="ck" role="checkbox" aria-checked="${on}" data-act="day" data-i="${i}" aria-label="দিন ${bn(i+1)} সম্পন্ন">${ic('check',16)}</button><div class="dt"><div class="dn">দিন ${bn(i+1)} · ${BOOKS[h.bk].name} ${h.n}</div><div class="ds">${esc(h.body)}</div></div></div>`}).join('')}</div>
+ ${p.days>show||S.planOpen?`<button class="btn ghost sm" data-act="planMore" style="margin-top:8px">${S.planOpen?'কম দেখান':`আরও ${bn(p.days-show)} দিন দেখান`}</button>`:''}
+ <p class="tiny" style="margin-top:8px">নমুনা তালিকা। অগ্রগতি এই ডিভাইসেই থাকে, কোনো অ্যাকাউন্ট লাগে না।</p></div>
+ <div class="card stack"><div class="row"><h3 class="h3">খুতবার তালিকা</h3><span class="sp"></span><span class="tag">${bn(S.khut.length)}টি বাছা</span></div>
+  <div>${SHORT.map(x=>`<button class="pick" role="checkbox" aria-checked="${S.khut.includes(x)}" data-act="khut" data-id="${x}"><span class="ck" aria-checked="${S.khut.includes(x)}">${ic('check',16)}</span><span><b>${cite(H[x])}</b><br><span class="tiny">${esc(H[x].body.slice(0,46))}…</span></span></button>`).join('')}</div>
+  <div class="row"><button class="btn primary sm" data-act="copy" data-c="khutbah:x">${ic('copy',16)}<span class="lbl2">লেখা কপি করুন</span></button><button class="btn ghost sm" data-act="paper" aria-pressed="${S.paper}">${ic('print',16)} ${S.paper?'সাধারণ দৃশ্য':'ছাপার দৃশ্য'}</button></div>
+  <div class="paper ${S.paper?'big':''}">${paperInner}</div><p class="tiny">ছাপার দৃশ্যে উদ্ধৃতিসহ পরিষ্কার তালিকা দেখায়, ব্রাউজারের প্রিন্ট থেকে ছাপা যাবে।</p></div></div>`)}`;
+};
+
+function settingsPanel(){
+ const h=H.n202;
+ return `<div class="stack">
+ <div class="prev-box"><p class="rt">${esc(h.chain.split(/\s*\.{2,}\s*/).pop())} ${esc(h.body)}</p></div>
+ <div>
+ <div class="opt"><div class="oh">লেখার আকার <span>${bn(SIZES[S.size])} px</span></div><div class="stepper"><button data-act="size" data-d="-1" aria-label="ছোট করুন" ${S.size<=0?'disabled':''}><span style="font-size:14px">অ</span></button><div class="dots">${SIZES.map((_,i)=>`<i class="${i<=S.size?'on':''}"></i>`).join('')}</div><button data-act="size" data-d="1" aria-label="বড় করুন" ${S.size>=4?'disabled':''}><span style="font-size:22px">অ</span></button></div></div>
+ <div class="opt"><div class="oh">লাইনের ফাঁক</div><div class="opts3">${segBtns([[0,'ঘন'],[1,'স্বাভাবিক'],[2,'খোলা']],S.lh,'lh','v')}</div></div>
+ <div class="opt"><div class="oh">লেখার প্রস্থ</div><div class="opts3">${segBtns([[0,'সরু'],[1,'মাঝারি'],[2,'চওড়া']],S.width,'width','v')}</div></div>
+ <div class="opt"><div class="oh">সংখ্যা</div><div class="opts2">${segBtns([['bn','বাংলা ১২৩'],['en','English 123']],S.digits,'digits','v')}</div></div></div>
+ ${cmp('C19',`<div class="opt" style="border:0"><div class="oh">থিম</div><div class="themes" role="group" aria-label="থিম">
+  <button data-act="skin" data-k="light" aria-pressed="${S.skin==='light'}"><span class="sw2" style="background:#f2f8f6"><i style="background:#0b8a78;width:60%"></i><i style="background:#0f2d28;width:90%"></i><i style="background:#0f2d28;width:70%"></i></span>উজ্জ্বল</button>
+  <button data-act="skin" data-k="dark" aria-pressed="${S.skin==='dark'}"><span class="sw2" style="background:#0c1714"><i style="background:#3fcbb3;width:60%"></i><i style="background:#e7f3ef;width:90%"></i><i style="background:#e7f3ef;width:70%"></i></span>অন্ধকার</button>
+  <button data-act="skin" data-k="sepia" aria-pressed="${S.skin==='sepia'}"><span class="sw2" style="background:#f4ead3"><i style="background:#2a7a66;width:60%"></i><i style="background:#38301f;width:90%"></i><i style="background:#38301f;width:70%"></i></span>সেপিয়া</button></div></div>`)}
+ <button class="btn ghost" data-act="resetSet" style="align-self:flex-start">${ic('refresh',16)} আগের অবস্থায় ফেরান</button></div>`;
+}
+SC.comfort=()=>`<div class="stack" style="margin-top:10px"><h2 class="h2">পড়ার সেটিংস</h2><p class="hint">আরামে পড়ার জন্য লেখা সাজিয়ে নিন। পরিবর্তন সব হাদীসে প্রযোজ্য।</p></div>
+${cmp('C18',`<div class="card">${settingsPanel()}</div>`)}`;
+
+SC.states=()=>`
+<div class="stack" style="margin-top:10px"><h2 class="h2">অবস্থা ও ত্রুটি</h2><p class="hint">লোড হওয়া, ফাঁকা ফলাফল, ত্রুটি এবং পাতা না পাওয়া।</p></div>
+<div class="stgrid">
+${cmp('C26',`<div class="card stack"><span class="lbl">লোড হচ্ছে</span><div class="center"><span class="spin lg"></span><b>লোড হচ্ছে...</b></div><div class="list"><div class="hcard"><div class="hc-b" style="display:flex;flex-direction:column;gap:10px"><div class="skl" style="width:55%"></div><div class="skl"></div><div class="skl" style="width:82%"></div></div></div></div></div>`)}
+${cmp('C26',`<div class="card stack"><span class="lbl">কোনো ফলাফল নেই</span><div class="empty" style="padding:8px"><span class="ei">${ic('search',26)}</span><b>কোনো হাদীস পাওয়া যায়নি</b><span>অন্য বানানে খুঁজে দেখুন।</span></div><div class="dym">আপনি কি বোঝাতে চেয়েছেন: <button data-act="tryQ" data-v="নামায">নামায</button>?</div></div>`)}
+${cmp('C26',`<div class="card stack"><span class="lbl">হাদীস লোড করা যায়নি</span>
+ ${S.stRetry?`<div class="center"><span class="spin lg"></span><b>আবার চেষ্টা চলছে...</b></div>`:`<div class="empty" style="padding:8px"><span class="ei" style="color:var(--bad)">${ic('wifi',26)}</span><b>হাদীস লোড করা যায়নি</b><span>ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।</span><button class="btn primary sm" data-act="retry">${ic('refresh',16)} আবার চেষ্টা করুন</button></div>`}</div>`)}
+${cmp('C27',`<div class="nf"><span class="big">৪০৪</span><h3 class="h2">পৃষ্ঠাটি পাওয়া যায়নি</h3><p class="muted">লিঙ্কটি ভুল হতে পারে বা পাতাটি সরে গেছে।</p><button class="btn primary" data-act="go" data-s="home">${ic('home',18)} হোমে ফিরে যান</button></div>`)}
+${cmp('C28',`<div class="card stack"><span class="lbl">উপরে যান বোতাম</span><p class="hint">পাতা নিচে নামালে ডান পাশে ভেসে ওঠে।</p><div class="row"><button class="fab show" style="position:static;transform:none" data-act="top" aria-label="উপরে যান">${ic('up',20)}</button><span class="tiny">ছুঁলে পাতার উপরে ফিরে যায়</span></div></div>`)}
+</div>`;
+
+SC.future=()=>`
+<div class="stack" style="margin-top:10px"><h2 class="h2">সতর্কবার্তা ও চ্যানেল</h2></div>
+${cmp('C29',`<div class="card stack fut"><div class="row"><span class="tag f">শীঘ্রই আসছে</span><span class="tiny">এখনো চালু হয়নি, পরিকল্পনার অংশ</span></div>
+ <p class="hint">প্রতিদিনের হাদীস বা জুমু’আর স্মরণিকা পেতে নিচের যেকোনো মাধ্যম বেছে নেওয়া যাবে। অ্যাকাউন্ট লাগবে না।</p>
+ ${[['rss','RSS ফিড','যেকোনো ফিড রিডারে নতুন হাদীস'],['tg','টেলিগ্রাম চ্যানেল','প্রতিদিন সকালে একটি হাদীস'],['mail','ইমেইল','সাপ্তাহিক জুমু’আর হাদীস'],['bell','পুশ নোটিফিকেশন','ব্রাউজার বা ফোনে স্মরণ করিয়ে দেবে']].map(([i,t,d])=>`<div class="chan-c"><span class="ci">${ic(i,22)}</span><div><b>${t}</b><div class="hint">${d}</div></div>${tg(false,'noop','disabled aria-label="'+t+'"')}</div>`).join('')}
+ <div class="lbl">কত ঘন ঘন</div><div class="chips">${['প্রতিদিন','প্রতি জুমু’আয়','রমযান মৌসুমে'].map(x=>`<span class="chip" style="opacity:.6">${x}</span>`).join('')}</div>
+ <div class="lbl">বার্তার নমুনা</div><div style="background:var(--surface2);border-radius:18px;padding:14px;display:flex"><div class="tgmsg"><b style="font-size:12.5px;color:var(--accent2)">বইকথা · আজকের হাদীস</b><br>${esc(H.t987.body)}<br><span class="tiny">— ${cite(H.t987)}</span></div></div>
+ <button class="btn" disabled>আগ্রহ জানান (শীঘ্রই)</button></div>`)}`;
+
+SC.map=()=>{
+ const f=S.mapf;const keys=Object.keys(CMP).filter(k=>{const m=CMP[k][1];return f==='all'||(f==='E'&&/^E/.test(m))||(f==='N'&&/N\d/.test(m)&&!/Future/.test(m))||(f==='F'&&/Future|Suggested/.test(m))});
+ const cnt={E:Object.values(CMP).filter(x=>/^E/.test(x[1])).length,N:Object.values(CMP).filter(x=>/N\d/.test(x[1])&&!/Future/.test(x[1])).length};
+ const sname=Object.fromEntries(SCREEN_LIST);
+ return `<div class="stack" style="margin-top:10px"><h2 class="h2 lat" style="font-family:var(--f-lat)">Component map</h2>
+ <p class="hint lat" style="font-family:var(--f-lat)">All 32 components of design D2. Tap a screen name to jump to where the component appears. The component flashes when you arrive.</p>
+ <div class="row lat" style="font-family:var(--f-lat)"><span class="pill e" style="position:static">E existing</span><span class="pill n" style="position:static">N# new</span><span class="pill mix" style="position:static">E+N mixed</span><span class="pill f" style="position:static">Future</span><span class="pill s" style="position:static">Suggested</span></div>
+ <div class="chips lat" style="font-family:var(--f-lat)">${[['all','All 32'],['E','Existing ('+cnt.E+')'],['N','New ('+cnt.N+')'],['F','Future / suggested']].map(([v,t])=>`<button class="chip" data-act="mapf" data-v="${v}" aria-pressed="${f===v}">${t}</button>`).join('')}</div>
+ <div class="mapgrid">${keys.map(k=>`<div class="maprow lat" style="font-family:var(--f-lat)">${pillHTML(k).replace('class="pill','class="pill static').replace('<span','<span style="position:static"')}<div class="mh"><span class="code">${k}</span><span class="mn">${CMP[k][0]}</span></div><div class="lk">${CMP[k][2].map(s=>`<button data-act="go" data-s="${s}" data-c="${k}">${sname[s]}</button>`).join('')}${k==='C02'?`<button data-act="phone">Phone view</button>`:''}</div></div>`).join('')}</div>
+ <p class="tiny lat" style="font-family:var(--f-lat)">C01, C02, C28 and C30 are present on every screen. C02 shows only in the phone frame.</p></div>`;
+};
+
+/* ---------------- render ---------------- */
+function applyDigits(root){
+ if(S.digits!=='en')return;
+ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>/[০-৯]/.test(n.nodeValue)&&!/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.parentNode.nodeName)?1:2});
+ const arr=[];while(w.nextNode())arr.push(w.currentNode);arr.forEach(n=>n.nodeValue=en(n.nodeValue));
+ $$('input[placeholder]',root).forEach(i=>i.placeholder=en(i.placeholder));
+}
+function syncCtl(){
+ $$('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===S.mode));
+ $$('#skinSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===S.skin));
+ $('#scr').value=S.screen;
+}
+function render(keepScroll){
+ const st=$('#stage');st.classList.toggle('desk',S.mode==='desk');
+ const t=TITLES[S.screen];const tt=typeof t==='function'?t():t;
+ st.innerHTML=`<div class="tabstrip"><span class="fav"></span><span>${esc(tt)}</span></div>${navHTML()}<main class="screen" id="screen">${SC[S.screen]()}</main>${footer()}${fabHTML()}${tabHTML()}`;
+ applyDigits(st);syncCtl();bindScreen();onScroll();
+ if(!keepScroll)window.scrollTo(0,0);
+}
+function rerenderKeep(){const y=window.scrollY;render(true);window.scrollTo(0,y)}
+function go(s,c){
+ S.screen=s;S.sheet&&closeSheet();
+ if(s==='results'&&S._fresh){S.loading=true;S._fresh=false;setTimeout(()=>{S.loading=false;if(S.screen==='results')rerenderKeep()},650)}
+ render();
+ try{history.replaceState(null,'','#'+s)}catch(e){}
+ if(c){requestAnimationFrame(()=>{const el=$(`[data-cmp="${c}"]`,$('#stage'));if(el){const y=el.getBoundingClientRect().top+window.scrollY-180;window.scrollTo({top:Math.max(0,y)});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700)}})}
+}
+function bindScreen(){
+ const q=$('#q');if(q){q.addEventListener('input',()=>{S.qDraft=q.value;$('#helpers').innerHTML=helpersHTML(q.value);applyDigits($('#helpers'));$('#qclr').hidden=!q.value})}
+ const sf=$('#sform');if(sf)sf.addEventListener('submit',e=>{e.preventDefault();doSearch(q.value,'sind')});
+ const rf=$('#rform');if(rf)rf.addEventListener('submit',e=>{e.preventDefault();doSearch($('#rq').value,'rind',true)});
+ const jf=$('#jform');if(jf)jf.addEventListener('submit',e=>{e.preventDefault();S.jump=$('#jq').value;doJump(S.jump)});
+ const tf=$('#tfilter');if(tf)tf.addEventListener('input',()=>{const v=tf.value.trim();$$('#tindex .chip').forEach(c=>c.hidden=!!v&&!c.dataset.t.includes(v))});
+ const nf=$('#nfilter');if(nf)nf.addEventListener('input',()=>{const v=nf.value.trim();$$('#nlist button').forEach(c=>c.hidden=!!v&&!c.dataset.name.includes(v))});
+}
+function doSearch(v,indId,onResults){
+ v=v.trim();if(!v){toast('কিছু লিখুন');return}
+ if(/^[A-Za-z ]+$/.test(v)&&ROMAN[v.toLowerCase().split(' ')[0]]){toast('বাংলা প্রস্তাব থেকে একটি বেছে নিন');return}
+ const j=parseJump(v);if(j){jumpTo(j.bk,j.n);return}
+ S.q=v;S.qDraft=v;const ind=$('#'+indId);if(ind)ind.hidden=false;
+ setTimeout(()=>{S.filter='all';S.page=1;S._fresh=true;go('results')},900);
+}
+function jumpTo(bk,n){
+ const h=HLIST.map(x=>H[x]).find(x=>x.bk===bk&&parseInt(en(x.n),10)===n);
+ if(h){S.hid=h.id;S.chainOpen=false;go('hadis')}
+ else{S.book=bk;S.start=Math.floor((n-1)/20)*20+1;S.jumpMsg=`✓ ${BOOKS[bk].name} ${bn(n)} নং পর্যন্ত পৌঁছানো গেছে (নমুনা)`;go('books')}
+}
+function doJump(v){
+ const j=parseJump(v);
+ if(!j){S.jumpMsg='গ্রন্থের নাম আর নম্বর লিখুন, যেমন: বুখারী ১২৩৪';rerenderKeep();focusJ();return}
+ const max=BOOKS[j.bk].n;
+ if(j.n<1||j.n>max){S.jumpMsg=`${BOOKS[j.bk].name}-এ সর্বোচ্চ ${fmt(max)} নম্বর পর্যন্ত আছে`;rerenderKeep();focusJ();return}
+ S.book=j.bk;S.start=Math.floor((j.n-1)/20)*20+1;S.jumpMsg=`✓ ${BOOKS[j.bk].name} ${bn(j.n)} নং হাদীসের পাতায় এসেছেন`;rerenderKeep();
+}
+function focusJ(){const i=$('#jq');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}
+
+/* ---------------- sheet / toast ---------------- */
+let tmr;
+function toast(m){const t=$('#toast');t.textContent=S.digits==='en'?en(m):m;t.classList.add('show');clearTimeout(tmr);tmr=setTimeout(()=>t.classList.remove('show'),1900)}
+function openSheet(kind){
+ S.sheet=kind;const sh=$('#sheet');sh.classList.add('open');sh.setAttribute('aria-hidden','false');sh.style.setProperty('--sw',S.mode==='desk'?'1120px':'390px');
+ fillSheet();
+}
+function fillSheet(){
+ const sh=$('#sheet');let html='';
+ if(S.sheet==='more'){
+  const M=[['narrators','user','বর্ণনাকারী'],['compare','cols','তুলনা'],['daily','plan','আজকের হাদীস ও পরিকল্পনা'],['share','share','শেয়ার'],['comfort','sliders','পড়ার সেটিংস'],['future','bell','সতর্কবার্তা (শীঘ্রই)'],['states','alert','অবস্থা ও ত্রুটি'],['map','grid','Component map']];
+  html=`<div class="grab" style="margin:0 auto 10px"></div><h2 class="h2">আরও</h2><div class="menu">${M.map(([s,i,t])=>`<button data-act="go" data-s="${s}">${ic(i,22)}<span>${t}</span></button>`).join('')}</div>`;
+ }else{html=`<div class="grab" style="margin:0 auto 10px"></div><div class="row" style="margin-bottom:10px"><h2 class="h2">পড়ার সেটিংস</h2><span class="sp"></span><button class="ibtn" data-act="closeSheet" aria-label="বন্ধ করুন">${ic('x',18)}</button></div>${settingsPanel()}`}
+ sh.innerHTML=`<div class="panel" role="dialog" aria-modal="true">${html}</div>`;applyDigits(sh);
+ const f=$('button',sh.querySelector('.panel'));if(f&&!sh.dataset.f){}
+}
+function closeSheet(){S.sheet=null;const sh=$('#sheet');sh.classList.remove('open');sh.setAttribute('aria-hidden','true');sh.innerHTML=''}
+
+/* ---------------- copy ---------------- */
+function copySpec(s){const i=s.indexOf(':');const k=s.slice(0,i),id=s.slice(i+1);const h=H[id];
+ switch(k){case'card':return full(h)+`\n\n— ${cite(h)}`;case'cite':return cite(h);case'link':return `https://${hurl(h)}`;case'share':{const h2=H[S.qhid];return tail(h2)+(S.shareCite?`\n\n— ${cite(h2)}`:'')+(S.shareLink?`\nhttps://${hurl(h2)}`:'')}case'khutbah':return khutbahText();}return ''}
+async function copyText(t){t=S.digits==='en'?en(t):t;try{await navigator.clipboard.writeText(t)}catch(e){const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}ta.remove()}}
+
+/* ---------------- events ---------------- */
+function setScroll(){}
+function onScroll(){
+ const fab=$('#fab');if(fab)fab.classList.toggle('show',window.scrollY>380);
+ if(S.screen==='hadis'){
+  const a=$('#article');if(a){const r=a.getBoundingClientRect();const vh=window.innerHeight;const h=r.height;const p=Math.max(0,Math.min(1,(vh*.55-r.top)/Math.max(h,1)));const pc=Math.round(p*100);
+   const n=$('#rpi');if(n)n.style.width=pc+'%';const b=$('#rbi');if(b)b.style.width=pc+'%';const t=$('#rpct');if(t)t.textContent=S.digits==='en'?pc+'%':bn(pc)+'%';const pb=t&&t.previousElementSibling;if(pb)pb.setAttribute('aria-valuenow',pc)}
+ }else{const n=$('#rpi');if(n)n.style.width='0'}
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+window.addEventListener('resize',measure);
+function measure(){const c=$('#ctl');document.documentElement.style.setProperty('--ctl-h',c.offsetHeight+'px')}
+
+function stepHadis(d){
+ const i=HLIST.indexOf(S.hid);S.hid=HLIST[(i+d+HLIST.length)%HLIST.length];S.chainOpen=false;render();
+ const a=$('#article');if(a)a.classList.add(d>0?'slide-l':'slide-r');
+}
+
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-act]');
+ if(e.target.id==='sheet'){closeSheet();return}
+ if(!t)return;const a=t.dataset.act;const d=t.dataset;
+ switch(a){
+ case'go':go(d.s,d.c);break;
+ case'mode':S.mode=d.m;render(true);if(S.sheet)$('#sheet').style.setProperty('--sw',S.mode==='desk'?'1120px':'390px');break;
+ case'phone':S.mode='phone';go('home');break;
+ case'skin':S.skin=d.k;applySettings();syncCtl();if(S.screen==='comfort')rerenderKeep();if(S.sheet)fillSheet();break;
+ case'top':window.scrollTo({top:0,behavior:'smooth'});break;
+ case'openMore':openSheet('more');break;
+ case'openSettings':openSheet('settings');break;
+ case'closeSheet':closeSheet();break;
+ case'pickBook':S.book=d.b;S.start=({bukhari:301,muslim:1061,tirmidhi:981,abudawud:201,ibnmajah:201,nasai:201})[d.b];S.jumpMsg='';go('books');break;
+ case'setBook':S.book=d.b;S.start=({bukhari:301,muslim:1061,tirmidhi:981,abudawud:201,ibnmajah:201,nasai:201})[d.b];S.jumpMsg='';rerenderKeep();break;
+ case'bstep':{const tot=BOOKS[S.book].n;S.start=Math.max(1,Math.min(tot,S.start+parseInt(d.d,10)));rerenderKeep();break}
+ case'brange':S.start=parseInt(d.s,10);rerenderKeep();break;
+ case'jfill':S.jump=d.v;rerenderKeep();break;
+ case'sugg':{const q=$('#q');q.value=d.v;S.qDraft=d.v;$('#helpers').innerHTML=helpersHTML(d.v);applyDigits($('#helpers'));$('#qclr').hidden=false;doSearch(d.v,'sind');break}
+ case'pickQ':{const q=$('#q');if(q){q.value=d.v;S.qDraft=d.v;$('#helpers').innerHTML=helpersHTML(d.v);$('#qclr').hidden=false;q.focus()}break}
+ case'pickQ2':S.q=d.v;S.page=1;const ri=$('#rind');if(ri)ri.hidden=false;setTimeout(()=>{S._fresh=true;go('results')},700);break;
+ case'tryQ':{if(S.screen!=='search'){S.qDraft=d.v;go('search');setTimeout(()=>{const q=$('#q');if(q)q.focus()},50);break}const q=$('#q');q.value=d.v;S.qDraft=d.v;$('#helpers').innerHTML=helpersHTML(d.v);applyDigits($('#helpers'));$('#qclr').hidden=false;q.focus();window.scrollTo({top:0,behavior:'smooth'});break}
+ case'clearQ':{const q=$('#q');q.value='';S.qDraft='';$('#helpers').innerHTML='';$('#qclr').hidden=true;q.focus();break}
+ case'jumpTo':jumpTo(d.b,parseInt(d.n,10));break;
+ case'prox':S.prox=!S.prox;if(S.screen==='results'){rerenderKeep();toast(S.prox?'শীর্ষ ৫০টি ফলাফলে কাছাকাছি শব্দ খোঁজা হয়েছে':'সাধারণ ক্রমে ফেরা হয়েছে')}else rerenderKeep();break;
+ case'demoInd':{const i=$('#sind2');i.hidden=false;setTimeout(()=>i.hidden=true,2200);break}
+ case'filter':S.filter=d.f;S.page=1;rerenderKeep();break;
+ case'page':S.page=parseInt(d.p,10);rerenderKeep();break;
+ case'open':S.hid=d.id;S.chainOpen=false;go('hadis');break;
+ case'hid':S.hid=d.id;S.chainOpen=false;rerenderKeep();window.scrollTo(0,0);break;
+ case'nav':stepHadis(parseInt(d.d,10));break;
+ case'fold':{S.chainOpen=!S.chainOpen;const f=$('#fold');f.classList.toggle('open',S.chainOpen);t.setAttribute('aria-expanded',S.chainOpen);break}
+ case'copy':{const txt=copySpec(d.c);copyText(txt);const l=t.querySelector('.lbl2');const old=l?l.textContent:null;t.classList.add('done');if(l)l.textContent='কপি করা হয়েছে';toast('কপি করা হয়েছে');setTimeout(()=>{t.classList.remove('done');if(l)l.textContent=old},1600);break}
+ case'cmpTog':{const i=S.compare.indexOf(d.id);if(i>-1)S.compare.splice(i,1);else if(S.compare.length<4)S.compare.push(d.id);else{toast('সর্বোচ্চ ৪টি হাদীস তুলনা করা যায়');break}
+  if(S.screen==='compare'){rerenderKeep()}else{rerenderKeep();toast(i>-1?'তুলনা থেকে সরানো হয়েছে':`তুলনায় যোগ হয়েছে (${bn(S.compare.length)}টি)`)}break}
+ case'shareOf':if(SHORT.includes(d.id))S.qhid=d.id;go('share');break;
+ case'qhid':S.qhid=d.id;rerenderKeep();break;
+ case'shCite':S.shareCite=!S.shareCite;rerenderKeep();break;
+ case'shLink':S.shareLink=!S.shareLink;rerenderKeep();break;
+ case'chan':toast(`প্রোটোটাইপ: এখানে ${d.n} খুলবে`);break;
+ case'qstyle':S.qstyle=parseInt(d.v,10);rerenderKeep();break;
+ case'qratio':S.qratio=d.v;rerenderKeep();break;
+ case'chat':S.chat=d.v;rerenderKeep();break;
+ case'toast':toast(d.m);break;
+ case'topic':S.topic=d.t||null;rerenderKeep();break;
+ case'nar':S.nar=d.id;rerenderKeep();break;
+ case'cmode':S.cmode=d.v;rerenderKeep();break;
+ case'dtab':S.dtab=d.v;rerenderKeep();break;
+ case'plan':S.plan=d.id;S.planOpen=false;rerenderKeep();break;
+ case'planMore':S.planOpen=!S.planOpen;rerenderKeep();break;
+ case'day':{const arr=S.planDone[S.plan];const i=parseInt(d.i,10);const k=arr.indexOf(i);k>-1?arr.splice(k,1):arr.push(i);rerenderKeep();break}
+ case'khut':{const k=S.khut.indexOf(d.id);k>-1?S.khut.splice(k,1):S.khut.push(d.id);S.khut.sort((a,b)=>HLIST.indexOf(a)-HLIST.indexOf(b));rerenderKeep();break}
+ case'paper':S.paper=!S.paper;rerenderKeep();break;
+ case'size':S.size=Math.max(0,Math.min(4,S.size+parseInt(d.d,10)));applySettings();S.sheet?fillSheet():rerenderKeep();break;
+ case'lh':S.lh=parseInt(d.v,10);applySettings();S.sheet?fillSheet():rerenderKeep();break;
+ case'width':S.width=parseInt(d.v,10);applySettings();S.sheet?fillSheet():rerenderKeep();break;
+ case'digits':S.digits=d.v;applySettings();S.sheet?(render(true),fillSheet()):rerenderKeep();break;
+ case'resetSet':S.size=2;S.lh=1;S.width=1;S.digits='bn';S.skin='light';applySettings();syncCtl();render(true);if(S.sheet)fillSheet();break;
+ case'retry':S.stRetry=true;rerenderKeep();setTimeout(()=>{S.stRetry=false;if(S.screen==='states')rerenderKeep()},1400);break;
+ case'mapf':S.mapf=d.v;rerenderKeep();break;
+ }
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&S.sheet){closeSheet();return}
+ if(S.screen==='hadis'&&!/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.nodeName)){
+  if(e.key==='ArrowRight'){stepHadis(1)}else if(e.key==='ArrowLeft'){stepHadis(-1)}
+ }
+});
+/* swipe on phones */
+let sx=0,sy=0,sOn=false;
+document.addEventListener('touchstart',e=>{const a=e.target.closest&&e.target.closest('#article');sOn=!!a&&S.screen==='hadis';if(sOn){sx=e.touches[0].clientX;sy=e.touches[0].clientY}},{passive:true});
+document.addEventListener('touchend',e=>{if(!sOn)return;sOn=false;const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>60&&Math.abs(dy)<45)stepHadis(dx<0?1:-1)},{passive:true});
+
+/* control bar */
+$('#lab').addEventListener('change',e=>document.body.classList.toggle('nolabels',!e.target.checked));
+$('#scr').innerHTML=SCREEN_LIST.map(([v,t],i)=>`<option value="${v}">${String(i+1).padStart(2,'0')} ${t}</option>`).join('');
+$('#scr').addEventListener('change',e=>go(e.target.value));
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(SC[h]&&h!==S.screen)go(h)});
+
+/* boot */
+try{const sv=JSON.parse(store.get('d2')||'null');if(sv){['skin','size','lh','width','digits'].forEach(k=>{if(sv[k]!==undefined)S[k]=sv[k]})}}catch(e){}
+applySettings();measure();
+const h0=location.hash.slice(1);if(SC[h0])S.screen=h0;
+render(true);
+if('ResizeObserver' in window)new ResizeObserver(measure).observe($('#ctl'));
+})();
+</script>
+
+</body></html>
