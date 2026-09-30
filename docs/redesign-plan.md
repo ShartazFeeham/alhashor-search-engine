@@ -59,7 +59,7 @@ The decisions made so far, and the plan for rebuilding the site from them. The i
 I'm making these unless you object.
 
 - **Drop Bootstrap and react-bootstrap.** D2 is its own design system, so Bootstrap would fight it. This also shrinks the CSS (236 KB today).
-- **Keep React 18, Vite and Vitest.** New code is written test-first, and the existing 104 tests are updated as screens change.
+- **Keep React 18, Vite and Vitest, pending the Next.js decision in section 9.** New code is written test-first, and the existing 104 tests are updated as screens change.
 - **Plain CSS with design tokens** as CSS variables, one file for tokens and one per area. No CSS framework.
 - **Routes:** `/` home, `/search?q=&page=&book=`, `/hadis/:book/:number`, `/books` and `/books/:book?page=`, `/topics?topic=&page=`, `/compare?ids=`, `/daily`, `/settings`, and `*` for not-found. Everything stays shareable from the address bar.
 - **Saved on the device only** (no accounts): theme, reading settings and digit style. Reading-plan progress too, if you agree (see section 9).
@@ -113,3 +113,21 @@ Each phase ends with passing tests, lint and build, and a screenshot check again
 2. **Reading-plan progress:** OK to store it on the device? It's separate from the rejected bookmarks and history.
 3. **Curated content:** who writes the start-here lists per topic, the seasonal picks and the plans? I can draft a first version from keyword searches for you to edit.
 4. **Phase order and review:** OK to build phase by phase, showing you screenshots after each, starting with phase 0 and 1?
+5. **Next.js (open decision):** stay on React with Vite, or move to Next.js? The plan above assumes Vite. See the next section.
+
+## 10. Open decision: Next.js
+
+Nothing in the ✅ Easy features needs Next.js. It only matters for the ideas that can't be done in the front end alone (see [redesign-ideas.md](redesign-ideas.md)).
+
+| If you want... | With Vite (now) | With Next.js |
+|---|---|---|
+| SEO pages (28) | Not possible without a separate prerender step | ✅ Render each hadis page on demand and cache it, with a sitemap |
+| Link previews (27) | Needs a small Netlify edge function | ⚠️ Per-hadis HTML is easy; preview *images* with Bengali text are risky |
+| Narrator index (11), reminders (23) | ❌ | ⚠️ Build-time compute, scheduled functions; still needs your curation or outside services |
+| Everything else in the plan | ✅ | ✅ (same UI) |
+
+**Costs of moving:** routing and data loading are rewritten (react-router becomes Next's router). Server-rendered pages use Netlify credits on the free plan, so pages would need caching. The UI components themselves mostly carry over.
+
+**Where it would go in the plan:** if yes, it becomes **phase 0**, before the design work, because the route structure changes. That way nothing is ported twice. If you choose to add it later, it becomes a final phase after phase 9.
+
+**My lean:** stay on Vite for this redesign unless SEO pages or link previews matter to you. They are the main reasons to move. If they do matter, migrate first.
