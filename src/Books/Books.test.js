@@ -48,12 +48,12 @@ test('next and previous move by one page of 20 hadis', async () => {
   render(<Books />);
   fireEvent.click(screen.getByText('বুখারি শরীফ'));
   await screen.findByText(file('Bukhari', 1));
-  expect(screen.getByText('১-২০/৭০৫৩')).toBeInTheDocument();
+  expect(screen.getByText('১-২০/৬৭১৯')).toBeInTheDocument();
 
   fireEvent.click(screen.getByText('Next »'));
   expect(await screen.findByText(file('Bukhari', 21))).toBeInTheDocument();
   expect(screen.queryByText(file('Bukhari', 1))).not.toBeInTheDocument();
-  expect(screen.getByText('২১-৪০/৭০৫৩')).toBeInTheDocument();
+  expect(screen.getByText('২১-৪০/৬৭১৯')).toBeInTheDocument();
 
   fireEvent.click(screen.getByText('« Prev'));
   expect(await screen.findByText(file('Bukhari', 1))).toBeInTheDocument();
@@ -67,7 +67,7 @@ test('previous does nothing on the first page', async () => {
   fireEvent.click(screen.getByText('« Prev'));
   fireEvent.click(screen.getByText('-10'));
 
-  expect(screen.getByText('১-২০/৭০৫৩')).toBeInTheDocument();
+  expect(screen.getByText('১-২০/৬৭১৯')).toBeInTheDocument();
   expect(screen.getByText(file('Bukhari', 1))).toBeInTheDocument();
 });
 
@@ -78,8 +78,9 @@ test('+10 jumps ten pages ahead', async () => {
 
   fireEvent.click(screen.getByText('+10'));
 
-  expect(await screen.findByText(file('Bukhari', 201))).toBeInTheDocument();
-  expect(screen.getByText('২০১-২২০/৭০৫৩')).toBeInTheDocument();
+  // number 63 has no file, so the 201st hadis is number 202
+  expect(await screen.findByText(file('Bukhari', 202))).toBeInTheDocument();
+  expect(screen.getByText('২০১-২২০/৬৭১৯')).toBeInTheDocument();
 });
 
 test('paging stops at the last page and never goes past the last hadis', async () => {
@@ -96,4 +97,32 @@ test('paging stops at the last page and never goes past the last hadis', async (
 
   fireEvent.click(screen.getByText('Next »'));
   expect(screen.getByText('৩৬০১-৩৬০৮/৩৬০৮')).toBeInTheDocument();
+});
+
+test('skips hadis numbers that have no data file', async () => {
+  render(<Books />);
+  fireEvent.click(screen.getByText('বুখারি শরীফ'));
+  await screen.findByText(file('Bukhari', 1));
+
+  // Bukhari has no number 63, so the 4th page runs 61, 62, 64, 65 ... 81.
+  for (let i = 0; i < 3; i++) fireEvent.click(screen.getByText('Next »'));
+
+  expect(await screen.findByText(file('Bukhari', 62))).toBeInTheDocument();
+  expect(screen.getByText(file('Bukhari', 64))).toBeInTheDocument();
+  expect(screen.getByText(file('Bukhari', 81))).toBeInTheDocument();
+  expect(screen.queryByText(file('Bukhari', 63))).not.toBeInTheDocument();
+  expect(screen.queryByText(file('Bukhari', 82))).not.toBeInTheDocument();
+  expect(screen.getByText('৬১-৮০/৬৭১৯')).toBeInTheDocument();
+  expect(global.fetch).not.toHaveBeenCalledWith(file('Bukhari', 63));
+});
+
+test('the last page holds only hadis that exist', async () => {
+  render(<Books />);
+  fireEvent.click(screen.getByText('সুনানু নাসাঈ শরীফ'));
+  await screen.findByText(file('Nasae', 1));
+
+  for (let i = 0; i < 30; i++) fireEvent.click(screen.getByText('+10'));
+
+  expect(await screen.findByText(file('Nasae', 5758))).toBeInTheDocument();
+  expect(screen.getByText('৫৭৪১-৫৭৫৩/৫৭৫৩')).toBeInTheDocument();
 });

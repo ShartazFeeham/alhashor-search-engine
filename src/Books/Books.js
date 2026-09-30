@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import getNum from "../Helpers/EngToBng";
 import HadisView from "../Helpers/HadisView";
 import { HADIS_PER_PAGE } from "../Helpers/paging";
-import { BOOKS } from "./bookList";
+import { BOOKS, hadisNumbers } from "./bookList";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Book.css'
 
@@ -13,14 +13,12 @@ function Books() {
     const [page, setPage] = useState(0);
 
     const book = selected === null ? null : BOOKS[selected];
-    const lastPage = book ? Math.ceil(book.total / HADIS_PER_PAGE) - 1 : 0;
+    const numbers = useMemo(() => (book ? hadisNumbers(book) : []), [book]); // only hadis that exist
+    const total = numbers.length;
+    const lastPage = book ? Math.ceil(total / HADIS_PER_PAGE) - 1 : 0;
     const first = page * HADIS_PER_PAGE + 1;
-    const last = book ? Math.min(first + HADIS_PER_PAGE - 1, book.total) : 0;
-
-    const tags = [];
-    for (let number = first; number <= last; number++) {
-        tags.push(book.code + "-" + number);
-    }
+    const last = book ? Math.min(first + HADIS_PER_PAGE - 1, total) : 0;
+    const tags = numbers.slice(first - 1, last).map((number) => book.code + "-" + number);
 
     function chooseBook(index) {
         setSelected(index);
@@ -53,7 +51,7 @@ function Books() {
                         <div className="titem">
                             <div onClick={() => { goToPage(page - 1) }}>&#171; Prev</div>
                         </div>
-                        <div className="titem">{getNum(first.toString()) + "-" + getNum(last.toString()) + "/" + getNum(book.total.toString())}</div>
+                        <div className="titem">{getNum(first.toString()) + "-" + getNum(last.toString()) + "/" + getNum(total.toString())}</div>
                         <div className="titem"><div onClick={() => { goToPage(page + 1) }}>Next &#187;</div></div>
                         <div className="titem">
                             <div onClick={() => { goToPage(page + 10) }}>+10</div>
