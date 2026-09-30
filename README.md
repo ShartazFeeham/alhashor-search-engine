@@ -66,5 +66,4 @@ Pushes to `main` deploy automatically through GitHub Actions ([.github/workflows
 ## Notes
 
 - Some hadis numbers have no data file (for example about 330 numbers in Bukhari's range). Those cards show a "could not be loaded" message.
-- More ideas and known issues are in [docs/](docs/).
 - Searches are matched by a normalized Bengali spelling, because the data spells some letters two ways. See [src/Search/searchIndex.js](src/Search/searchIndex.js).
