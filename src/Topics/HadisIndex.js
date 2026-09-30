@@ -143,12 +143,12 @@ const TOPICS = Array.from(new Set([
         "সুন্নত",
     ].map((word) => word.trim()))).sort();
 
-function HadisIndex({ selectTopic, setTopic, setPage }) {
+function HadisIndex({ onSelect }) {
     return (
         <>
             <div className="scroller">
                 {TOPICS.map((item) => {
-                    return <div key={item} className='item' onClick={() => { selectTopic(item); setTopic(item); setPage(0) }}>{item}</div>
+                    return <div key={item} className='item' onClick={() => onSelect(item)}>{item}</div>
                 })}
             </div>
         </>

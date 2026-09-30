@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import HadisView from "../Helpers/HadisView";
 import NextPrev from "../Helpers/NextPrev";
 import React from 'react';
@@ -6,6 +7,7 @@ import "./Search.css"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import getNum from "../Helpers/EngToBng";
 import Loading from "../Helpers/Loading";
+import { HADIS_PER_PAGE, pageFromParam, pageSlice } from "../Helpers/paging";
 import Suggestions from "./Suggestions";
 import { normalizeQuery, searchTags } from "./searchIndex";
 
@@ -13,70 +15,80 @@ const IDLE = 0;
 const SEARCHING = 1;
 const DONE = 2;
 
+/*
+    The address is the source of truth: /search?q=<words>&page=<n>
+    Whenever the query in the address changes (a new search, back/forward, an opened link)
+    the hadis for its words are looked up (see searchIndex.js), best matches first.
+    The page shows 20 results at a time.
+*/
 function Search() {
+    const [params, setParams] = useSearchParams();
+    const query = params.get("q") || "";
+    const words = useMemo(() => normalizeQuery(query), [query]);
 
-    const [allResults, setAllResults] = useState([]);
-    const [page, setPage] = useState(0);
-    const [displayHadis, setDisplayHadis] = useState([]);
-    const [resultCount, setResultCount] = useState(0);
-    const [searchedWords, setSearchedWords] = useState([]);
-    const [status, setStatus] = useState(IDLE);
-    const latestSearch = useRef(0);
+    const [text, setText] = useState(query);
+    const [results, setResults] = useState([]);
+    const [status, setStatus] = useState(words.length > 0 ? SEARCHING : IDLE);
 
-    /*
-        Clean the input into words
-        Find the hadis tags for every word (see searchIndex.js), best matches first
-        Display 20 results per page
-    */
+    const resultCount = results.length;
+    const page = pageFromParam(params.get("page"), resultCount);
 
-    function setBox(input) {
-        document.getElementById("search").value = input;
+    // Keep the search box in step with the address.
+    useEffect(() => {
+        setText(query);
+    }, [query]);
+
+    useEffect(() => {
+        setResults([]);
+        if (words.length === 0) {
+            setStatus(IDLE);
+            return;
+        }
+        let cancelled = false; // a newer search (or leaving the page) replaces this one
+        setStatus(SEARCHING);
+        searchTags(words).then((tags) => {
+            if (cancelled) return;
+            setResults(tags);
+            setStatus(DONE);
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, [words]);
+
+    function search(event) {
+        event.preventDefault();
+        const q = normalizeQuery(text).join(" ");
+        if (q === "") return;
+        setParams({ q });
     }
 
-    const scan = async (event) => {
-        event.preventDefault();
-        const words = normalizeQuery(event.target.elements.search.value);
-        if (words.length === 0) return;
-
-        const thisSearch = ++latestSearch.current;
-        setPage(0);
-        setAllResults([]);
-        setDisplayHadis([]);
-        setResultCount(0);
-        setSearchedWords(words);
-        setStatus(SEARCHING);
-
-        const tags = await searchTags(words);
-        if (thisSearch !== latestSearch.current) return; // a newer search replaced this one
-
-        setAllResults(tags);
-        setDisplayHadis(tags.slice(0, 20));
-        setResultCount(tags.length);
-        setStatus(DONE);
-    };
+    function setPage(target) {
+        setParams(target === 0 ? { q: query } : { q: query, page: String(target + 1) });
+    }
 
     // RETURN
     return (
         <div>
-            <form onSubmit={scan} className="sc">
+            <form onSubmit={search} className="sc">
                 <div className="info">হাদীসের ক্রম কিংবা বর্ণনাকারীর নাম দিয়ে হাদীস খুঁজুন। অথবা যেকোনো শব্দ/বিষয় কিংবা হাদীসের অংশ লিখে সার্চ করুন।
                 <br></br>
                 <b>সমস্ত হাদীস বাংলায়, অতএব শুধু বাংলায় লিখে সার্চ করুন! </b>
                 </div>
                 <hr></hr>
-                <input id="search" name="search" type={"text"} className={"sb"} /><br></br>
+                <input id="search" name="search" type={"text"} className={"sb"} value={text} onChange={(event) => setText(event.target.value)} /><br></br>
                 <input type="submit" className="s" value="Search" />
-                {status === IDLE ? <Suggestions setBox={setBox} /> : ""}
+                {status === IDLE ? <Suggestions setBox={setText} /> : ""}
             </form>
             {resultCount > 0 ? <div className="count">{"মোট " + getNum(resultCount.toString()) + " টি হাদিস পাওয়া গেছে "}
                 <br /><b>
-                    {getNum((page * 20 + 1).toString()) + " - " + ((page * 20 + 20) < resultCount ? getNum((page * 20 + 20).toString()) : getNum(resultCount.toString())) + " পর্যন্ত দেখানো হচ্ছে"} </b></div> : ""}
-            {displayHadis?.map(
+                    {getNum((page * HADIS_PER_PAGE + 1).toString()) + " - " + getNum(Math.min((page + 1) * HADIS_PER_PAGE, resultCount).toString()) + " পর্যন্ত দেখানো হচ্ছে"} </b></div> : ""}
+            {pageSlice(results, page).map(
                 (hadis) => (
-                    <HadisView key={hadis} tag={hadis} words={searchedWords} />
+                    <HadisView key={hadis} tag={hadis} words={words} />
                 )
             )}
-            {resultCount > 0 ? <NextPrev page={page} setPage={setPage} allResults={allResults} setDisplayHadis={setDisplayHadis} resultCount={resultCount} /> :
+            {resultCount > 0 ? <NextPrev page={page} setPage={setPage} resultCount={resultCount} /> :
                 status === SEARCHING ? <Loading /> : ""
             }
             {status === DONE && resultCount === 0 ? <div className="nf">কেবল মাত্র বাংলা লেখায় সার্চ করুন। কোনো ফলাফল না পাওয়া গেলে বানান পরিবর্তন করে লিখুন।</div> : ""}

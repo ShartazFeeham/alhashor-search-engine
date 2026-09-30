@@ -7,5 +7,3 @@ export const BOOKS = [
     { code: "MAJ", name: "সুনানু ইবনে মাজাহ", total: 4341 },
     { code: "NAS", name: "সুনানু নাসাঈ শরীফ", total: 5758 },
 ];
-
-export const HADIS_PER_PAGE = 20;

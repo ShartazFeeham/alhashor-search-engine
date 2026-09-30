@@ -1,7 +1,8 @@
 import { useState } from "react";
 import getNum from "../Helpers/EngToBng";
 import HadisView from "../Helpers/HadisView";
-import { BOOKS, HADIS_PER_PAGE } from "./bookList";
+import { HADIS_PER_PAGE } from "../Helpers/paging";
+import { BOOKS } from "./bookList";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Book.css'
 
