@@ -9,7 +9,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Home from "./Home/Home";
 
 function App() {
-  const [display, setDisplay] = useState(0);
+  const [, setDisplay] = useState(0);
   window.history.pushState(this, null, null)
   window.history.pushState(this, null, null)
   window.history.pushState(this, null, null)

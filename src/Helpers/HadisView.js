@@ -70,8 +70,8 @@ function HadisView(props) {
                 </div>
                 <div class="ftr">
                     <div className="op" onClick={() => {
-                        { copyHadis(props.tag) }
-                    }} ><img src="../../photos/copy.png" height={20} width={20} /> Copy</div>
+                        copyHadis(props.tag)
+                    }} ><img src="../../photos/copy.png" height={20} width={20} alt="copy" /> Copy</div>
                     {toShow.length !== hadisText.length ? <div className="more" onClick={expand}>সম্পূর্ণ হাদীস দেখুন...</div> : ""}
                 </div>
             </div>

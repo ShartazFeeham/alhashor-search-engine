@@ -1,0 +1,25 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Single-page app fallback: paths with no matching file serve index.html so the router can handle them.
+# Real files (/json/*, /photos/*, static assets) are still served as files.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Data files: readable from other origins, cached for a day to cut repeat requests.
+[[headers]]
+  for = "/json/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/photos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
