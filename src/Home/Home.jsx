@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom";
+'use client';
+
+import Link from "next/link";
 import './Home.css'
 import { usePageTitle } from "../Helpers/usePageTitle";
 
@@ -8,7 +10,7 @@ function Home() {
         <div className="homeCont">
             <div className="row">
                 <div className="col-sm-6" >
-                    <Link to={'/search'} className='link'>
+                    <Link href={'/search'} className='link'>
                         <div className="card m-2">
                             <h5 className="card-header">Search Hadis</h5>
                             <div className="container">
@@ -29,7 +31,7 @@ function Home() {
                 </div>
 
                 <div className="col-sm-6">
-                    <Link to={'/topics'} className='link'>
+                    <Link href={'/topics'} className='link'>
                         <div className="card m-2">
                             <h5 className="card-header">Hadis by topics</h5>
                             <div className="container">
@@ -53,7 +55,7 @@ function Home() {
 
             <div className="row">
                 <div className="col-sm-6">
-                    <Link to={'/books'} className='link'>
+                    <Link href={'/books'} className='link'>
                         <div className="card m-2">
                             <h5 className="card-header">Books</h5>
                             <div className="container">

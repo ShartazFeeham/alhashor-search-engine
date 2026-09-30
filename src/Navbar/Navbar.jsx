@@ -1,7 +1,9 @@
+'use client';
+
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import './Navbar.css';
 
 function NavBar() {
@@ -9,7 +11,7 @@ function NavBar() {
         <div className="fw-bold">
             <Navbar className='navbg' variant="dark">
                 <Container>
-                    <Navbar.Brand className='hm' as={Link} to='/'>
+                    <Navbar.Brand className='hm' as={Link} href='/'>
                         <img
                             src="/photos/Logo/logo4.png"
                             width="80"
@@ -26,7 +28,7 @@ function NavBar() {
                         />
                     </Navbar.Brand>
                     <Nav className="navbar-right">
-                        <Nav.Link as={Link} to="/">
+                        <Nav.Link as={Link} href="/">
                             <img
                                 src="/photos/NavIcons/home.png"
                                 width="30"
@@ -36,7 +38,7 @@ function NavBar() {
                             />হোম
                         </Nav.Link>
 
-                        <Nav.Link as={Link} to="/search">
+                        <Nav.Link as={Link} href="/search">
                             <img
                                 src="/photos/NavIcons/search.png"
                                 width="30"
@@ -46,7 +48,7 @@ function NavBar() {
                             />সার্চ
                         </Nav.Link>
 
-                        <Nav.Link as={Link} to="/books">
+                        <Nav.Link as={Link} href="/books">
                             <img
                                 src="/photos/NavIcons/books.png"
                                 width="30"
@@ -57,7 +59,7 @@ function NavBar() {
                         </Nav.Link>
 
 
-                        <Nav.Link as={Link} to="/topics">
+                        <Nav.Link as={Link} href="/topics">
                             <img
                                 src="/photos/NavIcons/topics.png"
                                 width="30"
