@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { getHistory, getUrl, setUrl } from './nextNavigation';
+import { getHistory, getUrl, notFound, setUrl } from './nextNavigation';
 
 function Probe() {
   const params = useSearchParams();
@@ -53,4 +53,8 @@ test('setUrl outside React is seen by a mounted reader', () => {
   render(<Probe />);
   act(() => setUrl('/books'));
   expect(screen.getByTestId('where')).toHaveTextContent('/books');
+});
+
+test('notFound stops rendering with the 404 marker', () => {
+  expect(() => notFound()).toThrow('NEXT_HTTP_ERROR_FALLBACK;404');
 });

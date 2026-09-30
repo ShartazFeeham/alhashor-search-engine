@@ -15,6 +15,7 @@ import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/ui.css';
 import '../styles/home.css';
+import '../styles/hadis.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import TopNav from '../shell/TopNav';
 import TabBar from '../shell/TabBar';

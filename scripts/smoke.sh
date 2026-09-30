@@ -34,10 +34,17 @@ expect_status "/json/tags/%E0%A6%B0%E0%A7%8B.json" 200
 expect_status /photos/copy.png 200
 expect_status /json/tags/qqqq.json 404        # Review Focus 3: a missing data file is a real 404
 expect_status /no-such-page 404
+expect_status /hadis/bukhari/6628 200
+expect_status /hadis/bukhari/0 404
+expect_status /hadis/bukhari/99999 404
+expect_status /hadis/nobook/1 404
+expect_status /hadis/bukhari/63 200           # a gap number is a valid address; the page says so
 
 expect_text "/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE&page=2" "মোট ৪০৩" "deep link to page 2 of a Bengali search renders (Review Focus 1)"
 expect_text "/search?q=zzzz" "কোনো ফলাফল" "an unknown word shows the not-found note (Review Focus 3)"
 expect_text "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "হাদীস নং" "a topic deep link renders hadis"
+expect_text /hadis/bukhari/6628 "হাদীস নং" "a hadis page renders"
+expect_text /hadis/bukhari/63 "এই হাদীসটি পাওয়া যায়নি" "a gap hadis says it is not found"
 expect_text /books "নিচে থেকে যেকোনো একটি বই ক্লিক করুন" "the books page renders"
 expect_text /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি" "the not-found page renders"
 # Page titles on a fresh load (Next.js used to overwrite the page title with the layout's title)
@@ -45,5 +52,6 @@ expect_title / "BoiKotha - হাদীস সম্ভার" "home title"
 expect_title /books "হাদীসের বই - BoiKotha" "books title on a fresh load"
 expect_title "/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE&page=2" "রোজা - হাদীস সার্চ - BoiKotha" "search title on a fresh load of page 2"
 expect_title "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha" "topics title on a fresh load"
+expect_title /hadis/bukhari/6628 "বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha" "hadis title on a fresh load"
 expect_title /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha" "not-found title"
 exit $fail

@@ -24,3 +24,5 @@ shoot topics /topics
 shoot search /search
 shoot books /books
 shoot not-found /no-such-page
+shoot hadis /hadis/bukhari/6628
+shoot hadis-long /hadis/bukhari/307

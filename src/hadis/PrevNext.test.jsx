@@ -1,0 +1,54 @@
+import { fireEvent, render, screen } from '@testing-library/react';
+import { SettingsProvider } from '../settings/SettingsProvider';
+import { getUrl } from '../test/nextNavigation';
+import PrevNext from './PrevNext';
+
+const show = (ui) => render(<SettingsProvider>{ui}</SettingsProvider>);
+
+test('links to the neighbouring hadis of the same book, skipping gaps', () => {
+  show(<PrevNext bookId="bukhari" number={64} />);
+  expect(screen.getByRole('link', { name: /আগের/ })).toHaveAttribute('href', '/hadis/bukhari/62');
+  expect(screen.getByRole('link', { name: /পরের/ })).toHaveAttribute('href', '/hadis/bukhari/65');
+});
+
+test('the first hadis has no previous link and the last has no next link', () => {
+  const { unmount } = show(<PrevNext bookId="muslim" number={1} />);
+  expect(screen.queryByRole('link', { name: /আগের/ })).not.toBeInTheDocument();
+  unmount();
+  show(<PrevNext bookId="muslim" number={7281} />);
+  expect(screen.queryByRole('link', { name: /পরের/ })).not.toBeInTheDocument();
+});
+
+test('the arrow keys move to the previous and next hadis', () => {
+  show(<PrevNext bookId="bukhari" number={10} />);
+  fireEvent.keyDown(window, { key: 'ArrowRight' });
+  expect(getUrl().pathname).toBe('/hadis/bukhari/11');
+  fireEvent.keyDown(window, { key: 'ArrowLeft' });
+  expect(getUrl().pathname).toBe('/hadis/bukhari/9');
+});
+
+test('arrow keys are ignored while typing in a field', () => {
+  show(
+    <div>
+      <input aria-label="box" />
+      <PrevNext bookId="bukhari" number={10} />
+    </div>
+  );
+  fireEvent.keyDown(screen.getByLabelText('box'), { key: 'ArrowRight' });
+  expect(getUrl().pathname).toBe('/');
+});
+
+test('a horizontal swipe on the article area moves between hadis', () => {
+  show(<PrevNext bookId="bukhari" number={10} swipeTarget="page" />);
+  const area = document.body;
+  fireEvent.touchStart(area, { touches: [{ clientX: 300, clientY: 200 }] });
+  fireEvent.touchEnd(area, { changedTouches: [{ clientX: 120, clientY: 210 }] });
+  expect(getUrl().pathname).toBe('/hadis/bukhari/11');
+});
+
+test('a mostly vertical swipe (scrolling) does nothing', () => {
+  show(<PrevNext bookId="bukhari" number={10} swipeTarget="page" />);
+  fireEvent.touchStart(document.body, { touches: [{ clientX: 200, clientY: 100 }] });
+  fireEvent.touchEnd(document.body, { changedTouches: [{ clientX: 150, clientY: 400 }] });
+  expect(getUrl().pathname).toBe('/');
+});

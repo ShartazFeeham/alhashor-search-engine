@@ -46,6 +46,11 @@ const router = {
   },
 };
 
+// Like Next's notFound(): stops rendering by throwing.
+export function notFound() {
+  throw new Error('NEXT_HTTP_ERROR_FALLBACK;404');
+}
+
 export function useRouter() {
   return router;
 }
