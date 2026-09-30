@@ -5,7 +5,6 @@ import { clickable } from "../Helpers/clickable";
 import { HADIS_PER_PAGE } from "../Helpers/paging";
 import { usePageTitle } from "../Helpers/usePageTitle";
 import { BOOKS, hadisNumbers } from "./bookList";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './Book.css'
 
 const NON_BREAKING_SPACE = " ";

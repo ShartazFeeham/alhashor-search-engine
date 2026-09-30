@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { clickable } from "./clickable";
 import Highlight from "./Highlight";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './HadisView.css'
 import getNum, { getBook } from "./EngToBng";
 import { hadisUrl } from "./hadisPath";

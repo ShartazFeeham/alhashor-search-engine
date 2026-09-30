@@ -1,6 +1,5 @@
 import "./App.css";
 import Search from "./Search/Search";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from "./Navbar/Navbar";
 import Books from "./Books/Books";
 import Topics from "./Topics/Topics";
