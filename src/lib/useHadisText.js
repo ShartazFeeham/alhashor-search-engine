@@ -5,6 +5,11 @@ import { hadisUrl } from '../Helpers/hadisPath';
 
 const cache = new Map(); // tag -> Promise of a settled result ('ok' or 'missing')
 
+// Forgets every remembered text (tests use this so one test's data never leaks into the next).
+export function clearHadisTextCache() {
+  cache.clear();
+}
+
 // Loads one hadis text. A number with no data file is 'missing'; a network failure is 'error'
 // and is tried again on the next request (only 'ok' and 'missing' are remembered).
 export function loadHadisText(tag) {

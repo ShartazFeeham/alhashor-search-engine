@@ -6,7 +6,7 @@ import HadisIndex from "./HadisIndex";
 import { pageFromParam, pageSlice } from "../Helpers/paging";
 import PageTitle from "../Helpers/PageTitle";
 import { useUrlParams } from "../Helpers/useUrlParams";
-import { normalizeQuery, searchTags } from "../Search/searchIndex";
+import { normalizeQuery, searchTags } from "../search/searchIndex";
 const NO_TOPIC = "সূচিপত্র";
 
 // The address is the source of truth: /topics?topic=<name>&page=<n>

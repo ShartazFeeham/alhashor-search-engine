@@ -1,6 +1,7 @@
 // Adds DOM matchers such as toBeInTheDocument() and toHaveTextContent() to expect.
 import '@testing-library/jest-dom';
 import { beforeEach, vi } from 'vitest';
+import { clearHadisTextCache } from './lib/useHadisText';
 import { resetNavigation } from './test/nextNavigation';
 
 // Every test runs against in-memory versions of the Next.js router and link.
@@ -25,4 +26,5 @@ Object.defineProperty(globalThis, 'localStorage', { value: new MemoryStorage(), 
 beforeEach(() => {
   localStorage.clear();
   resetNavigation();
+  clearHadisTextCache();
 });

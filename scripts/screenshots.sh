@@ -22,6 +22,7 @@ shoot() { # <name> <route>
 shoot home /
 shoot topics /topics
 shoot search /search
+shoot results /search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE
 shoot books /books
 shoot not-found /no-such-page
 shoot hadis /hadis/bukhari/6628

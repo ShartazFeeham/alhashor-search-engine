@@ -87,5 +87,5 @@ test('site metadata names the site and describes it in Bengali', () => {
 test('the layout loads every global stylesheet, in the order the pages were designed with', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Search/Search.css', '../Search/suggestions.css', '../Books/Book.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css']);
+  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Books/Book.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css']);
 });

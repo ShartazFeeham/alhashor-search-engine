@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import Search from '../../Search/Search';
+import SearchPage from '../../search/SearchPage';
 
 export default function Page() {
   return (
     <Suspense>
-      <Search />
+      <SearchPage />
     </Suspense>
   );
 }
