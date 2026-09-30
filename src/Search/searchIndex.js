@@ -12,7 +12,11 @@ import { normalizeBengali } from "../Helpers/bengali";
 export { normalizeBengali };
 
 const PUNCTUATION = /[&/#^+()$~%.'":*?<>{}!@,;।]/g;
-const MAX_WORDS_FOR_LONGER_WORDS = 8;
+// A query of fewer than this many words looks inside longer words for every word. In a longer
+// query (often a pasted sentence) that is skipped for very common words, which would only pull in
+// thousands of hadis and many data files.
+const SHORT_QUERY_WORDS = 8;
+const COMMON_WORD_HADIS = 500;
 
 // [normalized form, other spelling used in the data]
 const SPELLINGS = [
@@ -86,30 +90,43 @@ export function createSearchIndex(load = fetchJson) {
         return indexes.flatMap((index) => index.get(normalized) || []);
     }
 
-    async function tagsForWord(word, includeLongerWords) {
-        const [ownTags, longerWords] = await Promise.all([
-            lookup("tags", word),
-            includeLongerWords ? lookup("substring", word) : [],
-        ]);
-        const tags = new Set(ownTags);
-        const longerTags = await Promise.all([...new Set(longerWords)].map((longer) => lookup("tags", longer)));
-        longerTags.forEach((list) => list.forEach((tag) => tags.add(tag)));
-        return tags;
+    // Map of tag -> true if the word itself is in that hadis, false if only a longer word containing it is.
+    async function tagsForWord(word, shortQuery) {
+        const ownTags = lookup("tags", word);
+        const longerWords = shortQuery
+            ? lookup("substring", word)
+            : ownTags.then((own) => (new Set(own).size > COMMON_WORD_HADIS ? [] : lookup("substring", word)));
+        const [own, longer] = await Promise.all([ownTags, longerWords]);
+
+        const found = new Map();
+        own.forEach((tag) => found.set(tag, true));
+        const longerTags = await Promise.all([...new Set(longer)].map((longerWord) => lookup("tags", longerWord)));
+        longerTags.forEach((list) => list.forEach((tag) => {
+            if (!found.has(tag)) found.set(tag, false);
+        }));
+        return found;
     }
 
-    // Hadis tags, best matches (most of the words) first.
+    // Hadis tags, best matches first: the most of the searched words, then the most of them exactly.
     async function searchTags(words, { requireAll = false } = {}) {
-        const includeLongerWords = words.length < MAX_WORDS_FOR_LONGER_WORDS;
-        const tagsPerWord = await Promise.all(words.map((word) => tagsForWord(word, includeLongerWords)));
+        const shortQuery = words.length < SHORT_QUERY_WORDS;
+        const foundPerWord = await Promise.all(words.map((word) => tagsForWord(word, shortQuery)));
 
-        const matches = new Map(); // tag -> number of words it matches
-        for (const tags of tagsPerWord) {
-            for (const tag of tags) matches.set(tag, (matches.get(tag) || 0) + 1);
+        const matches = new Map(); // tag -> { words matched, words matched exactly }
+        for (const found of foundPerWord) {
+            for (const [tag, exact] of found) {
+                const match = matches.get(tag) || { words: 0, exact: 0 };
+                match.words++;
+                if (exact) match.exact++;
+                matches.set(tag, match);
+            }
         }
 
         let ranked = [...matches.entries()];
-        if (requireAll) ranked = ranked.filter(([, count]) => count === words.length);
-        return ranked.sort((a, b) => b[1] - a[1]).map(([tag]) => tag);
+        if (requireAll) ranked = ranked.filter(([, match]) => match.words === words.length);
+        return ranked
+            .sort((a, b) => b[1].words - a[1].words || b[1].exact - a[1].exact)
+            .map(([tag]) => tag);
     }
 
     return { searchTags };

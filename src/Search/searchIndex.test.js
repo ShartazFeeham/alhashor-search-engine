@@ -66,14 +66,6 @@ describe('searchTags', () => {
     expect(await searchTags(['fast', 'prayer'], { requireAll: true })).toEqual(['BUK-2']);
   });
 
-  test('skips the longer-word lookup for queries of eight or more words', async () => {
-    const words = ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh'];
-    const { fetchJson, calls } = fakeServer({});
-    const { searchTags } = createSearchIndex(fetchJson);
-    await searchTags(words);
-    expect(calls.some((url) => url.includes('/substring/'))).toBe(false);
-  });
-
   test('downloads each data file only once, even across searches and at the same time', async () => {
     const { fetchJson, calls } = fakeServer({
       '/json/tags/fa.json': { fast: ['BUK-1'] },
@@ -246,5 +238,77 @@ describe('searchTags with different spellings', () => {
     const { searchTags } = createSearchIndex(fetchJson);
     await searchTags(['fast']);
     expect(calls.filter((url) => url.includes('/tags/'))).toEqual(['/json/tags/fa.json']);
+  });
+});
+
+describe('ranking', () => {
+  test('among hadis matching the same number of words, exact matches come first', async () => {
+    const { fetchJson } = fakeServer({
+      '/json/tags/aa.json': { aa: ['T-mixed', 'T-exact', 'T-one'], aaa: ['T-longer'] },
+      '/json/substring/aa.json': { aa: ['aaa'] },
+      '/json/tags/bb.json': { bb: ['T-exact'], bbb: ['T-longer', 'T-mixed'] },
+      '/json/substring/bb.json': { bb: ['bbb'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    // T-exact: both words exactly; T-mixed: one exactly, one inside a longer word;
+    // T-longer: both inside longer words; T-one matches only one word, so it is last.
+    expect(await searchTags(['aa', 'bb'])).toEqual(['T-exact', 'T-mixed', 'T-longer', 'T-one']);
+  });
+
+  test('for a single word, exact matches come before matches inside longer words', async () => {
+    const { fetchJson } = fakeServer({
+      '/json/tags/fa.json': { fasting: ['BUK-1'], fast: ['BUK-2'] },
+      '/json/substring/fa.json': { fast: ['fasting'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect(await searchTags(['fast'])).toEqual(['BUK-2', 'BUK-1']);
+  });
+
+  test('requireAll still means every word matched, exactly or inside a longer word', async () => {
+    const { fetchJson } = fakeServer({
+      '/json/tags/aa.json': { aa: ['T-exact'], aaa: ['T-longer'] },
+      '/json/substring/aa.json': { aa: ['aaa'] },
+      '/json/tags/bb.json': { bb: ['T-exact'], bbb: ['T-longer', 'T-only-bb'] },
+      '/json/substring/bb.json': { bb: ['bbb'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect(await searchTags(['aa', 'bb'], { requireAll: true })).toEqual(['T-exact', 'T-longer']);
+  });
+});
+
+describe('long queries', () => {
+  const commonTags = Array.from({ length: 501 }, (_, i) => `BUK-${i + 1}`);
+  const eightWords = ['cm', 'rr', 'w3', 'w4', 'w5', 'w6', 'w7', 'w8'];
+
+  test('a short query looks inside longer words for every word, common or not', async () => {
+    const { fetchJson, calls } = fakeServer({
+      '/json/tags/cm.json': { cm: commonTags },
+      '/json/substring/cm.json': { cm: [] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    await searchTags(['cm']);
+    expect(calls).toContain('/json/substring/cm.json');
+  });
+
+  test('a long query skips longer words only for very common words', async () => {
+    const { fetchJson, calls } = fakeServer({
+      '/json/tags/cm.json': { cm: commonTags },
+      '/json/substring/cm.json': { cm: [] },
+      '/json/tags/rr.json': { rr: ['BUK-1'] },
+      '/json/substring/rr.json': { rr: [] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    await searchTags(eightWords);
+    expect(calls).not.toContain('/json/substring/cm.json');
+    expect(calls).toContain('/json/substring/rr.json');
+  });
+
+  test('a rare word in a long query still finds hadis through longer words', async () => {
+    const { fetchJson } = fakeServer({
+      '/json/tags/rr.json': { rr: ['BUK-1'], rrr: ['BUK-2'] },
+      '/json/substring/rr.json': { rr: ['rrr'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect(await searchTags(['rr', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7', 'w8'])).toEqual(['BUK-1', 'BUK-2']);
   });
 });
