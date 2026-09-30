@@ -7,6 +7,7 @@
 // spelling was used. So a lookup compares words by their normalized spelling, and checks the
 // file of every raw spelling of the word's start.
 
+import { BASE_PATH } from "../Helpers/basePath";
 import { normalizeBengali } from "../Helpers/bengali";
 
 export { normalizeBengali };
@@ -69,7 +70,7 @@ export function createSearchIndex(load = fetchJson) {
     const files = new Map(); // url -> Promise of the file's index
 
     function loadFile(kind, prefix) {
-        const url = `${import.meta.env.BASE_URL}json/${kind}/${prefix}.json`;
+        const url = `${BASE_PATH}/json/${kind}/${prefix}.json`;
         if (!files.has(url)) {
             files.set(
                 url,

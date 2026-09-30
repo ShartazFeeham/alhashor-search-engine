@@ -18,3 +18,9 @@ test('maps every book code to its folder', () => {
 test('returns null for an unknown book code', () => {
   expect(hadisUrl('XXX-1')).toBeNull();
 });
+
+import { BASE_PATH } from './basePath';
+
+test('the base path is empty unless configured, so data URLs start at the site root', () => {
+  expect(BASE_PATH).toBe('');
+});
