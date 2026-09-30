@@ -34,15 +34,17 @@ function NextPrev({ page, setPage, allResults, setDisplayHadis, resultCount }) {
     return (
         <div className='npc'>
             <table width={"100%"}>
-                <tr>
-                    <td>
-                        <button type='button' className='pn btn' onClick={prev}>&#171; আগের পৃষ্ঠা</button>
-                    </td>
-                    <td>
+                <tbody>
+                    <tr>
+                        <td>
+                            <button type='button' className='pn btn' onClick={prev}>&#171; আগের পৃষ্ঠা</button>
+                        </td>
+                        <td>
 
-                        <button type='button' className='pn btn' onClick={next}>পরের পৃষ্ঠা &#187;</button>
-                    </td>
-                </tr>
+                            <button type='button' className='pn btn' onClick={next}>পরের পৃষ্ঠা &#187;</button>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     );

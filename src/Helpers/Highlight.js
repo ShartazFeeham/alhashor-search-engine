@@ -10,9 +10,9 @@ function Highlight(props){
         }
     }
     return (
-        <normal>
+        <span>
             {props.word+" "}
-        </normal>
+        </span>
     )
 }
 export default Highlight;

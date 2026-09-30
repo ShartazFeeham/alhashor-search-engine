@@ -1,44 +1,26 @@
 # Core Improvements
 
-Improvements to the core search-and-display path only.
+Improvements to the core search-and-display path.
 
-## Search correctness
+## Done
 
-- **Empty-input check:** `userText.lengh` in `src/Search/Search.js` is a typo, so the empty-input guard never fires. An empty search still runs and leaves `searching` and `found` stuck. It should check `.length`, trim the input, and return cleanly.
-- **Per-word result updates:** results are computed and pushed to state inside the per-word loop, so the UI updates once per word. Merge all words first, then set state once.
-- **`results` map:** it is a plain `Map` recreated on every render, and the sort override is redefined each loop. Build it locally in `scan` and sort once at the end.
-- **Dead code:** `value = value + 1` does nothing.
-- **Lookup failures:** a missing shard file (`fetch` returns a 404 page, and `.json()` throws) or a missing parent entry (`parTagArray` is `undefined`) crashes the whole search. Handle these per word.
-- **Tag/search matching:** a query whose first two characters have no shard file breaks the same way. That includes one-character words and mixed scripts.
+- **Empty search:** it now does nothing, instead of running and leaving the page stuck. The `lengh` typo is gone with the old code.
+- **Search state:** results are set once per search, not once per word. The `results` map and the dead `value = value + 1` line are gone.
+- **Lookup failures:** a missing or invalid data file means "no hadis for that word", not a crash or an endless spinner. Words named like built-in object properties (`constructor`) no longer break a search.
+- **Speed:** data files are fetched in parallel and cached in memory, and a word is looked up directly instead of copying the whole file into a `Map`. On real data, searching "নামায" went from 27 requests and 6.6 MB to 4 requests and 585 KB, with identical results.
+- **One shared search module:** `src/Search/searchIndex.js` replaces the search code that was duplicated in the Search and Topics pages.
+- **Stale searches:** a slow earlier search or topic can no longer overwrite a newer one.
+- **Search and topic states:** no spinner forever or premature "not found" note. A topic with no hadis says so.
+- **Hadis display:** the fetch loop is fixed (one request per hadis), the text is used correctly after loading, each card expands independently, and copying reuses the loaded text. A missing hadis shows a message instead of a spinner.
+- **Shared path helper:** the book-name and URL logic lives in `src/Helpers/hadisPath.js`, and all data paths are absolute so they work on any URL depth.
+- **Keys:** result cards and words now have `key` props.
+- **History:** the `pushState` calls that broke the back button are removed.
 
-## Ranking and matching
+## Still to do
 
-- **Ranking:** it only counts matched words, so long and short hadis rank the same. Weight exact word matches above substring matches, and boost hadis where the words appear close together.
-- **Query words:** the "fewer than 8 words" cutoff drops substring matching for longer queries. Instead, skip only very common words.
-- **Input normalization:** it doesn't handle Bengali variants such as different forms of ও/য়/ড়, or zero-width characters. Both sides should be normalized.
-
-## Search speed
-
-- **Sequential fetching:** shards for each word and its parent words are fetched one at a time with `await`. Fetch them in parallel with `Promise.all`.
-- **Shard caching:** a shard is re-fetched and re-parsed on every search. Cache parsed shards in memory.
-- **Lookup cost:** `new Map(Object.entries(data))` copies a whole shard to read one key. Use `data[word]`.
-
-## Hadis display
-
-- **Fetch loop in `src/Helpers/HadisView.js`:** `getHadisText()` runs during render, so the fetch repeats on every render. Move it to a `useEffect` keyed on `props.tag`.
-- **Stale text:** `setToShow` reads `hadisText` right after `setHadisText(data)`, so it uses the old value. Use `data`.
-- **Shared `limit`:** it is a module-level variable, so expanding one hadis changes truncation for every card. Make it per-card state.
-- **Repeated path building:** the book-name lookup and URL building are duplicated in `getHadisText` and `copyHadis`. Extract one helper.
-- **Pagination:** `NextPrev` slices from `allResults`, so check that paging never leaves stale cards from the previous page.
-- **Keys:** the result cards and `Highlight` words are rendered without `key` props.
-
-## Navigation that breaks searching
-
-- **History spam in `src/App.js`:** `pushState` runs five times on every render, which breaks the back button.
-- **URL state:** search state lives in component state only, so a refresh or back navigation loses the results. Put the query and page in the URL.
-
-## Suggested first steps
-
-1. Fix the fetch loop in `HadisView`.
-2. Fix the `lengh` typo.
-3. Fetch shards in parallel and cache them.
+- **Ranking:** results are ranked only by how many searched words match. Weight exact word matches above substring matches, and boost hadis where the words appear close together.
+- **Long queries:** the "fewer than eight words" cutoff drops longer-word matching for long queries. Skip only very common words instead.
+- **Input normalization:** Bengali spelling variants (for example different forms of য়, ড়, ঢ়, and zero-width characters) are not normalized on either side. I hit this while writing tests: a topic typed with one form of য় didn't match the topic list's own spelling.
+- **URL state:** the search query and page live only in component state, so a refresh or back navigation loses the results. Put them in the URL (`/search?q=...&page=2`).
+- **Paging:** the paging logic is repeated in `Search`, `Topics`, `Books` and `NextPrev`. Unify it.
+- **Data gaps:** about 330 hadis numbers in Bukhari's range have no data file. Decide whether to hide them or add a data manifest.

@@ -1,7 +1,6 @@
 import './HadisIndex.css'
 
-function HadisIndex({ selectTopic, setTopic, setPage }) {
-    let index = [
+const TOPICS = Array.from(new Set([
         "ঈমান",
         "নামায",
         "হজ্জ ",
@@ -142,21 +141,14 @@ function HadisIndex({ selectTopic, setTopic, setPage }) {
         "অভিসম্পাত",
         "সুন্নাত",
         "সুন্নত",
-    ]
-    let items = new Set();
-    for (let i = 0; i < index.length; i++) {
-        let word = index[i];
-        while (word.startsWith(" ")) word = word.substring(1, word.length);
-        while (word[word.length - 1] === ' ') word = word.substring(0, word.length - 1);
-        items.add(word);
-    }
-    index = Array.from(items);
-    index.sort();
+    ].map((word) => word.trim()))).sort();
+
+function HadisIndex({ selectTopic, setTopic, setPage }) {
     return (
         <>
-            <div class="scroller">
-                {index.map((item) => {
-                    return <div className='item' onClick={() => { selectTopic(item); setTopic(item); setPage(0) }}>{item}</div>
+            <div className="scroller">
+                {TOPICS.map((item) => {
+                    return <div key={item} className='item' onClick={() => { selectTopic(item); setTopic(item); setPage(0) }}>{item}</div>
                 })}
             </div>
         </>
