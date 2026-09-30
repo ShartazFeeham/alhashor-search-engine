@@ -52,7 +52,7 @@ The inputs and conditions most likely to bite that no feature test in the spec n
 | `scripts/with-server.sh`, `screenshots.sh`, `compare-screenshots.py`, `check-self-contained.sh` (new) | Checks that run against a real server and headless Chrome |
 | `src/Search/Search.jsx`, `src/Topics/Topics.jsx` (modify) | Use `useUrlParams` |
 | `src/Navbar/Navbar.jsx`, `src/Home/Home.jsx`, `src/NotFound/NotFound.jsx` (modify) | Use `next/link` |
-| `src/App.jsx`, `src/index.jsx`, `index.html`, `src/App.test.jsx` (delete, Task 6) | Replaced by the App Router files and new tests |
+| `src/App.jsx`, `src/index.jsx`, `index.html` (delete, Task 6); `src/App.test.jsx` (delete, Task 4) | Replaced by the App Router files and new tests |
 
 ---
 
@@ -1072,7 +1072,7 @@ const nextConfig = {
 export default nextConfig;
 ```
 
-- [ ] **Step 4: Remove the Vite app, react-router and the old App test; update scripts, ESLint and .gitignore**
+- [ ] **Step 4: Remove the Vite app and react-router; update scripts, ESLint and .gitignore**
 
 ```bash
 git rm src/App.jsx src/index.jsx index.html vite.config.js
