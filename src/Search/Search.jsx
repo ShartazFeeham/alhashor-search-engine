@@ -1,5 +1,6 @@
+'use client';
+
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import HadisView from "../Helpers/HadisView";
 import NextPrev from "../Helpers/NextPrev";
 import "./Search.css"
@@ -7,6 +8,7 @@ import getNum from "../Helpers/EngToBng";
 import Loading from "../Helpers/Loading";
 import { HADIS_PER_PAGE, pageFromParam, pageSlice } from "../Helpers/paging";
 import { usePageTitle } from "../Helpers/usePageTitle";
+import { useUrlParams } from "../Helpers/useUrlParams";
 import Suggestions from "./Suggestions";
 import { normalizeQuery, searchTags } from "./searchIndex";
 
@@ -21,7 +23,7 @@ const DONE = 2;
     The page shows 20 results at a time.
 */
 function Search() {
-    const [params, setParams] = useSearchParams();
+    const [params, setParams] = useUrlParams();
     const query = params.get("q") || "";
     const words = useMemo(() => normalizeQuery(query), [query]);
     usePageTitle(words.join(" "), "হাদীস সার্চ");

@@ -1,20 +1,24 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { StrictMode } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { setUrl } from '../test/nextNavigation';
 import Search from './Search';
 
 const NOT_FOUND = /কোনো ফলাফল না পাওয়া গেলে/;
 
 function Where() {
-  const location = useLocation();
-  return <div data-testid="where">{decodeURIComponent(location.pathname + location.search)}</div>;
+  const pathname = usePathname();
+  const query = useSearchParams().toString();
+  return <div data-testid="where">{decodeURIComponent(pathname + (query ? '?' + query : ''))}</div>;
 }
 
 function renderSearch(url = '/search') {
+  setUrl(url);
   return render(
-    <MemoryRouter initialEntries={[url]}>
+    <>
       <Search />
       <Where />
-    </MemoryRouter>
+    </>
   );
 }
 
@@ -186,4 +190,17 @@ describe('the address bar', () => {
     fireEvent.click(screen.getByText('আবু হুরায়রা'));
     expect(screen.getByRole('textbox')).toHaveValue('আবু হুরায়রা');
   });
+});
+
+test('in StrictMode a search still downloads each data file only once', async () => {
+  servePaged('strictword', 2);
+  setUrl('/search?q=strictword');
+  render(
+    <StrictMode>
+      <Search />
+    </StrictMode>
+  );
+  expect(await screen.findByText(/মোট ২ টি হাদিস পাওয়া গেছে/)).toBeInTheDocument();
+  const shardRequests = global.fetch.mock.calls.filter(([url]) => url === '/json/tags/st.json');
+  expect(shardRequests).toHaveLength(1);
 });

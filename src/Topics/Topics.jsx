@@ -1,9 +1,11 @@
+'use client';
+
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import HadisDisplay from "./HadisDisplay";
 import HadisIndex from "./HadisIndex";
 import { pageFromParam, pageSlice } from "../Helpers/paging";
 import { usePageTitle } from "../Helpers/usePageTitle";
+import { useUrlParams } from "../Helpers/useUrlParams";
 import { normalizeQuery, searchTags } from "../Search/searchIndex";
 import './Topics.css'
 
@@ -12,7 +14,7 @@ const NO_TOPIC = "সূচিপত্র";
 // The address is the source of truth: /topics?topic=<name>&page=<n>
 // A topic shows only the hadis that contain every word of the topic.
 function Topics() {
-    const [params, setParams] = useSearchParams();
+    const [params, setParams] = useUrlParams();
     const topic = params.get("topic") || "";
     const words = useMemo(() => normalizeQuery(topic), [topic]);
     usePageTitle(topic, "বিষয়ভিত্তিক হাদীস");

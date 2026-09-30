@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo, useState } from "react";
 import getNum from "../Helpers/EngToBng";
 import HadisView from "../Helpers/HadisView";

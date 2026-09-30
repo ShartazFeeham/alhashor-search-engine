@@ -1,21 +1,24 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { setUrl } from '../test/nextNavigation';
 import Topics from './Topics';
 
 const prefix = (word) => word.substring(0, 2);
 const NO_HADIS = /এই বিষয়ে কোনো হাদীস পাওয়া যায়নি/;
 
 function Where() {
-  const location = useLocation();
-  return <div data-testid="where">{decodeURIComponent(location.pathname + location.search)}</div>;
+  const pathname = usePathname();
+  const query = useSearchParams().toString();
+  return <div data-testid="where">{decodeURIComponent(pathname + (query ? '?' + query : ''))}</div>;
 }
 
 function renderTopics(url = '/topics') {
+  setUrl(url);
   return render(
-    <MemoryRouter initialEntries={[url]}>
+    <>
       <Topics />
       <Where />
-    </MemoryRouter>
+    </>
   );
 }
 
