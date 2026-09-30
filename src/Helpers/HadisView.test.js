@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import HadisView from './HadisView';
 
 const MORE = 'সম্পূর্ণ হাদীস দেখুন...';
@@ -83,4 +83,43 @@ test('copies the text it already loaded without fetching again', async () => {
 
   await waitFor(() => expect(writeText).toHaveBeenCalledWith('alpha beta'));
   expect(global.fetch).toHaveBeenCalledTimes(1);
+});
+
+test('copying shows a short message instead of an alert', async () => {
+  serve({ '/json/hadis/Bukhari/0001/text.txt': 'alpha beta' });
+  Object.assign(navigator, { clipboard: { writeText: jest.fn().mockResolvedValue() } });
+  window.alert = jest.fn();
+  jest.useFakeTimers();
+  try {
+    render(<HadisView tag="BUK-1" words={[]} />);
+    await act(async () => {
+      await Promise.resolve();
+    });
+    await screen.findByText('alpha');
+
+    fireEvent.click(screen.getByText('Copy'));
+    expect(screen.getByText('কপি করা হয়েছে')).toBeInTheDocument();
+    expect(window.alert).not.toHaveBeenCalled();
+
+    act(() => {
+      jest.advanceTimersByTime(2500);
+    });
+    expect(screen.queryByText('কপি করা হয়েছে')).not.toBeInTheDocument();
+  } finally {
+    jest.useRealTimers();
+  }
+});
+
+test('copy and see-more work from the keyboard', async () => {
+  serve({ '/json/hadis/Bukhari/0001/text.txt': longText('a') });
+  const writeText = jest.fn().mockResolvedValue();
+  Object.assign(navigator, { clipboard: { writeText } });
+  render(<HadisView tag="BUK-1" words={[]} />);
+  await screen.findByText(MORE);
+
+  fireEvent.keyDown(screen.getByText('Copy'), { key: 'Enter' });
+  expect(writeText).toHaveBeenCalled();
+
+  fireEvent.keyDown(screen.getByText(MORE), { key: 'Enter' });
+  expect(screen.queryByText(MORE)).not.toBeInTheDocument();
 });

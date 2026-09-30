@@ -63,3 +63,36 @@ test('the navigation links change the page without reloading', () => {
   expect(window.location.pathname).toBe('/books');
   expect(screen.getByText('নিচে থেকে যেকোনো একটি বই ক্লিক করুন')).toBeInTheDocument();
 });
+
+describe('page titles', () => {
+  test.each([
+    ['/', 'BoiKotha - হাদীস সম্ভার'],
+    ['/search', 'হাদীস সার্চ - BoiKotha'],
+    ['/search?q=রোজা', 'রোজা - হাদীস সার্চ - BoiKotha'],
+    ['/books', 'হাদীসের বই - BoiKotha'],
+    ['/topics', 'বিষয়ভিত্তিক হাদীস - BoiKotha'],
+    ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha'],
+  ])('%s is titled %s', (path, title) => {
+    global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+    openAt(path);
+    expect(document.title).toBe(title);
+    delete global.fetch;
+  });
+
+  test('choosing a book puts its name in the title', () => {
+    global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+    openAt('/books');
+    fireEvent.click(screen.getByText('মুসলিম শরীফ'));
+    expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - BoiKotha');
+    delete global.fetch;
+  });
+});
+
+describe('unknown addresses', () => {
+  test('show a not-found page with a way back home', () => {
+    openAt('/no-such-page');
+    expect(screen.getByText('পৃষ্ঠাটি পাওয়া যায়নি')).toBeInTheDocument();
+    expect(screen.getByText('হোম পেজে ফিরে যান').getAttribute('href')).toBe('/');
+    expect(document.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha');
+  });
+});

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { clickable } from "./clickable";
 import Highlight from "./Highlight";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './HadisView.css'
@@ -12,6 +13,7 @@ function HadisView(props) {
     const [hadisText, setHadisText] = useState("");
     const [expanded, setExpanded] = useState(false);
     const [failed, setFailed] = useState(false);
+    const [copied, setCopied] = useState(false);
     const words = props.words;
     const tag = props.tag;
 
@@ -44,10 +46,17 @@ function HadisView(props) {
     const truncated = !expanded && hadisText.length > LIMIT;
     const toShow = truncated ? hadisText.substring(0, LIMIT) + "...." : hadisText;
 
+    // The "copied" note disappears by itself.
+    useEffect(() => {
+        if (!copied) return;
+        const timer = setTimeout(() => setCopied(false), 2000);
+        return () => clearTimeout(timer);
+    }, [copied]);
+
     function copyHadis() {
         if (hadisText.length === 0) return;
         navigator.clipboard.writeText(hadisText);
-        alert("Hadis copied.");
+        setCopied(true);
     }
 
     return (
@@ -64,10 +73,11 @@ function HadisView(props) {
                     </div>
                 </div>
                 <div className="ftr">
-                    <div className="op" onClick={copyHadis}>
+                    <div className="op" {...clickable(copyHadis)}>
                         <img src="/photos/copy.png" height={20} width={20} alt="copy" /> Copy
                     </div>
-                    {truncated ? <div className="more" onClick={() => setExpanded(true)}>সম্পূর্ণ হাদীস দেখুন...</div> : ""}
+                    {copied ? <div className="copied">কপি করা হয়েছে</div> : ""}
+                    {truncated ? <div className="more" {...clickable(() => setExpanded(true))}>সম্পূর্ণ হাদীস দেখুন...</div> : ""}
                 </div>
             </div>
         </div>

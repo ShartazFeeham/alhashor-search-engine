@@ -126,3 +126,15 @@ test('the last page holds only hadis that exist', async () => {
   expect(await screen.findByText(file('Nasae', 5758))).toBeInTheDocument();
   expect(screen.getByText('৫৭৪১-৫৭৫৩/৫৭৫৩')).toBeInTheDocument();
 });
+
+test('the paging controls work from the keyboard', async () => {
+  render(<Books />);
+  fireEvent.click(screen.getByText('বুখারি শরীফ'));
+  await screen.findByText(file('Bukhari', 1));
+
+  fireEvent.keyDown(screen.getByText('Next »'), { key: 'Enter' });
+  expect(await screen.findByText(file('Bukhari', 21))).toBeInTheDocument();
+
+  fireEvent.keyDown(screen.getByText('« Prev'), { key: ' ' });
+  expect(await screen.findByText(file('Bukhari', 1))).toBeInTheDocument();
+});

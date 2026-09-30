@@ -8,6 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import getNum from "../Helpers/EngToBng";
 import Loading from "../Helpers/Loading";
 import { HADIS_PER_PAGE, pageFromParam, pageSlice } from "../Helpers/paging";
+import { usePageTitle } from "../Helpers/usePageTitle";
 import Suggestions from "./Suggestions";
 import { normalizeQuery, searchTags } from "./searchIndex";
 
@@ -25,6 +26,7 @@ function Search() {
     const [params, setParams] = useSearchParams();
     const query = params.get("q") || "";
     const words = useMemo(() => normalizeQuery(query), [query]);
+    usePageTitle(words.join(" "), "হাদীস সার্চ");
 
     const [text, setText] = useState(query);
     const [results, setResults] = useState([]);

@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import HadisDisplay from "./HadisDisplay";
 import HadisIndex from "./HadisIndex";
 import { pageFromParam, pageSlice } from "../Helpers/paging";
+import { usePageTitle } from "../Helpers/usePageTitle";
 import { normalizeQuery, searchTags } from "../Search/searchIndex";
 import './Topics.css'
 
@@ -14,6 +15,7 @@ function Topics() {
     const [params, setParams] = useSearchParams();
     const topic = params.get("topic") || "";
     const words = useMemo(() => normalizeQuery(topic), [topic]);
+    usePageTitle(topic, "বিষয়ভিত্তিক হাদীস");
 
     const [results, setResults] = useState([]);
     const [searching, setSearching] = useState(words.length > 0);

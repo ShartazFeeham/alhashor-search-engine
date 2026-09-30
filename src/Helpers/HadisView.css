@@ -82,3 +82,11 @@
     margin-right: 10px;
     margin-bottom: 10px;
 }
+.copied {
+    display: inline;
+    float: right;
+    margin-top: 8px;
+    margin-left: 10px;
+    color: #2e7d32;
+    font-weight: bold;
+}

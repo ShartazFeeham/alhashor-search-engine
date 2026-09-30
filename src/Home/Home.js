@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import './Home.css'
+import { usePageTitle } from "../Helpers/usePageTitle";
 
 function Home() {
+    usePageTitle();
     return (
         <div className="homeCont">
             <div className="row">

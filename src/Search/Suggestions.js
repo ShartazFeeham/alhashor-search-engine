@@ -1,4 +1,5 @@
 import './suggestions.css'
+import { clickable } from '../Helpers/clickable'
 function Suggestions({setBox}) {
     const sug = [
         "রোজা",
@@ -15,7 +16,7 @@ function Suggestions({setBox}) {
         <div className='s-cont'>
             {sug?.map(
                 (item) => (
-                    <div key={item} className="s-item" onClick={() => setBox(item)}>{item}</div>
+                    <div key={item} className="s-item" {...clickable(() => setBox(item))}>{item}</div>
                 )
             )}
         </div>

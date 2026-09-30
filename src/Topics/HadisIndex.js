@@ -1,6 +1,8 @@
 import './HadisIndex.css'
+import { clickable } from '../Helpers/clickable'
+import { normalizeBengali } from '../Helpers/bengali'
 
-const TOPICS = Array.from(new Set([
+const TOPIC_NAMES = [
         "ঈমান",
         "নামায",
         "হজ্জ ",
@@ -141,14 +143,19 @@ const TOPICS = Array.from(new Set([
         "অভিসম্পাত",
         "সুন্নাত",
         "সুন্নত",
-    ].map((word) => word.trim()))).sort();
+    ].map((word) => word.trim());
+
+// Each topic once, even if the list holds it in two spellings of the same letters.
+const TOPICS = Array.from(
+    new Map(TOPIC_NAMES.reduceRight((entries, name) => [[normalizeBengali(name), name], ...entries], [])).values()
+).sort();
 
 function HadisIndex({ onSelect }) {
     return (
         <>
             <div className="scroller">
                 {TOPICS.map((item) => {
-                    return <div key={item} className='item' onClick={() => onSelect(item)}>{item}</div>
+                    return <div key={item} className='item' {...clickable(() => onSelect(item))}>{item}</div>
                 })}
             </div>
         </>

@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import getNum from "../Helpers/EngToBng";
 import HadisView from "../Helpers/HadisView";
+import { clickable } from "../Helpers/clickable";
 import { HADIS_PER_PAGE } from "../Helpers/paging";
+import { usePageTitle } from "../Helpers/usePageTitle";
 import { BOOKS, hadisNumbers } from "./bookList";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Book.css'
@@ -13,6 +15,7 @@ function Books() {
     const [page, setPage] = useState(0);
 
     const book = selected === null ? null : BOOKS[selected];
+    usePageTitle(book && book.name, "হাদীসের বই");
     const numbers = useMemo(() => (book ? hadisNumbers(book) : []), [book]); // only hadis that exist
     const total = numbers.length;
     const lastPage = book ? Math.ceil(total / HADIS_PER_PAGE) - 1 : 0;
@@ -46,15 +49,15 @@ function Books() {
                     </div>
                     <div className="tcontainer">
                         <div className="titem">
-                            <div onClick={() => { goToPage(page - 10) }}>-10</div>
+                            <div {...clickable(() => goToPage(page - 10))}>-10</div>
                         </div>
                         <div className="titem">
-                            <div onClick={() => { goToPage(page - 1) }}>&#171; Prev</div>
+                            <div {...clickable(() => goToPage(page - 1))}>&#171; Prev</div>
                         </div>
                         <div className="titem">{getNum(first.toString()) + "-" + getNum(last.toString()) + "/" + getNum(total.toString())}</div>
-                        <div className="titem"><div onClick={() => { goToPage(page + 1) }}>Next &#187;</div></div>
+                        <div className="titem"><div {...clickable(() => goToPage(page + 1))}>Next &#187;</div></div>
                         <div className="titem">
-                            <div onClick={() => { goToPage(page + 10) }}>+10</div>
+                            <div {...clickable(() => goToPage(page + 10))}>+10</div>
                         </div>
                     </div>
                 </div> : ""}
