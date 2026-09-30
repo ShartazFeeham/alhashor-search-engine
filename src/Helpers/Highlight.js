@@ -1,7 +1,9 @@
+import { normalizeBengali } from "./bengali";
+
 function Highlight(props){
-    let mark = props.mark;
-    for(let i=0; i<mark.length; i++){
-        if(props.word.includes(mark[i])){
+    const word = normalizeBengali(props.word);
+    for(let i=0; i<props.mark.length; i++){
+        if(word.includes(normalizeBengali(props.mark[i]))){
             return (
                 <b>
                     {props.word+" "}

@@ -1,20 +1,45 @@
 // Looks hadis up in the static data files under /json:
-//   tags/<first two letters>.json       word -> hadis tags containing it
-//   substring/<first two letters>.json  word -> longer words that contain it
+//   tags/<first two characters>.json       word -> hadis tags containing it
+//   substring/<first two characters>.json  word -> longer words that contain it
+//
+// The files spell some Bengali letters two ways (য় as one character or as য + ়, ো as one
+// character or as ে + া, ...), and a word is filed under the first two characters of whichever
+// spelling was used. So a lookup compares words by their normalized spelling, and checks the
+// file of every raw spelling of the word's start.
+
+import { normalizeBengali } from "../Helpers/bengali";
+
+export { normalizeBengali };
 
 const PUNCTUATION = /[&/#^+()$~%.'":*?<>{}!@,;।]/g;
 const MAX_WORDS_FOR_LONGER_WORDS = 8;
+
+// [normalized form, other spelling used in the data]
+const SPELLINGS = [
+    ["য়", "য়"], // য়
+    ["ড়", "ড়"], // ড়
+    ["ঢ়", "ঢ়"], // ঢ়
+    ["ো", "ো"], // ো
+    ["ৌ", "ৌ"], // ৌ
+];
 
 export function normalizeQuery(text) {
     if (typeof text !== "string") return [];
     return text.replace(PUNCTUATION, "").split(/\s+/).filter(Boolean);
 }
 
-// Own array entries only, so words like "constructor" don't hit Object.prototype.
-function entriesFor(shard, word) {
-    return Object.prototype.hasOwnProperty.call(shard, word) && Array.isArray(shard[word])
-        ? shard[word]
-        : [];
+// The file names a normalized word could be stored under: the first two characters of each
+// way its start may be spelled. (Invisible joiners inside those two characters are not covered.)
+function rawPrefixes(word) {
+    const start = word.substring(0, 4);
+    let spellings = [""];
+    for (let i = 0; i < start.length;) {
+        const spelling = SPELLINGS.find(([normalized]) => start.startsWith(normalized, i));
+        const options = spelling ? spelling : [start[i]];
+        spellings = spellings.flatMap((so) => options.map((option) => so + option));
+        i += spelling ? spelling[0].length : 1;
+    }
+    return [...new Set(spellings.map((spelling) => spelling.substring(0, 2)))];
 }
 
 function fetchJson(url) {
@@ -24,36 +49,51 @@ function fetchJson(url) {
     });
 }
 
-export function createSearchIndex(load = fetchJson) {
-    const shards = new Map(); // url -> Promise of the parsed file
+// normalized word -> everything filed under it (both spellings merged)
+function indexFile(data) {
+    const index = new Map();
+    if (data === null || typeof data !== "object") return index;
+    for (const [word, entries] of Object.entries(data)) {
+        if (!Array.isArray(entries)) continue;
+        const key = normalizeBengali(word);
+        index.set(key, index.has(key) ? index.get(key).concat(entries) : entries);
+    }
+    return index;
+}
 
-    function loadShard(kind, word) {
-        const url = `${process.env.PUBLIC_URL}/json/${kind}/${word.substring(0, 2)}.json`;
-        if (!shards.has(url)) {
-            shards.set(
+export function createSearchIndex(load = fetchJson) {
+    const files = new Map(); // url -> Promise of the file's index
+
+    function loadFile(kind, prefix) {
+        const url = `${process.env.PUBLIC_URL}/json/${kind}/${prefix}.json`;
+        if (!files.has(url)) {
+            files.set(
                 url,
                 load(url)
-                    .then((data) => (data !== null && typeof data === "object" ? data : {}))
+                    .then(indexFile)
                     .catch(() => {
-                        shards.delete(url); // try again on the next search
-                        return {};
+                        files.delete(url); // try again on the next search
+                        return new Map();
                     })
             );
         }
-        return shards.get(url);
+        return files.get(url);
+    }
+
+    async function lookup(kind, word) {
+        const normalized = normalizeBengali(word);
+        const indexes = await Promise.all(rawPrefixes(normalized).map((prefix) => loadFile(kind, prefix)));
+        return indexes.flatMap((index) => index.get(normalized) || []);
     }
 
     async function tagsForWord(word, includeLongerWords) {
-        const [tagShard, substringShard] = await Promise.all([
-            loadShard("tags", word),
-            includeLongerWords ? loadShard("substring", word) : {},
+        const [ownTags, longerWords] = await Promise.all([
+            lookup("tags", word),
+            includeLongerWords ? lookup("substring", word) : [],
         ]);
-        const tags = new Set(entriesFor(tagShard, word));
-        const longerWords = entriesFor(substringShard, word);
-        const longerShards = await Promise.all(longerWords.map((longer) => loadShard("tags", longer)));
-        longerWords.forEach((longer, i) => {
-            entriesFor(longerShards[i], longer).forEach((tag) => tags.add(tag));
-        });
+        const tags = new Set(ownTags);
+        const longerTags = await Promise.all([...new Set(longerWords)].map((longer) => lookup("tags", longer)));
+        longerTags.forEach((list) => list.forEach((tag) => tags.add(tag)));
         return tags;
     }
 

@@ -1,4 +1,4 @@
-import { createSearchIndex, normalizeQuery } from './searchIndex';
+import { createSearchIndex, normalizeBengali, normalizeQuery } from './searchIndex';
 
 // Fake data server: url -> parsed JSON. Anything else fails like a 404.
 function fakeServer(shards, { delay = 0 } = {}) {
@@ -146,5 +146,105 @@ describe('searchTags', () => {
     const { fetchJson } = fakeServer({});
     const { searchTags } = createSearchIndex(fetchJson);
     expect(await searchTags([])).toEqual([]);
+  });
+});
+
+// The data stores the same Bengali letter in different spellings, so words typed one
+// way must match hadis indexed the other way.
+const YA_PRECOMPOSED = '\u09df'; // য়
+const YA_DECOMPOSED = '\u09af\u09bc'; // য + ়
+const O_PRECOMPOSED = '\u09cb'; // ো
+const O_DECOMPOSED = '\u09c7\u09be'; // ে + া
+
+describe('normalizeBengali', () => {
+  test('gives one spelling to letters the data writes in two ways', () => {
+    expect(normalizeBengali(`ম${YA_PRECOMPOSED}লা`)).toBe(normalizeBengali(`ম${YA_DECOMPOSED}লা`));
+    expect(normalizeBengali(`ক${O_PRECOMPOSED}ন`)).toBe(normalizeBengali(`ক${O_DECOMPOSED}ন`));
+    expect(normalizeBengali('\u09dc')).toBe(normalizeBengali('\u09a1\u09bc')); // ড়
+    expect(normalizeBengali('\u09dd')).toBe(normalizeBengali('\u09a2\u09bc')); // ঢ়
+  });
+
+  test('drops invisible joiner characters', () => {
+    expect(normalizeBengali('কর\u200cা')).toBe('করা');
+    expect(normalizeBengali('কর\u200dা')).toBe('করা');
+  });
+
+  test('leaves plain text alone', () => {
+    expect(normalizeBengali('fast')).toBe('fast');
+    expect(normalizeBengali('রোজা')).toBe(normalizeBengali('রোজা'));
+  });
+});
+
+describe('searchTags with different spellings', () => {
+  test('finds a word typed with one spelling of য় in a file that uses the other', async () => {
+    const stored = `ম${YA_DECOMPOSED}লা`;
+    const { fetchJson } = fakeServer({
+      [`/json/tags/${stored.substring(0, 2)}.json`]: { [stored]: ['BUK-1'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect(await searchTags([`ম${YA_PRECOMPOSED}লা`])).toEqual(['BUK-1']);
+  });
+
+  test('and the other way round', async () => {
+    const stored = `ম${YA_PRECOMPOSED}লা`;
+    const { fetchJson } = fakeServer({
+      [`/json/tags/${stored.substring(0, 2)}.json`]: { [stored]: ['BUK-2'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect(await searchTags([`ম${YA_DECOMPOSED}লা`])).toEqual(['BUK-2']);
+  });
+
+  test('combines hadis indexed under both spellings of the same word', async () => {
+    const precomposed = `ম${YA_PRECOMPOSED}লা`;
+    const decomposed = `ম${YA_DECOMPOSED}লা`;
+    const { fetchJson } = fakeServer({
+      [`/json/tags/${precomposed.substring(0, 2)}.json`]: { [precomposed]: ['BUK-1'] },
+      [`/json/tags/${decomposed.substring(0, 2)}.json`]: { [decomposed]: ['BUK-2'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect((await searchTags([precomposed])).sort()).toEqual(['BUK-1', 'BUK-2']);
+  });
+
+  test('finds a word whose ো is stored in the other form, in either direction', async () => {
+    const precomposed = `ক${O_PRECOMPOSED}ন`;
+    const decomposed = `ক${O_DECOMPOSED}ন`;
+    const server = fakeServer({
+      [`/json/tags/${precomposed.substring(0, 2)}.json`]: { [precomposed]: ['BUK-1'] },
+    });
+    expect(await createSearchIndex(server.fetchJson).searchTags([decomposed])).toEqual(['BUK-1']);
+
+    const other = fakeServer({
+      [`/json/tags/${decomposed.substring(0, 2)}.json`]: { [decomposed]: ['BUK-2'] },
+    });
+    expect(await createSearchIndex(other.fetchJson).searchTags([precomposed])).toEqual(['BUK-2']);
+  });
+
+  test('a word typed without an invisible joiner matches the stored word that has one', async () => {
+    const { fetchJson } = fakeServer({
+      '/json/tags/কর.json': { 'কর\u200cা': ['BUK-3'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect(await searchTags(['করা'])).toEqual(['BUK-3']);
+  });
+
+  test('also finds hadis through longer words stored under another spelling', async () => {
+    const shortWord = `ম${YA_PRECOMPOSED}`;
+    const longer = `ম${YA_DECOMPOSED}লা`;
+    const { fetchJson } = fakeServer({
+      [`/json/tags/${shortWord}.json`]: {},
+      [`/json/substring/${shortWord}.json`]: { [shortWord]: [longer] },
+      [`/json/tags/${longer.substring(0, 2)}.json`]: { [longer]: ['BUK-4'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    expect(await searchTags([shortWord])).toEqual(['BUK-4']);
+  });
+
+  test('a word with no ambiguous letters still needs only one data file', async () => {
+    const { fetchJson, calls } = fakeServer({
+      '/json/tags/fa.json': { fast: ['BUK-1'] },
+    });
+    const { searchTags } = createSearchIndex(fetchJson);
+    await searchTags(['fast']);
+    expect(calls.filter((url) => url.includes('/tags/'))).toEqual(['/json/tags/fa.json']);
   });
 });

@@ -15,3 +15,8 @@ test('shows other words as plain text in a valid element', () => {
   expect(screen.getByText('prayer').tagName).toBe('SPAN');
   expect(messages).toEqual([]);
 });
+
+test('highlights a word even when it is spelled with a different form of the same letter', () => {
+  render(<Highlight word={'ম\u09af\u09bcলা'} mark={['ম\u09dfলা']} />);
+  expect(screen.getByText('ময়লা').tagName).toBe('B');
+});
