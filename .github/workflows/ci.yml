@@ -28,12 +28,8 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
-      - run: npm test -- --watchAll=false
-        env:
-          CI: "true"
+      - run: npm test -- --run
       - run: npm run build
-        env:
-          CI: "true"
 
       # Deploy to Netlify only from main, and only after everything above passed.
       # The Netlify site's own Git-based builds must be turned off so it doesn't deploy twice.

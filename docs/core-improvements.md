@@ -16,11 +16,16 @@ Improvements to the core search-and-display path.
 - **Keys:** result cards and words now have `key` props.
 - **History:** the `pushState` calls that broke the back button are removed.
 
+## Also done
+
+- **URL state:** `/search?q=<words>&page=<n>` and `/topics?topic=<name>&page=<n>`, so refresh, back and shared links work.
+- **Bengali spelling:** the data writes য়, ড়, ঢ়, ো and ৌ in two spellings (and adds invisible joiners). Words are now compared by a normalized spelling and the files of every raw spelling are checked. On real data every spelling gives identical results; for example আবু হুরায়রা went from 1,852 to 5,721 hadis.
+- **Ranking:** most searched words matched first, then most matched exactly. Queries of eight or more words still look inside longer words for rare words and skip only very common ones.
+- **Missing data files:** the Books page lists only hadis that exist (334 Bukhari and 5 Nasa'i numbers have no file).
+- **Paging:** Search and Topics share one set of paging helpers.
+
 ## Still to do
 
-- **Ranking:** results are ranked only by how many searched words match. Weight exact word matches above substring matches, and boost hadis where the words appear close together.
-- **Long queries:** the "fewer than eight words" cutoff drops longer-word matching for long queries. Skip only very common words instead.
-- **Input normalization:** Bengali spelling variants (for example different forms of য়, ড়, ঢ়, and zero-width characters) are not normalized on either side. I hit this while writing tests: a topic typed with one form of য় didn't match the topic list's own spelling.
-- **URL state:** the search query and page live only in component state, so a refresh or back navigation loses the results. Put them in the URL (`/search?q=...&page=2`).
-- **Paging:** the paging logic is repeated in `Search`, `Topics`, `Books` and `NextPrev`. Unify it.
-- **Data gaps:** about 330 hadis numbers in Bukhari's range have no data file. Decide whether to hide them or add a data manifest.
+- **Proximity ranking:** boosting hadis where the searched words appear close together needs word positions. The data only lists which hadis contain a word, not where, so this would need new data.
+- **Book pages in the address:** `/books/bukhari?page=3` style links. Search and Topics already do this.
+- **Single-hadis pages:** a link to one hadis, for example `/hadis/buk-124`.

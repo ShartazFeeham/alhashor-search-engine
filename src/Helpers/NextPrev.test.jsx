@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import NextPrev from './NextPrev';
 
 test('renders without React warnings', () => {
-  const errors = jest.spyOn(console, 'error').mockImplementation(() => {});
+  const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
   render(<NextPrev page={0} setPage={() => {}} resultCount={45} />);
   const messages = errors.mock.calls.map((call) => String(call[0]));
   errors.mockRestore();
@@ -10,7 +10,7 @@ test('renders without React warnings', () => {
 });
 
 test('next asks for the following page and previous for the one before', () => {
-  const setPage = jest.fn();
+  const setPage = vi.fn();
   const { rerender } = render(<NextPrev page={0} setPage={setPage} resultCount={45} />);
   fireEvent.click(screen.getByText(/পরের পৃষ্ঠা/));
   expect(setPage).toHaveBeenLastCalledWith(1);
@@ -21,14 +21,14 @@ test('next asks for the following page and previous for the one before', () => {
 });
 
 test('next does nothing on the last page', () => {
-  const setPage = jest.fn();
+  const setPage = vi.fn();
   render(<NextPrev page={2} setPage={setPage} resultCount={45} />);
   fireEvent.click(screen.getByText(/পরের পৃষ্ঠা/));
   expect(setPage).not.toHaveBeenCalled();
 });
 
 test('previous does nothing on the first page', () => {
-  const setPage = jest.fn();
+  const setPage = vi.fn();
   render(<NextPrev page={0} setPage={setPage} resultCount={45} />);
   fireEvent.click(screen.getByText(/আগের পৃষ্ঠা/));
   expect(setPage).not.toHaveBeenCalled();

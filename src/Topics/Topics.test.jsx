@@ -27,7 +27,7 @@ function reply(body) {
 
 // `word` matches `count` hadis (BUK-1 ... BUK-count); hadis n has the text "t<n>".
 function servePaged(word, count) {
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     if (url === `/json/tags/${prefix(word)}.json`) {
       return reply({ [word]: Array.from({ length: count }, (_, i) => `BUK-${i + 1}`) });
     }
@@ -42,7 +42,7 @@ afterEach(() => {
 });
 
 test('shows the hadis for the chosen topic', async () => {
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     if (url === `/json/tags/${prefix('ঈমান')}.json`) return reply({ ঈমান: ['BUK-1'] });
     if (url === '/json/hadis/Bukhari/0001/text.txt') return reply('imaan hadis text');
     return reply(undefined);
@@ -53,7 +53,7 @@ test('shows the hadis for the chosen topic', async () => {
 });
 
 test('a topic of several words shows only hadis that contain all of them', async () => {
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     if (url === `/json/tags/${prefix('জ্ঞান')}.json`) return reply({ জ্ঞান: ['BUK-1', 'BUK-2'] });
     if (url === `/json/tags/${prefix('অর্জন')}.json`) return reply({ অর্জন: ['BUK-2'] });
     if (url === '/json/hadis/Bukhari/0001/text.txt') return reply('only-first');
@@ -67,7 +67,7 @@ test('a topic of several words shows only hadis that contain all of them', async
 });
 
 test('a topic with no hadis says so instead of loading forever', async () => {
-  global.fetch = jest.fn(() => reply(undefined));
+  global.fetch = vi.fn(() => reply(undefined));
   renderTopics();
   fireEvent.click(screen.getByText('কৃপণতা'));
   expect(await screen.findByText(NO_HADIS)).toBeInTheDocument();
@@ -76,7 +76,7 @@ test('a topic with no hadis says so instead of loading forever', async () => {
 
 test('a slow earlier topic cannot overwrite the topic chosen after it', async () => {
   let releaseSlow;
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     if (url === `/json/tags/${prefix('সুদ')}.json`) {
       return new Promise((resolve) => {
         releaseSlow = () => resolve({ ok: true, json: () => Promise.resolve({ সুদ: ['BUK-7'] }) });

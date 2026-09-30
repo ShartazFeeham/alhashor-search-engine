@@ -21,7 +21,7 @@ function renderSearch(url = '/search') {
 const where = () => screen.getByTestId('where');
 
 function serve(files) {
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     const found = url in files;
     return Promise.resolve({ ok: found, json: () => Promise.resolve(files[url]) });
   });
@@ -29,7 +29,7 @@ function serve(files) {
 
 // `word` matches `count` hadis (BUK-1 ... BUK-count); hadis n has the text "t<n>".
 function servePaged(word, count) {
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     const ok = (body) => Promise.resolve({ ok: true, json: () => Promise.resolve(body) });
     if (url === `/json/tags/${word.substring(0, 2)}.json`) {
       return ok({ [word]: Array.from({ length: count }, (_, i) => `BUK-${i + 1}`) });
@@ -82,7 +82,7 @@ test('a search with no results shows the not-found note and stops loading', asyn
 
 test('does not show the not-found note while the search is still running', async () => {
   let release;
-  global.fetch = jest.fn(() => new Promise((resolve) => { release = () => resolve({ ok: false }); }));
+  global.fetch = vi.fn(() => new Promise((resolve) => { release = () => resolve({ ok: false }); }));
   renderSearch();
   search('pending');
   expect(await screen.findByAltText('loading...')).toBeInTheDocument();
@@ -93,7 +93,7 @@ test('does not show the not-found note while the search is still running', async
 
 test('a slow earlier search cannot overwrite a newer one', async () => {
   let releaseSlow;
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     if (url === '/json/tags/sl.json') {
       return new Promise((resolve) => {
         releaseSlow = () => resolve({ ok: true, json: () => Promise.resolve({ slow: ['BUK-7'] }) });

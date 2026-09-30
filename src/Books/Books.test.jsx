@@ -3,7 +3,7 @@ import Books from './Books';
 
 // Every hadis file "contains" its own URL, so a card shows which file it loaded.
 beforeEach(() => {
-  global.fetch = jest.fn((url) => Promise.resolve({ ok: true, json: () => Promise.resolve(url) }));
+  global.fetch = vi.fn((url) => Promise.resolve({ ok: true, json: () => Promise.resolve(url) }));
 });
 
 afterEach(() => {

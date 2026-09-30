@@ -7,7 +7,7 @@ test('shows a word that contains a searched word in bold', () => {
 });
 
 test('shows other words as plain text in a valid element', () => {
-  const errors = jest.spyOn(console, 'error').mockImplementation(() => {});
+  const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
   render(<Highlight word="prayer" mark={['fast']} />);
   const messages = errors.mock.calls.map((call) => String(call[0]));
   errors.mockRestore();

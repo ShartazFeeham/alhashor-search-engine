@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import HadisView from "../Helpers/HadisView";
 import NextPrev from "../Helpers/NextPrev";
-import React from 'react';
 import "./Search.css"
 import getNum from "../Helpers/EngToBng";
 import Loading from "../Helpers/Loading";

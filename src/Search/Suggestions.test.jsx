@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Suggestions from './Suggestions';
 
 test('a suggestion can be chosen with the mouse or the keyboard', () => {
-  const setBox = jest.fn();
+  const setBox = vi.fn();
   render(<Suggestions setBox={setBox} />);
   fireEvent.click(screen.getByText('রোজা'));
   expect(setBox).toHaveBeenLastCalledWith('রোজা');

@@ -69,7 +69,7 @@ export function createSearchIndex(load = fetchJson) {
     const files = new Map(); // url -> Promise of the file's index
 
     function loadFile(kind, prefix) {
-        const url = `${process.env.PUBLIC_URL}/json/${kind}/${prefix}.json`;
+        const url = `${import.meta.env.BASE_URL}json/${kind}/${prefix}.json`;
         if (!files.has(url)) {
             files.set(
                 url,

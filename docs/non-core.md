@@ -29,21 +29,26 @@ Everything outside the core search and hadis-display logic (see [core-improvemen
 - `README.md` was corrupted and is rewritten.
 - Page language is `bn` and the description is real. The manifest says BoiKotha instead of "Create React App Sample".
 - Ten unused images and `src/logo.svg` are removed. The Home page no longer advertises audio playback, which doesn't exist.
+- Bootstrap is imported once, and the unused Create React App styles are gone. The built CSS was checked: identical apart from those unused rules.
+
+**Toolchain and dependencies**
+- Moved from Create React App to Vite 7, with Vitest 3 for tests and ESLint 9 (flat config). Screenshots of all four pages are pixel-identical before and after, and everything passes on Node 20 and Node 25.
+- React 18.3, react-router-dom 6.30, Bootstrap 5.3 and react-bootstrap 2.10 are up to date within their major versions.
+- `npm audit` findings went from 75 to 9 (all in dev tooling, none in code shipped to browsers).
+
+**Accessibility, titles and small fixes**
+- Copy, "see the full hadis", book paging, topics and suggestions work from the keyboard.
+- Copying shows a short "copied" note instead of `alert()`.
+- Every page sets its own title, and unknown addresses show a not-found page.
+- The topic list is de-duplicated by normalized spelling. The search box is a controlled input.
 
 ## Still to do
 
-**Outdated**
-- **Create React App:** `react-scripts` 5.0.1 is unmaintained, and CRA was officially deprecated in 2025. The path forward is Vite.
-- **Dependencies:** react 18.2 (latest 19.x), react-router-dom 6.8 (6.30 available, 7 is latest), bootstrap 5.2 (5.3), react-bootstrap 2.6 (2.10), and the testing-library packages are one or two majors behind.
-- **Vulnerabilities:** `npm audit` reports 75, mostly in the old CRA build tooling, not in code shipped to browsers. They mostly disappear when moving off CRA.
-- **Naming:** the page title is "BoiKotha - হাদীস সম্ভার", the repo is "alhashor-search-engine", the package is "hadis-engine". This is a brand decision.
+These need a decision from you, or are bigger changes:
 
-**Rough edges**
-- **Bootstrap CSS** is imported in six files. Webpack ships one copy, so it's only source noise. I left it because removing the duplicates changes the CSS order and could change how the pages look.
-- **Accessibility:** other clickable `div`s (copy, "see the full hadis", paging, topic items, book paging) still aren't keyboard-focusable.
-- **Topics list:** near-duplicate spellings (তাকদীর/তাকদির, কিয়ামত/কেয়ামত, সুন্নাত/সুন্নত) are only de-duplicated by exact string.
-- **Copy confirmation:** it uses `alert()`. A small toast would be nicer.
-- **Search box:** the input is uncontrolled and the Suggestions component fills it through `document.getElementById`.
-- **SEO and sharing:** every page has the same title and description, and a single hadis can't be linked to.
-- **Unknown URLs:** any path other than the four pages renders a blank page. A small "not found" page would help.
-- **Data delivery:** 35.7k tiny files in the repo make cloning, CI and deploys slow. Bundling hadis into per-book or per-chunk files would help. The real content is about 71 MiB.
+- **Naming:** the page title is "BoiKotha - হাদীস সম্ভার", the repo is "alhashor-search-engine", the package is "hadis-engine". This is a brand decision.
+- **Data delivery:** 35.7k tiny files in the repo make cloning, CI and deploys slow. Bundling the hadis into per-book or per-chunk files would help, but it changes the data layout and the deploy, so it needs your go-ahead. The real content is about 71 MiB.
+- **Major version upgrades:** React 19, react-router-dom 7, and newer testing-library majors. They can change behavior, so each needs its own pass.
+- **ESLint 9** is marked "no longer supported" by its maintainers (ESLint 10 exists). The plugins used here don't all support 10 yet.
+- **Remaining audit findings:** 9, all in dev tooling.
+- **Per-page descriptions and sharing:** each page has its own title now, but the meta description is the same everywhere, and a single hadis still can't be linked to.

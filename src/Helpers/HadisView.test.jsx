@@ -5,7 +5,7 @@ const MORE = 'সম্পূর্ণ হাদীস দেখুন...';
 const longText = (label) => Array.from({ length: 200 }, (_, i) => `${label}${i}`).join(' ');
 
 function serve(texts) {
-  global.fetch = jest.fn((url) => {
+  global.fetch = vi.fn((url) => {
     const text = texts[url];
     return Promise.resolve({
       ok: text !== undefined,
@@ -73,9 +73,9 @@ test('shows a message instead of loading forever when the text is missing', asyn
 
 test('copies the text it already loaded without fetching again', async () => {
   serve({ '/json/hadis/Bukhari/0001/text.txt': 'alpha beta' });
-  const writeText = jest.fn().mockResolvedValue();
+  const writeText = vi.fn().mockResolvedValue();
   Object.assign(navigator, { clipboard: { writeText } });
-  window.alert = jest.fn();
+  window.alert = vi.fn();
   render(<HadisView tag="BUK-1" words={[]} />);
   await screen.findByText('alpha');
 
@@ -87,32 +87,30 @@ test('copies the text it already loaded without fetching again', async () => {
 
 test('copying shows a short message instead of an alert', async () => {
   serve({ '/json/hadis/Bukhari/0001/text.txt': 'alpha beta' });
-  Object.assign(navigator, { clipboard: { writeText: jest.fn().mockResolvedValue() } });
-  window.alert = jest.fn();
-  jest.useFakeTimers();
-  try {
-    render(<HadisView tag="BUK-1" words={[]} />);
-    await act(async () => {
-      await Promise.resolve();
-    });
-    await screen.findByText('alpha');
+  Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue() } });
+  window.alert = vi.fn();
+  render(<HadisView tag="BUK-1" words={[]} />);
+  await screen.findByText('alpha');
 
+  // fake timers only around the click: the note must disappear by itself
+  vi.useFakeTimers();
+  try {
     fireEvent.click(screen.getByText('Copy'));
     expect(screen.getByText('কপি করা হয়েছে')).toBeInTheDocument();
     expect(window.alert).not.toHaveBeenCalled();
 
     act(() => {
-      jest.advanceTimersByTime(2500);
+      vi.advanceTimersByTime(2500);
     });
     expect(screen.queryByText('কপি করা হয়েছে')).not.toBeInTheDocument();
   } finally {
-    jest.useRealTimers();
+    vi.useRealTimers();
   }
 });
 
 test('copy and see-more work from the keyboard', async () => {
   serve({ '/json/hadis/Bukhari/0001/text.txt': longText('a') });
-  const writeText = jest.fn().mockResolvedValue();
+  const writeText = vi.fn().mockResolvedValue();
   Object.assign(navigator, { clipboard: { writeText } });
   render(<HadisView tag="BUK-1" words={[]} />);
   await screen.findByText(MORE);

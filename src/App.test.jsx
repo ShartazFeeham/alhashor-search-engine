@@ -28,7 +28,7 @@ test('maps a hadis tag to its book name', () => {
 });
 
 test.each(['/', '/search', '/books', '/topics'])('page %s renders without React warnings', (path) => {
-  const errors = jest.spyOn(console, 'error').mockImplementation(() => {});
+  const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
   openAt(path);
   const messages = errors.mock.calls.map((call) => String(call[0]));
   errors.mockRestore();
@@ -43,7 +43,7 @@ test('rendering the app does not add browser history entries', () => {
 });
 
 test('the home page buttons open their page without errors', () => {
-  const onError = jest.fn();
+  const onError = vi.fn();
   window.addEventListener('error', onError);
   openAt('/');
   fireEvent.click(screen.getByText('হাদীস সার্চ'));
@@ -73,14 +73,14 @@ describe('page titles', () => {
     ['/topics', 'বিষয়ভিত্তিক হাদীস - BoiKotha'],
     ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha'],
   ])('%s is titled %s', (path, title) => {
-    global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
     openAt(path);
     expect(document.title).toBe(title);
     delete global.fetch;
   });
 
   test('choosing a book puts its name in the title', () => {
-    global.fetch = jest.fn(() => Promise.resolve({ ok: false }));
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
     openAt('/books');
     fireEvent.click(screen.getByText('মুসলিম শরীফ'));
     expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - BoiKotha');

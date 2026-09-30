@@ -10,7 +10,7 @@ test('lists every topic once, even if it was written in two spellings', () => {
 });
 
 test('a topic can be chosen with the mouse or the keyboard', () => {
-  const onSelect = jest.fn();
+  const onSelect = vi.fn();
   render(<HadisIndex onSelect={onSelect} />);
   fireEvent.click(screen.getByText('ঈমান'));
   expect(onSelect).toHaveBeenLastCalledWith('ঈমান');
