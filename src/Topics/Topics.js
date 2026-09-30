@@ -1,81 +1,34 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import HadisDisplay from "./HadisDisplay";
 import HadisIndex from "./HadisIndex";
+import { normalizeQuery, searchTags } from "../Search/searchIndex";
 import './Topics.css'
 
 function Topics() {
 
-    let results = new Map();
     const [topic, setTopic] = useState("সূচিপত্র");
     const [allResults, setAllResults] = useState([]);
     const [page, setPage] = useState(0);
     const [displayHadis, setDisplayHadis] = useState([]);
     const [resultCount, setResultCount] = useState(0);
+    const [searching, setSearching] = useState(false);
+    const latestTopic = useRef(0);
 
-    async function selectTopic(userText) {
+    // A topic shows only the hadis that contain every word of the topic.
+    async function selectTopic(topicName) {
+        const thisTopic = ++latestTopic.current;
         setAllResults([]);
         setDisplayHadis([]);
-        if (userText[0] === ' ') userText = userText.substring(1, userText.length);
-        if (userText[userText.length - 1] === ' ') userText = userText.substring(0, userText.length - 1);
-        let words = userText.split(" ");
-        for (let i = 0; i < words.length; i++) {
-            let word = words[i];
-            const tags = new Set();
-            let wordPath = "json/tags/" + word.substring(0, 2) + ".json";
-            await fetch(wordPath).then((res) => res.json()).then((data) => {
-                const tagMap = new Map(Object.entries(data));
-                let tagArray = tagMap.get(word);
-                if (tagArray != null) {
-                    for (let i = 0; i < tagArray.length; i++) {
-                        let tag = tagArray[i];
-                        tags.add(tag);
-                    }
-                }
-            }).then(async () => {
-                let subPath = "json/substring/" + word.substring(0, 2) + ".json";
-                await fetch(subPath).then((res) => res.json()).then(async (data) => {
-                    const submap = new Map(Object.entries(data));
-                    let parents = submap.get(word);
-                    if (parents != null) {
-                        for (let i = 0; i < parents.length; i++) {
-                            let par = parents[i];
-                            let parPath = "json/tags/" + par.substring(0, 2) + ".json";
-                            await fetch(parPath).then((res) => res.json()).then((data) => {
-                                const parTagMap = new Map(Object.entries(data));
-                                let parTagArray = parTagMap.get(par);
-                                for (let j = 0; j < parTagArray.length; j++) {
-                                    let parTag = parTagArray[j];
-                                    tags.add(parTag);
-                                }
-                            });
-                        }
-                    }
-                });
-            }).then(async () => {
-                for (const tag of tags) {
-                    let freq = 0;
-                    if (results.has(tag)) freq = results.get(tag);
-                    freq++;
-                    results.set(tag, freq)
-                }
-            }).then(async () => {
-                let hadisSet = new Set();
-                for (let [key, value] of results) {
-                    // The only difference against search is - this condition
-                    if (value === i + 1)
-                        hadisSet.add(key);
-                    value = value + 1;
-                }
-                let ar = Array.from(hadisSet)
-                setAllResults(ar);
-                let toDisplay = [];
-                for (let i = 0; i < 20 && i < ar.length; i++) {
-                    toDisplay[i] = ar[i];
-                }
-                setDisplayHadis(toDisplay);
-                setResultCount(ar.length);
-            });
-        }
+        setResultCount(0);
+        setSearching(true);
+
+        const tags = await searchTags(normalizeQuery(topicName), { requireAll: true });
+        if (thisTopic !== latestTopic.current) return; // a newer topic replaced this one
+
+        setAllResults(tags);
+        setDisplayHadis(tags.slice(0, 20));
+        setResultCount(tags.length);
+        setSearching(false);
     }
 
     return (
@@ -88,7 +41,7 @@ function Topics() {
                     <HadisIndex setTopic={setTopic} selectTopic={selectTopic} setPage={setPage} />
                 </div>
                 <div className="right">
-                    <HadisDisplay topic={topic} hadisList={displayHadis} page={page} setPage={setPage} allResults={allResults} setDisplayHadis={setDisplayHadis} resultCount={resultCount} />
+                    <HadisDisplay topic={topic} hadisList={displayHadis} searching={searching} page={page} setPage={setPage} allResults={allResults} setDisplayHadis={setDisplayHadis} resultCount={resultCount} />
                 </div>
             </div>
         </div>
