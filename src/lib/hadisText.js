@@ -3,6 +3,9 @@ import { formatNumber } from './digits';
 const NUMBER_PREFIX = /^\s*((?:[০-৯]+\/)?[০-৯]+)\s*[।.]\s*/;
 const CHAIN_END = /(?:থেকে|হতে)\s+বর্ণিত(?:\s+আছে\s+যে)?(?:,|।|:|ঃ)?/;
 const SEARCH_WINDOW = 400;
+// Text before "থেকে বর্ণিত" is a chain of names only when it is short and has no sentence in it;
+// otherwise it is part of the saying (a chapter heading, a statement, a verse).
+const MAX_CHAIN_LENGTH = 200;
 
 // Shows the first and last narrator, joined by an ellipsis, when the chain has several.
 function summarise(names) {
@@ -18,8 +21,11 @@ export function splitHadis(text) {
   const number = numberMatch ? numberMatch[1] : '';
   const rest = numberMatch ? text.slice(numberMatch[0].length) : text;
   const end = CHAIN_END.exec(rest.slice(0, SEARCH_WINDOW));
-  if (!end) return { number, chain: '', body: rest.trim(), summary: '' };
-  const chainEnd = end.index + end[0].length;
+  const names = end ? rest.slice(0, end.index) : '';
+  const chainEnd = end ? end.index + end[0].length : 0;
+  if (!end || names.length > MAX_CHAIN_LENGTH || names.includes('।') || rest.slice(chainEnd).trim() === '') {
+    return { number, chain: '', body: rest.trim(), summary: '' };
+  }
   return {
     number,
     chain: rest.slice(0, chainEnd).trim(),

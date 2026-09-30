@@ -10,14 +10,18 @@ export function SettingsProvider({ children }) {
   // The saved settings are loaded right after mounting (the inline theme script has already
   // applied a saved theme, so there is no flash).
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setSettings(loadSettings());
+    setLoaded(true);
   }, []);
 
+  // Nothing is applied before the saved settings are loaded: applying the defaults first would
+  // remove the theme the inline script set, and the wrong colours could flash for one frame.
   useEffect(() => {
-    applySettings(settings);
-  }, [settings]);
+    if (loaded) applySettings(settings);
+  }, [loaded, settings]);
 
   const update = useCallback((partial) => {
     setSettings((current) => {

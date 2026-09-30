@@ -67,3 +67,25 @@ test('the first render uses the defaults, so the server and the browser agree (h
   expect(seen[0]).toBe('bn');
   expect(seen[seen.length - 1]).toBe('en');
 });
+
+test('a saved theme already on the page is never removed while the saved settings load (no flash)', () => {
+  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
+  document.documentElement.setAttribute('data-theme', 'dark'); // what the inline script did before first paint
+  const removed = vi.spyOn(document.documentElement, 'removeAttribute');
+  render(<SettingsProvider><Probe /></SettingsProvider>);
+  expect(removed).not.toHaveBeenCalledWith('data-theme');
+  expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  removed.mockRestore();
+});
+
+test('the provider renders when the browser blocks storage entirely', () => {
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError'); } });
+  try {
+    render(<SettingsProvider><Probe /></SettingsProvider>);
+    act(() => screen.getByText('dark').click());
+    expect(screen.getByTestId('theme')).toHaveTextContent('dark');
+  } finally {
+    Object.defineProperty(globalThis, 'localStorage', original);
+  }
+});

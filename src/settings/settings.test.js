@@ -45,3 +45,14 @@ test('applySettings sets the theme and the reading variables', () => {
   applySettings({ ...DEFAULT_SETTINGS, theme: 'auto' }, root);
   expect(root.hasAttribute('data-theme')).toBe(false);
 });
+
+test('storage that throws the moment it is read (site data blocked) does not break loading or saving', () => {
+  const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError'); } });
+  try {
+    expect(loadSettings()).toEqual(DEFAULT_SETTINGS);
+    expect(() => saveSettings(DEFAULT_SETTINGS)).not.toThrow();
+  } finally {
+    Object.defineProperty(globalThis, 'localStorage', original);
+  }
+});

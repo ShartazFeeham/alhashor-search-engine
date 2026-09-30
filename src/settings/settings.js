@@ -22,7 +22,16 @@ export function clampSettings(partial = {}) {
   };
 }
 
-export function loadSettings(storage = globalThis.localStorage) {
+// Merely reading window.localStorage throws when the visitor blocks site data, so it is read here.
+function defaultStorage() {
+  try {
+    return globalThis.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+export function loadSettings(storage = defaultStorage()) {
   try {
     const raw = storage.getItem(STORAGE_KEY);
     return raw ? clampSettings(JSON.parse(raw)) : { ...DEFAULT_SETTINGS };
@@ -31,7 +40,7 @@ export function loadSettings(storage = globalThis.localStorage) {
   }
 }
 
-export function saveSettings(settings, storage = globalThis.localStorage) {
+export function saveSettings(settings, storage = defaultStorage()) {
   try {
     storage.setItem(STORAGE_KEY, JSON.stringify(settings));
   } catch {

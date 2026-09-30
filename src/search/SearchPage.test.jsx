@@ -289,7 +289,7 @@ test('copy on a result copies the whole hadis and confirms it', async () => {
   await screen.findByText('t1');
   fireEvent.click(screen.getByRole('button', { name: 'কপি' }));
   expect(navigator.clipboard.writeText).toHaveBeenCalledWith('t1');
-  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('কপি করা হয়েছে'));
+  await waitFor(() => expect(screen.getAllByRole('status').map((e) => e.textContent).join(' ')).toContain('কপি করা হয়েছে'));
 });
 
 test('typing Roman letters offers Bengali spellings that fill the box', async () => {
@@ -323,4 +323,25 @@ test('titles: bare, and with the words searched', () => {
   serve({});
   renderSearch('/search?q=রোজা');
   expect(document.title).toBe('রোজা - হাদীস সার্চ - BoiKotha');
+});
+
+test('a narrator-name search highlights the name in the chain when the saying has no match (Review: narrator search)', async () => {
+  global.fetch = vi.fn((url) => {
+    const ok = (body) => Promise.resolve({ ok: true, json: () => Promise.resolve(body) });
+    if (decodeURIComponent(url).startsWith('/json/tags/হু')) return ok({ 'হুরায়রা': ['BUK-1'] });
+    if (url === '/json/hadis/Bukhari/0001/text.txt') return ok('১। আবূ হুরায়রা (রাঃ) থেকে বর্ণিত। তিনি বলেন, সত্য কথা বলো।');
+    return Promise.resolve({ ok: false });
+  });
+  renderSearch('/search?q=' + encodeURIComponent('হুরায়রা'));
+  expect(await screen.findByText('হুরায়রা', { selector: 'mark' })).toBeInTheDocument();
+});
+
+test('the result count and the not-found note are inside one live region that is always on the page', async () => {
+  serve({ '/json/tags/zo.json': { zoneword: ['BUK-1'] }, '/json/hadis/Bukhari/0001/text.txt': 'one' });
+  renderSearch();
+  const [region] = screen.getAllByRole('status'); // the page's own region comes before the toast's
+  expect(region).toBeInTheDocument();
+  search('zoneword');
+  await screen.findByText(/মোট ১ টি হাদিস পাওয়া গেছে/);
+  expect(region).toHaveTextContent('মোট ১ টি হাদিস পাওয়া গেছে');
 });

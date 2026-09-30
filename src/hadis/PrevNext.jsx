@@ -33,27 +33,35 @@ export default function PrevNext({ bookId, number, swipeTarget }) {
     window.addEventListener('keydown', onKey);
 
     let start = null;
+    // Only a one-finger swipe on a page that is not zoomed in counts: two fingers are a pinch,
+    // and a zoomed-in page is being panned, not flipped.
     const onTouchStart = (event) => {
       const touch = event.touches[0];
-      start = touch ? { x: touch.clientX, y: touch.clientY } : null;
+      start = event.touches.length === 1 && touch ? { x: touch.clientX, y: touch.clientY } : null;
     };
     const onTouchEnd = (event) => {
       const touch = event.changedTouches[0];
-      if (!start || !touch) return;
-      const dx = touch.clientX - start.x;
-      const dy = touch.clientY - start.y;
+      const swipeStart = start;
       start = null;
+      if (!swipeStart || !touch || (window.visualViewport?.scale ?? 1) > 1) return;
+      const dx = touch.clientX - swipeStart.x;
+      const dy = touch.clientY - swipeStart.y;
       if (Math.abs(dx) < SWIPE_MIN_X || Math.abs(dy) > SWIPE_MAX_Y) return;
       go(dx < 0 ? next : prev);
+    };
+    const onTouchCancel = () => {
+      start = null;
     };
     if (swipeTarget === 'page') {
       document.addEventListener('touchstart', onTouchStart, { passive: true });
       document.addEventListener('touchend', onTouchEnd, { passive: true });
+      document.addEventListener('touchcancel', onTouchCancel, { passive: true });
     }
     return () => {
       window.removeEventListener('keydown', onKey);
       document.removeEventListener('touchstart', onTouchStart);
       document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('touchcancel', onTouchCancel);
     };
   }, [bookId, prev, next, router, swipeTarget]);
 

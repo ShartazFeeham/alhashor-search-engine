@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
-import { highlightParts, makeSnippet } from '../lib/matchPattern';
+import { hasMatch, highlightParts, makeSnippet } from '../lib/matchPattern';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import BookBadge from '../ui/BookBadge';
@@ -32,7 +32,10 @@ export default function ResultItem({ tag, matcher }) {
   if (status === 'missing' || status === 'error') {
     content = <p className="search-missing">এই হাদীসটি পাওয়া যায়নি।</p>;
   } else if (status === 'ok') {
-    const snippet = makeSnippet(splitHadis(text).body, matcher);
+    // The snippet is about the saying; when the words matched only the chain or the number
+    // (a search for a narrator), it is taken from the whole text so the match is shown.
+    const { body } = splitHadis(text);
+    const snippet = makeSnippet(hasMatch(body, matcher) ? body : text, matcher);
     cut = snippet.cutStart || snippet.cutEnd;
     content = (
       <p className="search-text">

@@ -14,7 +14,7 @@
 .hadis-progress-bar{height:3px;background:var(--line);border-radius:3px;overflow:hidden}
 .hadis-progress-bar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .12s linear}
 
-.hadis-article{display:flex;flex-direction:column;gap:18px;touch-action:pan-y}
+.hadis-article{display:flex;flex-direction:column;gap:18px}
 .hadis-head{display:flex;align-items:center;gap:12px}
 .hadis-head h1{font-size:1.25rem;line-height:1.3;font-weight:700;margin:0}
 

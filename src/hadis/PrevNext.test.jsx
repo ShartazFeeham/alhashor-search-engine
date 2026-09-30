@@ -52,3 +52,31 @@ test('a mostly vertical swipe (scrolling) does nothing', () => {
   fireEvent.touchEnd(document.body, { changedTouches: [{ clientX: 150, clientY: 400 }] });
   expect(getUrl().pathname).toBe('/');
 });
+
+test('a pinch (two fingers) never changes the hadis', () => {
+  show(<PrevNext bookId="bukhari" number={10} swipeTarget="page" />);
+  fireEvent.touchStart(document.body, { touches: [{ clientX: 150, clientY: 200 }] });
+  fireEvent.touchStart(document.body, { touches: [{ clientX: 150, clientY: 200 }, { clientX: 250, clientY: 200 }] });
+  fireEvent.touchEnd(document.body, { changedTouches: [{ clientX: 330, clientY: 205 }] });
+  expect(getUrl().pathname).toBe('/');
+});
+
+test('a cancelled touch does not leave a swipe half-started', () => {
+  show(<PrevNext bookId="bukhari" number={10} swipeTarget="page" />);
+  fireEvent.touchStart(document.body, { touches: [{ clientX: 300, clientY: 200 }] });
+  fireEvent.touchCancel(document.body);
+  fireEvent.touchEnd(document.body, { changedTouches: [{ clientX: 100, clientY: 200 }] });
+  expect(getUrl().pathname).toBe('/');
+});
+
+test('a swipe while zoomed in (panning the page) does nothing', () => {
+  Object.defineProperty(window, 'visualViewport', { configurable: true, value: { scale: 2 } });
+  try {
+    show(<PrevNext bookId="bukhari" number={10} swipeTarget="page" />);
+    fireEvent.touchStart(document.body, { touches: [{ clientX: 300, clientY: 200 }] });
+    fireEvent.touchEnd(document.body, { changedTouches: [{ clientX: 100, clientY: 200 }] });
+    expect(getUrl().pathname).toBe('/');
+  } finally {
+    delete window.visualViewport;
+  }
+});

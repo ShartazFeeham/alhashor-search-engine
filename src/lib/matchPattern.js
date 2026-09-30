@@ -33,6 +33,11 @@ export function buildMatcher(words) {
   return patterns.length ? new RegExp(patterns.join('|'), 'gi') : null;
 }
 
+// Whether the text holds any of the words (a fresh pattern each time: a global one remembers where it stopped).
+export function hasMatch(text, matcher) {
+  return matcher ? new RegExp(matcher.source, 'i').test(text) : false;
+}
+
 export function highlightParts(text, matcher) {
   if (!matcher) return [{ text, match: false }];
   const parts = [];

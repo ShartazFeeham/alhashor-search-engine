@@ -68,3 +68,14 @@ test('when nothing matches the snippet is the start of the text', () => {
   expect(snippet.cutStart).toBe(false);
   expect(snippet.cutEnd).toBe(true);
 });
+
+test('hasMatch says whether a text contains any of the words', async () => {
+  const { hasMatch } = await import('./matchPattern');
+  const matcher = buildMatcher(['নামায']);
+  expect(hasMatch('আমরা নামায পড়ি', matcher)).toBe(true);
+  expect(hasMatch('আমরা রোজা রাখি', matcher)).toBe(false);
+  expect(hasMatch('কিছু', null)).toBe(false);
+  // asking twice gives the same answer (a global pattern remembers its position)
+  expect(hasMatch('আমরা নামায পড়ি', matcher)).toBe(true);
+  expect(hasMatch('আমরা নামায পড়ি', matcher)).toBe(true);
+});

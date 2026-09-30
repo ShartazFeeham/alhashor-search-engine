@@ -83,21 +83,20 @@ export default function SearchPage() {
       <PageTitle parts={[words.join(' '), 'হাদীস সার্চ']} />
       <SearchBox text={text} onText={setText} query={query} onSubmit={submit} />
 
-      {status === SEARCHING && (
-        <div className="search-indicator" role="status">
-          <span>খুঁজছি...</span>
-          <i />
-        </div>
-      )}
-
-      {status === DONE && tags.length === 0 && (
-        <p className="search-nf">
-          কেবল মাত্র বাংলা লেখায় সার্চ করুন। কোনো ফলাফল না পাওয়া গেলে বানান পরিবর্তন করে লিখুন।
-        </p>
-      )}
-
-      {status === DONE && tags.length > 0 && (
-        <>
+      {/* One live region, always on the page, so the changing state is announced to screen readers. */}
+      <div className="search-live" role="status">
+        {status === SEARCHING && (
+          <div className="search-indicator">
+            <span>খুঁজছি...</span>
+            <i />
+          </div>
+        )}
+        {status === DONE && tags.length === 0 && (
+          <p className="search-nf">
+            কেবল মাত্র বাংলা লেখায় সার্চ করুন। কোনো ফলাফল না পাওয়া গেলে বানান পরিবর্তন করে লিখুন।
+          </p>
+        )}
+        {status === DONE && tags.length > 0 && (
           <p className="search-total">
             মোট {digits(visible.length)} টি হাদিস পাওয়া গেছে
             {visible.length > 0 && (
@@ -109,6 +108,11 @@ export default function SearchPage() {
               </>
             )}
           </p>
+        )}
+      </div>
+
+      {status === DONE && tags.length > 0 && (
+        <>
           <BookFilter counts={counts} selected={book} onSelect={(id) => address({ book: id })} />
           {visible.length === 0 ? (
             <p className="search-nf">এই বইয়ে কোনো হাদীস পাওয়া যায়নি। অন্য বই বেছে নিন।</p>

@@ -90,3 +90,22 @@ test('on the real data, most hadis have a recognisable chain and no text is ever
   console.info(`chain recognised in ${withChain} of ${total} sampled hadis (${Math.round((100 * withChain) / total)}%)`);
   expect(withChain / total).toBeGreaterThan(0.7);
 });
+
+test('a long stretch before "থেকে বর্ণিত" that contains a sentence end is saying, not a chain', () => {
+  const text = 'ইবরাহীম তায়মী বলেন, আমরা নামায পড়তাম। এরপর তিনি আরও বললেন যে এটি সুন্নত। ইবনু আবূ মুলায়কা (রহঃ) থেকে বর্ণিত। পরে তিনি বললেন।';
+  const parts = splitHadis(text);
+  expect(parts.chain).toBe('');
+  expect(parts.body).toBe(text);
+});
+
+test('an over-long stretch before the marker is not a chain', () => {
+  const text = `${'শব্দ '.repeat(45)}(রাঃ) থেকে বর্ণিত। তিনি বলেন, ভালো কথা।`;
+  expect(splitHadis(text).chain).toBe('');
+  expect(splitHadis(text).body).toBe(text.trim());
+});
+
+test('when the chain would leave nothing to read, the whole text is the saying', () => {
+  const parts = splitHadis('১০২। আবূ দাঊদ (রহঃ) ... আনাস (রাঃ) থেকে বর্ণিত।');
+  expect(parts.chain).toBe('');
+  expect(parts.body).toBe('আবূ দাঊদ (রহঃ) ... আনাস (রাঃ) থেকে বর্ণিত।');
+});
