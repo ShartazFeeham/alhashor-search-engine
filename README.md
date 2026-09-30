@@ -1,6 +1,6 @@
 # Alhashor Search Engine
 
-A Bengali hadis search site covering the six major hadis books: Bukhari, Muslim, Tirmidhi, Abu Dawud, Ibn Majah and Nasa'i. It runs entirely in the browser against static JSON files, so it needs no server or database.
+A Bengali hadis search site covering the six major hadis books: Bukhari, Muslim, Tirmidhi, Abu Dawud, Ibn Majah and Nasa'i. It is a Next.js app that reads static JSON files shipped with it, so it needs no database or outside service.
 
 Live at https://hadis.feeham.com
 
@@ -14,15 +14,15 @@ All hadis text is in Bengali, so searches must be written in Bengali.
 
 ## Getting started
 
-Requires Node 20.19 or newer (see `.nvmrc`). Built with Vite and tested with Vitest.
+Requires Node 20.9 or newer (see `.nvmrc`). Built with Next.js and tested with Vitest.
 
 ```sh
 npm ci          # install dependencies
-npm start       # dev server at http://localhost:3000
+npm run dev     # dev server at http://localhost:3000
 npm test        # tests in watch mode; add -- --run to run them once
 npm run lint    # ESLint, zero warnings allowed
-npm run build   # production build into build/
-npm run preview # serve the production build locally
+npm run build   # production build
+npm start       # serve the production build at http://localhost:3000
 ```
 
 ## How search works
@@ -56,12 +56,7 @@ public/
 
 ## Deployment
 
-Pushes to `main` deploy automatically through GitHub Actions ([.github/workflows/ci.yml](.github/workflows/ci.yml)):
-
-1. Install, lint, test and build (this also runs on every pull request).
-2. On `main` only, deploy `build/` to Netlify with the Netlify CLI.
-
-[netlify.toml](netlify.toml) holds the single-page-app redirect and the cache and CORS headers for `/json/*` and `/photos/*`. The workflow needs two repository secrets: `NETLIFY_AUTH_TOKEN` and `NETLIFY_SITE_ID`.
+Deploys are paused while the site moves to Next.js. The CI workflow ([.github/workflows/ci.yml](.github/workflows/ci.yml)) still installs, lints, tests and builds on every push and pull request. [netlify.toml](netlify.toml) keeps the cache and CORS headers for `/json/*` and `/photos/*`.
 
 ## Notes
 

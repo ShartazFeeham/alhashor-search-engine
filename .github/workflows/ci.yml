@@ -31,11 +31,11 @@ jobs:
       - run: npm test -- --run
       - run: npm run build
 
-      # Deploy to Netlify only from main, and only after everything above passed.
-      # The Netlify site's own Git-based builds must be turned off so it doesn't deploy twice.
+      # Deploys are paused. This step deployed a static build/ folder, which a Next.js site no
+      # longer produces; rework it (Netlify's Next.js support) before turning it back on.
       - name: Deploy to Netlify
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: npx --yes netlify-cli@latest deploy --prod --dir=build --no-build
+        if: ${{ false }}
+        run: npx --yes netlify-cli@latest deploy --prod --dir=.next --no-build
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
