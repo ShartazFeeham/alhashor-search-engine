@@ -13,6 +13,8 @@ import '../Books/Book.css';
 import '../Topics/HadisIndex.css';
 import '../Topics/Topics.css';
 import '../Home/Home.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import NavBar from '../Navbar/Navbar';
 import BackToTop from '../Helpers/BackToTop';

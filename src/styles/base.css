@@ -1,0 +1,29 @@
+/* Base rules for the new design. Legacy pages (Books, Topics) still use Bootstrap, so this file
+   only sets what the new design needs and does not reset anything the legacy CSS depends on. */
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--f-ui), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 75%, transparent);
+  outline-offset: 2px;
+}
+
+mark {
+  background: var(--hl);
+  color: var(--hl-ink);
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
