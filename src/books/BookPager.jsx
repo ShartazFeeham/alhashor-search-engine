@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { bookHref, pageCount } from '../lib/bookBrowse';
 import { useDigits } from '../lib/useDigits';
-import { toTop } from './toTop';
+import { toTop } from '../lib/toTop';
 import Icon from '../ui/Icon';
 
 // A control that is a link when it can go somewhere and plain, dimmed text when it cannot.

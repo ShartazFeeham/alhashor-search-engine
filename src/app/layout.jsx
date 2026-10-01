@@ -1,13 +1,4 @@
-// All stylesheets are global and load in this order, exactly as the old single bundle did.
-// (Pages relied on each other's rules, e.g. Loading.css's .container, so the order is kept.)
-import '../index.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../App.css';
-import '../Helpers/HadisView.css';
-import '../Helpers/Loading.css';
-import '../Helpers/NextPrev.css';
-import '../Topics/HadisIndex.css';
-import '../Topics/Topics.css';
+// All stylesheets are global and load in this order (a test pins it).
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/ui.css';
@@ -15,6 +6,9 @@ import '../styles/home.css';
 import '../styles/hadis.css';
 import '../styles/search.css';
 import '../styles/books.css';
+import '../styles/topics.css';
+import '../styles/share.css';
+import '../styles/daily.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import TopNav from '../shell/TopNav';
 import TabBar from '../shell/TabBar';

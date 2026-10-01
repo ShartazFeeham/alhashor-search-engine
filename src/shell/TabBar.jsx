@@ -20,6 +20,18 @@ export default function TabBar() {
     <>
       {moreOpen && (
         <div className="shell-more">
+          <Link href="/daily" onClick={() => setMoreOpen(false)}>
+            <Icon name="clock" size={20} />
+            আজকের হাদীস
+          </Link>
+          <Link href="/daily?tab=plans" onClick={() => setMoreOpen(false)}>
+            <Icon name="plan" size={20} />
+            পরিকল্পনা
+          </Link>
+          <Link href="/daily?tab=khutbah" onClick={() => setMoreOpen(false)}>
+            <Icon name="print" size={20} />
+            খুতবার তালিকা
+          </Link>
           <Link href="/settings" onClick={() => setMoreOpen(false)}>
             <Icon name="sliders" size={20} />
             পড়ার সেটিংস
@@ -39,7 +51,11 @@ export default function TabBar() {
           <Icon name="search" size={26} />
         </Link>
         {tab('topics', '/topics', 'tag', 'বিষয়')}
-        <button type="button" aria-expanded={moreOpen} onClick={() => setMoreOpen((open) => !open)}>
+        <button
+          type="button"
+          aria-expanded={moreOpen}
+          aria-current={current === 'daily' ? 'true' : undefined}
+          onClick={() => setMoreOpen((open) => !open)}>
           <Icon name="grid" size={22} />
           <span>আরও</span>
         </button>

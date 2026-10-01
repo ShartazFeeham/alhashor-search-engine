@@ -1,0 +1,36 @@
+/* Share: the share buttons shown with a hadis, and the quote-card page (/share/<book>/<number>).
+   D2 look: rounded cards, pill buttons, 44px touch targets. */
+
+/* ---------- the share buttons shown with a hadis ---------- */
+.share-icon-btn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:transparent;border:1px solid transparent;color:var(--ink2);cursor:pointer;transition:background .2s,color .2s}
+.share-icon-btn:hover{background:var(--surface2);color:var(--accent2)}
+.hadis-actions a.ui-btn{text-decoration:none}
+
+/* ---------- the quote-card page ---------- */
+.share-page{max-width:640px}
+.share-back{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;min-height:44px;color:var(--ink2);font-weight:600;text-decoration:none}
+.share-back:hover{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
+.share-head{display:flex;align-items:center;gap:12px}
+.share-head .h1{font-size:22px}
+
+.share-card-wrap{display:flex;flex-direction:column;gap:12px}
+.share-sizes{display:flex;flex-wrap:wrap;gap:8px}
+.share-sizes .ui-chip{min-height:44px}
+.share-preview{display:flex;justify-content:center;padding:14px;border-radius:24px;background:var(--surface2)}
+.share-canvas{display:block;width:100%;max-width:420px;height:auto;border-radius:18px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.share-note{font-size:14px}
+
+.share-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.share-actions .ui-btn{min-height:44px;padding-inline:12px}
+.share-actions .ui-btn.primary{grid-column:1 / -1}
+
+.share-box{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:22px;background:var(--surface);box-shadow:var(--shadow)}
+.share-citebox{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:16px;padding:6px 6px 6px 14px;font-weight:600}
+.share-citebox span{flex:1;min-width:0}
+.share-citebox .ui-btn{min-height:44px}
+.share-text{margin:0;font-family:var(--f-read),serif;font-size:15.5px;line-height:1.8;white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:12px 14px;overflow-wrap:anywhere;color:var(--ink2)}
+
+@media (min-width: 641px){
+  .share-actions{grid-template-columns:repeat(4,auto);justify-content:start}
+  .share-actions .ui-btn.primary{grid-column:auto}
+}

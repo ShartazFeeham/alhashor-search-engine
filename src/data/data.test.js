@@ -1,0 +1,102 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { BOOKS, bookByCode, bookById, hasHadis } from '../lib/books';
+import { TOPICS } from '../lib/topics';
+import { CURATED_TOPICS } from './curatedTopics';
+import { PLANS } from './readingPlans';
+
+const root = process.cwd();
+const short = JSON.parse(readFileSync(path.join(root, 'public/json/short-hadis.json'), 'utf8'));
+
+const wordCount = (text) => text.trim().split(/\s+/).length;
+
+function expectRealHadis(entry) {
+  const book = bookById(entry.book);
+  expect(book, `unknown book id ${entry.book}`).toBeDefined();
+  expect(Number.isInteger(entry.number)).toBe(true);
+  expect(hasHadis(book, entry.number), `${entry.book} ${entry.number} has no data file`).toBe(true);
+}
+
+describe('curated topics', () => {
+  const names = Object.keys(CURATED_TOPICS);
+
+  test('has about ten topics, each with five or more entries', () => {
+    expect(names.length).toBeGreaterThanOrEqual(10);
+    for (const name of names) expect(CURATED_TOPICS[name].length).toBeGreaterThanOrEqual(5);
+  });
+
+  test('every topic name is a topic on the Topics page', () => {
+    for (const name of names) {
+      expect(name).toBe(name.trim());
+      expect(TOPICS, `${name} is not a topic`).toContain(name);
+    }
+  });
+
+  test('every entry uses a known book, an existing number and a short Bengali note', () => {
+    for (const name of names) {
+      for (const entry of CURATED_TOPICS[name]) {
+        expectRealHadis(entry);
+        expect(typeof entry.note).toBe('string');
+        expect(entry.note.length).toBeGreaterThan(0);
+        expect(wordCount(entry.note), `${name} ${entry.book} ${entry.number}`).toBeLessThanOrEqual(12);
+      }
+    }
+  });
+
+  test('no hadis is listed twice in one topic', () => {
+    for (const name of names) {
+      const keys = CURATED_TOPICS[name].map((e) => `${e.book}:${e.number}`);
+      expect(new Set(keys).size).toBe(keys.length);
+    }
+  });
+});
+
+describe('reading plans', () => {
+  test('exactly three plans with the agreed ids and day counts', () => {
+    expect(PLANS.map((p) => p.id)).toEqual(['ramadan-30', 'short-40', 'character-7']);
+    expect(PLANS.map((p) => p.days.length)).toEqual([30, 40, 7]);
+  });
+
+  test('each plan has an ascii id, a title and a description', () => {
+    for (const plan of PLANS) {
+      expect(plan.id).toMatch(/^[a-z0-9-]+$/);
+      expect(plan.title.length).toBeGreaterThan(0);
+      expect(plan.description.length).toBeGreaterThan(0);
+    }
+  });
+
+  test('every day uses a known book and an existing number', () => {
+    for (const plan of PLANS) for (const day of plan.days) expectRealHadis(day);
+  });
+
+  test('no hadis repeats within a plan', () => {
+    for (const plan of PLANS) {
+      const keys = plan.days.map((d) => `${d.book}:${d.number}`);
+      expect(new Set(keys).size, plan.id).toBe(keys.length);
+    }
+  });
+
+  test('the short-40 plan uses only hadis from the short list', () => {
+    const plan = PLANS.find((p) => p.id === 'short-40');
+    for (const day of plan.days) {
+      expect(short[bookById(day.book).code]).toContain(day.number);
+    }
+  });
+});
+
+describe('short-hadis.json', () => {
+  test('has the six book codes', () => {
+    expect(Object.keys(short).sort()).toEqual(BOOKS.map((b) => b.code).sort());
+  });
+
+  test('numbers are ascending, unique and all exist', () => {
+    for (const [code, numbers] of Object.entries(short)) {
+      const book = bookByCode(code);
+      expect(numbers.length).toBeGreaterThan(0);
+      for (let i = 0; i < numbers.length; i += 1) {
+        if (i > 0) expect(numbers[i]).toBeGreaterThan(numbers[i - 1]);
+        expect(hasHadis(book, numbers[i]), `${code} ${numbers[i]}`).toBe(true);
+      }
+    }
+  });
+});

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import PageTitle from '../Helpers/PageTitle';
+import HomeDailyCard from '../daily/HomeDailyCard';
 import { BOOKS, hadisCount } from '../lib/books';
 import { bookHref } from '../lib/bookBrowse';
 import { useDigits } from '../lib/useDigits';
@@ -46,11 +47,9 @@ export default function Home() {
           <b>হাদীসের বই</b>
           <span className="home-tile-text">{digits(BOOKS.length)}টি প্রধান গ্রন্থ, শুরু থেকে শেষ</span>
         </Link>
-        <div className="home-tile soon">
-          <b>আরও আসছে...</b>
-          <span className="home-tile-text">নতুন সুবিধা শীঘ্রই আসছে, ইনশাআল্লাহ</span>
-        </div>
       </div>
+
+      <HomeDailyCard />
 
       <section className="home-shelf-wrap" aria-labelledby="home-shelf-title">
         <div className="home-shelf-head">
@@ -74,6 +73,15 @@ export default function Home() {
         </div>
         <div className="home-plank" />
       </section>
+
+      <nav className="home-quick" aria-labelledby="home-quick-title">
+        <h2 className="h2" id="home-quick-title">নতুন সুবিধা</h2>
+        <div className="home-quick-links">
+          <Link href="/daily"><Icon name="clock" size={22} />আজকের হাদীস</Link>
+          <Link href="/daily?tab=plans"><Icon name="plan" size={22} />পরিকল্পনা</Link>
+          <Link href="/daily?tab=khutbah"><Icon name="print" size={22} />খুতবার তালিকা</Link>
+        </div>
+      </nav>
     </main>
   );
 }

@@ -1,12 +1,15 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { hadisHref } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
+import { shareHref } from '../lib/share';
 import { useDigits } from '../lib/useDigits';
 import BookBadge from '../ui/BookBadge';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
+import ShareButton from '../share/ShareButton';
 import { useToast } from '../ui/Toast';
 
 export default function HadisArticle({ book, number, text, id }) {
@@ -47,6 +50,8 @@ export default function HadisArticle({ book, number, text, id }) {
         <Button size="sm" variant="ghost" onClick={() => copy(text)}><Icon name="copy" size={16} />কপি</Button>
         <Button size="sm" variant="ghost" onClick={() => copy(`${book.cite}, হাদীস নং ${digits(number)}`)}>উদ্ধৃতি কপি</Button>
         <Button size="sm" variant="ghost" onClick={() => copy(`${window.location.origin}${href}`)}><Icon name="link" size={16} />লিংক কপি</Button>
+        <ShareButton book={book} number={number} text={text} />
+        <Link href={shareHref(book.id, number)} className="ui-btn ghost sm">ছবি বানান</Link>
       </div>
       <p className="hadis-permalink">স্থায়ী লিংক: <code>{href}</code></p>
     </article>

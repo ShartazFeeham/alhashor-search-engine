@@ -10,6 +10,7 @@ const LINKS = [
   ['search', '/search', 'সার্চ'],
   ['books', '/books', 'হাদীস বই'],
   ['topics', '/topics', 'বিষয়ভিত্তিক হাদীস'],
+  ['daily', '/daily', 'আজকের হাদীস'],
 ];
 
 export default function TopNav() {

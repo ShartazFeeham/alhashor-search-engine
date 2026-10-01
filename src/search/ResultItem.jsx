@@ -6,6 +6,7 @@ import { splitHadis } from '../lib/hadisText';
 import { hasMatch, highlightParts, makeSnippet } from '../lib/matchPattern';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
+import ShareButton from '../share/ShareButton';
 import BookBadge from '../ui/BookBadge';
 import { useToast } from '../ui/Toast';
 
@@ -58,6 +59,7 @@ export default function ResultItem({ tag, matcher }) {
       <div className="search-item-actions">
         {cut && <Link href={href}>সম্পূর্ণ হাদীস দেখুন...</Link>}
         {status === 'ok' && <button type="button" onClick={copy}>কপি</button>}
+        {status === 'ok' && <ShareButton book={book} number={number} text={text} variant="link" />}
         <Link href={href} className="quiet">হাদীস পাতা</Link>
       </div>
     </li>

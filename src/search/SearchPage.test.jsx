@@ -292,6 +292,18 @@ test('copy on a result copies the whole hadis and confirms it', async () => {
   await waitFor(() => expect(screen.getAllByRole('status').map((e) => e.textContent).join(' ')).toContain('কপি করা হয়েছে'));
 });
 
+test('each result has a quiet "শেয়ার" button that opens the share sheet', async () => {
+  const native = vi.fn().mockResolvedValue();
+  Object.defineProperty(navigator, 'share', { value: native, configurable: true, writable: true });
+  servePaged('copyword', 1);
+  renderSearch('/search?q=copyword');
+  await screen.findByText('t1');
+  fireEvent.click(screen.getByRole('button', { name: 'শেয়ার' }));
+  await waitFor(() => expect(native).toHaveBeenCalledTimes(1));
+  expect(native.mock.calls[0][0]).toMatchObject({ title: 'সহীহ বুখারী, হাদীস নং ১', url: `${window.location.origin}/hadis/bukhari/1` });
+  delete navigator.share;
+});
+
 test('typing Roman letters offers Bengali spellings that fill the box', async () => {
   renderSearch();
   fireEvent.change(screen.getByRole('textbox', BOX), { target: { value: 'namaz' } });

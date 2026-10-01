@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { bookHref, rangeGrid } from '../lib/bookBrowse';
 import { useDigits } from '../lib/useDigits';
-import { toTop } from './toTop';
+import { toTop } from '../lib/toTop';
 
 // Every hundred numbers of the book as a button; the one the open page is in is marked, and a
 // range with no hadis at all (a gap in the data) is shown but cannot be opened.

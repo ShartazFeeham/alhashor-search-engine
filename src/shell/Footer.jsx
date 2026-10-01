@@ -24,6 +24,7 @@ export default function Footer() {
         <Link href="/search">সার্চ</Link>
         <Link href="/books">হাদীস বই</Link>
         <Link href="/topics">বিষয়ভিত্তিক হাদীস</Link>
+        <Link href="/daily">আজকের হাদীস</Link>
       </nav>
     </footer>
   );

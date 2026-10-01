@@ -82,3 +82,7 @@
 .settings-stepper{display:flex;align-items:center;gap:10px}
 .settings-stepper output{min-width:3ch;text-align:center;font-weight:700}
 .settings-preview{margin:0;padding:14px;border-radius:14px;background:var(--surface2);font-family:var(--f-read),serif;font-size:var(--rs);line-height:var(--rlh);max-width:var(--rw)}
+
+/* ---------- not-found page ---------- */
+.notfound{align-items:center;text-align:center;padding-top:56px;padding-bottom:56px;gap:20px}
+.notfound .ui-btn{text-decoration:none}

@@ -1,10 +1,11 @@
 import { Suspense } from 'react';
-import Topics from '../../Topics/Topics';
+import { CURATED_TOPICS } from '../../data/curatedTopics';
+import TopicsPage from '../../topics/TopicsPage';
 
 export default function Page() {
   return (
     <Suspense>
-      <Topics />
+      <TopicsPage curated={CURATED_TOPICS} />
     </Suspense>
   );
 }

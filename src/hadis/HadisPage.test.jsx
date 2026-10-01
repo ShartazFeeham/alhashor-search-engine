@@ -108,3 +108,41 @@ test('sets the page title', async () => {
   await screen.findByRole('heading', { level: 1 });
   expect(document.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
 });
+
+describe('share', () => {
+  afterEach(() => {
+    delete navigator.share;
+  });
+
+  test('a "শেয়ার" button opens the share sheet with the citation, text and permanent link', async () => {
+    const native = vi.fn().mockResolvedValue();
+    Object.defineProperty(navigator, 'share', { value: native, configurable: true, writable: true });
+    serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+    show('bukhari', 6628);
+    await screen.findByRole('heading', { level: 1 });
+    fireEvent.click(screen.getByRole('button', { name: 'শেয়ার' }));
+    await waitFor(() => expect(native).toHaveBeenCalledTimes(1));
+    const data = native.mock.calls[0][0];
+    expect(data.title).toBe('সহীহ বুখারী, হাদীস নং ৬,৬২৮');
+    expect(data.url).toBe(`${window.location.origin}/hadis/bukhari/6628`);
+    expect(data.text).toContain('বর্তমান যুগের মুনাফিকরা');
+    expect(data.text).not.toMatch(/^৬৬২৮/);
+  });
+
+  test('without a share sheet the share text is copied and the toast says so', async () => {
+    serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+    show('bukhari', 6628);
+    await screen.findByRole('heading', { level: 1 });
+    fireEvent.click(screen.getByRole('button', { name: 'শেয়ার' }));
+    await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalled());
+    expect(navigator.clipboard.writeText.mock.calls.at(-1)[0]).toContain(`${window.location.origin}/hadis/bukhari/6628`);
+    expect(await screen.findByText('শেয়ার টেক্সট কপি করা হয়েছে')).toBeInTheDocument();
+  });
+
+  test('a "ছবি বানান" link goes to the quote-card page', async () => {
+    serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+    show('bukhari', 6628);
+    await screen.findByRole('heading', { level: 1 });
+    expect(screen.getByRole('link', { name: 'ছবি বানান' })).toHaveAttribute('href', '/share/bukhari/6628');
+  });
+});

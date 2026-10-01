@@ -9,6 +9,7 @@ import HomePage from './page';
 import SearchPage from './search/page';
 import BooksPage from './books/page';
 import TopicsPage from './topics/page';
+import DailyRoute, { metadata as dailyMetadata } from './daily/page';
 import NotFoundPage from './not-found';
 import SettingsRoute from './settings/page';
 
@@ -17,6 +18,9 @@ const pages = [
   ['/search', SearchPage],
   ['/books', BooksPage],
   ['/topics', TopicsPage],
+  ['/daily', DailyRoute],
+  ['/daily?tab=plans', DailyRoute],
+  ['/daily?tab=khutbah&ids=muslim-5', DailyRoute],
   ['/settings', SettingsRoute],
 ];
 
@@ -44,11 +48,18 @@ test.each([
   ['/books', 'হাদীসের বই - BoiKotha', BooksPage],
   ['/topics', 'বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
   ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
+  ['/daily', 'আজকের হাদীস - BoiKotha', DailyRoute],
+  ['/daily?tab=plans', 'পরিকল্পনা - BoiKotha', DailyRoute],
+  ['/daily?tab=khutbah', 'খুতবার তালিকা - BoiKotha', DailyRoute],
   ['/settings', 'পড়ার সেটিংস - BoiKotha', SettingsRoute],
 ])('%s is titled %s', (route, title, Page) => {
   setUrl(route);
   render(<SettingsProvider><Page /></SettingsProvider>);
   expect(document.title).toBe(title);
+});
+
+test('the daily route has a pre-built title for the first paint', () => {
+  expect(dailyMetadata.title).toBe('আজকের হাদীস - BoiKotha');
 });
 
 test('the not-found page explains and links home', () => {
@@ -78,8 +89,8 @@ test('site metadata names the site and describes it in Bengali', () => {
   expect(metadata.manifest).toBe('/manifest.json');
 });
 
-test('the layout loads every global stylesheet, in the order the pages were designed with', () => {
+test('the layout loads every global stylesheet, in order', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css']);
+  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css']);
 });

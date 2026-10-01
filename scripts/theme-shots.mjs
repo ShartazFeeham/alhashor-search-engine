@@ -12,6 +12,8 @@ const routes = [
   ['hadis', '/hadis/bukhari/307'],
   ['books', '/books'],
   ['book', '/books/bukhari?page=4'],
+  ['topics', '/topics'],
+  ['topic', '/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8'],
   ['settings', '/settings'],
 ];
 const sizes = [['phone', 390, 844], ['desktop', 1200, 900]];

@@ -87,3 +87,43 @@ test('a network failure offers another try', async () => {
   fireEvent.click(screen.getByRole('button', { name: 'আবার চেষ্টা করুন' }));
   expect(await screen.findByText(/সৎকাজ করো/)).toBeInTheDocument();
 });
+
+describe('share', () => {
+  afterEach(() => {
+    delete navigator.share;
+  });
+
+  test('a quiet share icon button sits next to copy once the text is there', async () => {
+    serve({ '/json/hadis/Muslim/0012/text.txt': SHORT });
+    show('muslim', 12);
+    expect(screen.queryByRole('button', { name: 'শেয়ার' })).not.toBeInTheDocument();
+    const button = await screen.findByRole('button', { name: 'শেয়ার' });
+    expect(button).toHaveAttribute('title', 'শেয়ার');
+    expect(screen.getByRole('button', { name: 'কপি' })).toBeInTheDocument();
+  });
+
+  test('share opens the share sheet for this hadis', async () => {
+    const native = vi.fn().mockResolvedValue();
+    Object.defineProperty(navigator, 'share', { value: native, configurable: true, writable: true });
+    serve({ '/json/hadis/Muslim/0012/text.txt': SHORT });
+    show('muslim', 12);
+    fireEvent.click(await screen.findByRole('button', { name: 'শেয়ার' }));
+    await waitFor(() => expect(native).toHaveBeenCalledTimes(1));
+    expect(native.mock.calls[0][0]).toMatchObject({
+      title: 'সহীহ মুসলিম, হাদীস নং ১২',
+      url: `${window.location.origin}/hadis/muslim/12`,
+    });
+    expect(native.mock.calls[0][0].text).toContain('সৎকাজ করো');
+  });
+
+  test('a long hadis is shared as an excerpt with the link to the full page', async () => {
+    serve({ '/json/hadis/Bukhari/0005/text.txt': LONG });
+    show('bukhari', 5);
+    fireEvent.click(await screen.findByRole('button', { name: 'শেয়ার' }));
+    await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalled());
+    const copied = navigator.clipboard.writeText.mock.calls.at(-1)[0];
+    expect(copied).toContain(' ...');
+    expect(copied).toContain(`সম্পূর্ণ হাদীস: ${window.location.origin}/hadis/bukhari/5`);
+    expect(copied.length).toBeLessThan(700);
+  });
+});

@@ -7,6 +7,7 @@ import { splitHadis } from '../lib/hadisText';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import BookBadge from '../ui/BookBadge';
+import ShareButton from '../share/ShareButton';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import { useToast } from '../ui/Toast';
@@ -74,6 +75,7 @@ export default function HadisCard({ bookId, number }) {
       {status === 'ok' && (
         <footer className="hcard-foot">
           <Button size="sm" onClick={copy}><Icon name="copy" size={16} />কপি</Button>
+          <ShareButton book={book} number={number} text={text} variant="icon" />
         </footer>
       )}
     </article>

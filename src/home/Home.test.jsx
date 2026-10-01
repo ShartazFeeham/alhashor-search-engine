@@ -1,9 +1,33 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { clearShortListCache } from '../daily/useShortList';
+import { pickDaily } from '../lib/dailyPick';
+import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
+import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
 import { getUrl } from '../test/nextNavigation';
 import Home from './Home';
 
 const renderHome = () => render(<SettingsProvider><Home /></SettingsProvider>);
+
+// The daily card loads its texts after the test body; let those loads finish inside act().
+async function settle() {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+}
+
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(new Date(2026, 9, 2, 10, 0));
+  clearShortListCache();
+  global.fetch = vi.fn(diskFetch);
+});
+
+afterEach(async () => {
+  await settle();
+  vi.useRealTimers();
+  delete global.fetch;
+});
 
 test('has a clear title and a search entry that opens the search page', () => {
   renderHome();
@@ -32,9 +56,60 @@ test('a book on the shelf opens that book', () => {
   expect(getUrl().pathname).toBe('/books/muslim');
 });
 
-test('says more is coming', () => {
+test('no longer has the placeholder tile saying more is coming', () => {
   renderHome();
-  expect(screen.getByText(/শীঘ্রই আসছে/)).toBeInTheDocument();
+  expect(screen.queryByText(/আরও আসছে/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/শীঘ্রই আসছে/)).not.toBeInTheDocument();
+});
+
+describe('the daily hadis card', () => {
+  const card = () => screen.getByRole('region', { name: 'আজকের হাদীস' });
+  const today = () => pickDaily(realShortList(), new Date(2026, 9, 2, 10, 0));
+
+  test('shows the start of today\'s hadis with its citation, and links to the daily page', async () => {
+    renderHome();
+    const pick = today();
+    const { chain, body } = splitHadis(realText(pick.book.id, pick.number));
+    const start = `${chain} ${body}`.trim().replace(/\s+/g, ' ').slice(0, 40);
+    const excerpt = await within(card()).findByTestId('home-daily-text');
+    expect(excerpt.textContent.replace(/\s+/g, ' ')).toContain(start);
+    expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
+    expect(within(card()).getByText('২ অক্টোবর ২০২৬')).toBeInTheDocument();
+    fireEvent.click(within(card()).getByRole('link', { name: /আরও দেখুন/ }));
+    expect(getUrl().pathname).toBe('/daily');
+  });
+
+  test('is a short excerpt, not the whole text of a long one', async () => {
+    renderHome();
+    const excerpt = await within(card()).findByTestId('home-daily-text');
+    expect(excerpt.textContent.length).toBeLessThanOrEqual(190);
+  });
+
+  test('still offers the daily page when the list cannot be loaded', async () => {
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
+    renderHome();
+    expect(await within(card()).findByText(/আজকের হাদীসটি আনা যায়নি/)).toBeInTheDocument();
+    expect(within(card()).getByRole('link', { name: /আরও দেখুন/ })).toHaveAttribute('href', '/daily');
+  });
+});
+
+describe('the new-features row', () => {
+  const row = () => screen.getByRole('navigation', { name: 'নতুন সুবিধা' });
+
+  test('links to the daily hadis, the plans and the khutbah sheet', () => {
+    renderHome();
+    expect(within(row()).getAllByRole('link').map((link) => [link.textContent, link.getAttribute('href')])).toEqual([
+      ['আজকের হাদীস', '/daily'],
+      ['পরিকল্পনা', '/daily?tab=plans'],
+      ['খুতবার তালিকা', '/daily?tab=khutbah'],
+    ]);
+  });
+
+  test('a link opens that tab', () => {
+    renderHome();
+    fireEvent.click(within(row()).getByRole('link', { name: 'পরিকল্পনা' }));
+    expect(getUrl().pathname + getUrl().search).toBe('/daily?tab=plans');
+  });
 });
 
 test('sets the home page title', () => {
