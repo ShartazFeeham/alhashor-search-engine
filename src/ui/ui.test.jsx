@@ -62,3 +62,8 @@ test('useToast outside the provider does nothing instead of crashing', () => {
   render(<Probe />);
   expect(() => fireEvent.click(screen.getByText('go'))).not.toThrow();
 });
+
+test('a chip with no pressed value is a plain button, not a toggle', () => {
+  render(<Chip>উদাহরণ</Chip>);
+  expect(screen.getByRole('button', { name: 'উদাহরণ' })).not.toHaveAttribute('aria-pressed');
+});

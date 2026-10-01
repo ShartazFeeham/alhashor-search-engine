@@ -60,7 +60,9 @@ test('has a breadcrumb with a link to the book and the home page', async () => {
   expect(crumbs).toHaveTextContent('হোম');
   expect(crumbs).toHaveTextContent('বুখারী শরীফ');
   fireEvent.click(screen.getByRole('link', { name: 'বুখারী শরীফ' }));
-  expect(getUrl().pathname).toBe('/books');
+  // the book's own page, at the page this hadis is on, pointing at it
+  expect(getUrl().pathname).toBe('/books/bukhari');
+  expect(getUrl().search).toMatch(/^\?page=\d+&hadis=6628$/);
 });
 
 test('shows reading time and the word count', async () => {

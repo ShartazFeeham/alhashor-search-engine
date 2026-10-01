@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { renderToStaticMarkup as toMarkup } from 'react-dom/server';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { setUrl } from '../test/nextNavigation';
@@ -51,12 +51,6 @@ test.each([
   expect(document.title).toBe(title);
 });
 
-test('choosing a book puts its name in the title', () => {
-  render(<BooksPage />);
-  fireEvent.click(screen.getByText('মুসলিম শরীফ'));
-  expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - BoiKotha');
-});
-
 test('the not-found page explains and links home', () => {
   render(<NotFoundPage />);
   expect(screen.getByText('পৃষ্ঠাটি পাওয়া যায়নি')).toBeInTheDocument();
@@ -87,5 +81,5 @@ test('site metadata names the site and describes it in Bengali', () => {
 test('the layout loads every global stylesheet, in the order the pages were designed with', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Books/Book.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css']);
+  expect(stylesheets).toEqual(['../index.css', 'bootstrap/dist/css/bootstrap.min.css', '../App.css', '../Helpers/HadisView.css', '../Helpers/Loading.css', '../Helpers/NextPrev.css', '../Topics/HadisIndex.css', '../Topics/Topics.css', '../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css']);
 });

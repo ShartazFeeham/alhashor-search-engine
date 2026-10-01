@@ -1,5 +1,5 @@
-import Books from '../../Books/Books';
+import BooksIndex from '../../books/BooksIndex';
 
 export default function Page() {
-  return <Books />;
+  return <BooksIndex />;
 }

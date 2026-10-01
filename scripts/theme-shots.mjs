@@ -10,6 +10,8 @@ const routes = [
   ['search', '/search'],
   ['results', '/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE'],
   ['hadis', '/hadis/bukhari/307'],
+  ['books', '/books'],
+  ['book', '/books/bukhari?page=4'],
   ['settings', '/settings'],
 ];
 const sizes = [['phone', 390, 844], ['desktop', 1200, 900]];

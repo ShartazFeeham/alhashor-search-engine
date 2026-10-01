@@ -24,6 +24,10 @@ expect_text() { # <route> <text> <what>
   if dump "$1" | grep -q "$2"; then echo "ok   $3"; else echo "FAIL $3"; fail=1; fi
 }
 
+expect_html() { # <route> <text> <what>: the page as the server sends it, before any script runs
+  if curl -s "$BASE$1" | grep -q "$2"; then echo "ok   $3"; else echo "FAIL $3"; fail=1; fi
+}
+
 expect_title() { # <route> <exact title> <what>
   got="$(dump "$1" | grep -o '<title>[^<]*</title>' | head -1 | sed -e 's/<title>//' -e 's/<\/title>//')"
   if [ "$got" = "$2" ]; then echo "ok   $3"; else echo "FAIL $3 (got: $got)"; fail=1; fi
@@ -38,6 +42,8 @@ expect_status /hadis/bukhari/6628 200
 expect_status /hadis/bukhari/0 404
 expect_status /hadis/bukhari/99999 404
 expect_status /hadis/nobook/1 404
+expect_status /books/muslim 200
+expect_status /books/nobook 404
 expect_status /hadis/bukhari/63 200           # a gap number is a valid address; the page says so
 
 expect_text "/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE&page=2" "মোট ৪০৩" "deep link to page 2 of a Bengali search renders (Review Focus 1)"
@@ -45,11 +51,16 @@ expect_text "/search?q=zzzz" "কোনো ফলাফল" "an unknown word sho
 expect_text "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "হাদীস নং" "a topic deep link renders hadis"
 expect_text /hadis/bukhari/6628 "হাদীস নং" "a hadis page renders"
 expect_text /hadis/bukhari/63 "এই হাদীসটি পাওয়া যায়নি" "a gap hadis says it is not found"
-expect_text /books "নিচে থেকে যেকোনো একটি বই ক্লিক করুন" "the books page renders"
+expect_text /books "একটি গ্রন্থ বেছে নিন" "the books page renders"
+expect_text /books/muslim "মোট ৭,২৮১ টি হাদীস" "a book page renders"
+expect_text "/books/bukhari?page=4" "হাদীস নং ৬১ - ৮১" "a deep link to page 4 of a book renders (63 is skipped)"
+expect_html /books/muslim "<h1>মুসলিম শরীফ</h1>" "a book page is pre-built with its header (not blank before scripts run)"
 expect_text /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি" "the not-found page renders"
 # Page titles on a fresh load (Next.js used to overwrite the page title with the layout's title)
 expect_title / "BoiKotha - হাদীস সম্ভার" "home title"
 expect_title /books "হাদীসের বই - BoiKotha" "books title on a fresh load"
+expect_title /books/muslim "মুসলিম শরীফ - হাদীসের বই - BoiKotha" "a book's title on a fresh load"
+expect_title "/books/muslim?page=3" "মুসলিম শরীফ - হাদীসের বই - BoiKotha" "a later book page keeps the book's title on a fresh load"
 expect_title "/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE&page=2" "রোজা - হাদীস সার্চ - BoiKotha" "search title on a fresh load of page 2"
 expect_title "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha" "topics title on a fresh load"
 expect_title /hadis/bukhari/6628 "বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha" "hadis title on a fresh load"

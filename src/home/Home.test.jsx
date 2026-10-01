@@ -26,10 +26,10 @@ test('shows all six books on a bookshelf with their real hadis counts', () => {
   }
 });
 
-test('a book on the shelf opens the books page', () => {
+test('a book on the shelf opens that book', () => {
   renderHome();
   fireEvent.click(screen.getByRole('link', { name: /মুসলিম/ }));
-  expect(getUrl().pathname).toBe('/books');
+  expect(getUrl().pathname).toBe('/books/muslim');
 });
 
 test('says more is coming', () => {

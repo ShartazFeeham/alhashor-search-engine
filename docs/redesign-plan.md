@@ -81,7 +81,7 @@ Each phase ends with passing tests, lint and build, and a screenshot check again
 | 1 | **Done (in Phase 2 of the build, without the daily hadis card):** **Home:** hero with search entry, tiles, bookshelf, daily hadis card | 5, 22 (basic) |
 | 2 | **Done:** **Hadis full page** with the D5 softening | 7, 2, 3, 25 (copy, cite), previous/next, swipe |
 | 3 | **Done:** **Search and results** with the D5 softening; typing helper; filters and snippets | 13, 14, 18 |
-| 4 | **Books:** picker, colour header, range grid, jump box, paging | 8 |
+| 4 | **Done:** **Books:** picker, colour header, range grid, jump box, paging | 8 |
 | 5 | **Topics:** chip index, results, curated "start here" pages | 12 |
 | 6 | **Share:** citation, share text, native share, quote-card image | 25, 26 |
 | 7 | **Daily, plans, khutbah sheet** | 22, 24 |
@@ -161,5 +161,20 @@ Departures from the designs made in this phase:
 - **Tab bar:** the raised Search button sits in the centre as in D2. The "More" button opens a small menu holding the settings link.
 - **Phone layout uses media queries at 640 px** instead of D2's container queries (D2 needed those only to fake a phone in a frame).
 - **Copy toast** shows after the clipboard write succeeds, so a blocked clipboard says so instead of claiming success.
-- **Legacy look that remains until Phase 3 of the build:** Books and Topics still use the old Bootstrap styling (including a red scrollbar from `Topics.css`), and their stylesheets are still imported in the old order from the layout.
+- **Legacy look that remains until Topics is rebuilt (Phase 5):** Topics still uses the old Bootstrap styling (including a red scrollbar from `Topics.css`), and its stylesheets are still imported in the old order from the layout. Books has been rebuilt (below).
 - **Case-insensitive file systems:** `src/Home` and `src/Search` were renamed to lower case (`src/home`, `src/search`) with `git mv`; a stale import with the old case passed on macOS but would fail on Linux, so it was fixed.
+
+Phase 4 result (Books): `/books` is a picker of the six books, and `/books/<book>?page=<n>` is a book's page: colour header, a switcher between books, a "go to number" box, a range grid (one button per hundred numbers) and a pager. The old Books page and its stylesheet are gone. About 376 tests pass, lint is clean, the build pre-renders all six book pages, and the real-browser checks pass (the jump scrolls to the hadis and marks it, the pager lands at the top, no sideways overflow at 320 px).
+
+Departures from the designs made in this phase:
+
+- **Pages are 20 hadis that exist, not 20 numbers.** Bukhari has gaps (for example 1923 to 2119), and paging by number would leave empty pages. The label under the range grid shows the real numbers on the page ("হাদীস নং ৬১ - ৮১"), and the old "−10 / +10" controls stay, as "−১০ / +১০" next to previous and next. The page label sits above the buttons so the pager fits a 320 px phone.
+- **A range with no hadis at all is shown dimmed and cannot be opened** (Bukhari 2,001 to 2,100), with a hover note, instead of leading to an empty page.
+- **Jump to number** understands Bengali and English digits, the book's spellings (full, short, older and Roman-letter), a bare number for the open book, and "নং", "#" and commas. It explains what it cannot open: unreadable text, a number past the end, a number with no file (with links to the hadis either side). It goes to that page of the book and marks the hadis (`?hadis=45`), rather than to the hadis page, so the neighbouring hadis stay in view; the hadis page's breadcrumb uses the same address, so "back to the book" returns to where you were.
+- **The pointed-at hadis is marked and scrolled to by the page, not by a `#` link.** The router does not update `:target`, and cards loading above the hadis moved it off screen, so the page holds it in view while the texts load and stops as soon as the reader scrolls, touches, clicks or types.
+- **Book pages are built ahead of time** (six static pages), with the header and switcher already in the pre-built page; only the page number is read in the browser.
+- **One shared hadis card** (`src/hadis/HadisCard.jsx`) with copy, loading, "not found" and retry states, ready for Topics and Compare. A text over 600 characters is cut with a link to the full page. Share and "add to compare" buttons arrive with Phases 6 and 8.
+- **Chip** (`src/ui/Chip.jsx`) is a plain button unless it is given a `pressed` value, so the example chips are not announced as toggles.
+- **Range cells are 44 px tall** (D2's are about 30 px) and the grid is not height-limited on desktop.
+- **Data:** Nasa'i 435 and the short-hadis list are still open data tasks.
+

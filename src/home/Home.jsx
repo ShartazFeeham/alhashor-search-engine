@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import PageTitle from '../Helpers/PageTitle';
 import { BOOKS, hadisCount } from '../lib/books';
+import { bookHref } from '../lib/bookBrowse';
 import { useDigits } from '../lib/useDigits';
 import Icon from '../ui/Icon';
 
@@ -60,7 +61,7 @@ export default function Home() {
           {BOOKS.map((book) => (
             <Link
               key={book.id}
-              href="/books"
+              href={bookHref(book)}
               className="home-spine"
               style={{ '--bk': `var(${book.colorVar})`, height: spineHeight(book) }}
               aria-label={`${book.full}, ${digits(hadisCount(book))} হাদীস`}
