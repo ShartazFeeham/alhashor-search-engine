@@ -1,52 +1,63 @@
 /* Search: D2's box, chips and indicator, with D5's calm hairline result list. */
 .search{max-width:760px}
-.search-form{display:flex;flex-direction:column;gap:12px}
-.search-note{margin:0;font-size:12px;color:var(--ink2);line-height:1.6}
+/* Tight spacing: this page only (the shared .screen rule in ui.css keeps 16px and 12px for the others). */
+.screen.search{padding-top:8px;gap:6px}
+.search-form{display:flex;flex-direction:column;gap:6px}
+.search-note{margin:0;font-size:12px;color:var(--ink2);line-height:1.5}
 .search-note b{color:var(--bad)}
-.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:6px 6px 6px 14px;transition:border-color .2s,box-shadow .2s}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:3px 4px 3px 14px;transition:border-color .2s,box-shadow .2s}
 .search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
 .search-box .ui-icon{color:var(--ink3)}
-.search-box input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:10px 2px;font:inherit;font-size:16px;color:var(--ink)}
+.search-box input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:8px 2px;font:inherit;font-size:16px;color:var(--ink)}
 .search-go{border:0;border-radius:99px;padding:10px 20px;background:var(--accent);color:var(--on-accent);font:inherit;font-size:14px;font-weight:700;cursor:pointer;min-height:44px}
-.search-chips{display:flex;flex-wrap:wrap;gap:8px}
+.search-chips{display:flex;flex-wrap:wrap;gap:6px}
+/* The warning line under the box: its height is always reserved so nothing jumps when it shows. */
+.search-warn{margin:0;min-height:20px;font-size:12px;line-height:20px;color:var(--bad)}
 
 .search-indicator{display:flex;align-items:center;gap:12px;color:var(--accent2);font-weight:600}
 .search-indicator i{display:block;width:90px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);background-size:200% 100%;animation:search-slide 1.1s linear infinite}
 @keyframes search-slide{to{background-position:-200% 0}}
-.search-nf{margin:0;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));color:var(--ink)}
+.search-nf{margin:0;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));color:var(--ink)}
 
-.search-total{margin:0;display:flex;flex-direction:column;gap:2px;font-size:15px;font-weight:500}
+.search-total{margin:0;display:flex;flex-flow:row wrap;align-items:baseline;gap:0 10px;font-size:15px;font-weight:500;line-height:1.5}
 .search-total b{font-size:12px;font-weight:400;color:var(--ink2)}
-.search-filters{display:flex;flex-wrap:wrap;gap:8px}
+.search-filters{display:flex;flex-wrap:wrap;gap:6px}
+.search-filters .ui-chip{padding:7px 10px;flex:none}
 .search-filters .ui-chip[disabled]{opacity:.45;cursor:not-allowed}
 .search-count-n{font-size:11.5px;opacity:.8}
 
 .search-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.search-item{padding:24px 0;border-top:1px solid var(--line);min-width:0}
-.search-item:first-child{border-top:0;padding-top:10px}
-.search-item-head{display:flex;align-items:center;gap:10px;font-weight:600}
+.search-item{padding:10px 0;border-top:1px solid var(--line);min-width:0}
+.search-item:first-child{border-top:0;padding-top:6px}
+.search-item-head{display:flex;align-items:center;gap:8px;font-weight:600}
 .search-item-head a{color:var(--ink);text-decoration:none;padding:10px 0;margin:-10px 0}
 .search-item-head a:hover{color:var(--accent2)}
-.search-text{margin:12px 0 10px;font-family:var(--f-read),serif;font-size:calc(var(--rs) - 1px);line-height:var(--rlh);overflow-wrap:anywhere}
-.search-missing{margin:12px 0 10px;color:var(--ink3)}
+.search-text{margin:2px 0 4px;font-family:var(--f-read),serif;font-size:calc(var(--rs) - 1px);line-height:calc(var(--rlh) * .85);overflow-wrap:anywhere}
+.search-missing{margin:2px 0 4px;color:var(--ink3)}
 /* Actions are 44px tall to tap; the row pulls the extra height back so the list looks as light as before. */
-.search-item-actions{display:flex;flex-wrap:wrap;align-items:center;gap:0 18px;font-size:12px;margin:-10px 0 -11px}
+.search-item-actions{display:flex;flex-wrap:wrap;align-items:center;gap:0 14px;font-size:12px;margin:-12px 0 -10px}
 .search-item-actions a,.search-item-actions button{display:inline-flex;align-items:center;min-height:44px;color:var(--accent2);font:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;text-decoration:none}
 .search-item-actions a:hover,.search-item-actions button:hover{text-decoration:underline;text-underline-offset:3px}
 .search-item-actions .quiet{color:var(--ink3);font-weight:500}
 
-.search-pager{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--line);color:var(--ink3);font-size:12px}
+.search-pager{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:6px;border-top:1px solid var(--line);color:var(--ink3);font-size:12px}
 .search-live:empty{display:none}
 
 /* Did you mean: a line under the count with the corrected spellings as chips (44 px targets). */
-.search-dym{margin:10px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;color:var(--ink2);font-size:13px}
+.search-dym{margin:2px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;color:var(--ink2);font-size:13px}
 .search-dym-item{display:inline-flex;align-items:center;gap:10px}
 .search-dym .ui-chip{min-height:44px;font-weight:700;color:var(--accent2);border-color:var(--accent)}
 .search-dym .ui-chip:hover{background:var(--accent-soft,var(--surface))}
 
 /* Words near each other: a quiet toggle chip under the count, then what it did. */
-.search-near{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.search-near{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .search-near .ui-chip{min-height:44px}
 .search-near-live:empty{display:none}
 .search-near-note{margin:0;font-size:12px;line-height:1.6;color:var(--ink2)}
 .search-indicator small{font-size:12px;font-weight:500;color:var(--ink3)}
+
+/* Phones: the book chips are one row of 44px chips that scrolls sideways instead of wrapping to three rows. */
+@media (max-width: 640px){
+  .search-filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px 0;margin:-2px 0}
+  .search-filters::-webkit-scrollbar{display:none}
+}

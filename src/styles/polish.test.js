@@ -64,6 +64,13 @@ describe('search tap targets', () => {
     expect(-Number(top) - Number(bottom)).toBeGreaterThanOrEqual(18);
   });
 
+  test('the pulled-back hit areas of two neighbouring results never overlap', () => {
+    const [, , bottom] = /margin:(-?\d+)px 0 (-?\d+)px/.exec(rule(search, '.search-item-actions'));
+    const pad = /padding:(\d+)px 0/.exec(rule(search, '.search-item'));
+    // the actions reach -bottom px under the row; the next title link reaches 10px above its text line
+    expect(-Number(bottom)).toBeLessThanOrEqual(2 * Number(pad[1]) - 10);
+  });
+
   test('the result title link has a 44px hit area through padding that its margin gives back', () => {
     const declarations = rule(search, '.search-item-head a');
     expect(declarations).toMatch(/padding:10px 0/);
@@ -195,5 +202,80 @@ describe('topic chips scroller', () => {
     const declarations = rule(read('topics.css'), '.topics-chips');
     expect(declarations).toMatch(/mask-image:linear-gradient\(to bottom/);
     expect(declarations).toMatch(/scroll-padding/);
+  });
+});
+
+describe('search results page: tight vertical spacing', () => {
+  const search = read('search.css');
+  const num = (declarations, property) => Number(new RegExp(`(?:^|;)${property}:(\\d+)px`).exec(declarations)?.[1] ?? NaN);
+
+  test('the page overrides its own top padding and gap (the shared .screen rule is untouched)', () => {
+    const page = rule(search, '.screen.search');
+    expect(num(page, 'padding-top')).toBeLessThanOrEqual(8);
+    expect(num(page, 'gap')).toBeLessThanOrEqual(6);
+    expect(read('ui.css')).toMatch(/\.screen\{padding:16px 16px 20px;display:flex;flex-direction:column;gap:12px;/);
+  });
+
+  test('the form and the box are close together, the box stays 44px or more and the input 16px', () => {
+    expect(num(rule(search, '.search-form'), 'gap')).toBeLessThanOrEqual(6);
+    const box = rule(search, '.search-box');
+    expect(/padding:(\d+)px/.exec(box)[1] * 1).toBeLessThanOrEqual(4);
+    expect(num(rule(search, '.search-box input'), 'font-size')).toBe(16);
+    expect(num(rule(search, '.search-go'), 'min-height')).toBeGreaterThanOrEqual(44);
+  });
+
+  test('the count line keeps its two parts on one line when there is room', () => {
+    const total = rule(search, '.search-total');
+    expect(total).toMatch(/flex-flow:row wrap/);
+    expect(Number(/gap:0 (\d+)px/.exec(total)[1])).toBeLessThanOrEqual(10);
+    expect(total).not.toMatch(/flex-direction:column/);
+  });
+
+  test('the chip rows have a 6px gap or less between them and keep 44px chips', () => {
+    expect(num(rule(search, '.search-filters'), 'gap')).toBeLessThanOrEqual(6);
+    expect(num(rule(search, '.search-chips'), 'gap')).toBeLessThanOrEqual(6);
+    expect(num(rule(search, '.search-filters .ui-chip'), 'min-height') || 44).toBeGreaterThanOrEqual(44);
+    expect(search).not.toMatch(/\.search-filters \.ui-chip\{[^}]*height:[1-3]\dpx/);
+  });
+
+  test('the result items are separated by a hairline and have 10px or less of padding', () => {
+    const item = rule(search, '.search-item');
+    expect(/padding:(\d+)px 0/.exec(item)[1] * 1).toBeLessThanOrEqual(10);
+    expect(item).toMatch(/border-top:1px solid var\(--line\)/);
+    expect(num(rule(search, '.search-item:first-child'), 'padding-top')).toBeLessThanOrEqual(6);
+  });
+
+  test('inside an item the title, the snippet and the actions sit 6px or less apart', () => {
+    const text = rule(search, '.search-text');
+    const margin = /margin:(\d+)px 0 (\d+)px/.exec(text);
+    expect(Number(margin[1])).toBeLessThanOrEqual(6);
+    expect(Number(margin[2])).toBeLessThanOrEqual(6);
+    expect(rule(search, '.search-item-head')).toMatch(/gap:(\d|10)px/);
+  });
+
+  test('the snippet follows the reading line gap but a little tighter, and keeps 15px text', () => {
+    const text = rule(search, '.search-text');
+    expect(text).toMatch(/line-height:calc\(var\(--rlh\) \* \.8\d?\)/);
+    expect(text).toMatch(/font-size:calc\(var\(--rs\) - 1px\)/);
+  });
+
+  test('the warning line under the box keeps 20px of height, 11px or more text and a token colour', () => {
+    const warn = rule(search, '.search-warn');
+    expect(num(warn, 'min-height')).toBeGreaterThanOrEqual(20);
+    expect(num(warn, 'font-size')).toBeGreaterThanOrEqual(11);
+    expect(warn).toMatch(/color:var\(--/);
+  });
+
+  test('the pager padding is 8px or less', () => {
+    expect(num(rule(search, '.search-pager'), 'padding-top')).toBeLessThanOrEqual(8);
+  });
+
+  test('the did-you-mean and near rows are tight too', () => {
+    expect(/margin:(\d+)px 0 0/.exec(rule(search, '.search-dym'))[1] * 1).toBeLessThanOrEqual(4);
+    expect(num(rule(search, '.search-near'), 'gap')).toBeLessThanOrEqual(4);
+  });
+
+  test('on phones the book chips stay in one scrolling row of 44px chips', () => {
+    expect(search).toMatch(/@media \(max-width: ?640px\)\{[^@]*\.search-filters\{[^}]*flex-wrap:nowrap;[^}]*overflow-x:auto/);
   });
 });
