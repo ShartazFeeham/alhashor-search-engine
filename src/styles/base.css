@@ -47,7 +47,7 @@ fieldset { min-width: 0; padding: 0; margin: 0; border: 0; }
 [hidden] { display: none !important; }
 
 body {
-  /* a full-height column: the page grows, the footer is last, the phone tab bar is fixed (ui.css) */
+  /* a full-height column: the page grows, the phone tab bar is fixed (ui.css) */
   display: flex;
   flex-direction: column;
   min-height: 100vh;

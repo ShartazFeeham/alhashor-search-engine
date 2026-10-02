@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const read = (name) => readFileSync(path.resolve(process.cwd(), 'src/styles', name), 'utf8');
@@ -116,8 +116,8 @@ describe('the toast', () => {
   });
 });
 
-// The page is a full-height column (main grows, the footer is last) and the phone tab bar is fixed
-// to the bottom, so a short page (not found) does not float the bar or the footer mid-screen.
+// The page is a full-height column (main grows) and the phone tab bar is fixed
+// to the bottom, so a short page (not found) does not float the bar mid-screen.
 describe('page shell layout', () => {
   const ui = read('ui.css');
   const base = read('base.css');
@@ -132,24 +132,6 @@ describe('page shell layout', () => {
     const main = rule(ui, 'body>main');
     expect(main).toMatch(/flex:1 0 auto/);
     expect(main).toMatch(/width:100%/);
-  });
-
-  test('the footer keeps its width in the column and sits last (no auto margins shrink it)', () => {
-    expect(rule(ui, '.shell-footer')).toMatch(/flex:none/);
-    expect(rule(ui, '.shell-footer')).toMatch(/width:calc\(100% - 32px\)/);
-  });
-
-  test('the footer is minimal: a hairline on top, no filled box, no logo tile', () => {
-    const footer = rule(ui, '.shell-footer');
-    expect(footer).toMatch(/border-top:1px solid var\(--line\)/);
-    expect(footer).not.toMatch(/background|border-radius/);
-    expect(ui).not.toMatch(/\.shell-footer-brand|\.shell-logo\.small/);
-  });
-
-  test('the footer links are 44px tall to tap and wrap on phones', () => {
-    expect(rule(ui, '.shell-footer-links')).toMatch(/flex-wrap:wrap/);
-    expect(rule(ui, '.shell-footer-links a')).toMatch(/padding:12px 0/);
-    expect(rule(ui, '.shell-footer-links a')).toMatch(/min-height:44px/);
   });
 
   test('the phone tab bar is a fixed floating pill (as in D2), lifted by the safe-area inset', () => {
@@ -179,8 +161,11 @@ describe('page shell layout', () => {
     expect(rule(ui, '.ui-fab')).toMatch(/bottom:calc\(var\(--tabbar-h\) \+ \d+px\)/);
   });
 
-  test('the footer links keep clear of the back-to-top button', () => {
-    expect(ui).toMatch(/\.shell-footer-links\{[^}]*padding-right:\d+px/);
+  test('the site has no footer: no .shell-footer rule is left in any stylesheet', () => {
+    const dir = path.resolve(process.cwd(), 'src/styles');
+    for (const file of readdirSync(dir).filter((name) => name.endsWith('.css'))) {
+      expect(readFileSync(path.join(dir, file), 'utf8'), file).not.toMatch(/shell-footer/);
+    }
   });
 });
 

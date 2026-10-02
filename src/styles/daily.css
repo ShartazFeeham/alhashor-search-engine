@@ -177,7 +177,7 @@
 
 /* ---------- print: the khutbah sheet only ---------- */
 @media print{
-  .shell-nav,.shell-tabbar,.shell-footer,.shell-more,.ui-fab,.ui-toast,.no-print,.daily-tabs{display:none !important}
+  .shell-nav,.shell-tabbar,.shell-more,.ui-fab,.ui-toast,.no-print,.daily-tabs{display:none !important}
   .daily[data-tab="khutbah"] .daily-head{display:none}
   html,body{background:#fff !important;color:#000 !important}
   body{display:block;min-height:0;padding:0 !important}

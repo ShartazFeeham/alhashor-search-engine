@@ -18,7 +18,7 @@ export default function CompareBar() {
   const visible = ids.length > 0 && !onComparePage;
 
   // While the bar shows, the body carries has-cmp-bar: the page keeps room at the bottom for it and
-  // back-to-top stacks above it (ui.css, compare.css), so it never hides the footer or the last content.
+  // back-to-top stacks above it (ui.css, compare.css), so it never hides the last content.
   useEffect(() => {
     if (!visible) return undefined;
     document.body.classList.add('has-cmp-bar');

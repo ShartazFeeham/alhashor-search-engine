@@ -19,7 +19,7 @@
 
 /* ---------- page column: room kept at the bottom for the fixed bars ---------- */
 /* --tabbar-h is the phone tab bar (64px, the raised search button reaches 10px above it, plus 10px of air and the iOS home-indicator inset); --dock-extra is the compare bar
-   while it shows (CompareBar puts the class has-cmp-bar on the body). Content and the footer are never
+   while it shows (CompareBar puts the class has-cmp-bar on the body). Content is never
    hidden behind them. */
 :root{--tabbar-h:0px;--dock-extra:0px}
 body{padding-bottom:calc(var(--tabbar-h) + var(--dock-extra))}
@@ -67,17 +67,6 @@ body>main{flex:1 0 auto;width:100%}
   .ui-fab{bottom:24px}
   .ui-toast{bottom:24px}
 }
-
-/* ---------- footer ---------- */
-.shell-footer{flex:none;width:calc(100% - 32px);margin:26px 16px 0;padding:6px 0 18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--ink3);max-width:1088px}
-@media (min-width: 1152px){ .shell-footer{margin-inline:auto} }
-.shell-footer .lat{font-family:var(--f-lat),system-ui,sans-serif}
-.shell-footer-links{display:flex;flex-wrap:wrap;gap:0 18px}
-/* the back-to-top button sits over the footer's right end: the links stop short of it */
-@media (max-width: 1151px){ .shell-footer-links{padding-right:56px} }
-.shell-footer-links a{color:var(--ink2);text-decoration:none;padding:12px 0;min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center}
-.shell-footer-links a:hover{text-decoration:underline}
-.shell-footer-note{margin:0}
 
 /* ---------- page basics used by the new pages ---------- */
 .screen{padding:16px 16px 20px;display:flex;flex-direction:column;gap:12px;max-width:1120px;margin:0 auto}

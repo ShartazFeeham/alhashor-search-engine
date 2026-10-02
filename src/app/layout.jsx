@@ -15,7 +15,6 @@ import '../styles/narrators.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import TopNav from '../shell/TopNav';
 import TabBar from '../shell/TabBar';
-import Footer from '../shell/Footer';
 import { ToastProvider } from '../ui/Toast';
 import CompareBar from '../compare/CompareBar';
 import { CompareProvider } from '../compare/CompareProvider';
@@ -54,7 +53,6 @@ export default function RootLayout({ children }) {
             <CompareProvider>
               <TopNav />
               {children}
-              <Footer />
               <TabBar />
               <CompareBar />
               <BackToTop />

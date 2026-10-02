@@ -13,7 +13,7 @@
 /* On a phone it sits above the tab bar (and its raised centre button), to the left of the
    back-to-top button (which stacks above it while the bar shows); on a wide screen it sits bottom
    left, clear of the button on the right. CompareBar adds the class has-cmp-bar to the body while it
-   is showing, which reserves room at the bottom of the page (ui.css), so it never hides the footer. */
+   is showing, which reserves room at the bottom of the page (ui.css), so it never hides the last content. */
 .cmp-bar{position:fixed;z-index:46;left:12px;right:68px;bottom:calc(var(--tabbar-h) + 16px);display:flex;align-items:center;justify-content:space-between;gap:6px;max-width:320px;padding:6px 6px 6px 6px;border-radius:99px;background:var(--surface);box-shadow:var(--shadow),0 0 0 1px var(--line)}
 .cmp-bar-link{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:99px;background:var(--accent);color:var(--on-accent);font-weight:700;text-decoration:none;white-space:nowrap}
 .cmp-bar-link:hover{background:var(--accent2)}

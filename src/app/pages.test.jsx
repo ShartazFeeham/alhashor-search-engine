@@ -99,8 +99,11 @@ test('the layout sets the language and wraps each page with the navigation', () 
   expect(html).toContain('PAGE BODY');
   expect(html).toContain('উপরে যান');
   expect(html).toContain('aria-label="নিচের মেনু"');
-  expect(html).toContain('aria-label="ফুটার মেনু"');
-  expect(html).toContain('৩২,৮৮৬ হাদীস');
+  // the site has no footer: no landmark, no footer menu, no total line
+  expect(html).not.toContain('shell-footer');
+  expect(html).not.toContain('<footer');
+  expect(html).not.toContain('ফুটার মেনু');
+  expect(html).not.toContain('৩২,৮৮৬ হাদীস');
 });
 
 test('the browser bar colour follows the light and dark pages instead of black', () => {

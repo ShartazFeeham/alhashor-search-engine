@@ -2,7 +2,6 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { CompareProvider } from '../compare/CompareProvider';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { getUrl, setUrl } from '../test/nextNavigation';
-import Footer from './Footer';
 import TabBar from './TabBar';
 import TopNav from './TopNav';
 
@@ -135,25 +134,6 @@ test('elsewhere the "more" button is not marked', () => {
   expect(screen.getByRole('button', { name: 'আরও' })).not.toHaveAttribute('aria-current');
 });
 
-test('the footer is a quiet landmark: one row of links and one muted line, no logo and no extra text', () => {
-  show(<Footer />);
-  const footer = screen.getByRole('contentinfo');
-  const nav = within(footer).getByRole('navigation', { name: 'ফুটার মেনু' });
-  expect(within(nav).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
-    ['হোম', '/'],
-    ['সার্চ', '/search'],
-    ['হাদীস বই', '/books'],
-    ['বিষয়ভিত্তিক হাদীস', '/topics'],
-    ['আজকের হাদীস', '/daily'],
-    ['বর্ণনাকারী', '/narrators'],
-  ]);
-  expect(within(footer).getByText((_, el) => el.tagName === 'P' && el.textContent === 'Alhashor · ৩২,৮৮৬ হাদীস')).toBeInTheDocument();
-  expect(footer.textContent).toBe(
-    ['হোম', 'সার্চ', 'হাদীস বই', 'বিষয়ভিত্তিক হাদীস', 'আজকের হাদীস', 'বর্ণনাকারী'].join('') + 'Alhashor · ৩২,৮৮৬ হাদীস',
-  );
-  expect(within(footer).queryByTestId(/^icon-/)).not.toBeInTheDocument();
-});
-
 test('the "more" menu links the narrators page', () => {
   show(<TabBar />);
   fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
@@ -174,7 +154,7 @@ test.each(['/narrators', '/narrators?name=abu-hurayrah&page=2'])('on %s the "mor
   expect(screen.getByRole('button', { name: 'আরও' })).toHaveAttribute('aria-current', 'true');
 });
 
-test('the top navigation has no narrators link (it would not fit beside the six it has at 641px); the footer and the more menu carry it', () => {
+test('the top navigation has no narrators link (it would not fit beside the six it has at 641px); the more menu carries it', () => {
   setUrl('/narrators');
   show(<TopNav />);
   expect(screen.queryByRole('link', { name: 'বর্ণনাকারী' })).not.toBeInTheDocument();
