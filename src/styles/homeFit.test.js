@@ -34,10 +34,17 @@ describe('Home first view: compact spacing', () => {
     expect(px(rule(home, '.home-hero::before'), 'width')).toBeLessThanOrEqual(110);
   });
 
-  test('the search bar is slim but at least 44px tall', () => {
+  test('the search bar is at least 44px tall and its padding stays modest', () => {
     const search = rule(home, '\n.home-search');
     expect(px(search, 'min-height')).toBeGreaterThanOrEqual(44);
-    expect(Number(/padding:(\d+)px/.exec(search)[1])).toBeLessThanOrEqual(8);
+    expect(Number(/padding:(\d+)px/.exec(search)[1])).toBeLessThanOrEqual(10);
+  });
+
+  test('the hero search bar is a little taller (44 to 56px, about 27%): min-height 56px, 10px padding, content centred', () => {
+    const search = rule(home, '\n.home-search');
+    expect(px(search, 'min-height')).toBe(56);
+    expect(search).toMatch(/padding:10px 14px/);
+    expect(search).toMatch(/align-items:center/);
   });
 
   test('there is no tiles block any more', () => {

@@ -8,7 +8,7 @@
 .home-eyebrow{margin:0 0 2px;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--accent2)}
 .home-hero .home-search{margin-top:8px}
 .home-hero .h1{font-size:22px;line-height:1.2}
-.home-search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:16px;min-height:44px;padding:4px 14px;color:var(--ink3);box-shadow:var(--shadow);border:2px solid transparent;text-decoration:none}
+.home-search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:16px;min-height:56px;padding:10px 14px;color:var(--ink3);box-shadow:var(--shadow);border:2px solid transparent;text-decoration:none}
 .home-search:hover{border-color:var(--accent)}
 
 .home-shelf-wrap{background:var(--surface);border-radius:20px;padding:8px 12px 0;box-shadow:var(--shadow);overflow:hidden}
