@@ -127,7 +127,8 @@ export default function SearchPage() {
       <h1 className="sr-only">হাদীস সার্চ</h1>
       <SearchBox text={text} onText={setText} query={query} onSubmit={submit} />
 
-      {/* One live region, always on the page, so the changing state is announced to screen readers. */}
+      {/* The count (in one live region, always on the page, so the changing state is announced to screen readers) and, at its right end, the near-words toggle. */}
+      <div className="search-summary">
       <div className="search-live" role="status">
         {status === SEARCHING && (
           <div className="search-indicator">
@@ -156,10 +157,11 @@ export default function SearchPage() {
         )}
         <DidYouMean suggestions={suggestions} onPick={pickSuggestion} />
       </div>
+      {canNear && <Chip pressed={near} onClick={() => address({ book, near: !near })}>কাছাকাছি শব্দ</Chip>}
+      </div>
 
       {canNear && (
         <div className="search-near">
-          <Chip pressed={near} onClick={() => address({ book, near: !near })}>কাছাকাছি শব্দ</Chip>
           <div className="search-near-live" role="status">
             {near && proximity.status === 'working' && (
               <div className="search-indicator">

@@ -275,3 +275,21 @@ describe('words near each other: fetching and cancelling', () => {
     expect(await screen.findByText(/সবগুলো ফলাফল দেখা হয়েছে/, {}, { timeout: 3000 })).toBeInTheDocument();
   });
 });
+
+describe('the near-words toggle sits beside the count', () => {
+  test('the toggle and the count are in one row, the toggle after the count', async () => {
+    serve({
+      [file('ঋষিত')]: { ঋষিত: tags(3), ঊষাম: tags(3) },
+      [file('ঊষাম')]: { ঋষিত: tags(3), ঊষাম: tags(3) },
+    });
+    renderSearch('/search?q=' + encodeURIComponent('ঋষিত ঊষাম'));
+    const count = await screen.findByText(/মোট ৩ টি হাদিস পাওয়া গেছে/);
+    const toggle = screen.getByRole('button', NEAR);
+    // eslint-disable-next-line testing-library/no-node-access
+    const row = count.closest('.search-summary');
+    expect(row).not.toBeNull();
+    expect(row).toContainElement(toggle);
+    expect(count.compareDocumentPosition(toggle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  });
+});

@@ -54,17 +54,19 @@ export default function ResultItem({ tag, matcher }) {
 
   return (
     <li className="search-item">
-      <div className="search-item-head">
-        <BookBadge bookId={book.id} size="sm" />
-        <Link href={href} id={titleId}>{book.full} - হাদীস নং {digits(number)}</Link>
+      <div className="search-item-main">
+        <div className="search-item-head">
+          <BookBadge bookId={book.id} size="sm" />
+          <Link href={href} id={titleId}>{book.full} - হাদীস নং {digits(number)}</Link>
+        </div>
+        {content}
       </div>
-      {content}
       <div className="search-item-actions">
         {cut && <Link href={href} aria-describedby={titleId}>সম্পূর্ণ হাদীস দেখুন...</Link>}
         {status === 'ok' && <button type="button" aria-describedby={titleId} onClick={copy}>কপি</button>}
         {status === 'ok' && <ShareButton book={book} number={number} text={text} variant="link" describedBy={titleId} />}
         {status === 'ok' && <CompareToggle bookId={book.id} number={number} variant="link" describedBy={titleId} />}
-        <Link href={href} className="quiet" aria-describedby={titleId}>হাদীস পাতা</Link>
+        <Link href={href} className="primary" aria-describedby={titleId}>হাদীস পাতা</Link>
       </div>
     </li>
   );

@@ -491,3 +491,35 @@ describe('headings, focus and announcements', () => {
     expect(screen.getByRole('list', { name: 'ফলাফল' })).not.toHaveFocus();
   });
 });
+
+describe('result cards, actions and boxed pager (structure)', () => {
+  test('a result is a card holding the title link, the text and the actions (after the text)', async () => {
+    servePaged('cardword', 2);
+    renderSearch('/search?q=cardword');
+    await screen.findByText('t1');
+    const card = within(screen.getByRole('list', { name: 'ফলাফল' })).getAllByRole('listitem')[0];
+    expect(card).toHaveClass('search-item');
+    const title = within(card).getByRole('link', { name: /হাদীস নং ১$/ });
+    const text = within(card).getByText('t1');
+    const copy = within(card).getByRole('button', { name: 'কপি' });
+    expect(title.compareDocumentPosition(text) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(text.compareDocumentPosition(copy) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(within(card).getByRole('button', { name: 'শেয়ার' })).toBeInTheDocument();
+    expect(within(card).getByRole('button', { name: 'তুলনায় যোগ করুন' })).toBeInTheDocument();
+    expect(within(card).getByRole('link', { name: 'হাদীস পাতা' })).toHaveClass('primary');
+  });
+
+  test('the pager is one named container with filled previous and next buttons that have arrow icons', async () => {
+    servePaged('qzpager', 45);
+    renderSearch('/search?q=qzpager');
+    await screen.findByText('t1');
+    const nav = screen.getByRole('navigation', { name: 'পাতা' });
+    const prev = within(nav).getByRole('button', { name: 'আগের' });
+    const next = within(nav).getByRole('button', { name: 'পরের' });
+    expect(prev).toHaveClass('search-pager-btn');
+    expect(next).toHaveClass('search-pager-btn');
+    expect(prev).toBeDisabled();
+    expect(within(nav).getAllByRole('button')).toHaveLength(2);
+    expect(within(nav).getByText('পাতা ১ / ৩')).toHaveClass('search-pager-label');
+  });
+});

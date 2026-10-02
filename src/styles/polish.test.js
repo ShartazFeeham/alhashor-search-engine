@@ -51,24 +51,14 @@ describe('search tap targets', () => {
   const search = read('search.css');
   const px = (declarations, property) => Number(new RegExp(`(?:^|;)${property}:(\\d+)px`).exec(declarations)?.[1] ?? 0);
 
-  test('the result actions (copy, share, compare, full hadis, hadis page) are 44px tall', () => {
+  test('the result actions are 36px pill buttons with a 44px tap area from a ::after', () => {
     const declarations = rule(search, '.search-item-actions a,.search-item-actions button');
-    expect(px(declarations, 'min-height')).toBeGreaterThanOrEqual(44);
+    expect(px(declarations, 'min-height')).toBeGreaterThanOrEqual(36);
     expect(declarations).toMatch(/display:inline-flex/);
-  });
-
-  test('the taller actions do not make the list heavier: the row pulls back what they add', () => {
-    const [, top, bottom] = /margin:(-?\d+)px 0 (-?\d+)px/.exec(rule(search, '.search-item-actions'));
-    expect(Number(top)).toBeLessThan(0);
-    expect(Number(bottom)).toBeLessThan(0);
-    expect(-Number(top) - Number(bottom)).toBeGreaterThanOrEqual(18);
-  });
-
-  test('the pulled-back hit areas of two neighbouring results never overlap', () => {
-    const [, , bottom] = /margin:(-?\d+)px 0 (-?\d+)px/.exec(rule(search, '.search-item-actions'));
-    const pad = /padding:(\d+)px 0/.exec(rule(search, '.search-item'));
-    // the actions reach -bottom px under the row; the next title link reaches 10px above its text line
-    expect(-Number(bottom)).toBeLessThanOrEqual(2 * Number(pad[1]) - 10);
+    expect(declarations).toMatch(/position:relative/);
+    const hit = rule(search, '.search-item-actions a::after,.search-item-actions button::after');
+    const reach = /inset:(-?\d+)px 0/.exec(hit);
+    expect(px(declarations, 'min-height') + 2 * -Number(reach[1])).toBeGreaterThanOrEqual(44);
   });
 
   test('the result title link has a 44px hit area through padding that its margin gives back', () => {
@@ -83,7 +73,7 @@ describe('search tap targets', () => {
 
   test('the did-you-mean chips and the near-words chip are 44px', () => {
     expect(px(rule(search, '.search-dym .ui-chip'), 'min-height')).toBeGreaterThanOrEqual(44);
-    expect(px(rule(search, '.search-near .ui-chip'), 'min-height')).toBeGreaterThanOrEqual(44);
+    expect(px(rule(search, '.search-summary .ui-chip'), 'min-height')).toBeGreaterThanOrEqual(44);
   });
 });
 
@@ -236,13 +226,6 @@ describe('search results page: tight vertical spacing', () => {
     expect(search).not.toMatch(/\.search-filters \.ui-chip\{[^}]*height:[1-3]\dpx/);
   });
 
-  test('the result items are separated by a hairline and have 10px or less of padding', () => {
-    const item = rule(search, '.search-item');
-    expect(/padding:(\d+)px 0/.exec(item)[1] * 1).toBeLessThanOrEqual(10);
-    expect(item).toMatch(/border-top:1px solid var\(--line\)/);
-    expect(num(rule(search, '.search-item:first-child'), 'padding-top')).toBeLessThanOrEqual(6);
-  });
-
   test('inside an item the title, the snippet and the actions sit 6px or less apart', () => {
     const text = rule(search, '.search-text');
     const margin = /margin:(\d+)px 0 (\d+)px/.exec(text);
@@ -265,15 +248,110 @@ describe('search results page: tight vertical spacing', () => {
   });
 
   test('the pager padding is 8px or less', () => {
-    expect(num(rule(search, '.search-pager'), 'padding-top')).toBeLessThanOrEqual(8);
+    expect(num(rule(search, '.search-pager'), 'padding')).toBeLessThanOrEqual(8);
   });
 
   test('the did-you-mean and near rows are tight too', () => {
     expect(/margin:(\d+)px 0 0/.exec(rule(search, '.search-dym'))[1] * 1).toBeLessThanOrEqual(4);
     expect(num(rule(search, '.search-near'), 'gap')).toBeLessThanOrEqual(4);
+    expect(Number(/gap:0 (\d+)px/.exec(rule(search, '.search-summary'))[1])).toBeLessThanOrEqual(8);
   });
 
   test('on phones the book chips stay in one scrolling row of 44px chips', () => {
     expect(search).toMatch(/@media \(max-width: ?640px\)\{[^@]*\.search-filters\{[^}]*flex-wrap:nowrap;[^}]*overflow-x:auto/);
+  });
+});
+
+describe('search page: result cards, action buttons, small option chips, boxed pager', () => {
+  const search = read('search.css');
+  const num = (declarations, property) => Number(new RegExp(`(?:^|;)${property}:(\\d+)px`).exec(declarations)?.[1] ?? NaN);
+
+  test('every result is a card: surface background, 1px line border, 14px radius, 8px gap, no hairline', () => {
+    const item = rule(search, '.search-item');
+    expect(item).toMatch(/background:var\(--surface\)/);
+    expect(item).toMatch(/border:1px solid var\(--line\)/);
+    expect(num(item, 'border-radius')).toBe(14);
+    expect(item).not.toMatch(/border-top/);
+    expect(search).not.toMatch(/\.search-item:first-child/);
+    const [, vertical] = /padding:(\d+)px (\d+)px/.exec(item);
+    expect(Number(vertical)).toBeGreaterThanOrEqual(10);
+    expect(Number(vertical)).toBeLessThanOrEqual(12);
+    expect(num(rule(search, '.search-list'), 'gap')).toBe(8);
+  });
+
+  test('wide: two columns, a flexible text column and a 150 to 190px actions column on the right', () => {
+    const item = rule(search, '.search-item');
+    expect(item).toMatch(/display:grid/);
+    const [, width] = /grid-template-columns:minmax\(0,1fr\) (\d+)px/.exec(item);
+    expect(Number(width)).toBeGreaterThanOrEqual(150);
+    expect(Number(width)).toBeLessThanOrEqual(190);
+    expect(rule(search, '.search-item-main')).toMatch(/min-width:0/);
+    const actions = rule(search, '.search-item-actions');
+    expect(actions).toMatch(/flex-direction:column/);
+    expect(actions).toMatch(/align-items:flex-end/);
+  });
+
+  test('the actions are compact pills: 13px text, line border, accent2 text, accent hover, filled primary', () => {
+    const pill = rule(search, '.search-item-actions a,.search-item-actions button');
+    expect(num(pill, 'font-size')).toBe(13);
+    expect(pill).toMatch(/border-radius:99px/);
+    expect(pill).toMatch(/border:1px solid var\(--line\)/);
+    expect(pill).toMatch(/color:var\(--accent2\)/);
+    expect(pill).toMatch(/padding:6px 12px/);
+    expect(rule(search, '.search-item-actions a:hover,.search-item-actions button:hover')).toMatch(/border-color:var\(--accent\)/);
+    const primary = rule(search, '.search-item-actions .primary');
+    expect(primary).toMatch(/background:var\(--accent\)/);
+    expect(primary).toMatch(/color:var\(--on-accent\)/);
+  });
+
+  test('phones: one column, the actions are a wrapped row at the bottom, aligned right', () => {
+    const phone = /@media \(max-width: ?640px\)\{([\s\S]*)\}\s*$/.exec(search)[1];
+    expect(rule(phone, '.search-item')).toMatch(/grid-template-columns:minmax\(0,1fr\)(?:;|$)/);
+    const actions = rule(phone, '.search-item-actions');
+    expect(actions).toMatch(/flex-direction:row/);
+    expect(actions).toMatch(/flex-wrap:wrap/);
+    expect(actions).toMatch(/justify-content:flex-end/);
+  });
+
+  test('the example chips are small: 12px text, 3px 9px padding, 6px gap, light, no shadow, 44px tap area', () => {
+    const chip = rule(search, '.search-chips .ui-chip');
+    expect(num(chip, 'font-size')).toBe(12);
+    expect(chip).toMatch(/padding:3px 9px/);
+    expect(chip).toMatch(/min-height:0/);
+    expect(chip).toMatch(/background:var\(--surface2\)/);
+    expect(chip).toMatch(/box-shadow:none/);
+    expect(chip).toMatch(/position:relative/);
+    expect(num(rule(search, '.search-chips'), 'gap')).toBeLessThanOrEqual(6);
+    expect(num(rule(search, '.search-chips'), 'gap')).toBeGreaterThanOrEqual(5);
+    expect(rule(search, '.search-chips .ui-chip::after')).toMatch(/inset:-8px 0/);
+  });
+
+  test('the book filter chips are left as they were (44px)', () => {
+    expect(search).not.toMatch(/\.search-filters \.ui-chip\{[^}]*font-size/);
+  });
+
+  test('the near-words toggle sits at the right end of the count row, centred', () => {
+    const row = rule(search, '.search-summary');
+    expect(row).toMatch(/display:flex/);
+    expect(row).toMatch(/flex-wrap:wrap/);
+    expect(row).toMatch(/align-items:center/);
+    expect(rule(search, '.search-summary .ui-chip')).toMatch(/margin-left:auto/);
+  });
+
+  test('the pager is a card with filled accent pill buttons and a quiet pill label', () => {
+    const pager = rule(search, '.search-pager');
+    expect(pager).toMatch(/background:var\(--surface\)/);
+    expect(pager).toMatch(/border:1px solid var\(--line\)/);
+    expect(num(pager, 'border-radius')).toBeGreaterThanOrEqual(14);
+    expect(num(pager, 'padding')).toBe(8);
+    const button = rule(search, '.search-pager-btn');
+    expect(button).toMatch(/background:var\(--accent\)/);
+    expect(button).toMatch(/color:var\(--on-accent\)/);
+    expect(button).toMatch(/border-radius:99px/);
+    expect(num(button, 'min-height')).toBeGreaterThanOrEqual(44);
+    expect(num(button, 'font-size')).toBe(15);
+    expect(button).toMatch(/font-weight:700/);
+    expect(rule(search, '.search-pager-btn[disabled]')).toMatch(/opacity:\.[2-5]/);
+    expect(rule(search, '.search-pager-label')).toMatch(/background:var\(--surface2\)/);
   });
 });
