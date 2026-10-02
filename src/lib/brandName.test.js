@@ -23,7 +23,7 @@ test('no source file under src/ still names the old brand, except the LEGACY_KEY
   expect(offenders).toEqual([]);
 });
 
-test('the old storage keys are only ever the three LEGACY_KEY constants', () => {
+test('the old storage keys are only ever the two LEGACY_KEY constants', () => {
   const legacy = [];
   for (const file of sourceFiles(SRC)) {
     readFileSync(file, 'utf8').split('\n').forEach((line) => {
@@ -31,5 +31,5 @@ test('the old storage keys are only ever the three LEGACY_KEY constants', () => 
       if (match) legacy.push(match[1]);
     });
   }
-  expect(legacy.sort()).toEqual(['boikotha.compare', 'boikotha.plan-progress', 'boikotha.settings']);
+  expect(legacy.sort()).toEqual(['boikotha.plan-progress', 'boikotha.settings']);
 });

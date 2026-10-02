@@ -1,5 +1,5 @@
 import { bookById } from './books';
-import { bookHref, checkJump, hadisAnchor, pageCount, pageNumbers, pageOfNumber, parseJump, rangeGrid } from './bookBrowse';
+import { bookHref, checkJump, hadisAnchor, pageCount, pageNumbers, pageOfNumber, rangeGrid } from './bookBrowse';
 
 const bukhari = bookById('bukhari');
 const muslim = bookById('muslim');
@@ -80,65 +80,6 @@ describe('rangeGrid', () => {
     expect(pageNumbers(bukhari, range.page)).toContain(401);
     const gapStart = rangeGrid(bukhari).find((r) => r.from === 2101); // 2101 to 2119 missing, 2120 exists
     expect(pageNumbers(bukhari, gapStart.page)).toContain(2120);
-  });
-});
-
-describe('parseJump', () => {
-  test('a book name and a number', () => {
-    expect(parseJump('বুখারী ১২৩৪')).toEqual({ book: bukhari, number: 1234 });
-    expect(parseJump('মুসলিম 1069')).toEqual({ book: muslim, number: 1069 });
-  });
-
-  test('the full and older spellings of a book name', () => {
-    expect(parseJump('বুখারী শরীফ ১২')).toEqual({ book: bukhari, number: 12 });
-    expect(parseJump('বুখারি শরীফ ১২')).toEqual({ book: bukhari, number: 12 });
-    expect(parseJump('আবূ দাউদ ৫')).toEqual({ book: bookById('abudawud'), number: 5 });
-    expect(parseJump('সুনানু ইবনে মাজাহ ৫')).toEqual({ book: bookById('ibnmajah'), number: 5 });
-    expect(parseJump('তিরমিজি ৯৮৭')).toEqual({ book: tirmidhi, number: 987 });
-  });
-
-  test('Roman-letter book names, in any case', () => {
-    expect(parseJump('Bukhari 77')).toEqual({ book: bukhari, number: 77 });
-    expect(parseJump('nasai 9')).toEqual({ book: nasai, number: 9 });
-  });
-
-  test('extra words like "নং" and spacing are tolerated', () => {
-    expect(parseJump('  বুখারী   নং ১২৩৪ ')).toEqual({ book: bukhari, number: 1234 });
-    expect(parseJump('বুখারী-১২৩৪')).toEqual({ book: bukhari, number: 1234 });
-  });
-
-  test('more ways to write a book name: Sharif, Sahih, Sunan, no spaces, curly apostrophes', () => {
-    expect(parseJump('Bukhari Sharif 5')).toEqual({ book: bukhari, number: 5 });
-    expect(parseJump('sahih bukhari 5')).toEqual({ book: bukhari, number: 5 });
-    expect(parseJump('Sahih Muslim 5')).toEqual({ book: muslim, number: 5 });
-    expect(parseJump('আবুদাউদ 5')).toEqual({ book: bookById('abudawud'), number: 5 });
-    expect(parseJump('Sunan Abu Dawud 5')).toEqual({ book: bookById('abudawud'), number: 5 });
-    expect(parseJump('tirmiji 3')).toEqual({ book: tirmidhi, number: 3 });
-    expect(parseJump('nasa’i 5')).toEqual({ book: nasai, number: 5 });
-  });
-
-  test('"নং", "no.", "#" and thousands commas around the number are tolerated', () => {
-    expect(parseJump('বুখারী ১২৩৪ নং')).toEqual({ book: bukhari, number: 1234 });
-    expect(parseJump('bukhari no. 5')).toEqual({ book: bukhari, number: 5 });
-    expect(parseJump('bukhari #5')).toEqual({ book: bukhari, number: 5 });
-    expect(parseJump('বুখারী 1,234')).toEqual({ book: bukhari, number: 1234 });
-    expect(parseJump('১,২৩৪', muslim)).toEqual({ book: muslim, number: 1234 });
-  });
-
-  test('a minus sign is not a separator', () => {
-    expect(parseJump('-5', muslim)).toBeNull();
-  });
-
-  test('a number alone uses the book given as the fallback', () => {
-    expect(parseJump('১২৩৪', muslim)).toEqual({ book: muslim, number: 1234 });
-    expect(parseJump('১২৩৪')).toBeNull();
-  });
-
-  test('a name with no number, or nonsense, is not a jump', () => {
-    expect(parseJump('বুখারী')).toBeNull();
-    expect(parseJump('রোজা ১২')).toBeNull();
-    expect(parseJump('')).toBeNull();
-    expect(parseJump('   ')).toBeNull();
   });
 });
 

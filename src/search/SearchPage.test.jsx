@@ -419,7 +419,7 @@ describe('headings, focus and announcements', () => {
     const first = within(screen.getAllByRole('listitem')[0]);
     const title = first.getAllByRole('link')[0].textContent;
     expect(title).toMatch(/হাদীস নং ১$/);
-    for (const name of ['কপি', 'শেয়ার', 'তুলনায় যোগ করুন']) {
+    for (const name of ['কপি', 'শেয়ার']) {
       expect(first.getByRole('button', { name })).toHaveAccessibleDescription(title);
     }
     expect(first.queryByRole('link', { name: 'হাদীস পাতা' })).not.toBeInTheDocument();
@@ -506,7 +506,7 @@ describe('result cards, actions and boxed pager (structure)', () => {
     expect(title.compareDocumentPosition(text) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(text.compareDocumentPosition(copy) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(within(card).getByRole('button', { name: 'শেয়ার' })).toBeInTheDocument();
-    expect(within(card).getByRole('button', { name: 'তুলনায় যোগ করুন' })).toBeInTheDocument();
+    expect(within(card).queryByRole('button', { name: 'তুলনায় যোগ করুন' })).not.toBeInTheDocument();
     expect(within(card).queryByRole('link', { name: 'হাদীস পাতা' })).not.toBeInTheDocument();
   });
 
@@ -550,10 +550,10 @@ describe('the whole result card opens the full hadis', () => {
     expect(getUrl().pathname).toBe(target());
   });
 
-  test('the copy, share and compare buttons do not open it', async () => {
+  test('the copy and share buttons do not open it', async () => {
     Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue() } });
     await open();
-    for (const name of ['কপি', 'শেয়ার', 'তুলনায় যোগ করুন']) {
+    for (const name of ['কপি', 'শেয়ার']) {
       fireEvent.click(screen.getByRole('button', { name }));
       expect(getUrl().pathname).toBe('/search');
     }

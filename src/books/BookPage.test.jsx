@@ -425,7 +425,7 @@ describe('the list uses the search result cards', () => {
     expect(first.querySelector('mark')).toBeNull();
     expect(within(first).getByRole('button', { name: 'কপি' })).toBeInTheDocument();
     expect(within(first).getByRole('button', { name: 'শেয়ার' })).toBeInTheDocument();
-    expect(within(first).getByRole('button', { name: 'তুলনায় যোগ করুন' })).toBeInTheDocument();
+    expect(within(first).queryByRole('button', { name: 'তুলনায় যোগ করুন' })).not.toBeInTheDocument();
   });
 
   test('a plain click on the text opens the hadis page, a click on a button does not', async () => {

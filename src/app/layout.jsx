@@ -10,14 +10,11 @@ import '../styles/topics.css';
 import '../styles/share.css';
 import '../styles/daily.css';
 import '../styles/related.css';
-import '../styles/compare.css';
 import '../styles/narrators.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import TopNav from '../shell/TopNav';
 import TabBar from '../shell/TabBar';
 import { ToastProvider } from '../ui/Toast';
-import CompareBar from '../compare/CompareBar';
-import { CompareProvider } from '../compare/CompareProvider';
 import BackToTop from '../Helpers/BackToTop';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { themeScript } from '../settings/themeScript';
@@ -50,13 +47,10 @@ export default function RootLayout({ children }) {
         <a href="#main" className="skip-link">মূল অংশে যান</a>
         <SettingsProvider>
           <ToastProvider>
-            <CompareProvider>
-              <TopNav />
-              {children}
-              <TabBar />
-              <CompareBar />
-              <BackToTop />
-            </CompareProvider>
+            <TopNav />
+            {children}
+            <TabBar />
+            <BackToTop />
           </ToastProvider>
         </SettingsProvider>
       </body>

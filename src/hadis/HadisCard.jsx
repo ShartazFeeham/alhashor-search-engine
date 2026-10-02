@@ -8,7 +8,6 @@ import { splitHadis } from '../lib/hadisText';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import BookBadge from '../ui/BookBadge';
-import CompareToggle from '../compare/CompareToggle';
 import ShareButton from '../share/ShareButton';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
@@ -21,7 +20,7 @@ function shorten(text) {
   return text.length > LIMIT ? `${text.slice(0, LIMIT).replace(/\s\S*$/, '')} ...` : null;
 }
 
-// One hadis as a card, shared by the book, topic and compare lists: the book badge and title
+// One hadis as a card, shared by the book and topic lists: the book badge and title
 // (a link to the hadis page), the text, and copy. A long text is cut with a link to the full page.
 // `level` is the heading level of the title: 2 under a page title, 3 under a section heading.
 export default function HadisCard({ bookId, number, level = 2 }) {
@@ -81,7 +80,6 @@ export default function HadisCard({ bookId, number, level = 2 }) {
         <footer className="hcard-foot">
           <Button size="sm" aria-describedby={titleId} onClick={copy}><Icon name="copy" size={16} />কপি</Button>
           <ShareButton book={book} number={number} text={text} variant="icon" describedBy={titleId} />
-          <CompareToggle bookId={bookId} number={number} variant="icon" describedBy={titleId} />
         </footer>
       )}
     </article>

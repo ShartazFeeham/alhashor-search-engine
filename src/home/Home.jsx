@@ -57,9 +57,10 @@ export default function Home() {
           <Link href="/topics" aria-describedby="home-topics-note"><Icon name="tag" size={20} />বিষয়ভিত্তিক হাদীস</Link>
           <Link href="/daily"><Icon name="clock" size={20} />আজকের হাদীস</Link>
           <Link href="/daily?tab=plans"><Icon name="plan" size={20} />পরিকল্পনা</Link>
-          <Link href="/daily?tab=khutbah"><Icon name="print" size={20} />খুতবার তালিকা</Link>
+          <Link href="/narrators" aria-describedby="home-narrators-note"><Icon name="user" size={20} />বর্ণনাকারী</Link>
         </div>
         <span id="home-topics-note" hidden>নামাজ, রোজা, ঈমান, আমলসহ শতাধিক বিষয়</span>
+        <span id="home-narrators-note" hidden>সাহাবী ও রাবীদের নাম ধরে তাঁদের বর্ণিত হাদীস</span>
       </nav>
     </main>
   );

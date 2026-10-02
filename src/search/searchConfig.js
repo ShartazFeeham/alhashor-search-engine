@@ -11,7 +11,7 @@
 //    the cap takes the first N of a list: 50 keeps 99% of the hadis for about a quarter of the
 //    requests. It works with both substring folders, because the lists of substring/ were sorted the
 //    same way (scripts/sort-substring-2.mjs). ?cap=0 switches it off, ?cap=1 to ?cap=500 sets it.
-//    So the four modes to compare are ?idx=2&sub=2&cap=0, ?idx=2&sub=2&cap=50, ?idx=3&sub=3&cap=0 and
+//    So the four modes under test are ?idx=2&sub=2&cap=0, ?idx=2&sub=2&cap=50, ?idx=3&sub=3&cap=0 and
 //    ?idx=3&sub=3&cap=50.
 //
 // This is a developer switch for comparing the layouts: nothing in the settings page, and a value

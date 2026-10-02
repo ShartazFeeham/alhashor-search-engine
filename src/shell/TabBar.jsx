@@ -3,18 +3,15 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
-import { useCompare } from '../compare/CompareProvider';
-import { compareHref } from '../lib/compareList';
 import Icon from '../ui/Icon';
 import { activeSection } from './activeTab';
 
 // The phone's bottom bar: Home, Books, a raised Search, Topics, and More (which holds the daily
-// hadis, plans, khutbah list, compare, narrators and settings).
+// hadis, plans, narrators and settings).
 export default function TabBar() {
   const pathname = usePathname();
   const current = activeSection(pathname);
   const [moreOpen, setMoreOpen] = useState(false);
-  const { ids } = useCompare();
   const menuId = useId();
   const moreRef = useRef(null);
   const menuRef = useRef(null);
@@ -83,7 +80,7 @@ export default function TabBar() {
           ref={moreRef}
           aria-expanded={moreOpen}
           aria-controls={menuId}
-          aria-current={current === 'daily' || current === 'compare' || current === 'narrators' ? 'true' : undefined}
+          aria-current={current === 'daily' || current === 'narrators' ? 'true' : undefined}
           onClick={() => setMoreOpen((open) => !open)}>
           <Icon name="grid" size={22} />
           <span>আরও</span>
@@ -98,14 +95,6 @@ export default function TabBar() {
           <Link href="/daily?tab=plans" onClick={() => setMoreOpen(false)}>
             <Icon name="plan" size={20} />
             পরিকল্পনা
-          </Link>
-          <Link href="/daily?tab=khutbah" onClick={() => setMoreOpen(false)}>
-            <Icon name="print" size={20} />
-            খুতবার তালিকা
-          </Link>
-          <Link href={compareHref(ids)} onClick={() => setMoreOpen(false)}>
-            <Icon name="cols" size={20} />
-            তুলনা
           </Link>
           <Link href="/narrators" onClick={() => setMoreOpen(false)}>
             <Icon name="user" size={20} />

@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { renderToStaticMarkup as toMarkup } from 'react-dom/server';
@@ -10,7 +10,6 @@ import SearchPage from './search/page';
 import BooksPage from './books/page';
 import TopicsPage from './topics/page';
 import DailyRoute, { metadata as dailyMetadata } from './daily/page';
-import CompareRoute, { metadata as compareMetadata } from './compare/page';
 import NarratorsRoute from './narrators/page';
 import NotFoundPage from './not-found';
 import SettingsRoute from './settings/page';
@@ -22,9 +21,6 @@ const pages = [
   ['/topics', TopicsPage],
   ['/daily', DailyRoute],
   ['/daily?tab=plans', DailyRoute],
-  ['/daily?tab=khutbah&ids=muslim-5', DailyRoute],
-  ['/compare', CompareRoute],
-  ['/compare?ids=bukhari-1,muslim-4774', CompareRoute],
   ['/narrators', NarratorsRoute],
   ['/narrators?name=abu-hurayrah&page=2&book=muslim', NarratorsRoute],
   ['/settings', SettingsRoute],
@@ -56,9 +52,6 @@ test.each([
   ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - Alhashor', TopicsPage],
   ['/daily', 'আজকের হাদীস - Alhashor', DailyRoute],
   ['/daily?tab=plans', 'আজকের হাদীস - Alhashor', DailyRoute],
-  ['/daily?tab=khutbah', 'আজকের হাদীস - Alhashor', DailyRoute],
-  ['/compare', 'হাদীস তুলনা - Alhashor', CompareRoute],
-  ['/compare?ids=bukhari-1,muslim-4774', 'হাদীস তুলনা - Alhashor', CompareRoute],
   ['/narrators', 'বর্ণনাকারী - Alhashor', NarratorsRoute],
   ['/narrators?name=abu-hurayrah', 'বর্ণনাকারী - Alhashor', NarratorsRoute], // the narrator's name joins the title once the index has loaded (NarratorsPage.test.jsx)
   ['/settings', 'পড়ার সেটিংস - Alhashor', SettingsRoute],
@@ -72,8 +65,9 @@ test('the daily route has a pre-built title for the first paint', () => {
   expect(dailyMetadata.title).toBe('আজকের হাদীস - Alhashor');
 });
 
-test('the compare route has a pre-built title for the first paint', () => {
-  expect(compareMetadata.title).toBe('হাদীস তুলনা - Alhashor');
+test('there is no compare route', () => {
+  expect(existsSync(path.resolve(process.cwd(), 'src/app/compare'))).toBe(false);
+  expect(existsSync(path.resolve(process.cwd(), 'src/compare'))).toBe(false);
 });
 
 test('the narrators route is static and sets no pre-built title (the page sets one that includes the narrator\'s name)', () => {
@@ -123,15 +117,13 @@ test('site metadata names the site and describes it in Bengali', () => {
 test('the layout loads every global stylesheet, in order', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css', '../styles/related.css', '../styles/compare.css', '../styles/narrators.css']);
+  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css', '../styles/related.css', '../styles/narrators.css']);
 });
 
-test('the layout keeps the compare choice for every page and shows the compare bar', () => {
+test('the layout renders no compare provider or bar', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
-  // the provider wraps the pages and the shell (the nav and tab bar read the choice), inside the toast provider
-  expect(source.indexOf('<ToastProvider>')).toBeLessThan(source.indexOf('<CompareProvider>'));
-  expect(source.indexOf('<CompareProvider>')).toBeLessThan(source.indexOf('<TopNav />'));
-  expect(source.indexOf('<CompareBar />')).toBeLessThan(source.indexOf('</CompareProvider>'));
+  expect(source).not.toMatch(/compare/i);
+  expect(source).toContain('<TopNav />');
 });
 
 describe('skip link and main landmark', () => {

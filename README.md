@@ -11,9 +11,8 @@ Live site (when deployed): https://hadis.feeham.com. Work currently stays local:
 - **Topics** (`/topics?topic=&page=&book=&sort=desc`): a letter-block menu of the 203 topics, curated by what people look for (docs/topics-review.md; a sticky sidebar from 900px, a full-screen overlay on phones) with a search box and an ascending/descending sort, and the topic's hadis shown as the `/search` listing for its name (`src/search/SearchResults.jsx`, shared with the search page). The curated "start here" block (`src/data/curatedTopics.js`) is switched off.
 - **Hadis page** (`/hadis/<book>/<number>`): calm reading column, folded narrator chain, reading time and progress line, copy / cite / link buttons, previous and next (arrow keys and swipe), breadcrumb back to the book.
 - **Share** (`/share/<book>/<number>`): citation, share text, native share sheet and a quote-card image drawn on a canvas in the browser (download or share).
-- **Daily** (`/daily`, `?tab=plans[&plan=<id>]`, `?tab=khutbah&ids=bukhari-1234,muslim-5`): hadis of the day (chosen from the date, no randomness), reading plans with per-day ticks kept on the device, and a khutbah sheet (the list lives in the address; copy, link and a print layout).
+- **Daily** (`/daily`, `?tab=plans[&plan=<id>]`): hadis of the day (chosen from the date, no randomness) and reading plans with per-day ticks kept on the device.
 - **Similar hadis**: under each hadis page, a live search with the meaningful words of the whole hadis (common words removed, at most 25 longest words), the best 20 kept, 5 shown and "আরও সদৃশ হাদীস" shows 5 more each time. The hadis page is a stack of cards as wide as the list pages.
-- **Compare**: in progress; the route does not exist yet (`src/compare/` holds its state so far).
 - **Themes and reading settings** (`/settings`): light, dark, sepia or follow the device; text size (3 to 30 px), line gap (0.5 to 2.5) and Bengali or English digits. Saved on the device only.
 
 ## Run it
@@ -35,7 +34,7 @@ A hadis page (`/hadis/<book>/<number>`) is rendered on the server, so the saying
 
 - **Text for the server.** `npm run build` runs the `prebuild` script, `scripts/build-text-shards.mjs`, which packs every text into `.data/hadis/<CODE>-<n>.json` (100 hadis per shard, 334 files, about 40 MB, git-ignored). `next.config.mjs` ships them with the hadis route and the RSS route; `src/lib/hadisServer.js` reads them (and falls back to the files in `public/json/hadis` when the shards are absent, as in tests).
 - **`SITE_URL`.** Absolute addresses come from `src/lib/site.js`: `NEXT_PUBLIC_SITE_URL` or `https://hadis.feeham.com`. Set the variable for another domain.
-- **Sitemaps and robots.** `/sitemap.xml` is an index of six sitemaps, `/sitemap/0.xml` to `/sitemap/5.xml`, one per book (every hadis that exists, plus the main pages in the first). `robots.txt` (`src/app/robots.js`) allows everything except `/search`, `/compare`, `/share/` and `/settings`. All of them are built at build time.
+- **Sitemaps and robots.** `/sitemap.xml` is an index of six sitemaps, `/sitemap/0.xml` to `/sitemap/5.xml`, one per book (every hadis that exists, plus the main pages in the first). `robots.txt` (`src/app/robots.js`) allows everything except `/search`, `/share/` and `/settings`. All of them are built at build time.
 - **RSS.** `/daily/rss.xml` is the hadis of the day for the last 14 days (dates in Bangladesh time), rebuilt at most hourly, announced from `/daily` with a `<link rel="alternate">`.
 - **Not done:** per-hadis preview images (Bengali text in generated images is unreliable); every link preview uses the site logo.
 
@@ -49,8 +48,7 @@ src/
   home/       home page            search/   search page, box, filters, results, searchIndex.js
   books/      book pages           topics/   topic menu, start-here block, pager
   hadis/      hadis page, shared hadis card, similar-hadis list
-  daily/      daily card, plans, khutbah sheet   share/  quote card and share logic
-  compare/    compare state (page not built yet)
+  daily/      daily card, plans            share/  quote card and share logic
   settings/   settings store, provider, page, inline theme script
   ui/         Button, Chip, Icon, BookBadge, Toast
   styles/     tokens.css (colours, three themes) plus one stylesheet per area; plain CSS, no framework
@@ -94,7 +92,7 @@ The search reads its settings from `src/search/searchConfig.js`. Three of them c
 | `?sub=` | `2`, `3` | `3` | containing-word files: `substring/` or `substring3/` |
 | `?cap=` | `0` (off), `1` to `500` | `50` | how many of the longer words that contain a query word have their `tags` file loaded: the first N of the word's list (the ones with the most hadis). Works with both `?sub=2` and `?sub=3`, because the lists of `substring/` and `substring3/` are sorted the same way |
 
-The four modes to compare, and the address switches for each:
+The four modes under test, and the address switches for each:
 
 | Mode | Switches | Behaviour |
 |---|---|---|
@@ -107,7 +105,7 @@ With the cap off, the 2-letter and the 3-letter files return the same hadis in t
 
 ## Self-contained rule
 
-Everything ships with the app: no database, no CDN fonts, analytics, third-party scripts or APIs, no hosted storage or accounts. Fonts are files in `src/assets/fonts`. The only storage is the visitor's own device (`localStorage`: `alhashor.settings`, `alhashor.plan-progress`, `alhashor.compare`; values saved under the old site name, `boikotha.*`, are still read once and copied across, see `LEGACY_KEY` in `src/settings/settings.js`, `src/lib/planProgress.js` and `src/lib/compareList.js`). Details are in section 11 of `docs/redesign-plan.md`.
+Everything ships with the app: no database, no CDN fonts, analytics, third-party scripts or APIs, no hosted storage or accounts. Fonts are files in `src/assets/fonts`. The only storage is the visitor's own device (`localStorage`: `alhashor.settings`, `alhashor.plan-progress`; values saved under the old site name, `boikotha.*`, are still read once and copied across, see `LEGACY_KEY` in `src/settings/settings.js` and `src/lib/planProgress.js`). Details are in section 11 of `docs/redesign-plan.md`.
 
 Checks (they use headless Google Chrome; the default path is the macOS one, override it with `CHROME=/path/to/chrome`). Build first, then run each against a server. `scripts/with-server.sh <port> "<start command>" <command...>` starts the server, waits for it, runs the command and stops the server:
 

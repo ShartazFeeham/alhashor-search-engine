@@ -16,8 +16,6 @@ const routes = [
   ['topic', `/topics?topic=${encodeURIComponent('নামায')}`],
   ['daily', '/daily'],
   ['daily-plans', '/daily?tab=plans&plan=ramadan-30'],
-  ['daily-khutbah', '/daily?tab=khutbah&ids=bukhari-1,muslim-5'],
-  ['compare', '/compare?ids=bukhari-1,muslim-5'],
   ['narrators', '/narrators'],
   ['narrator', '/narrators?name=abu-hurayrah'],
   ['share', '/share/bukhari/307'],

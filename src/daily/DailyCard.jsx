@@ -11,11 +11,10 @@ import BookBadge from '../ui/BookBadge';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import { useToast } from '../ui/Toast';
-import AddToKhutbah from './AddToKhutbah';
 import { citationOf } from './citation';
 
 // The hadis of the day as a larger, calm card: the date, book badge and citation, the whole text
-// (these hadis are short), and copy, the full page and the khutbah list.
+// (these hadis are short), and copy and the full page.
 export default function DailyCard({ book, number, date }) {
   const digits = useDigits();
   const toast = useToast();
@@ -73,7 +72,6 @@ export default function DailyCard({ book, number, date }) {
         {status === 'ok' && (
           <Button size="sm" onClick={copy}><Icon name="copy" size={16} />কপি</Button>
         )}
-        <AddToKhutbah bookId={book.id} number={number} />
       </div>
     </article>
   );

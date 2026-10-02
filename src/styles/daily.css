@@ -1,5 +1,5 @@
-/* Daily hadis, reading plans and the khutbah sheet (/daily), the home page's daily card and
-   quick links, and the print layout of the khutbah sheet. Ported from D2's daily screen. */
+/* Daily hadis and reading plans (/daily), the home page's daily card and
+   quick links. Ported from D2's daily screen. */
 .daily{max-width:760px}
 .daily-head p{margin-top:6px}
 .daily .h2,.home-quick .h2{font-size:17px;line-height:1.3;font-weight:700;margin:0}
@@ -19,7 +19,6 @@
 /* the group scrolls, which would clip an outside ring */
 .daily-tabs a:focus-visible{outline-offset:-3px}
 .daily-tabs a[aria-current="page"]{background:var(--surface);color:var(--accent2);box-shadow:var(--shadow)}
-.daily-tab-count{min-width:20px;height:20px;padding:0 5px;border-radius:99px;display:inline-grid;place-items:center;background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:700;flex:none}
 
 /* today's hadis */
 .daily-card{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:0 0 18px;border-radius:26px;background:var(--surface);box-shadow:var(--shadow)}
@@ -43,7 +42,6 @@
 .daily-recent-head a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none}
 .daily-recent-head a:hover{text-decoration:underline;text-underline-offset:3px}
 .daily-recent-text{margin:0;font-family:var(--f-read),serif;font-size:calc(var(--rs) - 1px);line-height:1.75;max-width:var(--rw);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
-.daily-recent-foot{display:flex}
 
 /* plans */
 .plan-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:12px}
@@ -84,49 +82,6 @@
 .plan-day-more{display:inline-flex;align-items:center;min-height:44px;color:var(--accent2);font-weight:600;text-decoration:none;text-underline-offset:3px}
 .plan-day-more:hover,.plan-day-more:focus-visible{text-decoration:underline}
 
-/* khutbah sheet */
-.khut-add{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
-.khut-add .h3{margin:0;font-size:14px}
-.khut-add .tiny a{color:var(--accent2);font-weight:600;text-decoration:none;text-underline-offset:3px}
-.khut-add .tiny a:hover,.khut-add .tiny a:focus-visible{text-decoration:underline}
-.khut-add-form{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:18px;padding:4px 4px 4px 14px;background:var(--surface);transition:border-color .2s,box-shadow .2s}
-.khut-add-form:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
-.khut-add-form input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);padding:8px 2px}
-.khut-add-msg:empty{display:none}
-.khut-add-msg{font-weight:600;font-size:12px;line-height:1.6;color:var(--accent2)}
-.khut-add-examples{display:flex;flex-wrap:wrap;gap:8px}
-.khut-add .ui-chip{min-height:44px}
-.khut-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-.khut-bar .tag{margin-right:auto}
-.khut-bar .ui-btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent2)}
-
-.khut-sheet{padding:20px 18px;border-radius:22px;background:var(--surface);box-shadow:var(--shadow);font-family:var(--f-read),serif}
-.khut-sheet-head{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:14px}
-.khut-sheet-head h2{margin:0;font-size:18px;line-height:1.4}
-.khut-date{margin:4px 0 0;font-size:12px;color:var(--ink2)}
-.khut-empty{margin:20px 0;text-align:center;color:var(--ink2);font-family:var(--f-ui),system-ui,sans-serif}
-.khut-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:18px}
-.khut-item{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:start}
-.khut-no{min-width:1.6em;font-weight:700;color:var(--ink2);line-height:var(--rlh);font-size:calc(var(--rs) - 1px)}
-.khut-main{min-width:0}
-.khut-text{margin:0;font-size:calc(var(--rs) - 1px);line-height:var(--rlh);max-width:var(--rw);overflow-wrap:anywhere}
-.khut-cite{display:flex;align-items:center;gap:8px;margin:6px 0 0;font-family:var(--f-ui),system-ui,sans-serif;font-size:12.5px;font-weight:600;color:var(--ink2)}
-.khut-note{margin:0;color:var(--ink2);font-family:var(--f-ui),system-ui,sans-serif}
-.khut-skeleton{display:flex;flex-direction:column;gap:8px}
-.khut-controls{grid-column:2;display:flex;gap:6px}
-.khut-icon{width:44px;height:44px;display:grid;place-items:center;border:0;border-radius:14px;background:var(--surface2);color:var(--ink);cursor:pointer}
-.khut-icon:hover:not([disabled]){background:var(--accent-soft)}
-.khut-icon[disabled]{opacity:.35;cursor:not-allowed}
-.khut-down{display:grid;transform:rotate(180deg)}
-.khut-foot{margin-top:20px;padding-top:8px;border-top:1px solid var(--line);text-align:center;font:600 11px var(--f-lat),system-ui,sans-serif;color:var(--ink3)}
-
-/* the "print view" preview: a paper sheet, on screen */
-.khut-sheet.is-paper{background:#fffdf8;color:#1d1b16;border-radius:6px;padding:26px 22px;box-shadow:0 10px 30px rgba(0,0,0,.18),0 0 0 1px #e5dfd0}
-.khut-sheet.is-paper .khut-sheet-head{border-bottom-color:#1d1b16}
-.khut-sheet.is-paper .khut-date,.khut-sheet.is-paper .khut-cite,.khut-sheet.is-paper .khut-no,.khut-sheet.is-paper .khut-foot{color:#6a6454}
-.khut-sheet.is-paper .khut-foot{border-top-color:#ddd}
-.khut-sheet.is-paper .no-print{display:none}
-
 /* home: the daily card (inside the hero) and the quick links */
 .home-daily{--home-daily-fs:12px;--home-daily-ink:var(--ink2);display:flex;flex-direction:column;gap:4px;min-width:0;margin:8px 0 0;padding:8px 12px 6px;border-radius:16px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
 .home-daily-loading{min-height:96px}
@@ -163,8 +118,6 @@
 @media (min-width: 641px){
   .home-quick-links{grid-template-columns:repeat(4,1fr)}
   .plan-list{grid-template-columns:1fr 1fr}
-  .khut-item{grid-template-columns:auto 1fr auto}
-  .khut-controls{grid-column:auto}
   .daily-tabs a{font-size:13.5px}
 }
 
@@ -173,24 +126,4 @@
   .shell-links{margin-left:4px}
   .shell-links a{padding:8px 9px;font-size:12.5px}
   .shell-brand small{display:none}
-}
-
-/* ---------- print: the khutbah sheet only ---------- */
-@media print{
-  .shell-nav,.shell-tabbar,.shell-more,.ui-fab,.ui-toast,.no-print,.daily-tabs{display:none !important}
-  .daily[data-tab="khutbah"] .daily-head{display:none}
-  html,body{background:#fff !important;color:#000 !important}
-  body{display:block;min-height:0;padding:0 !important}
-  .daily{max-width:none;padding:0;gap:0}
-  .khut-sheet,.khut-sheet.is-paper{padding:0 0 16mm;border-radius:0;background:#fff;color:#000;box-shadow:none;font-family:var(--f-read),serif}
-  .khut-sheet-head{border-bottom:2px solid #000;margin-bottom:8mm}
-  .khut-sheet-head h2{font-size:24pt}
-  .khut-date{font-size:13pt;color:#333}
-  .khut-list{display:block}
-  .khut-item{display:grid;grid-template-columns:auto 1fr;gap:0 4mm;padding:0 0 8mm;break-inside:avoid;page-break-inside:avoid;break-after:page;page-break-after:always}
-  .khut-item:last-child{break-after:auto;page-break-after:auto}
-  .khut-no{font-size:22pt;line-height:1.8;color:#333}
-  .khut-text{max-width:none;font-size:22pt;line-height:1.8;color:#000}
-  .khut-cite{margin-top:5mm;font-size:14pt;color:#333}
-  .khut-foot{position:fixed;left:0;right:0;bottom:0;padding:2mm 0 0;border-top:1px solid #999;font-size:10pt;color:#444}
 }

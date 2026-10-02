@@ -1,6 +1,5 @@
 import { HADIS_PER_PAGE } from '../Helpers/paging';
-import { BOOKS, hasHadis } from './books';
-import { toEnglishDigits } from './digits';
+import { hasHadis } from './books';
 
 const RANGE_SIZE = 100;
 
@@ -58,40 +57,6 @@ export function rangeGrid(book) {
     grid.push({ from, to, page: first <= to ? pageOfNumber(book, first) : null });
   }
   return grid;
-}
-
-// Spellings a visitor may type for each book. Names are compared without spaces, case, apostrophe
-// styles and the words "শরীফ", "সুনান", "sahih" and so on.
-const EXTRA_NAMES = {
-  bukhari: ['bukhari', 'বুখারি'],
-  muslim: ['muslim'],
-  tirmidhi: ['tirmidhi', 'tirmizi', 'tirmiji', 'তিরমিজি'],
-  abudawud: ['abudawud', 'abu dawud', 'abu daud', 'আবূ দাউদ'],
-  ibnmajah: ['ibnmajah', 'ibn majah', 'ibn maja', 'ইবনে মাজাহ', 'ইবনু মাজাহ'],
-  nasai: ['nasai', "nasa'i", 'nasae', 'নাসায়ী'],
-};
-
-const plain = (text) =>
-  text
-    .toLowerCase()
-    .replace(/[’‘ʼ`]/g, "'")
-    .replace(/শরীফ|সুনানু|সুনান|সহীহ|নং|\b(?:sharif|sahih|sunan|no)\b/g, ' ')
-    .replace(/[\s\-_,:.#]+/g, '');
-
-const NAMES = BOOKS.flatMap((book) =>
-  [book.name, book.full, book.legacyName, book.cite, ...EXTRA_NAMES[book.id]].map((name) => [plain(name), book])
-);
-
-// "বুখারী ১২৩৪", "bukhari 1234" or just "১২৩৪" (with `fallback`, the book already open). A trailing
-// "নং", "#" and thousands commas are fine; a leading minus is not a number.
-export function parseJump(text, fallback = null) {
-  const cleaned = toEnglishDigits(text.trim()).replace(/(\d),(?=\d)/g, '$1').replace(/\s*(?:নং|no\.?)\s*$/i, '');
-  if (cleaned.startsWith('-')) return null;
-  const match = /^(.*?)[\s\-_,:.#]*(\d+)\s*$/.exec(cleaned);
-  if (!match) return null;
-  const name = plain(match[1]);
-  const book = name === '' ? fallback : NAMES.find(([known]) => known === name)?.[1];
-  return book ? { book, number: Number(match[2]) } : null;
 }
 
 export function checkJump(book, number) {

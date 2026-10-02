@@ -8,7 +8,6 @@ import { splitHadis } from '../lib/hadisText';
 import { hasMatch, highlightParts, makeSnippet } from '../lib/matchPattern';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
-import CompareToggle from '../compare/CompareToggle';
 import ShareButton from '../share/ShareButton';
 import BookBadge from '../ui/BookBadge';
 import { useToast } from '../ui/Toast';
@@ -88,7 +87,6 @@ export default function ResultItem({ tag, matcher = null, anchor, marked = false
         {cut && <Link href={href} aria-describedby={titleId}>সম্পূর্ণ হাদীস দেখুন...</Link>}
         {status === 'ok' && <button type="button" aria-describedby={titleId} onClick={copy}>কপি</button>}
         {status === 'ok' && <ShareButton book={book} number={number} text={text} variant="link" describedBy={titleId} />}
-        {status === 'ok' && <CompareToggle bookId={book.id} number={number} variant="link" describedBy={titleId} />}
       </div>
     </li>
   );

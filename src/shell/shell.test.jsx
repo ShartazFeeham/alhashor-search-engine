@@ -1,13 +1,10 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { CompareProvider } from '../compare/CompareProvider';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { getUrl, setUrl } from '../test/nextNavigation';
 import TabBar from './TabBar';
 import TopNav from './TopNav';
 
 const show = (ui) => render(<SettingsProvider>{ui}</SettingsProvider>);
-
-afterEach(() => sessionStorage.clear());
 
 test.each([
   ['/', 'হোম'],
@@ -16,9 +13,8 @@ test.each([
   ['/topics', 'বিষয়ভিত্তিক হাদীস'],
   ['/daily', 'আজকের হাদীস'],
   ['/daily?tab=plans', 'আজকের হাদীস'],
-  ['/daily?tab=khutbah&ids=muslim-5', 'আজকের হাদীস'],
-  ['/compare', 'তুলনা'],
-  ['/compare?ids=bukhari-1,muslim-4774', 'তুলনা'],
+  ['/narrators', 'বর্ণনাকারী'],
+  ['/narrators?name=abu-hurayrah&page=2', 'বর্ণনাকারী'],
 ])('on %s the top navigation marks %s as the current page', (path, label) => {
   setUrl(path);
   show(<TopNav />);
@@ -75,12 +71,13 @@ test('the tab bar "more" button opens and closes a menu with the settings link',
   expect(screen.queryByRole('link', { name: 'পড়ার সেটিংস' })).not.toBeInTheDocument();
 });
 
-test('the "more" menu links the daily hadis, the plans and the khutbah sheet', () => {
+test('the "more" menu links the daily hadis and the plans', () => {
   show(<TabBar />);
   fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
   expect(screen.getByRole('link', { name: 'আজকের হাদীস' })).toHaveAttribute('href', '/daily');
   expect(screen.getByRole('link', { name: 'পরিকল্পনা' })).toHaveAttribute('href', '/daily?tab=plans');
-  expect(screen.getByRole('link', { name: 'খুতবার তালিকা' })).toHaveAttribute('href', '/daily?tab=khutbah');
+  expect(screen.queryByRole('link', { name: 'খুতবার তালিকা' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'তুলনা' })).not.toBeInTheDocument();
 });
 
 test('choosing a link in the "more" menu goes there and closes the menu', () => {
@@ -91,35 +88,17 @@ test('choosing a link in the "more" menu goes there and closes the menu', () => 
   expect(screen.queryByRole('link', { name: 'পরিকল্পনা' })).not.toBeInTheDocument();
 });
 
-test('the top navigation links to the compare page', () => {
+test('the top navigation has the narrators link in the last place and no compare link', () => {
   show(<TopNav />);
-  expect(screen.getByRole('link', { name: 'তুলনা' })).toHaveAttribute('href', '/compare');
-});
-
-test('the "more" menu links the compare page', () => {
-  show(<TabBar />);
-  fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
-  expect(screen.getByRole('link', { name: 'তুলনা' })).toHaveAttribute('href', '/compare');
-});
-
-test('with hadis chosen, both compare links carry them (so the page opens with that comparison)', () => {
-  sessionStorage.setItem('alhashor.compare', 'bukhari-1,muslim-4774');
-  show(
-    <CompareProvider>
-      <TopNav />
-      <TabBar />
-    </CompareProvider>
-  );
-  fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
-  const links = screen.getAllByRole('link', { name: 'তুলনা' });
-  expect(links).toHaveLength(2);
-  links.forEach((link) => expect(link).toHaveAttribute('href', '/compare?ids=bukhari-1,muslim-4774'));
-});
-
-test('on the compare page the "more" button is marked as holding the current page', () => {
-  setUrl('/compare');
-  show(<TabBar />);
-  expect(screen.getByRole('button', { name: 'আরও' })).toHaveAttribute('aria-current', 'true');
+  expect(screen.getAllByRole('link').slice(1, -1).map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
+    ['হোম', '/'],
+    ['সার্চ', '/search'],
+    ['হাদীস বই', '/books'],
+    ['বিষয়ভিত্তিক হাদীস', '/topics'],
+    ['আজকের হাদীস', '/daily'],
+    ['বর্ণনাকারী', '/narrators'],
+  ]);
+  expect(screen.queryByRole('link', { name: 'তুলনা' })).not.toBeInTheDocument();
 });
 
 test('on the daily page the "more" button is marked as holding the current page', () => {
@@ -152,13 +131,6 @@ test.each(['/narrators', '/narrators?name=abu-hurayrah&page=2'])('on %s the "mor
   setUrl(path);
   show(<TabBar />);
   expect(screen.getByRole('button', { name: 'আরও' })).toHaveAttribute('aria-current', 'true');
-});
-
-test('the top navigation has no narrators link (it would not fit beside the six it has at 641px); the more menu carries it', () => {
-  setUrl('/narrators');
-  show(<TopNav />);
-  expect(screen.queryByRole('link', { name: 'বর্ণনাকারী' })).not.toBeInTheDocument();
-  expect(screen.getAllByRole('link').filter((a) => a.getAttribute('aria-current') === 'page')).toHaveLength(0);
 });
 
 describe('the "more" menu is operable by keyboard', () => {
@@ -198,7 +170,7 @@ describe('the "more" menu is operable by keyboard', () => {
 
   test('Escape closes the menu and puts focus back on the button', () => {
     const more = open();
-    const link = screen.getByRole('link', { name: 'তুলনা' });
+    const link = screen.getByRole('link', { name: 'পরিকল্পনা' });
     link.focus();
     fireEvent.keyDown(link, { key: 'Escape' });
     expect(more).toHaveAttribute('aria-expanded', 'false');
@@ -227,7 +199,7 @@ describe('the "more" menu is operable by keyboard', () => {
 
   test('touching inside the menu or on the button does not close it by itself', () => {
     const more = open();
-    fireEvent.pointerDown(screen.getByRole('link', { name: 'তুলনা' }));
+    fireEvent.pointerDown(screen.getByRole('link', { name: 'পরিকল্পনা' }));
     fireEvent.pointerDown(more);
     expect(more).toHaveAttribute('aria-expanded', 'true');
   });
@@ -242,19 +214,19 @@ describe('the "more" menu is operable by keyboard', () => {
   test('the arrow keys, Home and End move between the links', () => {
     open();
     const links = within(screen.getByRole('group', { name: 'আরও মেনু' })).getAllByRole('link');
-    expect(links).toHaveLength(6);
+    expect(links).toHaveLength(4);
     links[0].focus();
     fireEvent.keyDown(links[0], { key: 'ArrowDown' });
     expect(links[1]).toHaveFocus();
     fireEvent.keyDown(links[1], { key: 'ArrowUp' });
     expect(links[0]).toHaveFocus();
     fireEvent.keyDown(links[0], { key: 'ArrowUp' });
-    expect(links[5]).toHaveFocus();
-    fireEvent.keyDown(links[5], { key: 'ArrowDown' });
+    expect(links[3]).toHaveFocus();
+    fireEvent.keyDown(links[3], { key: 'ArrowDown' });
     expect(links[0]).toHaveFocus();
     fireEvent.keyDown(links[0], { key: 'End' });
-    expect(links[5]).toHaveFocus();
-    fireEvent.keyDown(links[5], { key: 'Home' });
+    expect(links[3]).toHaveFocus();
+    fireEvent.keyDown(links[3], { key: 'Home' });
     expect(links[0]).toHaveFocus();
   });
 });

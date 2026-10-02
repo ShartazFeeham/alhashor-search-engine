@@ -11,7 +11,7 @@ import PlanDay from './PlanDay';
 import ProgressBar from './ProgressBar';
 
 // One plan: progress, the day-by-day checklist and "start again" (with a confirm step).
-export default function PlanDetail({ plan, progress, onToggle, onReset, items }) {
+export default function PlanDetail({ plan, progress, onToggle, onReset }) {
   const digits = useDigits();
   const [confirming, setConfirming] = useState(false);
   const total = plan.days.length;
@@ -19,7 +19,7 @@ export default function PlanDetail({ plan, progress, onToggle, onReset, items })
 
   return (
     <section className="plan-detail" aria-labelledby="plan-detail-title">
-      <Link href={dailyHref({ tab: 'plans', items })} className="plan-back">
+      <Link href={dailyHref({ tab: 'plans' })} className="plan-back">
         <Icon name="cl" size={18} />সব পরিকল্পনা
       </Link>
       <header className="plan-detail-head">

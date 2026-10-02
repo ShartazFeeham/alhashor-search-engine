@@ -8,7 +8,6 @@ import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import { useSettings } from '../settings/SettingsProvider';
 import BookBadge from '../ui/BookBadge';
-import AddToKhutbah from './AddToKhutbah';
 import { citationOf } from './citation';
 
 function Excerpt({ bookId, number }) {
@@ -40,9 +39,6 @@ export default function RecentList({ entries }) {
               <Link href={hadisHref(pick.book.id, pick.number)}>{citationOf(pick.book, pick.number, digits)}</Link>
             </div>
             <Excerpt bookId={pick.book.id} number={pick.number} />
-            <div className="daily-recent-foot">
-              <AddToKhutbah bookId={pick.book.id} number={pick.number} />
-            </div>
           </li>
         ))}
       </ol>

@@ -222,13 +222,13 @@ describe('the daily hadis card', () => {
 describe('the new-features row', () => {
   const row = () => screen.getByRole('navigation', { name: 'নতুন সুবিধা' });
 
-  test('has exactly four cards: topics first, then the daily hadis, the plans and the khutbah sheet', () => {
+  test('has exactly four cards: topics first, then the daily hadis, the plans and the narrators', () => {
     renderHome();
     expect(within(row()).getAllByRole('link').map((link) => [link.textContent, link.getAttribute('href')])).toEqual([
       ['বিষয়ভিত্তিক হাদীস', '/topics'],
       ['আজকের হাদীস', '/daily'],
       ['পরিকল্পনা', '/daily?tab=plans'],
-      ['খুতবার তালিকা', '/daily?tab=khutbah'],
+      ['বর্ণনাকারী', '/narrators'],
     ]);
   });
 

@@ -6,7 +6,7 @@ import { splitHadis } from '../lib/hadisText';
 import { STORAGE_KEY } from '../lib/planProgress';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { diskFetch, realText } from '../test/hadisFixtures';
-import { getUrl, setUrl } from '../test/nextNavigation';
+import { setUrl } from '../test/nextNavigation';
 import { ToastProvider } from '../ui/Toast';
 import PlansSection from './PlansSection';
 
@@ -70,10 +70,10 @@ describe('the plan list', () => {
     expect(within(link).getByRole('progressbar')).toHaveAttribute('aria-valuenow', String(Math.round((2 / PLAN.days.length) * 100)));
   });
 
-  test('keeps the khutbah list in the links so it is not lost', () => {
+  test('the plan links carry no list in the address', () => {
     setUrl('/daily?tab=plans&ids=muslim-5');
     show();
-    expect(screen.getByRole('link', { name: new RegExp(PLAN.title) })).toHaveAttribute('href', planAddress(PLAN, '&ids=muslim-5'));
+    expect(screen.getByRole('link', { name: new RegExp(PLAN.title) })).toHaveAttribute('href', planAddress(PLAN));
   });
 
   test('says when the plan in the address is not one of ours, and still shows the list', () => {
@@ -135,13 +135,10 @@ describe('a plan as a checklist', () => {
     expect(checkboxes()[2]).toBeChecked();
   });
 
-  test('a day can be added to the khutbah list', () => {
+  test('a day has no khutbah list button', () => {
     show();
-    const first = PLAN.days[0];
     const item = within(screen.getByRole('list', { name: 'দিনের তালিকা' })).getAllByRole('listitem')[0];
-    fireEvent.click(within(item).getByRole('button', { name: 'খুতবার তালিকায় যোগ করুন' }));
-    expect(getUrl().searchParams.get('plan')).toBe(PLAN.id);
-    expect(getUrl().searchParams.get('ids')).toBe(`${first.book}-${first.number}`);
+    expect(within(item).queryByRole('button', { name: /খুতবার তালিকা/ })).not.toBeInTheDocument();
   });
 
   test('a hadis that has no file says so, without breaking the list', async () => {

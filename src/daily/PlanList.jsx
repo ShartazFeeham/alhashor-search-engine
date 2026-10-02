@@ -8,7 +8,7 @@ import Icon from '../ui/Icon';
 import ProgressBar from './ProgressBar';
 
 // Every plan as a card: title, description, length and how far along the visitor is.
-export default function PlanList({ plans, progress, items }) {
+export default function PlanList({ plans, progress }) {
   const digits = useDigits();
   return (
     <ul className="plan-list">
@@ -16,7 +16,7 @@ export default function PlanList({ plans, progress, items }) {
         const total = plan.days.length;
         return (
           <li key={plan.id}>
-            <Link href={dailyHref({ tab: 'plans', plan: plan.id, items })} className="plan-card">
+            <Link href={dailyHref({ tab: 'plans', plan: plan.id })} className="plan-card">
               <span className="plan-card-head">
                 <b>{plan.title}</b>
                 <Icon name="cr" size={20} />

@@ -75,7 +75,7 @@ test('only the first sitemap has the static pages, and utility pages are not amo
   const first = await urlsOf(0);
   expect(first.slice(0, 3)).toEqual(['https://hadis.feeham.com/', 'https://hadis.feeham.com/books', 'https://hadis.feeham.com/books/bukhari']);
   for (const path of ['/topics', '/daily', '/narrators']) expect(first).toContain(`https://hadis.feeham.com${path}`);
-  for (const path of ['/search', '/compare', '/settings', '/share']) {
+  for (const path of ['/search', '/settings', '/share']) {
     expect(first.some((url) => url.startsWith(`https://hadis.feeham.com${path}`))).toBe(false);
   }
   expect((await urlsOf(1)).some((url) => !url.includes('/hadis/'))).toBe(false);
@@ -99,6 +99,6 @@ test('the index points at the six real sitemap addresses', async () => {
 
 test('robots lets everything in except the utility pages and points at the sitemap index', () => {
   const rules = robots();
-  expect(rules.rules).toEqual({ userAgent: '*', allow: '/', disallow: ['/search', '/compare', '/share/', '/settings'] });
+  expect(rules.rules).toEqual({ userAgent: '*', allow: '/', disallow: ['/search', '/share/', '/settings'] });
   expect(rules.sitemap).toBe('https://hadis.feeham.com/sitemap.xml');
 });

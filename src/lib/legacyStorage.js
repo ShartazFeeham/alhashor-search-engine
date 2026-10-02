@@ -1,5 +1,5 @@
 // The site's saved values used to live under keys with its old name. A visitor who saved reading
-// settings, plan progress or a compare list then must not lose them, so a value is read from the
+// settings or plan progress then must not lose them, so a value is read from the
 // current key, and when that key is absent from the old one, which is then copied to the current key.
 // The old key is left in place (harmless, and an older cached page can still read it).
 // Throws when the storage itself is blocked, like getItem does: callers already handle that.

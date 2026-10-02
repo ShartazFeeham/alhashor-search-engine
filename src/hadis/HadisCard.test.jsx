@@ -151,7 +151,6 @@ test('the repeated actions are described by the card title, so a list of them ca
   const actions = [
     await screen.findByRole('button', { name: 'কপি' }),
     screen.getByRole('button', { name: 'শেয়ার' }),
-    screen.getByRole('button', { name: 'তুলনায় যোগ করুন' }),
     screen.getByRole('link', { name: 'সম্পূর্ণ হাদীস দেখুন...' }),
   ];
   for (const action of actions) expect(action).toHaveAccessibleDescription(title);

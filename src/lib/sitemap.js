@@ -2,7 +2,7 @@ import { BOOKS, hasHadis } from './books';
 import { absoluteUrl } from './site';
 
 // The pages worth finding in a search engine that are not a single hadis. Utility pages
-// (search, compare, settings, share) are left out and kept out by robots.js.
+// (search, settings, share) are left out and kept out by robots.js.
 export const STATIC_PATHS = ['/', '/books', ...BOOKS.map((book) => `/books/${book.slug}`), '/topics', '/daily', '/narrators'];
 
 // One sitemap per book (the biggest has 7,281 addresses; a sitemap may hold 50,000).

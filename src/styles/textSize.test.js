@@ -82,7 +82,7 @@ test.each([
 });
 
 test('hadis reading text stays at 15px or more at the default size', () => {
-  const reading = ['.hadis-read', '.hcard-text', '.search-text', '.cmp-text', '.khut-text', '.daily-text', '.related-text', '.hadis-chain-full'];
+  const reading = ['.hadis-read', '.hcard-text', '.search-text', '.daily-text', '.related-text', '.hadis-chain-full'];
   const all = sizes(DEFAULT_SETTINGS.size);
   for (const name of reading) {
     const hit = all.filter((s) => s.selector === name);

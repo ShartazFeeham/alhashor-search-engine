@@ -1,11 +1,9 @@
 import { dailyHref, planOf, tabOf } from './dailyRoute';
 
-const item = (bookId, number) => ({ bookId, number });
-
 describe('tabOf', () => {
   test('reads the tab, and falls back to today', () => {
     expect(tabOf(new URLSearchParams('tab=plans'))).toBe('plans');
-    expect(tabOf(new URLSearchParams('tab=khutbah'))).toBe('khutbah');
+    expect(tabOf(new URLSearchParams('tab=khutbah'))).toBe('today');
     expect(tabOf(new URLSearchParams('tab=today'))).toBe('today');
     expect(tabOf(new URLSearchParams(''))).toBe('today');
     expect(tabOf(new URLSearchParams('tab=nonsense'))).toBe('today');
@@ -29,19 +27,13 @@ describe('dailyHref', () => {
 
   test('the other tabs name themselves', () => {
     expect(dailyHref({ tab: 'plans' })).toBe('/daily?tab=plans');
-    expect(dailyHref({ tab: 'khutbah' })).toBe('/daily?tab=khutbah');
   });
 
   test('a plan is only part of the plans tab', () => {
     expect(dailyHref({ tab: 'plans', plan: 'ramadan' })).toBe('/daily?tab=plans&plan=ramadan');
-    expect(dailyHref({ tab: 'khutbah', plan: 'ramadan' })).toBe('/daily?tab=khutbah');
   });
 
-  test('the khutbah list rides along on every tab, with its commas readable', () => {
-    const items = [item('bukhari', 1234), item('muslim', 5)];
-    expect(dailyHref({ tab: 'khutbah', items })).toBe('/daily?tab=khutbah&ids=bukhari-1234,muslim-5');
-    expect(dailyHref({ tab: 'today', items })).toBe('/daily?ids=bukhari-1234,muslim-5');
-    expect(dailyHref({ tab: 'plans', plan: 'ramadan', items })).toBe('/daily?tab=plans&plan=ramadan&ids=bukhari-1234,muslim-5');
-    expect(dailyHref({ tab: 'khutbah', items: [] })).toBe('/daily?tab=khutbah');
+  test('a list in the address is not carried along', () => {
+    expect(dailyHref({ tab: 'plans', plan: 'ramadan', items: [{ bookId: 'bukhari', number: 1 }] })).toBe('/daily?tab=plans&plan=ramadan');
   });
 });

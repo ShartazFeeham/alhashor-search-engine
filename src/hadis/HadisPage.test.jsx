@@ -35,6 +35,14 @@ afterEach(() => {
   delete global.fetch;
 });
 
+test('the actions have no compare button', async () => {
+  serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+  show('bukhari', 6628);
+  await loaded();
+  expect(screen.getByRole('button', { name: 'কপি' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /তুলনা/ })).not.toBeInTheDocument();
+});
+
 test('shows the book, the number, the saying first and the chain folded', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);

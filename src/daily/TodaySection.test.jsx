@@ -5,7 +5,6 @@ import { pickDaily, recentPicks } from '../lib/dailyPick';
 import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
-import { getUrl, setUrl } from '../test/nextNavigation';
 import { ToastProvider } from '../ui/Toast';
 import TodaySection from './TodaySection';
 import { clearShortListCache } from './useShortList';
@@ -167,35 +166,11 @@ describe('the last seven days', () => {
   });
 });
 
-describe('adding to the khutbah list', () => {
-  test('puts the hadis of the day in the address, keeping the page on the same tab', async () => {
-    show();
-    const today = pickDaily(SHORT, TODAY);
-    await screen.findByText(wholeText(today));
-    const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
-    fireEvent.click(within(card).getByRole('button', { name: 'খুতবার তালিকায় যোগ করুন' }));
-    expect(getUrl().pathname).toBe('/daily');
-    expect(getUrl().searchParams.get('ids')).toBe(`${today.book.id}-${today.number}`);
-    expect(await screen.findByText('খুতবার তালিকায় যোগ হয়েছে')).toBeInTheDocument();
-  });
-
-  test('a hadis already in the list says so and cannot be added again', async () => {
-    const today = pickDaily(SHORT, TODAY);
-    setUrl(`/daily?ids=${today.book.id}-${today.number}`);
-    show();
-    await screen.findByText(wholeText(today));
-    const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
-    expect(within(card).getByRole('button', { name: 'খুতবার তালিকায় আছে' })).toBeDisabled();
-  });
-
-  test('a full list says so', async () => {
-    const full = Array.from({ length: 30 }, (_, i) => `muslim-${i + 1}`).join(',');
-    setUrl(`/daily?ids=${full}`);
+describe('the hadis of the day has no khutbah list button', () => {
+  test('only the full page and copy actions are there', async () => {
     show();
     await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
     const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
-    fireEvent.click(within(card).getByRole('button', { name: 'খুতবার তালিকায় যোগ করুন' }));
-    expect(await screen.findByText(/৩০টির বেশি/)).toBeInTheDocument();
-    expect(getUrl().searchParams.get('ids')).toBe(full);
+    expect(within(card).queryByRole('button', { name: /খুতবার তালিকা/ })).not.toBeInTheDocument();
   });
 });

@@ -80,18 +80,12 @@ describe('search tap targets', () => {
 
 describe('the other stylesheets keep their controls at 44px', () => {
   test.each([
-    ['compare.css', '.cmp-icon-btn', 'height'],
-    ['compare.css', '.cmp-bar-link', 'min-height'],
-    ['compare.css', '.cmp-bar-clear', 'height'],
-    ['compare.css', '.cmp-col-head a', 'min-height'],
-    ['compare.css', '.cmp-remove', 'height'],
     ['share.css', '.share-icon-btn', 'height'],
     ['share.css', '.share-back', 'min-height'],
     ['daily.css', '.daily-tabs a', 'min-height'],
     ['daily.css', '.daily-recent-head a', 'min-height'],
     ['daily.css', '.plan-back', 'min-height'],
     ['daily.css', '.plan-day-more', 'min-height'],
-    ['daily.css', '.khut-icon', 'height'],
     ['related.css', '.related-link', 'min-height'],
   ])('%s %s has a %s of at least 44px', (file, selector, property) => {
     const match = new RegExp(`(?:^|;)${property}:(\\d+)px`).exec(rule(read(file), selector));
@@ -112,7 +106,6 @@ describe('the toast', () => {
 describe('page shell layout', () => {
   const ui = read('ui.css');
   const base = read('base.css');
-  const compare = read('compare.css');
   const phone = (css) => /@media \(max-width: 640px\)\{([^@]*)\}/.exec(css)?.[1] ?? '';
 
   test('the body is a full-height flex column and main grows', () => {
@@ -135,20 +128,15 @@ describe('page shell layout', () => {
     expect(bar).not.toMatch(/position:sticky/);
   });
 
-  test('on phones the body reserves room for the bar and the compare bar, on wide screens only the compare bar', () => {
+  test('on phones the body reserves room for the tab bar, on wide screens none', () => {
     expect(rule(ui, '.shell-tabbar')).not.toMatch(/margin/);
-    expect(rule(ui, 'body')).toMatch(/padding-bottom:calc\(var\(--tabbar-h\) \+ var\(--dock-extra\)\)/);
+    expect(rule(ui, 'body')).toMatch(/padding-bottom:var\(--tabbar-h\)/);
     expect(rule(ui, ':root')).toMatch(/--tabbar-h:0px/);
     expect(phone(ui)).toMatch(/--tabbar-h:calc\(\d+px \+ env\(safe-area-inset-bottom/);
-    expect(rule(ui, 'body.has-cmp-bar')).toMatch(/--dock-extra:\d+px/);
+    expect(ui).not.toMatch(/dock-extra|has-cmp-bar/);
   });
 
-  test('the compare bar sits above the tab bar, and back-to-top above the compare bar', () => {
-    expect(rule(compare, '.cmp-bar')).toMatch(/bottom:calc\(var\(--tabbar-h\) \+ \d+px\)/);
-    const fab = rule(compare, 'body.has-cmp-bar .ui-fab');
-    const bottom = Number(/calc\(var\(--tabbar-h\) \+ (\d+)px\)/.exec(fab)[1]);
-    const barBottom = Number(/calc\(var\(--tabbar-h\) \+ (\d+)px\)/.exec(rule(compare, '.cmp-bar'))[1]);
-    expect(bottom).toBeGreaterThanOrEqual(barBottom + 56 + 4);
+  test('back-to-top sits above the tab bar', () => {
     expect(rule(ui, '.ui-fab')).toMatch(/bottom:calc\(var\(--tabbar-h\) \+ \d+px\)/);
   });
 
@@ -163,14 +151,13 @@ describe('page shell layout', () => {
 describe('links in the daily pages use the accent, not the default blue', () => {
   const daily = read('daily.css');
 
-  test('the khutbah help links and the plan-day full-hadis link', () => {
-    for (const selector of ['.khut-add .tiny a', '.plan-day-more']) {
+  test('the plan-day full-hadis link', () => {
+    for (const selector of ['.plan-day-more']) {
       const declarations = rule(daily, selector);
       expect(declarations).toMatch(/color:var\(--accent2\)/);
       expect(declarations).not.toMatch(/--link/);
       expect(declarations).not.toMatch(/text-decoration:underline/);
     }
-    expect(daily).toMatch(/\.khut-add \.tiny a:hover,\.khut-add \.tiny a:focus-visible\{[^}]*underline/);
     expect(daily).toMatch(/\.plan-day-more:hover,\.plan-day-more:focus-visible\{[^}]*underline/);
     expect(rule(daily, '.plan-day-more')).toMatch(/min-height:44px/);
   });

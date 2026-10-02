@@ -47,13 +47,9 @@ expect_status /hadis/bukhari/99999 404
 expect_status /hadis/nobook/1 404
 expect_status /books/muslim 200
 expect_status /books/nobook 404
-expect_status /daily 200                      # daily hadis, plans and the khutbah sheet (tabs in the address)
 expect_status "/daily?tab=plans&plan=ramadan-30" 200
-expect_status "/daily?tab=khutbah&ids=bukhari-1234,muslim-5" 200
 expect_status /share/bukhari/6628 200         # the quote-card page of a hadis
 expect_status /share/bukhari/0 404
-expect_status /compare 200                    # compare: the address holds the hadis, so a link is a saved comparison
-expect_status "/compare?ids=bukhari-1,muslim-4774" 200
 expect_status /narrators 200                  # narrator index: a static page, the address holds the narrator, page and book
 expect_status "/narrators?name=abu-hurayrah&page=2&book=muslim" 200
 expect_status /json/narrators/index.json 200  # built once by scripts/build-narrators.mjs
@@ -77,9 +73,6 @@ expect_text /share/bukhari/6628 "ছবি ডাউনলোড" "the share pag
 expect_text /daily "গত ৭ দিন" "the daily page renders today's hadis and the last seven days (the short-hadis list loads)"
 expect_text "/daily?tab=plans" "রমযানের ৩০ দিন" "the plans tab lists the reading plans"
 expect_text "/daily?tab=plans&plan=ramadan-30" "দিন ৩০" "a plan deep link renders its day-by-day checklist"
-expect_text "/daily?tab=khutbah&ids=bukhari-1234,muslim-5" "হাদীস নং ১,২৩৪" "a khutbah list in the address renders its hadis"
-expect_text "/compare?ids=bukhari-1,muslim-4774" "অন্যদের সাথে মিলেছে" "a compare link renders both hadis and the count of shared words"
-expect_text /compare "তুলনা করতে দুটি হাদীস যোগ করুন" "the compare page with nothing chosen asks for two hadis"
 expect_text /narrators "স্বয়ংক্রিয়ভাবে বাছাই করা" "the narrators page renders its list and the note about the names"
 expect_text /narrators "টি হাদীস" "the narrators list shows each narrator's count of hadis (the index loads)"
 expect_text "/narrators?name=abu-hurayrah" "হাদীস নং" "a narrator deep link renders hadis cards"
@@ -96,9 +89,7 @@ expect_title "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "ঈমান 
 expect_title /hadis/bukhari/6628 "বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor" "hadis title on a fresh load"
 expect_title /share/bukhari/6628 "শেয়ার - বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor" "share page title on a fresh load"
 expect_title /daily "আজকের হাদীস - Alhashor" "daily title on a fresh load"
-expect_title "/daily?tab=khutbah" "আজকের হাদীস - Alhashor" "khutbah tab keeps the one daily title on a fresh load"
 expect_title "/daily?tab=plans" "আজকের হাদীস - Alhashor" "plans tab keeps the one daily title on a fresh load"
-expect_title /compare "হাদীস তুলনা - Alhashor" "compare title on a fresh load"
 expect_title /narrators "বর্ণনাকারী - Alhashor" "narrators title on a fresh load"
 expect_text "/narrators?name=abu-hurayrah&page=2" "<title>[^<][^<]* - বর্ণনাকারী - Alhashor</title>" "a narrator's title on a fresh load of page 2 names the narrator"
 expect_title /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি - Alhashor" "not-found title"

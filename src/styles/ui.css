@@ -18,12 +18,10 @@
 .ui-icon{flex:none}
 
 /* ---------- page column: room kept at the bottom for the fixed bars ---------- */
-/* --tabbar-h is the phone tab bar (64px, the raised search button reaches 10px above it, plus 10px of air and the iOS home-indicator inset); --dock-extra is the compare bar
-   while it shows (CompareBar puts the class has-cmp-bar on the body). Content is never
-   hidden behind them. */
-:root{--tabbar-h:0px;--dock-extra:0px}
-body{padding-bottom:calc(var(--tabbar-h) + var(--dock-extra))}
-body.has-cmp-bar{--dock-extra:88px}
+/* --tabbar-h is the phone tab bar (64px, the raised search button reaches 10px above it, plus 10px of air and the iOS home-indicator inset). Content is never
+   hidden behind it. */
+:root{--tabbar-h:0px}
+body{padding-bottom:var(--tabbar-h)}
 body>main{flex:1 0 auto;width:100%}
 
 /* ---------- toast and back-to-top ---------- */
@@ -58,7 +56,6 @@ body>main{flex:1 0 auto;width:100%}
 
 @media (max-width: 640px){
   :root{--tabbar-h:calc(84px + env(safe-area-inset-bottom,0px))}
-  body.has-cmp-bar{--dock-extra:72px}
   .shell-tabbar{display:flex}
 }
 @media (min-width: 641px){
