@@ -186,14 +186,6 @@ describe('daily tabs on a narrow phone', () => {
   });
 });
 
-describe('topic chips scroller', () => {
-  test('its edges fade, so a half-clipped chip looks intentional', () => {
-    const declarations = rule(read('topics.css'), '.topics-chips');
-    expect(declarations).toMatch(/mask-image:linear-gradient\(to bottom/);
-    expect(declarations).toMatch(/scroll-padding/);
-  });
-});
-
 describe('search results page: tight vertical spacing', () => {
   const search = read('search.css');
   const num = (declarations, property) => Number(new RegExp(`(?:^|;)${property}:(\\d+)px`).exec(declarations)?.[1] ?? NaN);

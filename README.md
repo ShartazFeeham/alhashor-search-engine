@@ -8,7 +8,7 @@ Live site (when deployed): https://hadis.feeham.com. Work currently stays local:
 
 - **Search** (`/search?q=&book=&page=`): by word, phrase, hadis number or narrator. English letters typed in the box turn into Bengali as you type (for example `namaz` becomes নামায; the Avro phonetic library, with a few curated spellings), and anything that is not Bengali or an English letter or digit is refused with a short warning. Book filter chips show a count per book. Each result shows the text around the match with the matched words highlighted.
 - **Books** (`/books`, `/books/<book>?page=`): a picker of the six colour-coded books; a book page has a slim switcher, a title band with a "go to number" box at its right end (digits only, Bengali or English, for the open book), a one-line range strip that scrolls sideways (one chip per hundred numbers), the range label and pager on one row, and a list of the same cards as the search page. Pages hold 20 hadis that exist, so numbers with no data file are skipped.
-- **Topics** (`/topics?topic=&page=`): 138 filterable topic chips, the topic's hadis as a paged list, and a curated "start here" block for topics with picks (`src/data/curatedTopics.js`).
+- **Topics** (`/topics?topic=&page=&book=&sort=desc`): a letter-block menu of the 138 topics (a sticky sidebar from 900px, a full-screen overlay on phones) with a search box and an ascending/descending sort, and the topic's hadis shown as the `/search` listing for its name (`src/search/SearchResults.jsx`, shared with the search page). The curated "start here" block (`src/data/curatedTopics.js`) is switched off.
 - **Hadis page** (`/hadis/<book>/<number>`): calm reading column, folded narrator chain, reading time and progress line, copy / cite / link buttons, previous and next (arrow keys and swipe), breadcrumb back to the book.
 - **Share** (`/share/<book>/<number>`): citation, share text, native share sheet and a quote-card image drawn on a canvas in the browser (download or share).
 - **Daily** (`/daily`, `?tab=plans[&plan=<id>]`, `?tab=khutbah&ids=bukhari-1234,muslim-5`): hadis of the day (chosen from the date, no randomness), reading plans with per-day ticks kept on the device, and a khutbah sheet (the list lives in the address; copy, link and a print layout).
@@ -47,7 +47,7 @@ src/
               share/[book]/[number], topics, daily, settings, not-found; layout.jsx loads the stylesheets
   shell/      top bar, phone tab bar (with the More menu), no footer
   home/       home page            search/   search page, box, filters, results, searchIndex.js
-  books/      book pages           topics/   topic index, start-here block, pager
+  books/      book pages           topics/   topic menu, start-here block, pager
   hadis/      hadis page, shared hadis card, similar-hadis list
   daily/      daily card, plans, khutbah sheet   share/  quote card and share logic
   compare/    compare state (page not built yet)

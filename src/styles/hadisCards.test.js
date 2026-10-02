@@ -78,12 +78,12 @@ describe('the slim previous/next block', () => {
 });
 
 describe('the same width as the hadis list pages', () => {
-  test('--list-w is 760px and .hadis-page, .search, .books and .topics all use it', () => {
+  test('--list-w is 760px and .hadis-page, .search, .books and .topics-main all use it', () => {
     expect(tokens).toMatch(/--list-w:\s*760px/);
     expect(rule(hadis, '.hadis-page')).toMatch(/max-width:var\(--list-w\)/);
     expect(rule(read('search.css'), '.search')).toMatch(/max-width:var\(--list-w\)/);
     expect(rule(read('books.css'), '.books')).toMatch(/max-width:var\(--list-w\)/);
-    expect(rule(read('topics.css'), '.topics')).toMatch(/max-width:var\(--list-w\)/);
+    expect(rule(read('topics.css'), '.topics-main')).toMatch(/max-width:var\(--list-w\)/);
   });
 
   test('the reading text and the similar texts fill their card', () => {

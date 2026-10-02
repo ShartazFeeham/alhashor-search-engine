@@ -1,3 +1,4 @@
+// SWITCHED OFF BY THE OWNER: the topics page does not show these picks now (the data is kept for later).
 // First draft of hand-picked "start here" hadis per topic, for the site owner to edit.
 //
 // Each topic name matches a topic on the Topics page exactly. Every entry points to a real

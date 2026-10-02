@@ -1,5 +1,5 @@
 import { normalizeBengali } from '../Helpers/bengali';
-import { TOPICS, curatedFor, filterTopics, loadTopicHadis, tagsToHadis, topicHref } from './topics';
+import { TOPICS, curatedFor, filterTopics, topicHref } from './topics';
 
 describe('TOPICS', () => {
   test('lists every topic once, even where the source holds two spellings of the same letters', () => {
@@ -64,38 +64,6 @@ describe('topicHref', () => {
   });
 });
 
-describe('tagsToHadis', () => {
-  test('turns hadis tags into a book and a number, keeping the order', () => {
-    expect(tagsToHadis(['MUS-45', 'BUK-1', 'MAJ-1453'])).toEqual([
-      { bookId: 'muslim', number: 45 },
-      { bookId: 'bukhari', number: 1 },
-      { bookId: 'ibnmajah', number: 1453 },
-    ]);
-  });
-
-  test('drops a tag it cannot read', () => {
-    expect(tagsToHadis(['BUK-1', 'XXX-2', 'nonsense', 'BUK-'])).toEqual([{ bookId: 'bukhari', number: 1 }]);
-  });
-});
-
-describe('loadTopicHadis', () => {
-  test('looks a topic up by all of its words and returns hadis in the order found', async () => {
-    const search = vi.fn().mockResolvedValue(['DAU-1288', 'DAU-3946']);
-    const hadis = await loadTopicHadis('জ্ঞান অর্জন', search);
-    expect(search).toHaveBeenCalledWith(['জ্ঞান', 'অর্জন'], { requireAll: true });
-    expect(hadis).toEqual([
-      { bookId: 'abudawud', number: 1288 },
-      { bookId: 'abudawud', number: 3946 },
-    ]);
-  });
-
-  test('a blank topic is not looked up', async () => {
-    const search = vi.fn();
-    expect(await loadTopicHadis('  ', search)).toEqual([]);
-    expect(search).not.toHaveBeenCalled();
-  });
-});
-
 describe('curatedFor', () => {
   const curated = {
     ঈমান: [
@@ -130,5 +98,23 @@ describe('curatedFor', () => {
   test('copes with no data at all', () => {
     expect(curatedFor(undefined, 'ঈমান')).toEqual([]);
     expect(curatedFor({}, 'ঈমান')).toEqual([]);
+  });
+});
+
+describe('topicHref with a sort', () => {
+  test('keeps &sort=desc and leaves ascending out', () => {
+    expect(decodeURIComponent(topicHref('ঈমান', 0, 'desc'))).toBe('/topics?topic=ঈমান&sort=desc');
+    expect(decodeURIComponent(topicHref('ঈমান', 1, 'desc'))).toBe('/topics?topic=ঈমান&page=2&sort=desc');
+    expect(topicHref('', 0, 'desc')).toBe('/topics?sort=desc');
+    expect(topicHref('ঈমান', 0, 'asc')).toBe(topicHref('ঈমান'));
+  });
+});
+
+describe('topicHref with a book', () => {
+  test('keeps &book=<id> between the page and the sort, and leaves "all" out', () => {
+    expect(decodeURIComponent(topicHref('ঈমান', 1, 'desc', 'muslim'))).toBe('/topics?topic=ঈমান&page=2&book=muslim&sort=desc');
+    expect(decodeURIComponent(topicHref('ঈমান', 0, 'asc', 'muslim'))).toBe('/topics?topic=ঈমান&book=muslim');
+    expect(topicHref('ঈমান', 0, 'asc', 'all')).toBe(topicHref('ঈমান'));
+    expect(topicHref('', 0, 'asc', 'muslim')).toBe('/topics');
   });
 });

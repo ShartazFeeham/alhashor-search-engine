@@ -1,7 +1,5 @@
 import { normalizeBengali } from '../Helpers/bengali';
-import { normalizeQuery, searchTags } from '../search/searchIndex';
 import { bookById, hasHadis } from './books';
-import { parseTag } from './hadisRoute';
 
 // The topics of the index. A topic is simply a word (or words): its hadis are the ones that
 // contain every word of it. Some are listed in two spellings (কিয়ামত and কেয়ামত); see TOPICS.
@@ -163,32 +161,20 @@ export function filterTopics(topics, text) {
   return topics.filter((name) => normalizeBengali(name).includes(wanted));
 }
 
-// The address of a topic's page (0-based `page`; the first page has no "?page=").
-export function topicHref(topic, page = 0) {
+// The address of a topic's page (0-based `page`; the first page has no "?page="), /topics?topic=
+// &page=&book=&sort=desc. A book filter other than 'all' is kept as "&book=<id>", a descending
+// menu sort as "&sort=desc"; the defaults are left out.
+export function topicHref(topic, page = 0, sort = 'asc', book = 'all') {
   const params = new URLSearchParams();
   if (topic) params.set('topic', topic);
   if (topic && page > 0) params.set('page', String(page + 1));
+  if (topic && book && book !== 'all') params.set('book', book);
+  if (sort === 'desc') params.set('sort', 'desc');
   const query = params.toString();
   return query ? `/topics?${query}` : '/topics';
 }
 
-// ["BUK-12", ...] as [{ bookId, number }, ...], skipping a tag that is not a hadis tag.
-export function tagsToHadis(tags) {
-  return tags.flatMap((tag) => {
-    const parsed = parseTag(tag);
-    return parsed ? [{ bookId: parsed.book.id, number: parsed.number }] : [];
-  });
-}
-
-// Every hadis of a topic, best matches first. A topic of several words needs all of them.
-// `search` is injectable for tests.
-export async function loadTopicHadis(topic, search = searchTags) {
-  const words = normalizeQuery(topic);
-  if (words.length === 0) return [];
-  return tagsToHadis(await search(words, { requireAll: true }));
-}
-
-// The editor's "start here" entries for a topic ([{ book, number, note }], see
+// The editor's "start here" entries (switched off by the owner: nothing shows them now) for a topic ([{ book, number, note }], see
 // src/data/curatedTopics.js), without any that cannot be shown: an unknown book, or a number
 // with no file. The topic is found whichever way its letters were typed.
 export function curatedFor(curated, topic) {

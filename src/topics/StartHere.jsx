@@ -4,6 +4,7 @@ import HadisCard from '../hadis/HadisCard';
 import { useDigits } from '../lib/useDigits';
 import Icon from '../ui/Icon';
 
+// SWITCHED OFF BY THE OWNER: the topics page does not render this block (kept for later).
 // The editor's "start here" picks for a topic: numbered, each with its short note above the
 // shared hadis card. `entries` is [{ book, number, note }] (see src/data/curatedTopics.js).
 export default function StartHere({ entries }) {

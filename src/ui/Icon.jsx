@@ -13,6 +13,7 @@ const PATHS = {
   cl: <path d="m15 6-6 6 6 6" />,
   cd: <path d="m6 9 6 6 6-6" />,
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  menu: <path d="M4 7h16M4 12h16M4 17h16" />,
   x: <path d="M6 6l12 12M18 6 6 18" />,
   up: <path d="M12 19V5M5 12l7-7 7 7" />,
   clock: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>,
