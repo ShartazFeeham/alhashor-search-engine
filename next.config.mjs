@@ -21,6 +21,8 @@ const nextConfig = {
   // hostname only (one label per `*`): the home Wi-Fi (its address changes on reconnect), the
   // other private ranges, and Bonjour names such as my-mac.local.
   allowedDevOrigins: ['localhost', '127.0.0.1', '192.168.*.*', '10.*.*.*', '172.*.*.*', '*.local'],
+  // Dev only: hide the round "N" dev-tools indicator that floats at the bottom-left of every page.
+  devIndicators: false,
   // Pin the project root: there is another package-lock.json higher up in the home folder.
   turbopack: { root: path.dirname(fileURLToPath(import.meta.url)) },
   outputFileTracingIncludes: {

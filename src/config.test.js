@@ -18,3 +18,8 @@ test('the dev server accepts the home Wi-Fi, so a phone can load its scripts (el
   const { default: config } = await import(path.resolve(process.cwd(), 'next.config.mjs'));
   expect(config.allowedDevOrigins).toEqual(expect.arrayContaining(['192.168.*.*', '*.local', 'localhost']));
 });
+
+test('the round Next.js dev indicator (bottom-left of every dev page) is switched off', async () => {
+  const { default: config } = await import(path.resolve(process.cwd(), 'next.config.mjs'));
+  expect(config.devIndicators).toBe(false);
+});
