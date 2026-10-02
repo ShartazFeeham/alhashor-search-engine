@@ -12,8 +12,29 @@ describe('TOPICS', () => {
     expect(TOPICS.every((name) => name !== '' && name === name.trim())).toBe(true);
   });
 
-  test('keeps the topics the old index had', () => {
-    for (const name of ['ঈমান', 'নামায', 'জ্ঞান অর্জন', 'কৃপণতা', 'শাফাআত']) expect(TOPICS).toContain(name);
+  test('keeps the topics people look for first, in the spelling the data uses most', () => {
+    for (const name of ['ঈমান', 'নামায', 'রোযা', 'যাকাত', 'হজ', 'কৃপণ', 'শাফাআত', 'ওজু', 'ঈদের নামায', 'মক্কা বিজয়']) expect(TOPICS).toContain(name);
+  });
+
+  test('has at least 100 topics', () => {
+    expect(TOPICS.length).toBeGreaterThanOrEqual(100);
+  });
+
+  test('every name is Bangla text of 2 to 30 characters', () => {
+    for (const name of TOPICS) {
+      expect(name.length, name).toBeGreaterThanOrEqual(2);
+      expect(name.length, name).toBeLessThanOrEqual(30);
+      expect(/^[\u0980-\u09FF]+( [\u0980-\u09FF]+)*$/.test(name), name).toBe(true);
+    }
+  });
+
+  test('no two names are the same after normalising the letters', () => {
+    const keys = TOPICS.map((name) => normalizeBengali(name));
+    expect(new Set(keys).size).toBe(TOPICS.length);
+  });
+
+  test('the spelling variants and the too-narrow or too-broad names of the review are gone', () => {
+    for (const name of ['রোজা', 'হজ্জ', 'বিতর নামায', 'কৃপণতা', 'জ্ঞান অর্জন', 'হুর', 'মদ', 'ঈদ', 'তওবা', 'সুন্নত']) expect(TOPICS).not.toContain(name);
   });
 });
 

@@ -76,21 +76,21 @@ describe('a chosen topic (/topics?topic=<name>) is a search for its name', () =>
   });
 
   test('the cards are the search cards: the topic words are highlighted', async () => {
-    serve('রোজা', 3);
-    show('/topics?topic=রোজা');
+    serve('রোযা', 3);
+    show('/topics?topic=রোযা');
     await screen.findByText(/মোট ৩ টি হাদিস/);
-    const marks = await screen.findAllByText('রোজা', { selector: 'mark' });
+    const marks = await screen.findAllByText('রোযা', { selector: 'mark' });
     expect(marks).toHaveLength(3);
     expect(within(items()[0]).getByRole('link', { name: /হাদীস নং ১/ })).toBeInTheDocument();
     expect(within(items()[0]).getByRole('button', { name: 'কপি' })).toBeInTheDocument();
   });
 
   test('a topic of several words looks up all of them like the search box does', async () => {
-    serve('জ্ঞান', 2);
-    show('/topics?topic=জ্ঞান অর্জন');
-    await waitFor(() => expect(global.fetch).toHaveBeenCalledWith('/json/tags/অর.json'));
-    expect(global.fetch).toHaveBeenCalledWith('/json/tags/জ্.json');
-    expect(global.fetch).toHaveBeenCalledWith('/json/tags/অর.json');
+    serve('মক্কা', 2);
+    show('/topics?topic=মক্কা বিজয়');
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledWith('/json/tags/বি.json'));
+    expect(global.fetch).toHaveBeenCalledWith('/json/tags/মক.json');
+    expect(global.fetch).toHaveBeenCalledWith('/json/tags/বি.json');
   });
 
   test('a topic with no hadis says so, as the search page does', async () => {

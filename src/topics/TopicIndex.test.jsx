@@ -76,10 +76,10 @@ describe('the filter box', () => {
     fireEvent.change(box(), { target: { value: 'নামায' } });
     const names = chips().map((chip) => chip.textContent);
     expect(names).toContain('নামায');
-    expect(names).toContain('বিতর নামায');
+    expect(names).toContain('ঈদের নামায');
     expect(names).not.toContain('ঈমান');
     expect(names.every((name) => name.includes('নামায'))).toBe(true);
-    expect(headings()).toEqual(['ন', 'ব']);
+    expect(headings()).toEqual(['ঈ', 'ন']);
   });
 
   test('announces how many topics match, and says "কোনো বিষয় পাওয়া যায়নি" when none do', () => {
@@ -87,7 +87,7 @@ describe('the filter box', () => {
     const live = screen.getByRole('status');
     expect(live).toBeEmptyDOMElement();
 
-    fireEvent.change(box(), { target: { value: 'বিতর' } });
+    fireEvent.change(box(), { target: { value: 'ঈদের' } });
     expect(live).toHaveTextContent('১টি বিষয় পাওয়া গেছে');
 
     fireEvent.change(box(), { target: { value: 'zzzz' } });
@@ -98,7 +98,7 @@ describe('the filter box', () => {
 
   test('clearing the text brings every topic back and the announcement goes away', () => {
     show();
-    fireEvent.change(box(), { target: { value: 'বিতর' } });
+    fireEvent.change(box(), { target: { value: 'ঈদের' } });
     fireEvent.change(box(), { target: { value: '' } });
     expect(chips()).toHaveLength(TOPICS.length);
     expect(screen.getByRole('status')).toBeEmptyDOMElement();
