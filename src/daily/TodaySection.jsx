@@ -26,7 +26,7 @@ function TodayContent() {
   }
   if (!today || short.status === 'loading') {
     return (
-      <div className="daily-card daily-card-loading" aria-busy="true" aria-label="লোড হচ্ছে">
+      <div className="hadis-skeleton hadis-card" aria-busy="true" aria-label="লোড হচ্ছে">
         <div className="hadis-skel" style={{ width: '40%' }} />
         <div className="hadis-skel" style={{ width: '96%' }} />
         <div className="hadis-skel" style={{ width: '88%' }} />

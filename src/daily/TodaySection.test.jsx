@@ -13,10 +13,13 @@ const TODAY = new Date(2026, 9, 2, 10, 30);
 const SHORT = realShortList();
 
 const cite = ({ book, number }) => `${book.cite}, হাদীস নং ${formatNumber(number, 'bn')}`;
-const wholeText = ({ book, number }) => {
+// The shared article shows the reading text (the body) in its own block, with the chain above it.
+// The seven-day list shows the chain and the body together.
+const listText = ({ book, number }) => {
   const { chain, body } = splitHadis(realText(book.id, number));
   return `${chain} ${body}`.trim().replace(/\s+/g, ' ');
 };
+const wholeText = ({ book, number }) => splitHadis(realText(book.id, number)).body.replace(/\s+/g, ' ');
 
 const show = () =>
   render(
@@ -59,12 +62,12 @@ describe('the hadis of the day', () => {
     expect(within(card).getByText('শুক্রবার')).toBeInTheDocument();
   });
 
-  test('is the same hadis the pure pick gives, with its book badge and full citation', async () => {
+  test('is the same hadis the pure pick gives, with its book badge and full title', async () => {
     show();
     const today = pickDaily(SHORT, TODAY);
     await screen.findByText(wholeText(today));
     const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
-    expect(within(card).getByText(cite(today))).toBeInTheDocument();
+    expect(within(card).getByRole('heading', { level: 2, name: `${today.book.full} - হাদীস নং ${formatNumber(today.number, 'bn')}` })).toBeInTheDocument();
     expect(within(card).getByText(bookById(today.book.id).badge)).toBeInTheDocument();
   });
 
@@ -80,10 +83,10 @@ describe('the hadis of the day', () => {
     show();
     const today = pickDaily(SHORT, TODAY);
     await screen.findByText(wholeText(today));
-    fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: /কপি/ }));
+    fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
     await settle();
     const copied = navigator.clipboard.writeText.mock.calls[0][0];
-    expect(copied.replace(/\s+/g, ' ')).toBe(`${wholeText(today)} — ${cite(today)}`);
+    expect(copied.replace(/\s+/g, ' ')).toBe(realText(today.book.id, today.number).replace(/\s+/g, ' '));
     expect(screen.getByText('কপি করা হয়েছে')).toBeInTheDocument();
   });
 
@@ -91,7 +94,7 @@ describe('the hadis of the day', () => {
     navigator.clipboard.writeText.mockRejectedValue(new Error('blocked'));
     show();
     await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
-    fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: /কপি/ }));
+    fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
     await settle();
     expect(screen.getByText('কপি করা যায়নি')).toBeInTheDocument();
   });
@@ -139,13 +142,46 @@ describe('the hadis of the day', () => {
   });
 });
 
+// The page reuses the hadis page's article instead of a look of its own.
+describe('the shared hadis article', () => {
+  test('has the hadis page structure: header card, chain card, reading card with progress, actions card', async () => {
+    const { container } = show();
+    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    const article = container.querySelector('article.hadis-article');
+    expect(article).toBe(screen.getByRole('article', { name: 'আজকের হাদীস' }));
+    expect(article.querySelector('header.hadis-head.hadis-card')).toBeInTheDocument();
+    expect(article.querySelector('.hadis-reading.hadis-card p.hadis-read')).toBeInTheDocument();
+    expect(article.querySelector('.hadis-reading .hadis-progress')).toBeInTheDocument();
+    expect(article.querySelector('.hadis-actions.hadis-card')).toBeInTheDocument();
+    expect(article.querySelector('.hadis-chain.hadis-card')).toBeInTheDocument();
+    expect(container.querySelector('.daily-card, .daily-text, .daily-actions')).toBeNull();
+  });
+
+  test('keeps one h1 on the page: the article title is an h2, the date line is above it', async () => {
+    const { container } = show();
+    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    const article = screen.getByRole('article', { name: 'আজকের হাদীস' });
+    expect(article.querySelector('h1')).toBeNull();
+    expect(within(article).getByText(/আজকের হাদীস ·/)).toHaveClass('daily-date');
+    expect(container.querySelector('.hadis-head .daily-date')).toBeInTheDocument();
+  });
+
+  test('offers the same actions as the hadis page, plus the full page first', async () => {
+    show();
+    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    const actions = screen.getByRole('article', { name: 'আজকের হাদীস' }).querySelector('.hadis-actions');
+    expect(within(actions).getAllByRole('link').map((l) => l.textContent)).toEqual(['পুরো হাদীস', 'ছবি বানান']);
+    expect(within(actions).getAllByRole('button').map((b) => b.textContent)).toEqual(expect.arrayContaining(['কপি', 'উদ্ধৃতি কপি', 'লিংক কপি']));
+  });
+});
+
 describe('the last seven days', () => {
   const section = () => screen.getByRole('region', { name: 'গত ৭ দিন' });
 
   test('lists the pick of each of the seven days before, newest first, each linking to its page', async () => {
     show();
     const recent = recentPicks(SHORT, TODAY);
-    await screen.findByText(wholeText(recent[6].pick));
+    await screen.findByText(listText(recent[6].pick));
     const items = within(section()).getAllByRole('listitem');
     expect(items).toHaveLength(7);
     items.forEach((item, index) => {
@@ -161,7 +197,7 @@ describe('the last seven days', () => {
     show();
     const recent = recentPicks(SHORT, TODAY);
     const body = splitHadis(realText(recent[0].pick.book.id, recent[0].pick.number)).body;
-    await screen.findByText(wholeText(recent[0].pick));
+    await screen.findByText(listText(recent[0].pick));
     expect(within(section()).getAllByRole('listitem')[0]).toHaveTextContent(body.slice(0, 20));
   });
 });

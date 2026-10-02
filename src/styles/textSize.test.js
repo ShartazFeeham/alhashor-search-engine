@@ -29,7 +29,7 @@ function screenCss(source) {
 function toPx(value, rs) {
   const expr = value
     .replace(/var\(--rs\)/g, `(${rs})`)
-    .replace(/var\(--home-daily-fs\)/g, '12px')
+    .replace(/var\(--home-daily-fs\)/g, '13px')
     .replace(/([\d.]+)rem/g, '($1*16)')
     .replace(/([\d.]+)vw/g, '($1*0)')
     .replace(/([\d.]+)em/g, '($1*15)')
@@ -82,7 +82,7 @@ test.each([
 });
 
 test('hadis reading text stays at 15px or more at the default size', () => {
-  const reading = ['.hadis-read', '.hcard-text', '.search-text', '.daily-text', '.related-text', '.hadis-chain-full'];
+  const reading = ['.hadis-read', '.hcard-text', '.search-text', '.related-text', '.hadis-chain-full'];
   const all = sizes(DEFAULT_SETTINGS.size);
   for (const name of reading) {
     const hit = all.filter((s) => s.selector === name);
@@ -91,20 +91,19 @@ test('hadis reading text stays at 15px or more at the default size', () => {
   }
 });
 
-// The owner asked for the Home daily card's excerpt to match its citation line (12px, set by
-// --home-daily-fs), so it is the one reading text deliberately under the 15px floor, but not under 12px.
-test('the home daily excerpt is as small as its citation, and no smaller than 12px', () => {
+// The owner asked for the Home daily card's excerpt to match its citation line (13px, set by
+// --home-daily-fs, 13px), so it is the one reading text deliberately under the 15px floor, but not under 13px.
+test('the home daily excerpt is as small as its citation, and no smaller than 13px', () => {
   const all = sizes(DEFAULT_SETTINGS.size);
   const of = (selector) => all.find((s) => s.selector === selector)?.px;
   expect(of('.home-daily-text')).toBe(of('.home-daily-cite'));
-  expect(of('.home-daily-text')).toBeGreaterThanOrEqual(12);
+  expect(of('.home-daily-text')).toBe(13);
 });
 
 test('the main sizes after the change', () => {
   const all = sizes(DEFAULT_SETTINGS.size);
   const of = (selector) => all.find((s) => s.selector === selector)?.px;
   expect(of('.hadis-read')).toBe(16);
-  expect(of('.daily-text')).toBe(18);
   expect(of('.h1')).toBe(24);
   expect(of('.ui-btn.sm')).toBe(12);
   expect(of('.shell-tabbar a,.shell-tabbar button')).toBe(11);
@@ -117,5 +116,5 @@ test('headings stay larger than the text under them', () => {
   const of = (selector) => all.find((s) => s.selector === selector).px;
   expect(of('.h1')).toBeGreaterThan(of('.hadis-read'));
   expect(of('.topics-name')).toBeGreaterThan(of('.hadis-read'));
-  expect(of('.daily .h2,.home-quick .h2')).toBeGreaterThan(of('.daily-cite'));
+  expect(of('.daily .h2,.home-quick .h2')).toBeGreaterThan(of('.hadis-read'));
 });

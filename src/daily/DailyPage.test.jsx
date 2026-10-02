@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { PLANS } from '../data/readingPlans';
 import { SettingsProvider } from '../settings/SettingsProvider';
@@ -101,5 +103,19 @@ describe('page titles', () => {
     setUrl(address);
     show();
     expect(document.title).toBe(title);
+  });
+});
+
+// One look for the day's hadis and the hadis page: the same width and the same shared CSS.
+describe('shared layout with the hadis page', () => {
+  const css = (name) => readFileSync(path.resolve(process.cwd(), 'src/styles', name), 'utf8');
+
+  test('the page is as wide as the hadis page, through the same token', () => {
+    expect(css('daily.css')).toMatch(/\.daily\{max-width:var\(--list-w\)\}/);
+    expect(css('hadis.css')).toMatch(/\.hadis-page\{max-width:var\(--list-w\)/);
+  });
+
+  test('daily.css has no article look of its own any more', () => {
+    expect(css('daily.css')).not.toMatch(/\.daily-card\b|\.daily-text|\.daily-actions|\.daily-cite/);
   });
 });

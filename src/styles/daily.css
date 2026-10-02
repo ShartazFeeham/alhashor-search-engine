@@ -1,6 +1,6 @@
 /* Daily hadis and reading plans (/daily), the home page's daily card and
    quick links. Ported from D2's daily screen. */
-.daily{max-width:760px}
+.daily{max-width:var(--list-w)}
 .daily-head p{margin-top:6px}
 .daily .h2,.home-quick .h2{font-size:17px;line-height:1.3;font-weight:700;margin:0}
 .daily .tiny{font-size:11.5px;color:var(--ink3);margin:0}
@@ -20,18 +20,8 @@
 .daily-tabs a:focus-visible{outline-offset:-3px}
 .daily-tabs a[aria-current="page"]{background:var(--surface);color:var(--accent2);box-shadow:var(--shadow)}
 
-/* today's hadis */
-.daily-card{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:0 0 18px;border-radius:26px;background:var(--surface);box-shadow:var(--shadow)}
-.daily-card::after{content:"”";position:absolute;right:16px;top:44px;font:800 128px/1 var(--f-lat),serif;color:var(--bk);opacity:.07;pointer-events:none}
-.daily-card-head{display:flex;align-items:center;gap:12px;padding:14px 18px;background:color-mix(in srgb,var(--bk) 13%,var(--surface))}
-.daily-card-title h2{margin:0;font-size:13.5px;line-height:1.3}
-.daily-date{margin:2px 0 0;font-size:12px;color:var(--ink2)}
-.daily-text{margin:0 18px;font-family:var(--f-read),serif;font-size:calc(var(--rs) + 2px);line-height:var(--rlh);max-width:var(--rw);overflow-wrap:anywhere}
-.daily-cite{margin:0 18px;font-weight:600;font-size:12px;color:var(--ink2)}
-.daily-actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 18px}
-.daily-skeleton{display:flex;flex-direction:column;gap:10px;margin:0 18px}
-.daily-card-loading{padding:18px;gap:12px}
-.daily-card .daily-note{margin:0 18px}
+/* today's hadis: the article itself is the hadis page's (hadis.css); only its date line is here */
+.daily-date{margin:0;font-size:12.5px;color:var(--ink2)}
 
 .daily-recent{display:flex;flex-direction:column;gap:6px}
 .daily-recent-list{list-style:none;margin:0;padding:0}
@@ -83,7 +73,7 @@
 .plan-day-more:hover,.plan-day-more:focus-visible{text-decoration:underline}
 
 /* home: the daily card (inside the hero) and the quick links */
-.home-daily{--home-daily-fs:12px;--home-daily-ink:var(--ink2);display:flex;flex-direction:column;gap:4px;min-width:0;margin:8px 0 0;padding:8px 12px 6px;border-radius:16px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.home-daily{position:relative;--home-daily-fs:13px;--home-daily-ink:var(--ink2);display:flex;flex-direction:column;gap:4px;min-width:0;margin:8px 0 0;padding:8px 12px 6px;border-radius:16px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
 .home-daily-loading{min-height:96px}
 .home-daily-top{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:0 10px}
 .home-daily-top h2{margin:0;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--accent2)}
@@ -95,6 +85,10 @@
 .home-daily-skeleton{display:flex;flex-direction:column;gap:12px;padding:8px 0}
 .home-daily-more{color:var(--accent2);font-family:var(--f-ui),system-ui,sans-serif;font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap;text-decoration:none;text-underline-offset:3px}
 .home-daily-more:hover,.home-daily-more:focus-visible{text-decoration:underline}
+/* the whole card is the link: the link's ::after stretches over the card (.home-daily is the containing block) */
+.home-daily-more::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.home-daily:hover{background:var(--accent-soft)}
+.home-daily:has(.home-daily-more:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
 .home-daily-more .ui-icon{vertical-align:-3px}
 .home-daily-flow .home-daily-more{padding:11px 4px;margin:0 -4px 0 0}
 /* the 44px hit area may spill over the card padding, so a one-line text does not make the row taller */

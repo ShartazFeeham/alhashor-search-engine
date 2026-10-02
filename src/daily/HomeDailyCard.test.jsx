@@ -119,9 +119,43 @@ test('the excerpt has the same size and colour as the citation line, from shared
   expect(excerpt).toContain('color:var(--home-daily-ink)');
   expect(cite).toContain('color:var(--home-daily-ink)');
   const card = cssRule('.home-daily');
-  expect(card).toMatch(/--home-daily-fs:12px/);
+  expect(card).toMatch(/--home-daily-fs:13px/);
   expect(card).toContain('--home-daily-ink:var(--ink2)');
   expect(excerpt).toMatch(/line-height:1\.[67]\d*[;}]/);
+});
+
+describe('the whole card is one link', () => {
+  test('has a single link, to the hadis page, still labelled "আরও দেখুন", and no other interactive element', async () => {
+    const { book, number } = pick();
+    renderCard();
+    await screen.findByTestId('home-daily-text');
+    const links = within(card()).getAllByRole('link');
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
+    expect(links[0]).toHaveTextContent('আরও দেখুন');
+    expect(within(card()).queryByRole('button')).not.toBeInTheDocument();
+    expect(links[0].querySelector('a, button')).toBeNull();
+  });
+
+  test('the click target covers the card: the card is the containing block of the link\'s stretched ::after', () => {
+    expect(cssRule('.home-daily')).toMatch(/position:relative/);
+    const stretch = cssRule('.home-daily-more::after');
+    expect(stretch).toMatch(/content:""/);
+    expect(stretch).toMatch(/position:absolute/);
+    expect(stretch).toMatch(/inset:0/);
+    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
+    // nothing between the link and the card may become the containing block
+    for (const selector of ['.home-daily-body', '.home-daily-text']) {
+      expect(cssRule(selector), selector).not.toMatch(/position:(relative|absolute|fixed|sticky)/);
+    }
+    expect(css).not.toMatch(/\.home-daily-more\{[^}]*overflow/);
+  });
+
+  test('has a hover state and a visible keyboard focus ring on the whole card', () => {
+    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
+    expect(css).toMatch(/\.home-daily:hover\{[^}]*background:var\(--[a-z0-9-]+\)/);
+    expect(css).toMatch(/\.home-daily:has\(\.home-daily-more:focus-visible\)\{[^}]*outline:2px solid var\(--accent\)/);
+  });
 });
 
 test('the excerpt is short enough for about two lines', async () => {
