@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useId, useRef, useState } from 'react';
 import Icon from '../ui/Icon';
 import { activeSection } from './activeTab';
+import { rememberReturn } from './settingsReturn';
 
 // The phone's bottom bar: Home, Books, a raised Search, Topics, and More (which holds the daily
 // hadis, plans, narrators and settings).
@@ -100,7 +101,7 @@ export default function TabBar() {
             <Icon name="user" size={20} />
             বর্ণনাকারী
           </Link>
-          <Link href="/settings" onClick={() => setMoreOpen(false)}>
+          <Link href="/settings" onClick={() => { rememberReturn(); setMoreOpen(false); }}>
             <Icon name="sliders" size={20} />
             পড়ার সেটিংস
           </Link>

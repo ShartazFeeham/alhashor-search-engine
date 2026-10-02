@@ -44,6 +44,14 @@ const router = {
   replace(path) {
     setUrl(path);
   },
+  // Like the browser's back button: goes to the page before the last push.
+  back() {
+    const before = history[history.length - 1];
+    if (!before) return;
+    history = history.slice(0, -1);
+    url = new URL(before);
+    notify();
+  },
 };
 
 // Like Next's notFound(): stops rendering by throwing.

@@ -42,7 +42,7 @@ body>main{flex:1 0 auto;width:100%}
 .shell-links a:hover{background:var(--surface2)}
 .shell-links a[aria-current="page"]{background:var(--accent-soft);color:var(--accent2)}
 .shell-iconbtn{margin-left:auto;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface);box-shadow:var(--shadow);color:var(--ink2);text-decoration:none;flex:none}
-.shell-iconbtn b{font-size:14px}
+button.shell-iconbtn{border:0;padding:0;font:inherit;cursor:pointer}
 
 /* ---------- bottom tab bar (phones) ---------- */
 .shell-tabbar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:45;display:none;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface);border-radius:24px;box-shadow:var(--shadow),0 0 0 1px var(--line)}

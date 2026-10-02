@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import Icon from '../ui/Icon';
 import { activeSection } from './activeTab';
+import { leaveSettings, rememberReturn } from './settingsReturn';
 
 const LINKS = [
   ['home', '/', 'হোম'],
@@ -15,7 +17,34 @@ const LINKS = [
 ];
 
 export default function TopNav() {
-  const current = activeSection(usePathname());
+  const pathname = usePathname();
+  const current = activeSection(pathname);
+  const router = useRouter();
+  const open = pathname === '/settings';
+  const button = useRef(null);
+  const refocus = useRef(false);
+
+  const close = () => {
+    refocus.current = true;
+    leaveSettings(router);
+  };
+  // Escape closes the settings page like the cross does.
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape' && !event.defaultPrevented) close();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  });
+  // After the cross closed the settings the same spot of the bar is the settings link again;
+  // focus goes back to it.
+  useEffect(() => {
+    if (!open && refocus.current) {
+      refocus.current = false;
+      button.current?.focus();
+    }
+  }, [open]);
   return (
     <header className="shell-nav">
       <div className="shell-nav-in">
@@ -33,9 +62,15 @@ export default function TopNav() {
             </Link>
           ))}
         </nav>
-        <Link href="/settings" className="shell-iconbtn" aria-label="পড়ার সেটিংস" title="পড়ার সেটিংস">
-          <b>Aa</b>
-        </Link>
+        {open ? (
+          <button type="button" ref={button} className="shell-iconbtn" aria-label="সেটিংস বন্ধ করুন" title="সেটিংস বন্ধ করুন" aria-expanded="true" onClick={close}>
+            <Icon name="x" size={20} />
+          </button>
+        ) : (
+          <Link href="/settings" ref={button} className="shell-iconbtn" aria-label="পড়ার সেটিংস" title="পড়ার সেটিংস" onClick={rememberReturn}>
+            <Icon name="sliders" size={20} />
+          </Link>
+        )}
       </div>
     </header>
   );
