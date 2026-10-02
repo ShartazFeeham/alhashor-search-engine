@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { getUrl } from '../test/nextNavigation';
 import PrevNext from './PrevNext';
@@ -79,4 +79,17 @@ test('a swipe while zoomed in (panning the page) does nothing', () => {
   } finally {
     delete window.visualViewport;
   }
+});
+
+test('the block is one card with a slim single-line link on each side (arrow, label, neighbour name)', () => {
+  show(<PrevNext bookId="bukhari" number={64} />);
+  const nav = screen.getByRole('navigation', { name: 'আগের ও পরের হাদীস' });
+  expect(nav).toHaveClass('hadis-card');
+  const prev = screen.getByRole('link', { name: /আগের/ });
+  const next = screen.getByRole('link', { name: /পরের/ });
+  expect(prev).toHaveTextContent('‹আগেরবুখারী ৬২');
+  expect(next).toHaveTextContent('পরেরবুখারী ৬৫›');
+  expect(within(prev).getByText('আগের')).toBeInTheDocument();
+  expect(within(prev).getByText('বুখারী ৬২')).toBeInTheDocument();
+  expect(within(next).getByText('পরের')).toBeInTheDocument();
 });

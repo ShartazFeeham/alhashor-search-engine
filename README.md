@@ -12,7 +12,7 @@ Live site (when deployed): https://hadis.feeham.com. Work currently stays local:
 - **Hadis page** (`/hadis/<book>/<number>`): calm reading column, folded narrator chain, reading time and progress line, copy / cite / link buttons, previous and next (arrow keys and swipe), breadcrumb back to the book.
 - **Share** (`/share/<book>/<number>`): citation, share text, native share sheet and a quote-card image drawn on a canvas in the browser (download or share).
 - **Daily** (`/daily`, `?tab=plans[&plan=<id>]`, `?tab=khutbah&ids=bukhari-1234,muslim-5`): hadis of the day (chosen from the date, no randomness), reading plans with per-day ticks kept on the device, and a khutbah sheet (the list lives in the address; copy, link and a print layout).
-- **Related hadis**: a short list under each hadis page, read from pre-built shards (see Data scripts).
+- **Similar hadis**: under each hadis page, a live search with the meaningful words of the whole hadis (common words removed, at most 25 longest words), the best 20 kept, 5 shown and "আরও সদৃশ হাদীস" shows 5 more each time. The hadis page is a stack of cards as wide as the list pages.
 - **Compare**: in progress; the route does not exist yet (`src/compare/` holds its state so far).
 - **Themes and reading settings** (`/settings`): light, dark, sepia or follow the device; text size (3 to 30 px), line gap (0.5 to 2.5) and Bengali or English digits. Saved on the device only.
 
@@ -48,7 +48,7 @@ src/
   shell/      top bar, phone tab bar (with the More menu), no footer
   home/       home page            search/   search page, box, filters, results, searchIndex.js
   books/      book pages           topics/   topic index, start-here block, pager
-  hadis/      hadis page, shared hadis card, related list
+  hadis/      hadis page, shared hadis card, similar-hadis list
   daily/      daily card, plans, khutbah sheet   share/  quote card and share logic
   compare/    compare state (page not built yet)
   settings/   settings store, provider, page, inline theme script
@@ -77,7 +77,8 @@ public/json/
                                  the first N (the cap). Made from substring/ and tags/ by
                                  scripts/build-substring-3.mjs. The search reads these by default
   short-hadis.json               numbers of hadis of 60 words or fewer, per book code (daily pick)
-  related/<CODE>-<n>.json        up to 3 related hadis per hadis, 100 hadis per shard (BUK-0.json ...)
+  related/<CODE>-<n>.json        up to 3 related hadis per hadis, 100 hadis per shard (BUK-0.json ...);
+                                 no longer read by the site (the hadis page searches live), kept until the owner decides
 docs/         redesign-plan.md (decisions, phases, deviations), redesign-ideas.md, design/ (D2 and D5 references)
 ```
 
@@ -131,7 +132,8 @@ Run once from the repo root when the data changes. Both read `public/json/hadis`
 - `node scripts/build-short-hadis.mjs` writes `public/json/short-hadis.json` (hadis of 60 words or fewer, used by the daily pick).
 - `node scripts/build-index-3.mjs` regroups `public/json/tags/*.json` into `public/json/tags3/<first three letters>.json` (no network; the same output every time; it reads `tags/` and replaces `tags3/`; `src/lib/indexShards.test.js` checks that both folders hold the same words and tags). Run it again whenever `tags/` changes.
 - `node scripts/build-substring-3.mjs` regroups `public/json/substring/*.json` into `public/json/substring3/<first three letters of the key>.json` and sorts each list by the words' hadis count (read from `public/json/tags`), the most first, ties by code point order (no network; the same output every time; about 4 s; it replaces `substring3/`). `src/lib/substringShards.test.js` checks that both folders hold the same (key, word) pairs and that every list is sorted. Run it again whenever `substring/` or `tags/` changes.
-- `node scripts/build-related.mjs` writes `public/json/related/<CODE>-<n>.json`: for each hadis up to 3 related ones, by words they share weighted by rarity, with a small bonus for another book; two near-identical texts in different books are marked as the same report. The method is described at the top of the script.
+- `node scripts/build-related.mjs` writes `public/json/related/<CODE>-<n>.json`: for each hadis up to 3 related ones, by words they share weighted by rarity, with a small bonus for another book; two near-identical texts in different books are marked as the same report. The method is described at the top of the script. The site no longer reads these files (the similar list is a live search now); the script and the files are kept for now.
+- `node scripts/build-stopwords.mjs [--threshold=750] [--report=<file>]` writes `src/data/stopwords.json`: the words that are in more than 750 of the hadis (301 words), counted from `public/json/tags`. The similar-hadis search leaves them out, together with words of one or two letters and words with digits (`src/lib/similarWords.js`).
 
 ## Deploy notes
 

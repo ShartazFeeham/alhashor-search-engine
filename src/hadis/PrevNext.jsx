@@ -66,17 +66,19 @@ export default function PrevNext({ bookId, number, swipeTarget }) {
   }, [bookId, prev, next, router, swipeTarget]);
 
   return (
-    <nav className="hadis-pn" aria-label="আগের ও পরের হাদীস">
+    <nav className="hadis-pn hadis-card" aria-label="আগের ও পরের হাদীস">
       {prev !== null ? (
         <Link href={hadisHref(bookId, prev)} className="prev">
-          <small>‹ আগের হাদীস</small>
-          <span>{book.name} {digits(prev)}</span>
+          <span className="pn-arrow" aria-hidden="true">‹</span>
+          <small>আগের</small>
+          <span className="pn-name">{book.name} {digits(prev)}</span>
         </Link>
       ) : <span />}
       {next !== null ? (
         <Link href={hadisHref(bookId, next)} className="next">
-          <small>পরের হাদীস ›</small>
-          <span>{book.name} {digits(next)}</span>
+          <small>পরের</small>
+          <span className="pn-name">{book.name} {digits(next)}</span>
+          <span className="pn-arrow" aria-hidden="true">›</span>
         </Link>
       ) : <span />}
     </nav>

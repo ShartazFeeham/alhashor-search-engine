@@ -1,6 +1,6 @@
 /* Books: the picker, a book's page (D2's colour header, switcher, jump box, range grid and
    pager) and the shared hadis card. */
-.books{max-width:760px}
+.books{max-width:var(--list-w)}
 
 .books-intro p{margin:6px 0 0;color:var(--ink2)}
 .books-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:12px}

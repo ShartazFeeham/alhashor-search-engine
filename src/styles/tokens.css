@@ -10,6 +10,8 @@
   --shadow:0 1px 2px rgba(10,50,44,.06),0 8px 22px rgba(10,50,44,.07);
   /* reading: font size and line height (changed by the reading settings); the column width --rw is fixed, nothing writes it */
   --rs:16px; --rlh:1.9; --rw:34em;
+  /* the width of the content pages: lists (search, books, topics) and the hadis page */
+  --list-w:760px;
 }
 
 :root[data-theme="dark"] {

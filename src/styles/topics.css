@@ -1,6 +1,6 @@
 /* Topics: D2's filterable chip index, the "start here" block and the paged list of shared hadis
    cards. The cards themselves are styled in books.css (.hcard). */
-.topics{max-width:760px}
+.topics{max-width:var(--list-w)}
 
 .topics-index{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
 .topics-index-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}

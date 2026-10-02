@@ -1,150 +1,193 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
-import { clearRelatedCache } from '../lib/related';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { clearHadisTextCache } from '../lib/useHadisText';
+import { searchClient } from '../search/searchClient';
 import { SettingsProvider } from '../settings/SettingsProvider';
+import { getHistory, getUrl } from '../test/nextNavigation';
+import { realText } from '../test/hadisFixtures';
 import { serveRealData } from '../test/publicJson';
 import RelatedList from './RelatedList';
 
-// Real shard-shaped data for real hadis: Nasa'i 903 (the prayer-opening supplication) has the
-// same report in Tirmidhi 243 and Ibn Majah 806, and Nasa'i 902 shares words with it.
-const SHARD = {
-  '903': [['TIR', 243, 's'], ['MAJ', 806, 's'], ['NAS', 902, 'w', 'اسْمُكَ جَدُّكَ']],
-  '1109': [['MUS', 988, 'w', 'শুভ্রতা বগলের রাখতেন']],
-};
+vi.mock('../search/searchClient', () => ({ searchClient: { search: vi.fn() } }));
 
-const show = (bookId, number) =>
+// The hadis being read: Nasa'i 903 (the prayer-opening supplication). The stubbed search answers
+// with real Bukhari 1..N and Nasa'i 903 itself, in a fixed order, so the flow is deterministic.
+const TEXT = realText('nasai', 903);
+const stubSearch = (tags) => {
+  searchClient.search.mockImplementation(() => ({ promise: Promise.resolve(tags), cancel: vi.fn() }));
+};
+const buk = (count, withSelf = true) => {
+  const tags = Array.from({ length: count }, (_, i) => `BUK-${i + 1}`);
+  return withSelf ? ['NAS-903', ...tags] : tags;
+};
+const show = (number = 903, text = TEXT) =>
   render(
     <SettingsProvider>
-      <RelatedList bookId={bookId} number={number} />
+      <RelatedList bookId="nasai" number={number} text={text} />
     </SettingsProvider>
   );
-
+const items = () => within(screen.getByRole('region', { name: 'সদৃশ হাদীস' })).getAllByRole('listitem');
 // The list row (li) that holds the link with this name.
 const rowOf = (name) => screen.getAllByRole('listitem').find((row) => within(row).queryByRole('link', { name }));
-const itemOf = async (name) => {
-  await screen.findByRole('link', { name });
-  return rowOf(name);
-};
-
-const serveShard = (shard = SHARD) =>
-  serveRealData((url) =>
-    url === '/json/related/NAS-9.json' || url === '/json/related/NAS-11.json'
-      ? Promise.resolve({ ok: true, json: () => Promise.resolve(shard) })
-      : undefined
-  );
+const moreButton = () => screen.queryByRole('button', { name: 'আরও সদৃশ হাদীস' });
 
 beforeEach(() => {
   localStorage.clear();
+  serveRealData();
 });
 
 afterEach(() => {
-  clearRelatedCache();
   clearHadisTextCache();
-  // fetch is not deleted here: the page of a finished test may still start a late request when it unmounts
 });
 
-test('lists the related hadis under a labelled heading, as a real list', async () => {
-  serveShard();
-  show('nasai', 903);
-  const section = await screen.findByRole('region', { name: 'এই বিষয়ে আরও হাদীস' });
-  expect(within(section).getByRole('heading', { level: 2, name: 'এই বিষয়ে আরও হাদীস' })).toBeInTheDocument();
-  expect(within(section).getAllByRole('listitem')).toHaveLength(3);
+test('searches with the meaningful words of the whole text, and shows the first 5 results', async () => {
+  stubSearch(buk(30));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  const [words] = searchClient.search.mock.calls[0];
+  expect(words.length).toBeGreaterThan(0);
+  expect(words.length).toBeLessThanOrEqual(25);
+  expect(words).not.toContain('বলতেন');
+  expect(items()).toHaveLength(5);
+  expect(screen.getByRole('link', { name: 'বুখারী ১' })).toHaveAttribute('href', '/hadis/bukhari/1');
 });
 
-test('each item links to the hadis page with the book name and number', async () => {
-  serveShard();
-  show('nasai', 903);
-  expect(await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' })).toHaveAttribute('href', '/hadis/tirmidhi/243');
-  expect(screen.getByRole('link', { name: 'ইবনে মাজাহ ৮০৬' })).toHaveAttribute('href', '/hadis/ibnmajah/806');
-  expect(screen.getByRole('link', { name: 'নাসাঈ ৯০২' })).toHaveAttribute('href', '/hadis/nasai/902');
+test('the hadis being read is never in its own list', async () => {
+  stubSearch(buk(8));
+  show();
+  await screen.findByRole('link', { name: 'বুখারী ১' });
+  expect(screen.queryByRole('link', { name: 'নাসাঈ ৯০৩' })).not.toBeInTheDocument();
 });
 
-test('shows the saying of each hadis, without its number or narrator chain', async () => {
-  serveShard();
-  show('nasai', 903);
-  const item = await itemOf('ইবনে মাজাহ ৮০৬');
-  await waitFor(() => expect(within(item).getByText(/সালাত শুরু করে বলতেন/)).toBeInTheDocument());
-  expect(within(item).queryByText(/থেকে বর্ণিত/)).not.toBeInTheDocument();
-  const tirmidhi = rowOf('তিরমিযী ২৪৩');
-  await waitFor(() => expect(within(tirmidhi).getByText(/সালাত শুরু করার পর বলতেন/)).toBeInTheDocument());
-  expect(within(tirmidhi).queryByText(/^২৪৩/)).not.toBeInTheDocument();
+test('the button shows the next 5 each time: 5, 10, 15, 20, then it is gone', async () => {
+  stubSearch(buk(30));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  for (const shown of [10, 15, 20]) {
+    fireEvent.click(moreButton());
+    expect(items()).toHaveLength(shown);
+  }
+  expect(moreButton()).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'বুখারী ২১' })).not.toBeInTheDocument(); // only the top 20 are kept
 });
 
-test('a same report in another book says so, and shared words are named', async () => {
-  serveShard();
-  show('nasai', 903);
-  const tirmidhi = await itemOf('তিরমিযী ২৪৩');
-  expect(within(tirmidhi).getByText('অন্য গ্রন্থেও একই বর্ণনা')).toBeInTheDocument();
-  const nasai = rowOf('নাসাঈ ৯০২');
-  expect(within(nasai).getByText('মিল রয়েছে: اسْمُكَ, جَدُّكَ')).toBeInTheDocument();
+test('with fewer than 20 results the button goes away when all are shown', async () => {
+  stubSearch(buk(8));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  fireEvent.click(moreButton());
+  expect(items()).toHaveLength(8);
+  expect(moreButton()).not.toBeInTheDocument();
 });
 
-test('no percentages anywhere', async () => {
-  serveShard();
-  show('nasai', 903);
-  await screen.findByRole('region');
-  expect(document.body.textContent).not.toMatch(/%|শতাংশ/);
+test('with 5 results or fewer there is no button at all', async () => {
+  stubSearch(buk(5));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  expect(items()).toHaveLength(5);
+  expect(moreButton()).not.toBeInTheDocument();
 });
 
-test('shows the book badge of each item', async () => {
-  serveShard();
-  show('nasai', 903);
-  const tirmidhi = await itemOf('তিরমিযী ২৪৩');
-  expect(within(tirmidhi).getByText('তি')).toBeInTheDocument();
+test('the texts of results 6 to 20 are fetched in the background, right after the first 5 show', async () => {
+  stubSearch(buk(30));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  await waitFor(() => {
+    const asked = global.fetch.mock.calls.map((call) => String(call[0]));
+    expect(asked.some((url) => url.includes('/Bukhari/0020/'))).toBe(true);
+  });
+  const asked = global.fetch.mock.calls.map((call) => String(call[0]));
+  expect(asked.some((url) => url.includes('/Bukhari/0021/'))).toBe(false);
+});
+
+test('each item has the book badge, a link, the saying and the number of shared words', async () => {
+  stubSearch(['TIR-243']);
+  show();
+  const link = await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
+  expect(link).toHaveAttribute('href', '/hadis/tirmidhi/243');
+  const item = rowOf('তিরমিযী ২৪৩');
+  expect(within(item).getByText('তি')).toBeInTheDocument();
+  await waitFor(() => expect(within(item).getByText(/সালাত শুরু করার পর বলতেন/)).toBeInTheDocument());
+  expect(within(item).getByText(/^[০-৯]+ টি শব্দ মিলেছে$/)).toBeInTheDocument();
+  expect(within(item).queryByText(/%/)).not.toBeInTheDocument();
+});
+
+test('the items are list items with the separator class, inside one card', async () => {
+  stubSearch(buk(8));
+  show();
+  const region = await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  expect(region).toHaveClass('hadis-card');
+  for (const item of items()) expect(item).toHaveClass('related-item');
+});
+
+test('a plain click on the text or an empty part opens the hadis; a selection or a link click does not add one', async () => {
+  stubSearch(['TIR-243']);
+  show();
+  await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
+  const item = rowOf('তিরমিযী ২৪৩');
+  const text = await within(item).findByText(/সালাত শুরু করার পর বলতেন/);
+
+  vi.spyOn(window, 'getSelection').mockReturnValue({ toString: () => 'সালাত' });
+  fireEvent.click(text);
+  expect(getUrl().pathname).toBe('/');
+
+  window.getSelection.mockReturnValue({ toString: () => '' });
+  fireEvent.click(text);
+  expect(getUrl().pathname).toBe('/hadis/tirmidhi/243');
+});
+
+test('a click on the title link is left to the link itself (no second navigation)', async () => {
+  stubSearch(['TIR-243']);
+  show();
+  const link = await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
+  fireEvent.click(link);
+  expect(getUrl().pathname).toBe('/hadis/tirmidhi/243');
+  expect(getHistory()).toHaveLength(1); // the link navigated once; the item's click handler stayed out
+});
+
+test('while searching a quiet line says so', async () => {
+  searchClient.search.mockImplementation(() => ({ promise: new Promise(() => {}), cancel: vi.fn() }));
+  show();
+  expect(screen.getByText('খুঁজছি...')).toBeInTheDocument();
+});
+
+test('renders nothing at all when there are no similar hadis (no heading, no gap)', async () => {
+  stubSearch(['NAS-903']);
+  const { container } = show();
+  await waitFor(() => expect(searchClient.search).toHaveBeenCalled());
+  await waitFor(() => expect(container).toBeEmptyDOMElement());
+});
+
+test('renders nothing when the text has no searchable word', async () => {
+  stubSearch(buk(8));
+  const { container } = show(903, '১২৩ এবং তিনি');
+  await waitFor(() => expect(container).toBeEmptyDOMElement());
+  expect(searchClient.search).not.toHaveBeenCalled();
+});
+
+test('a failed search shows a quiet error line and no list', async () => {
+  searchClient.search.mockImplementation(() => ({ promise: Promise.reject(new Error('worker')), cancel: vi.fn() }));
+  show();
+  expect(await screen.findByText('সদৃশ হাদীস আনা যায়নি।')).toBeInTheDocument();
+  expect(screen.queryByRole('listitem')).not.toBeInTheDocument();
 });
 
 test('numbers follow the digit style', async () => {
-  serveShard();
+  stubSearch(['TIR-243']);
   localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
-  show('nasai', 903);
+  show();
   expect(await screen.findByRole('link', { name: 'তিরমিযী 243' })).toBeInTheDocument();
 });
 
-test('renders nothing at all while loading', async () => {
-  serveShard();
-  const { container } = show('nasai', 903);
-  expect(container).toBeEmptyDOMElement();
-  await screen.findByRole('region'); // let the load finish inside the test
-});
-
-test('renders nothing when the hadis has no related ones (no heading, no gap)', async () => {
-  serveShard();
-  const { container } = show('nasai', 904);
-  await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-  await new Promise((resolve) => setTimeout(resolve, 20));
-  expect(container).toBeEmptyDOMElement();
-});
-
-test('renders nothing when the shard does not exist (404)', async () => {
-  serveRealData();
-  const { container } = show('bukhari', 63);
-  await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-  await new Promise((resolve) => setTimeout(resolve, 20));
-  expect(container).toBeEmptyDOMElement();
-});
-
-test('renders nothing after a network error', async () => {
-  global.fetch = vi.fn(() => Promise.reject(new Error('offline')));
-  const { container } = show('nasai', 903);
-  await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-  await new Promise((resolve) => setTimeout(resolve, 20));
-  expect(container).toBeEmptyDOMElement();
-});
-
-test('an item whose text cannot be loaded still shows its link and reason', async () => {
-  serveRealData((url) => {
-    if (url === '/json/related/NAS-9.json') return Promise.resolve({ ok: true, json: () => Promise.resolve({ '903': [['TIR', 243, 's']] }) });
-    if (url.includes('/Tirmiji/0243/')) return Promise.reject(new Error('offline'));
-    return undefined;
-  });
-  show('nasai', 903);
-  const item = await itemOf('তিরমিযী ২৪৩');
-  expect(within(item).getByText('অন্য গ্রন্থেও একই বর্ণনা')).toBeInTheDocument();
-});
-
-test('the item link has the class that stretches it over the whole row (44px tap area, see related.css)', async () => {
-  serveShard();
-  show('nasai', 903);
-  const link = await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
-  expect(link).toHaveClass('related-link');
+test('a new hadis searches again and the old results are not shown for it', async () => {
+  stubSearch(buk(8));
+  const { rerender } = show();
+  await screen.findByRole('link', { name: 'বুখারী ১' });
+  stubSearch(['TIR-243']);
+  rerender(
+    <SettingsProvider>
+      <RelatedList bookId="nasai" number={904} text={realText('nasai', 904)} />
+    </SettingsProvider>
+  );
+  await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
+  expect(screen.queryByRole('link', { name: 'বুখারী ১' })).not.toBeInTheDocument();
 });

@@ -1,5 +1,5 @@
 /* Search: D2's box, chips and indicator, with result cards. */
-.search{max-width:760px}
+.search{max-width:var(--list-w)}
 /* Tight spacing: this page only (the shared .screen rule in ui.css keeps 16px and 12px for the others). */
 .screen.search{padding-top:8px;gap:6px}
 .search-form{display:flex;flex-direction:column;gap:6px}

@@ -1,7 +1,9 @@
-/* The hadis full page: D2's colours, fonts and pill buttons, with D5's calm (no heavy card,
-   hairlines instead of boxes, quiet links). */
-.hadis-page{max-width:calc(var(--rw) + 32px);gap:18px}
+/* The hadis full page: every block is a card with the look of the search result cards, 8px apart,
+   as wide as the list pages (--list-w). */
+.hadis-page{max-width:var(--list-w);gap:8px}
+.hadis-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;min-width:0}
 
+.hadis-head{display:flex;flex-direction:column;gap:6px}
 .hadis-crumbs ol{display:flex;flex-wrap:wrap;gap:4px 6px;list-style:none;margin:0;padding:0;font-size:12.5px;color:var(--ink3);align-items:center}
 .hadis-crumbs li{display:flex;align-items:center;gap:6px}
 .hadis-crumbs li+li::before{content:"›";color:var(--ink3)}
@@ -9,34 +11,36 @@
 .hadis-crumbs a:hover{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
 .hadis-crumbs [aria-current="page"]{color:var(--ink)}
 
-.hadis-progress{position:sticky;top:61px;z-index:20;background:var(--page);padding:8px 0 6px}
+.hadis-progress{position:sticky;top:61px;z-index:20;background:var(--surface);padding:0 0 6px;margin-bottom:6px}
 .hadis-progress-meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--ink3);margin-bottom:6px}
 .hadis-progress-bar{height:3px;background:var(--line);border-radius:3px;overflow:hidden}
 .hadis-progress-bar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .12s linear}
 
-.hadis-article{display:flex;flex-direction:column;gap:18px}
-.hadis-head{display:flex;align-items:center;gap:12px}
+.hadis-article{display:flex;flex-direction:column;gap:8px}
+.hadis-title{display:flex;align-items:center;gap:12px}
 .hadis-head h1{font-size:1.125rem;line-height:1.3;font-weight:700;margin:0}
 
 .hadis-chain{display:flex;flex-direction:column;gap:6px;font-size:.805rem;color:var(--ink2)}
-.hadis-chain-toggle{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;background:none;border:0;border-bottom:1px solid var(--line);font:inherit;color:inherit;text-align:left;cursor:pointer;min-height:44px}
+.hadis-chain-toggle{display:flex;align-items:center;gap:10px;width:100%;padding:0;background:none;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer;min-height:44px}
 .hadis-chain-label{font-weight:700;color:var(--accent2);flex:none}
 .hadis-chain-summary{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hadis-chain.open .hadis-chain-summary{white-space:normal}
 .hadis-chain.open .ui-icon{transform:rotate(180deg)}
-.hadis-chain-full{margin:0;padding-left:14px;border-left:2px solid var(--line);font-family:var(--f-read),serif;font-size:.9375rem;line-height:1.9;color:var(--ink2)}
+.hadis-chain-full{margin:6px 0 0;padding-left:14px;border-left:2px solid var(--line);font-family:var(--f-read),serif;font-size:.9375rem;line-height:1.9;color:var(--ink2)}
 
-.hadis-read{margin:0;font-family:var(--f-read),serif;font-size:var(--rs);line-height:var(--rlh);max-width:var(--rw);color:var(--ink)}
+.hadis-read{margin:0;font-family:var(--f-read),serif;font-size:var(--rs);line-height:var(--rlh);color:var(--ink)}
 
 .hadis-actions{display:flex;flex-wrap:wrap;gap:8px}
-.hadis-permalink{margin:0;font-size:11.5px;color:var(--ink3)}
-.hadis-permalink code{font-family:var(--f-lat),monospace;color:var(--ink2)}
 
-.hadis-pn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.hadis-pn a{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--line);padding:16px 0 4px;color:var(--ink2);text-decoration:none}
+/* Previous and next: a slim card, one line per link (arrow, label, neighbour). The ::after keeps a 44px tap area. */
+.hadis-pn{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px 8px}
+.hadis-pn a{position:relative;display:flex;align-items:center;gap:6px;min-height:36px;min-width:0;font-size:14px;color:var(--ink2);text-decoration:none}
+.hadis-pn a::after{content:"";position:absolute;inset:-4px 0}
 .hadis-pn a:hover{color:var(--accent2)}
-.hadis-pn .next{text-align:right;align-items:flex-end;grid-column:2}
-.hadis-pn small{color:var(--ink3);font-size:.72rem}
+.hadis-pn .next{justify-content:flex-end;text-align:right;grid-column:2}
+.hadis-pn small{color:var(--ink3);font-size:13px;flex:none}
+.hadis-pn .pn-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.hadis-pn .pn-arrow{flex:none;color:var(--ink3)}
 
 .hadis-message{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
 .hadis-message h1{font-size:1.125rem;margin:0}
