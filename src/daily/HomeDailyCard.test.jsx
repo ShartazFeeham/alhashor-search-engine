@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-node-access */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
@@ -186,66 +187,31 @@ describe('where the link goes', () => {
   const body = () => screen.getByTestId('home-daily-body');
   const link = () => within(card()).getByRole('link', { name: 'আরও দেখুন' });
 
-  // jsdom has no layout; a test says how tall the text really is by faking these two.
-  function fakeLayout(scroll, client) {
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', { configurable: true, get: () => scroll });
-    Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, get: () => client });
-  }
-  afterEach(() => {
-    delete HTMLElement.prototype.scrollHeight;
-    delete HTMLElement.prototype.clientHeight;
+  test('the text takes the whole width of the card and the link is on its own line below it, for a short and a long hadis', async () => {
+    for (const fits of [(_, words) => words < 12, (shown) => shown.length > 300]) {
+      const real = realHadis(fits);
+      withText(real.raw);
+      clearShortListCache();
+      clearDailyPicksCache();
+      const { unmount } = renderCard();
+      const excerpt = await screen.findByTestId('home-daily-text');
+      const paragraph = excerpt.closest('p');
+      expect(paragraph).toHaveClass('home-daily-text');
+      expect(within(paragraph).queryByRole('link')).not.toBeInTheDocument();
+      expect(paragraph).toHaveTextContent(excerpt.textContent);
+      expect(body()).toContainElement(link());
+      expect(paragraph.compareDocumentPosition(link()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(link()).toContainHTML('<svg');
+      expect(body().children).toHaveLength(2);
+      unmount();
+    }
   });
 
-  test('a very short real hadis (under 12 words): the link follows the last word on the same line, no ellipsis', async () => {
-    const real = realHadis((_, words) => words < 12);
-    withText(real.raw);
+  test('a short hadis is shown whole, with no ellipsis', async () => {
+    const short = realHadis((_, words) => words < 12);
+    withText(short.raw);
     renderCard();
-    const excerpt = await screen.findByTestId('home-daily-text');
-    expect(excerpt).toHaveTextContent(real.shown);
-    expect(excerpt.textContent).not.toMatch(/…|\.\.\./);
-    expect(body()).toHaveAttribute('data-link', 'inline');
-    const paragraph = within(body()).getByTestId('home-daily-flow');
-    expect(within(paragraph).getByTestId('home-daily-text')).toBe(excerpt);
-    expect(within(paragraph).getByRole('link', { name: 'আরও দেখুন' })).toBe(link());
-    expect(paragraph.textContent.trim()).toBe(`${real.shown} আরও দেখুন`);
-    expect(link()).toContainHTML('<svg');
-  });
-
-  test('a medium real hadis that ends inside two lines: also an inline link, no ellipsis', async () => {
-    const real = realHadis((shown) => shown.length > 55 && shown.length <= 100);
-    withText(real.raw);
-    renderCard();
-    const excerpt = await screen.findByTestId('home-daily-text');
-    expect(excerpt).toHaveTextContent(real.shown);
-    expect(excerpt.textContent).not.toMatch(/…|\.\.\./);
-    expect(body()).toHaveAttribute('data-link', 'inline');
-    expect(within(within(body()).getByTestId('home-daily-flow')).getByRole('link', { name: 'আরও দেখুন' })).toBe(link());
-  });
-
-  test('a long real hadis is cut with an ellipsis and the link moves to the corner, outside the text', async () => {
-    const real = realHadis((shown) => shown.length > 300);
-    withText(real.raw);
-    renderCard();
-    const excerpt = await screen.findByTestId('home-daily-text');
-    expect(excerpt.textContent).toMatch(/…$/);
-    expect(real.shown.startsWith(excerpt.textContent.slice(0, -1))).toBe(true);
-    expect(body()).toHaveAttribute('data-link', 'corner');
-    const paragraph = within(body()).getByTestId('home-daily-flow');
-    expect(within(paragraph).queryByRole('link')).not.toBeInTheDocument();
-    expect(within(body()).getByRole('link', { name: 'আরও দেখুন' })).toBe(link());
-    expect(paragraph.compareDocumentPosition(link()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  });
-
-  test('a text that is not cut but still needs more than two lines (narrow phone, big text size) moves the link to the corner', async () => {
-    const real = realHadis((shown) => shown.length > 55 && shown.length <= 100);
-    withText(real.raw);
-    fakeLayout(120, 58);
-    renderCard();
-    const excerpt = await screen.findByTestId('home-daily-text');
-    expect(excerpt).toHaveTextContent(real.shown);
-    expect(body()).toHaveAttribute('data-link', 'corner');
-    expect(within(within(body()).getByTestId('home-daily-flow')).queryByRole('link')).not.toBeInTheDocument();
-    expect(within(card()).getAllByRole('link')).toHaveLength(1);
+    expect((await screen.findByTestId('home-daily-text')).textContent).toBe(short.shown);
   });
 
   test('the link always goes to the full hadis page, wherever it sits', async () => {
@@ -265,25 +231,23 @@ describe('where the link goes', () => {
   });
 });
 
-describe('the stylesheet for the corner link and the compact card', () => {
-  test('the corner mode is two columns, text then link at the bottom right; the inline mode is plain flow', () => {
+describe('the stylesheet for the link row and the compact card', () => {
+  test('the body is a plain column: the text, then the link on the right edge below it (no grid, no side-by-side)', () => {
     const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
-    const corner = css.split('\n').find((rule) => rule.startsWith('.home-daily-body[data-link="corner"]{'));
-    expect(corner).toContain('display:grid');
-    expect(corner).toContain('grid-template-columns:minmax(0,1fr) auto');
-    expect(corner).toContain('align-items:end');
-    expect(cssRule('.home-daily-body')).not.toContain('display:grid');
+    expect(css).not.toMatch(/data-link|home-daily-flow/);
+    const bodyRule = cssRule('.home-daily-body');
+    expect(bodyRule).toContain('display:flex');
+    expect(bodyRule).toContain('flex-direction:column');
+    expect(bodyRule).not.toContain('display:grid');
+    expect(cssRule('.home-daily-more')).toContain('align-self:flex-end');
   });
 
-  test('the link has a 44px hit area, the accent colour, and an underline on hover and focus', () => {
+  test('the link is accent coloured, underlined on hover and focus; the tap area is the whole card', () => {
     const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
     const more = cssRule('.home-daily-more');
     expect(more).toContain('color:var(--accent2)');
     expect(more).toContain('white-space:nowrap');
     expect(css).toMatch(/\.home-daily-more:hover,\.home-daily-more:focus-visible\{text-decoration:underline\}/);
-    expect(css.split('\n').find((rule) => rule.startsWith('.home-daily-body[data-link="corner"] .home-daily-more{'))).toContain('min-height:44px');
-    // inline, the 44px comes from padding that does not change the line height
-    expect(css.split('\n').find((rule) => rule.startsWith('.home-daily-flow .home-daily-more{'))).toMatch(/padding:\d+px/);
   });
 
   test('the card has no min-height of its own: only the loading state holds a height, of about two lines', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-node-access */
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { clearDailyPicksCache } from '../daily/useHomePick';
 import { clearShortListCache } from '../daily/useShortList';

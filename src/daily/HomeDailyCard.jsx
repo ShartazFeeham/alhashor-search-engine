@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { formatDate } from '../lib/bnDate';
 import { hadisHref, tagOf } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
@@ -50,56 +49,15 @@ function Shell({ today, loading = false, children }) {
   );
 }
 
-// The excerpt (at most two lines) and the "আরও দেখুন" link. While the text is short the link
-// follows its last word on the same line. When the text is cut (or still needs more than two
-// lines, which only the browser can tell: a narrow screen, a big text size) the link moves to the
-// bottom right corner, beside the end of the second line.
-function Body({ excerpt, cut, href }) {
-  const [overflow, setOverflow] = useState(false);
-  const [round, setRound] = useState(0); // bumped to measure again
-  const bodyRef = useRef(null);
-  const textRef = useRef(null);
-  const seen = useRef('');
-  const corner = cut || overflow;
-
-  // Measured with the link inline, before the browser paints.
-  useLayoutEffect(() => {
-    const el = textRef.current;
-    if (!corner && el && el.scrollHeight > el.clientHeight + 1) setOverflow(true);
-  }, [corner, round, excerpt]);
-
-  // A new width or text size can make the text fit again (or not): measure again from the start.
-  useEffect(() => {
-    const el = bodyRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return undefined;
-    const sign = () => `${Math.round(el.getBoundingClientRect().width)}|${getComputedStyle(el).fontSize}`;
-    seen.current = sign();
-    const observer = new ResizeObserver(() => {
-      const now = sign();
-      if (now !== seen.current) {
-        seen.current = now;
-        setOverflow(false);
-        setRound((n) => n + 1);
-      }
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
+// The excerpt (at most two lines, the whole card width) and, on its own line below it, the
+// "আরও দেখুন" link. The link's ::after stretches over the card, so the whole card is that one link.
+function Body({ excerpt, href }) {
   return (
-    <div className="home-daily-body" data-testid="home-daily-body" data-link={corner ? 'corner' : 'inline'} ref={bodyRef}>
-      <p className="home-daily-text" ref={textRef}>
-        <span className="home-daily-flow" data-testid="home-daily-flow">
-          <span data-testid="home-daily-text">{excerpt}</span>
-          {!corner && (
-            <>
-              {' '}
-              <Link href={href} className="home-daily-more">{MORE}</Link>
-            </>
-          )}
-        </span>
+    <div className="home-daily-body" data-testid="home-daily-body">
+      <p className="home-daily-text">
+        <span data-testid="home-daily-text">{excerpt}</span>
       </p>
-      {corner && <Link href={href} className="home-daily-more">{MORE}</Link>}
+      <Link href={href} className="home-daily-more">{MORE}</Link>
     </div>
   );
 }
@@ -118,11 +76,11 @@ function Picked({ today, pick }) {
     );
   }
   const { chain, body } = splitHadis(text);
-  const { text: excerpt, cut } = excerptOf(`${chain} ${body}`.replace(/\s+/g, ' ').trim());
+  const { text: excerpt } = excerptOf(`${chain} ${body}`.replace(/\s+/g, ' ').trim());
   return (
     <Shell today={today}>
       <p className="home-daily-cite">{citationOf(pick.book, pick.number, digits)}</p>
-      <Body excerpt={excerpt} cut={cut} href={hadisHref(pick.book.id, pick.number)} />
+      <Body excerpt={excerpt} href={hadisHref(pick.book.id, pick.number)} />
     </Shell>
   );
 }

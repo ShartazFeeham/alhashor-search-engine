@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/no-node-access, testing-library/no-container */
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { bookById } from '../lib/books';
 import { formatNumber } from '../lib/digits';
