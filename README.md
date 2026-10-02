@@ -67,8 +67,9 @@ public/json/
                                  letters: the whole word and "_"); 9,655 files, 21.6 MB, made from
                                  tags/ by scripts/build-index-3.mjs. The search reads these by default;
                                  ?idx=2 on /search switches back to tags/ (see src/search/searchConfig.js)
-  substring/<first two letters>.json  word -> longer words containing it; 1,164 files, 8.6 MB (the lists
-                                 are in no useful order)
+  substring/<first two letters>.json  word -> longer words containing it; 1,164 files, 8.6 MB. Each list
+                                 is sorted by the words' hadis count, the most first (reordered in place by
+                                 scripts/sort-substring-2.mjs; the words are the same), so the cap works here too
   substring3/<first three letters of the word>.json  the same keys cut at three letters (a key of fewer
                                  than three letters: the whole key and "_"); 6,123 files, 8.6 MB, the
                                  largest কার.json 126 KB (the largest 2-letter file is 351 KB). Each list is
@@ -90,9 +91,18 @@ The search reads its settings from `src/search/searchConfig.js`. Three of them c
 |---|---|---|---|
 | `?idx=` | `2`, `3` | `3` | word files: `tags/` (2 letters) or `tags3/` (3 letters) |
 | `?sub=` | `2`, `3` | `3` | containing-word files: `substring/` or `substring3/` |
-| `?cap=` | `0` (off), `1` to `500` | `50` | how many of the longer words that contain a query word have their `tags` file loaded: the first N of the word's `substring3` list (the ones with the most hadis). Works only with `?sub=3`; with `?sub=2` it is ignored |
+| `?cap=` | `0` (off), `1` to `500` | `50` | how many of the longer words that contain a query word have their `tags` file loaded: the first N of the word's list (the ones with the most hadis). Works with both `?sub=2` and `?sub=3`, because the lists of `substring/` and `substring3/` are sorted the same way |
 
-`?idx=2&sub=2` is exactly the old behaviour, `?sub=3&cap=0` finds the same hadis in the same order as `?sub=2` but opens many more files for common words (about 4,900 against 2,070 for 20 common words), and the default (`cap=50`) opens about 360 of them while keeping 98% of the hadis (more in `docs/redesign-plan.md`).
+The four modes to compare, and the address switches for each:
+
+| Mode | Switches | Behaviour |
+|---|---|---|
+| 2-letter files, cap off | `?idx=2&sub=2&cap=0` | the old behaviour; every containing word is loaded (2,068 `tags` files for 20 common words) |
+| 2-letter files, cap | `?idx=2&sub=2&cap=50` | the first 50 containing words of each list: 269 files for the same 20 words, 98.2% of the hadis kept |
+| 3-letter files, cap off | `?idx=3&sub=3&cap=0` | the same hadis in the same order as the 2-letter files, but many more files (4,913) |
+| 3-letter files, cap | `?idx=3&sub=3&cap=50` | the default: 361 files, the same 98.2% of the hadis kept |
+
+With the cap off, the 2-letter and the 3-letter files return the same hadis in the same order (a golden test checks 56+ queries); with the cap on, the two return the same hadis too, as the lists are the same. The measured numbers are in `docs/redesign-plan.md`.
 
 ## Self-contained rule
 

@@ -7,10 +7,12 @@
 //    The default of each is set here and can be overridden on a page address with ?idx=2 or ?idx=3
 //    (tags) and ?sub=2 or ?sub=3 (substring).
 // 2. `containingCap`: how many of the longer words that contain a query word have their tags files
-//    loaded (each one is a download). substring3 lists are sorted by hadis count, the most first, so
+//    loaded (each one is a download). the lists of both substring folders are sorted by hadis count, the most first, so
 //    the cap takes the first N of a list: 50 keeps 99% of the hadis for about a quarter of the
-//    requests. It can only work on substring3 (substring/ lists are in no useful order), so in the
-//    2-letter substring mode it is ignored. ?cap=0 switches it off, ?cap=1 to ?cap=500 sets it.
+//    requests. It works with both substring folders, because the lists of substring/ were sorted the
+//    same way (scripts/sort-substring-2.mjs). ?cap=0 switches it off, ?cap=1 to ?cap=500 sets it.
+//    So the four modes to compare are ?idx=2&sub=2&cap=0, ?idx=2&sub=2&cap=50, ?idx=3&sub=3&cap=0 and
+//    ?idx=3&sub=3&cap=50.
 //
 // This is a developer switch for comparing the layouts: nothing in the settings page, and a value
 // that is not one of the layouts that exist (or a cap outside 0 to 500) is ignored. To add a layout:

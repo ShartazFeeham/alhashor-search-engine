@@ -4,8 +4,9 @@
 //                                                                         word -> longer words that contain it
 // Which of the two folders of each kind is used is a switch (searchConfig.js): the default, ?idx=2|3
 // (tags) and ?sub=2|3 (substring) on the page address, or a prefix given with the request (the Web
-// Worker gets it that way). substring3 lists are sorted by hadis count, the most first, which is what
-// lets `containingCap` (?cap=) load the tags files of only the first N containing words of a word.
+// Worker gets it that way). The lists of both substring folders are sorted by hadis count, the most
+// first (scripts/build-substring-3.mjs, scripts/sort-substring-2.mjs), which is what lets
+// `containingCap` (?cap=) load the tags files of only the first N containing words of a word.
 //
 // The files spell some Bengali letters two ways (য় as one character or as য + ়, ো as one
 // character or as ে + া, ...), and a word is filed under the first characters of whichever
@@ -41,11 +42,14 @@ export function normalizeQuery(text) {
 
 // The switches of one search: { tags, substring, cap }, the prefix lengths of the two folders and the
 // cap on the containing words (0: off). A value given with the request wins (and must be a layout
-// that exists, or a cap from 0 to 500), then the configured one. The cap only works on the 3-letter
-// substring files, whose lists are sorted by hadis count; with the 2-letter ones it is off.
+// that exists, or a cap from 0 to 500), then the configured one. The cap works with both substring
+// folders: the lists of substring/ and of substring3/ are both sorted by hadis count.
 function layoutOf({ tagsPrefix, substringPrefix, containingCap } = {}) {
-    const substring = prefixOrDefault("substring", substringPrefix);
-    return { tags: prefixOrDefault("tags", tagsPrefix), substring, cap: substring === 3 ? capOrDefault(containingCap) : 0 };
+    return {
+        tags: prefixOrDefault("tags", tagsPrefix),
+        substring: prefixOrDefault("substring", substringPrefix),
+        cap: capOrDefault(containingCap),
+    };
 }
 
 function fetchJson(url) {
@@ -117,12 +121,11 @@ export function createSearchIndex(load = fetchJson) {
         return entriesOf(indexes, normalized);
     }
 
-    // The longer words that contain a word, without repeats. With the cap on (layout.cap, 3-letter
-    // substring files only) the first `cap` words of each list: those have the most hadis. A word
-    // the data spells two ways has a list for each spelling, so each gets its own first `cap`.
-    // The words come back sorted: the order of a list differs between the two folders (substring3
-    // is by hadis count, substring is in no useful order), and the order the words are read in
-    // decides which of two equally good hadis comes first, which must not depend on the folder.
+    // The longer words that contain a word, without repeats. With the cap on (layout.cap, both
+    // substring folders) the first `cap` words of each list: those have the most hadis. A word the
+    // data spells two ways has a list for each spelling, so each gets its own first `cap`.
+    // The words come back sorted: the order in which they are read decides which of two equally good
+    // hadis comes first, and that must not depend on the folder or the cap.
     async function containingWords(word, layout) {
         const spellings = await lookupSpellings("substring", word, layout);
         const lists = spellings.map(({ entries }) => [...new Set(entries)]);

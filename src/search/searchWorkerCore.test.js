@@ -162,7 +162,9 @@ describe('the substring prefix and the cap in the message', () => {
     expect(posted[0].value).toEqual(['BUK-1', 'BUK-2']); // one containing word only
     await handle({ id: 2, type: 'search', words: ['নামায'], substringPrefix: 2, containingCap: 1 });
     expect(asked.filter((url) => url.includes('/json/substring'))).toEqual(['/json/substring3/নাম.json', '/json/substring/না.json']);
-    expect(posted[1].value).toEqual(['BUK-1', 'BUK-2', 'BUK-3']); // 2-letter lists: the cap is ignored
+    expect(posted[1].value).toEqual(['BUK-1', 'BUK-2']); // 2-letter lists: the cap works there too
+    await handle({ id: 3, type: 'search', words: ['নামায'], substringPrefix: 2, containingCap: 0 });
+    expect(posted[2].value).toEqual(['BUK-1', 'BUK-2', 'BUK-3']); // cap off: everything
   });
 
   test('values that are not valid are not trusted: the index falls back to its configuration', async () => {

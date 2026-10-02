@@ -190,6 +190,42 @@ describe('getSubstringPrefix and getContainingCap', () => {
   });
 });
 
+describe('the cap with the 2-letter substring files: the four modes that are compared', () => {
+  const modes = [
+    ['?idx=2&sub=2&cap=0', { idx: 2, sub: 2, cap: 0 }],
+    ['?idx=2&sub=2&cap=50', { idx: 2, sub: 2, cap: 50 }],
+    ['?idx=3&sub=3&cap=0', { idx: 3, sub: 3, cap: 0 }],
+    ['?idx=3&sub=3&cap=50', { idx: 3, sub: 3, cap: 50 }],
+  ];
+
+  test.each(modes)('%s is read as it is written, whatever the substring prefix', (search, expected) => {
+    expect(prefixFromSearch('tags', search)).toBe(expected.idx);
+    expect(prefixFromSearch('substring', search)).toBe(expected.sub);
+    expect(capFromSearch(search)).toBe(expected.cap);
+    expect(switchParams(search)).toEqual({ idx: String(expected.idx), sub: String(expected.sub), cap: String(expected.cap) });
+    window.history.replaceState(null, '', `/search${search}&q=x`);
+    expect([getTagsPrefix(), getSubstringPrefix(), getContainingCap()]).toEqual([expected.idx, expected.sub, expected.cap]);
+  });
+
+  test('with sub=2 a cap is a cap: it is not dropped by the config, the request value reaches the search as given', () => {
+    window.history.replaceState(null, '', '/search?q=x&sub=2&cap=7');
+    expect(getSubstringPrefix()).toBe(2);
+    expect(getContainingCap()).toBe(7);
+    expect(capOrDefault(7)).toBe(7);
+    expect(capOrDefault(0)).toBe(0);
+    expect(capOrDefault(501)).toBe(7); // not a cap: the address one
+  });
+
+  test('with sub=2 and no cap the default cap (50) applies, cap=0 switches it off, an invalid cap is ignored', () => {
+    window.history.replaceState(null, '', '/search?q=x&sub=2');
+    expect(getContainingCap()).toBe(50);
+    window.history.replaceState(null, '', '/search?q=x&sub=2&cap=0');
+    expect(getContainingCap()).toBe(0);
+    window.history.replaceState(null, '', '/search?q=x&sub=2&cap=501');
+    expect(getContainingCap()).toBe(50);
+  });
+});
+
 describe('a value given with a request', () => {
   test('prefixOrDefault trusts a layout that exists and falls back otherwise', () => {
     expect(prefixOrDefault('substring', 2)).toBe(2);

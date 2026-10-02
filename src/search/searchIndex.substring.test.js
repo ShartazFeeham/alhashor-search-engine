@@ -246,17 +246,35 @@ describe('the cap on the containing words (containingCap)', () => {
     expect(await searchTags(['key'], { containingCap: 9999 })).toEqual(['BUK-1']); // not a cap: the configured one
   });
 
-  test('in the 2-letter substring mode the cap is ignored: the lists are in no useful order, everything loads as before', async () => {
+  test('the cap works in the 2-letter substring mode too: the first N of the key\'s list (sorted by hadis count as in substring3)', async () => {
     const words = ['xa1z', 'xb2z', 'xc3z', 'xd4z'];
     const files = { '/json/substring/ke.json': { key: words } };
     words.forEach((word, i) => { files[`/json/tags3/${word.slice(0, 3)}.json`] = { [word]: [`BUK-${i + 1}`] }; });
     const { fetchJson, calls } = server(files);
     const { searchTags } = createSearchIndex(fetchJson);
-    expect(await searchTags(['key'], { substringPrefix: 2, containingCap: 1 })).toHaveLength(4);
+    expect(await searchTags(['key'], { substringPrefix: 2, containingCap: 1 })).toEqual(['BUK-1']);
+    expect(await searchTags(['key'], { substringPrefix: 2, containingCap: 3 })).toHaveLength(3);
+    expect(await searchTags(['key'], { substringPrefix: 2, containingCap: 0 })).toHaveLength(4); // 0 switches it off
     setSubstringPrefixForTests(2);
-    setContainingCapForTests(1);
+    setContainingCapForTests(2);
+    expect(await searchTags(['key'])).toEqual(['BUK-1', 'BUK-2']);
+    setContainingCapForTests(0);
     expect(await searchTags(['key'])).toHaveLength(4);
     expect(calls.some((url) => url.startsWith('/json/substring3/'))).toBe(false);
+  });
+
+  test('a key with fewer containing words than the cap is not changed by it, in the 2-letter mode', async () => {
+    const words = ['xa1z', 'xb2z', 'xc3z'];
+    const files = { '/json/substring/ke.json': { key: words } };
+    words.forEach((word, i) => { files[`/json/tags/${word.slice(0, 2)}.json`] = { ...(files[`/json/tags/${word.slice(0, 2)}.json`] ?? {}), [word]: [`BUK-${i + 1}`] }; });
+    const options = { tagsPrefix: 2, substringPrefix: 2 };
+    const off = server(files);
+    const on = server(files);
+    const a = await createSearchIndex(off.fetchJson).searchTags(['key'], { ...options, containingCap: 0 });
+    const b = await createSearchIndex(on.fetchJson).searchTags(['key'], { ...options, containingCap: 50 });
+    expect(b).toEqual(a);
+    expect(a).toHaveLength(3);
+    expect(on.calls.sort()).toEqual(off.calls.sort());
   });
 
   test('the same list taken once: a word repeated in a list counts once towards the cap', async () => {

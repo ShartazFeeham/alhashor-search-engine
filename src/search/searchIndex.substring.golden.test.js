@@ -97,6 +97,7 @@ describe('golden: what the cap saves, and what it costs', () => {
       twoLetters: { tags: 2, substring: 2, cap: 0 },
       threeUncapped: { tags: 3, substring: 3, cap: 0 },
       threeCapped: { tags: 3, substring: 3, cap: 50 },
+      twoCapped: { tags: 2, substring: 2, cap: 50 },
     };
     for (const [name, spec] of Object.entries(modes)) {
       measurements[name] = [];
@@ -179,23 +180,72 @@ describe('golden: what the cap saves, and what it costs', () => {
     }
   });
 
-  test('the cap is ignored in the 2-letter substring mode', async () => {
-    const off = mode({ tags: 2, substring: 2, cap: 0 });
-    const on = mode({ tags: 2, substring: 2, cap: 5 });
-    const a = await off.index.searchTags(['কে'], off.options);
-    const b = await on.index.searchTags(['কে'], on.options);
-    expect(b).toEqual(a);
-    expect(sorted(on.fetched)).toEqual(sorted(off.fetched));
+  // The same words with the cap in 2-letter mode (the substring/ lists were reordered by hadis count
+  // by scripts/sort-substring-2.mjs, contents identical). Measured on the real data, tags files opened:
+  //   idx2/sub2, cap off   total 2,068 files, p99 490 (কে), mean 103   (the same as above)
+  //   idx2/sub2, cap 50    total   269 files, p99  32 (কে), mean  13
+  // 7.7 times fewer files in total and 15 times fewer at p99; the capped result keeps 98.2% of the
+  // uncapped hadis on average (the same words and the same lists as with 3 letters, so the same 98.2%:
+  // কে 99.2%, রা 99.1%, দিন 97.8%, কি 93.9%, সে 93.1%, তে 91.4%, না 90.6%, all others 99.9% or more).
+  // The 3-letter modes need more files for the same words (cap off 4,913, cap 50 361), because a
+  // 2-letter tags file is shared by more words, so the 2-letter mode with the cap is the cheapest.
+  test('the cap works in the 2-letter substring mode: far fewer files, total and p99', () => {
+    const counts = (name) => measurements[name].map(({ files }) => files);
+    const off = sum(counts('twoLetters'));
+    const on = sum(counts('twoCapped'));
+    expect(on).toBeLessThan(off / 4);
+    expect(p99(counts('twoCapped'))).toBeLessThan(p99(counts('twoLetters')) / 4);
+    expect(p99(counts('twoCapped'))).toBeLessThanOrEqual(60);
+    for (const { word, files } of measurements.twoCapped) expect(files, word).toBeLessThanOrEqual(50 + 2);
+  });
+
+  test('in the 2-letter mode the capped result is part of the uncapped one and keeps at least 97% of its hadis on average', () => {
+    let kept = 0;
+    measurements.twoLetters.forEach(({ word, found: all }, i) => {
+      const capped = measurements.twoCapped[i].found;
+      const allSet = new Set(all);
+      expect(capped.every((tag) => allSet.has(tag)), word).toBe(true);
+      kept += capped.length / all.length;
+    });
+    expect(kept / WORDS.length).toBeGreaterThanOrEqual(0.97);
+  });
+
+  test('capped, the 2-letter and the 3-letter modes return the same hadis in the same order (same first N of the same lists)', () => {
+    measurements.twoCapped.forEach(({ word, found }, i) => {
+      expect(measurements.threeCapped[i].found, word).toEqual(found);
+    });
+  });
+
+  test('a rare word, one with fewer than 50 containing words, is not changed by the cap in the 2-letter mode either', async () => {
+    const rare = ['ফিতরা', 'জাহান্নাম', 'কিয়ামত', 'রমজান', 'শয়তান', 'মসজিদ', ...rareWords()]
+      .filter((word) => {
+        const key = normalizeBengali(word);
+        const lists = candidateShards(key, 2).flatMap((shard) => {
+          const data = readFile(`/json/substring/${encodeURIComponent(shard)}.json`) ?? {};
+          return Object.keys(data).filter((raw) => normalizeBengali(raw) === key).map((raw) => data[raw].length);
+        });
+        const n = Math.max(0, ...lists);
+        return n >= 1 && n < 50;
+      });
+    expect(new Set(rare).size).toBeGreaterThanOrEqual(5);
+    for (const word of new Set(rare)) {
+      const off = mode({ tags: 2, substring: 2, cap: 0 });
+      const on = mode({ tags: 2, substring: 2, cap: 50 });
+      const a = await off.index.searchTags(normalizeQuery(word), off.options);
+      const b = await on.index.searchTags(normalizeQuery(word), on.options);
+      expect(b, word).toEqual(a);
+      expect(sorted(on.fetched), word).toEqual(sorted(off.fetched));
+    }
   });
 
   test('did you mean gives the same suggestions in the 2- and 3-letter substring modes, capped or not', async () => {
     for (const typed of ['সয়তান', 'মসজীদ', 'নামাজ', 'নামা', 'কিয়ামাত']) {
       const reference = mode({ tags: 3, substring: 2 });
       const expected = (await reference.index.suggest([typed], { ...reference.options, resultCount: 0 })).map((s) => s.query);
-      for (const cap of [0, 50]) {
-        const m = mode({ tags: 3, substring: 3, cap });
+      for (const [substring, cap] of [[3, 0], [3, 50], [2, 50]]) {
+        const m = mode({ tags: 3, substring, cap });
         const found = (await m.index.suggest([typed], { ...m.options, resultCount: 0 })).map((s) => s.query);
-        expect(found, `${typed} cap ${cap}`).toEqual(expected);
+        expect(found, `${typed} sub ${substring} cap ${cap}`).toEqual(expected);
       }
     }
   });

@@ -144,6 +144,52 @@ describe('the real data: public/json/substring3 holds exactly what public/json/s
     expect(lists).toBeGreaterThan(22000);
   });
 
+  test('every 2-letter list (substring/) is also sorted by hadis count, largest first, ties by code point order, with the same words as before', () => {
+    // scripts/sort-substring-2.mjs reordered these lists (contents identical) so the cap works in 2-letter mode too
+    const count = new Map();
+    for (const name of readFolder('tags')) {
+      for (const [word, tags] of Object.entries(readJson('tags', name))) count.set(word, new Set(tags).size);
+    }
+    const sortedOk = (words) => words.every((word, i) => {
+      if (i === 0) return true;
+      const before = count.get(words[i - 1]) ?? 0;
+      const after = count.get(word) ?? 0;
+      return before > after || (before === after && compareCodePoints(words[i - 1], word) <= 0); // <= : a list may repeat a word
+    });
+    expect(sortedOk(['a', 'b'])).toBe(true);
+    expect(sortedOk(['নামাযী', 'নামাযী'])).toBe(true);
+    count.set('few', 1);
+    count.set('many', 9);
+    expect(sortedOk(['few', 'many'])).toBe(false); // the check does catch an unsorted list
+    expect(sortedOk(['b', 'a'])).toBe(false);
+
+    let lists = 0;
+    let bigLists = 0;
+    for (const name of readFolder('substring')) {
+      const data = readJson('substring', name);
+      for (const [key, words] of Object.entries(data)) {
+        lists++;
+        if (words.length > 50) bigLists++;
+        if (!sortedOk(words)) throw new Error(`${name} ${key}: not sorted by hadis count`);
+      }
+    }
+    expect(lists).toBeGreaterThan(22000);
+    expect(bigLists).toBeGreaterThan(500); // many lists are long enough for the cap to matter
+  });
+
+  test('the 2-letter and the 3-letter lists of a key are the same list, in the same order', () => {
+    const three = new Map();
+    for (const name of readFolder('substring3')) for (const [key, words] of Object.entries(readJson('substring3', name))) three.set(key, words);
+    let compared = 0;
+    for (const name of readFolder('substring')) {
+      for (const [key, words] of Object.entries(readJson('substring', name))) {
+        compared++;
+        expect(words, key).toEqual(three.get(key));
+      }
+    }
+    expect(compared).toBe(three.size);
+  });
+
   test('the first word of a big list is a common word: কে leads with the most frequent containing words', () => {
     const list = readJson('substring3', 'কে_.json')['কে'];
     expect(list.length).toBeGreaterThan(1000);
