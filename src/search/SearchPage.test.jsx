@@ -6,6 +6,11 @@ import { setUrl } from '../test/nextNavigation';
 import { ToastProvider } from '../ui/Toast';
 import SearchPage from './SearchPage';
 
+// These tests type placeholder words (Roman letters stand for word keys in the fake index), so the
+// converter is replaced by one that leaves letters as typed. The real converter is tested in
+// SearchBox.test.jsx.
+vi.mock('../lib/roman', () => ({ loadRoman: () => Promise.resolve(), romanReady: () => true, romanToBangla: (roman) => roman }));
+
 const NOT_FOUND = /কোনো ফলাফল না পাওয়া গেলে/;
 const BOX = { name: 'খোঁজার শব্দ' };
 
@@ -341,11 +346,11 @@ test('each result has a quiet "শেয়ার" button that opens the share s
   delete navigator.share;
 });
 
-test('typing Roman letters offers Bengali spellings that fill the box', async () => {
+test('typing English letters offers no suggestion list under the box', () => {
   renderSearch();
   fireEvent.change(screen.getByRole('textbox', BOX), { target: { value: 'namaz' } });
-  fireEvent.click(await screen.findByRole('button', { name: 'নামাজ' }));
-  expect(screen.getByRole('textbox', BOX)).toHaveValue('নামাজ');
+  expect(screen.queryByRole('group', { name: 'বাংলা প্রস্তাব' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'নামাজ' })).not.toBeInTheDocument();
 });
 
 test('the Bengali-only note and the example chips show before the first search', () => {
@@ -388,7 +393,7 @@ test('a narrator-name search highlights the name in the chain when the saying ha
 test('the result count and the not-found note are inside one live region that is always on the page', async () => {
   serve({ '/json/tags/zo.json': { zoneword: ['BUK-1'] }, '/json/hadis/Bukhari/0001/text.txt': 'one' });
   renderSearch();
-  const [region] = screen.getAllByRole('status'); // the page's own region comes before the toast's
+  const region = screen.getAllByRole('status').find((live) => live.classList.contains('search-live'));
   expect(region).toBeInTheDocument();
   search('zoneword');
   await screen.findByText(/মোট ১ টি হাদিস পাওয়া গেছে/);
@@ -429,7 +434,7 @@ describe('headings, focus and announcements', () => {
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
   });
 
-  test('the Roman-letter suggestions and the examples are named groups', () => {
+  test('the examples are a named group', () => {
     serve({});
     renderSearch();
     expect(screen.getByRole('group', { name: 'উদাহরণ' })).toBeInTheDocument();

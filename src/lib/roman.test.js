@@ -1,32 +1,25 @@
-import { curatedSuggestions, isRoman, romanSuggestions } from './roman';
+import { loadRoman, romanReady, romanToBangla } from './roman';
 
-test('recognises text typed in Roman letters', () => {
-  expect(isRoman('namaz')).toBe(true);
-  expect(isRoman('abu hurairah')).toBe(true);
-  expect(isRoman('নামায')).toBe(false);
-  expect(isRoman('namaz নামায')).toBe(false);
-  expect(isRoman('১২৩')).toBe(false);
-  expect(isRoman('   ')).toBe(false);
+beforeAll(loadRoman);
+
+test('the phonetic library is loaded on request and then ready', async () => {
+  await loadRoman();
+  expect(romanReady()).toBe(true);
 });
 
-test('common terms give the spellings found in the hadis', () => {
-  expect(curatedSuggestions('namaz')).toEqual(['নামায', 'নামাজ', 'সালাত']);
-  expect(curatedSuggestions('Roja')).toEqual(['রোজা', 'রোযা']);
-  expect(curatedSuggestions('unknownword')).toEqual([]);
+test('words are converted by the phonetic library', () => {
+  expect(romanToBangla('kitab')).toBe('কিতাব');
+  expect(romanToBangla('namaz')).toBe('নামায');
+  expect(romanToBangla('1234')).toBe('১২৩৪');
 });
 
-test('romanSuggestions lists curated spellings first, then the converter, without repeats', async () => {
-  const result = await romanSuggestions('namaz');
-  expect(result.slice(0, 3)).toEqual(['নামায', 'নামাজ', 'সালাত']);
-  expect(new Set(result).size).toBe(result.length);
+test('the prefixes of a word each convert on their own', () => {
+  expect(['n', 'na', 'nam', 'nama', 'namaz'].map(romanToBangla)).toEqual(['ন', 'না', 'নাম', 'নামা', 'নামায']);
 });
 
-test('words outside the list are converted by the phonetic library', async () => {
-  const result = await romanSuggestions('kitab');
-  expect(result).toContain('কিতাব');
-});
-
-test('Bengali or empty input has no suggestions', async () => {
-  expect(await romanSuggestions('নামায')).toEqual([]);
-  expect(await romanSuggestions('')).toEqual([]);
+test('common terms use the spelling found in the hadis, in any case', () => {
+  expect(romanToBangla('roja')).toBe('রোজা');
+  expect(romanToBangla('Roja')).toBe('রোজা');
+  expect(romanToBangla('dua')).toBe('দোয়া');
+  expect(romanToBangla('rojaa')).not.toBe('রোজা');
 });

@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { isRoman, romanSuggestions } from '../lib/roman';
+import { useEffect, useRef, useState } from 'react';
+import { WARNING_TEXT, applyInput, convertRomanRuns, diffEdit } from '../lib/banglaInput';
+import { loadRoman, romanReady, romanToBangla } from '../lib/roman';
 import Icon from '../ui/Icon';
 
 const EXAMPLES = [
@@ -16,26 +17,84 @@ const EXAMPLES = [
   'ইসলামের ভিত্তি পাঁচটি',
 ];
 
-// The search form: the box, the Bengali-only note, Roman-letter suggestions while typing and,
-// before the first search, example searches.
-export default function SearchBox({ text, onText, query, onSubmit }) {
-  const [suggestions, setSuggestions] = useState([]);
+const WARNING_MS = 3000;
 
-  // Roman letters (e.g. "namaz") get Bengali spellings to pick from. Only while typing:
-  // a search already run from the address is left alone.
+// The search form: the box, the Bengali-only note and, before the first search, example searches.
+// The box takes Bengali as typed, turns English letters into Bengali as you type (the whole word
+// is converted again after each letter) and refuses anything else with a short warning.
+export default function SearchBox({ text, onText, query, onSubmit }) {
+  const inputRef = useRef(null);
+  const valueRef = useRef(text); // the text as the rules last saw it
+  const wordRef = useRef(null); // the Roman word being typed (see banglaInput.js)
+  const composing = useRef(false);
+  const pending = useRef(false); // Roman letters are in the box because the engine was not ready
+  const timer = useRef(null);
+  const mounted = useRef(true);
+  const [warn, setWarn] = useState(false);
+
+  // Text set from outside (an example, a new address) is not a word being typed.
   useEffect(() => {
-    let cancelled = false;
-    if (text === query || !isRoman(text.trim())) {
-      setSuggestions([]);
-      return undefined;
+    if (text !== valueRef.current && !composing.current) {
+      valueRef.current = text;
+      wordRef.current = null;
     }
-    romanSuggestions(text).then((list) => {
-      if (!cancelled) setSuggestions(list);
-    });
+  }, [text]);
+
+  const showWarning = (on) => {
+    clearTimeout(timer.current);
+    setWarn(on);
+    if (on) timer.current = setTimeout(() => setWarn(false), WARNING_MS);
+  };
+
+  // Load the engine now so the first letters are converted at once; letters typed before it is
+  // ready show as typed and are converted when it arrives.
+  useEffect(() => {
+    mounted.current = true;
+    loadRoman().then(() => {
+      const input = inputRef.current;
+      if (!mounted.current || !pending.current || !input) return;
+      pending.current = false;
+      const done = convertRomanRuns(valueRef.current, wordRef.current, input.selectionStart ?? valueRef.current.length, romanToBangla);
+      valueRef.current = done.value;
+      wordRef.current = done.word;
+      input.value = done.value;
+      input.setSelectionRange(done.caret, done.caret);
+      onText(done.value);
+    }, () => {});
     return () => {
-      cancelled = true;
+      mounted.current = false;
+      clearTimeout(timer.current);
     };
-  }, [text, query]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const apply = (input, next, inputType) => {
+    const edit = diffEdit(valueRef.current, next, input.selectionStart ?? next.length, inputType);
+    if (!edit) return;
+    const ready = romanReady();
+    const done = applyInput({ value: valueRef.current, word: wordRef.current }, { type: 'edit', ...edit }, romanToBangla);
+    if (!ready && /[a-zA-Z0-9]/.test(done.value)) pending.current = true;
+    valueRef.current = done.value;
+    wordRef.current = done.word;
+    // The box is controlled, so what was typed is put back by hand (and the caret with it).
+    input.value = done.value;
+    input.setSelectionRange(done.caret, done.selEnd);
+    showWarning(done.warn);
+    onText(done.value);
+  };
+
+  const change = (event) => {
+    const input = event.target;
+    if (composing.current) {
+      onText(input.value); // an input method is at work: leave its text alone until it ends
+      return;
+    }
+    apply(input, input.value, event.nativeEvent?.inputType);
+  };
+
+  const endComposition = (event) => {
+    composing.current = false;
+    apply(event.target, event.target.value);
+  };
 
   return (
     <form className="search-form" role="search" onSubmit={onSubmit}>
@@ -50,18 +109,18 @@ export default function SearchBox({ text, onText, query, onSubmit }) {
           type="text"
           aria-label="খোঁজার শব্দ"
           value={text}
-          onChange={(event) => onText(event.target.value)}
+          ref={inputRef}
+          onChange={change}
+          onCompositionStart={() => { composing.current = true; }}
+          onCompositionEnd={endComposition}
           autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
         />
         <button type="submit" className="search-go">খুঁজুন</button>
       </div>
-      {suggestions.length > 0 && (
-        <div className="search-chips" role="group" aria-label="বাংলা প্রস্তাব">
-          {suggestions.map((word) => (
-            <button key={word} type="button" className="ui-chip" onClick={() => onText(word)}>{word}</button>
-          ))}
-        </div>
-      )}
+      <p className="search-warn" role="status" aria-live="polite">{warn ? WARNING_TEXT : ''}</p>
       {query === '' && (
         <div className="search-chips" role="group" aria-label="উদাহরণ">
           {EXAMPLES.map((word) => (

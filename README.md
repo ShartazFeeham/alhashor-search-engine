@@ -6,7 +6,7 @@ Live site (when deployed): https://hadis.feeham.com. Work currently stays local:
 
 ## Features
 
-- **Search** (`/search?q=&book=&page=`): by word, phrase, hadis number or narrator. Typing in Roman letters (for example `namaz`) offers Bengali spellings (a small curated list, then the Avro phonetic library, loaded only when needed). Book filter chips show a count per book. Each result shows the text around the match with the matched words highlighted.
+- **Search** (`/search?q=&book=&page=`): by word, phrase, hadis number or narrator. English letters typed in the box turn into Bengali as you type (for example `namaz` becomes নামায; the Avro phonetic library, with a few curated spellings), and anything that is not Bengali or an English letter or digit is refused with a short warning. Book filter chips show a count per book. Each result shows the text around the match with the matched words highlighted.
 - **Books** (`/books`, `/books/<book>?page=`): a picker of the six colour-coded books; a book page has a switcher, a "go to number" box (understands Bengali and English digits and several spellings of the book name), a range grid (one button per hundred numbers) and a pager. Pages hold 20 hadis that exist, so numbers with no data file are skipped.
 - **Topics** (`/topics?topic=&page=`): 138 filterable topic chips, the topic's hadis as a paged list, and a curated "start here" block for topics with picks (`src/data/curatedTopics.js`).
 - **Hadis page** (`/hadis/<book>/<number>`): calm reading column, folded narrator chain, reading time and progress line, copy / cite / link buttons, previous and next (arrow keys and swipe), breadcrumb back to the book.
@@ -55,7 +55,7 @@ src/
   ui/         Button, Chip, Icon, BookBadge, Toast
   styles/     tokens.css (colours, three themes) plus one stylesheet per area; plain CSS, no framework
   lib/        pure logic with tests: books list, number parsing, daily pick, plans, share text,
-              card layout, topics, Roman-letter helper, digits
+              card layout, topics, Roman-letter converter, search box input rules, digits
   data/       hand-written content: curated topic picks, reading plans
   Helpers/    page title, paging, URL params, Bengali normalising, back-to-top
   assets/fonts/  the three font families (SIL Open Font License), served by next/font/local

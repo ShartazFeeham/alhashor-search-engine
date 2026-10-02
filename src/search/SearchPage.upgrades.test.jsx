@@ -69,8 +69,8 @@ describe('did you mean', () => {
     serve({ [file('নামায')]: { নামায: tags(3) } });
     renderSearch('/search?q=' + encodeURIComponent('ণামায'));
     const suggestion = await screen.findByRole('button', { name: 'নামায' });
-    const [region] = screen.getAllByRole('status');
-    expect(within(region).getByText(DID_YOU_MEAN)).toBeInTheDocument();
+    const region = screen.getAllByRole('status').find((live) => within(live).queryByText(DID_YOU_MEAN));
+    expect(region).toBeDefined();
     expect(region).toContainElement(suggestion);
     expect(suggestion.tagName).toBe('BUTTON');
   });
