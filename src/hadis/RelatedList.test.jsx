@@ -1,8 +1,11 @@
+/* eslint-disable testing-library/no-node-access */
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { clearHadisTextCache } from '../lib/useHadisText';
 import { searchClient } from '../search/searchClient';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { getHistory, getUrl } from '../test/nextNavigation';
+import { normalizeBengali } from '../Helpers/bengali';
+import { splitHadis } from '../lib/hadisText';
 import { realText } from '../test/hadisFixtures';
 import { serveRealData } from '../test/publicJson';
 import RelatedList from './RelatedList';
@@ -106,7 +109,7 @@ test('each item has the book badge, a link, the saying and the number of shared 
   expect(link).toHaveAttribute('href', '/hadis/tirmidhi/243');
   const item = rowOf('তিরমিযী ২৪৩');
   expect(within(item).getByText('তি')).toBeInTheDocument();
-  await waitFor(() => expect(within(item).getByText(/সালাত শুরু করার পর বলতেন/)).toBeInTheDocument());
+  await waitFor(() => expect(item.querySelector('.related-text')).toHaveTextContent(/সালাত শুরু করার পর বলতেন/));
   expect(within(item).getByText(/^[০-৯]+ টি শব্দ মিলেছে$/)).toBeInTheDocument();
   expect(within(item).queryByText(/%/)).not.toBeInTheDocument();
 });
@@ -124,7 +127,8 @@ test('a plain click on the text or an empty part opens the hadis; a selection or
   show();
   await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
   const item = rowOf('তিরমিযী ২৪৩');
-  const text = await within(item).findByText(/সালাত শুরু করার পর বলতেন/);
+  await waitFor(() => expect(item.querySelector('.related-text')).not.toBeNull());
+  const text = item.querySelector('.related-text');
 
   vi.spyOn(window, 'getSelection').mockReturnValue({ toString: () => 'সালাত' });
   fireEvent.click(text);
@@ -190,4 +194,34 @@ test('a new hadis searches again and the old results are not shown for it', asyn
   );
   await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
   expect(screen.queryByRole('link', { name: 'বুখারী ১' })).not.toBeInTheDocument();
+});
+
+test('the words a similar hadis shares with the page are bold (strong), the text itself is unchanged', async () => {
+  stubSearch(['TIR-243']);
+  show();
+  await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
+  const item = rowOf('তিরমিযী ২৪৩');
+  await waitFor(() => expect(item.querySelector('.related-text')).not.toBeNull());
+  const [words] = searchClient.search.mock.calls[0];
+  const matches = [...item.querySelectorAll('.related-text strong.related-match')];
+  expect(matches.length).toBeGreaterThan(0);
+  // each bold word is a whole word that contains a searched word
+  for (const match of matches) {
+    expect(words.some((word) => normalizeBengali(match.textContent).includes(word))).toBe(true);
+    expect(match.textContent).not.toMatch(/\s/);
+  }
+  const saying = splitHadis(realText('tirmidhi', 243)).body || realText('tirmidhi', 243);
+  expect(item.querySelector('.related-text').textContent).toBe(saying);
+  expect(item.querySelector('.related-text mark')).toBeNull();
+});
+
+test('the bold words count as many words as the hadis shares with the page (at most)', async () => {
+  stubSearch(['TIR-243']);
+  show();
+  await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
+  const item = rowOf('তিরমিযী ২৪৩');
+  await waitFor(() => expect(item.querySelector('.related-text strong')).not.toBeNull());
+  const shared = Number(/^([০-৯]+)/.exec(within(item).getByText(/টি শব্দ মিলেছে/).textContent)[0].replace(/[০-৯]/g, (d) => '০১২৩৪৫৬৭৮৯'.indexOf(d)));
+  expect(item.querySelectorAll('.related-text strong').length).toBeGreaterThan(0);
+  expect(shared).toBeGreaterThan(0);
 });

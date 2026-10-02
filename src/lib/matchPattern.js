@@ -72,3 +72,12 @@ export function makeSnippet(text, matcher, { before = 70, after = 95 } = {}) {
   }
   return { text: text.slice(start, end).trim(), cutStart: start > 0, cutEnd: end < text.length };
 }
+
+// Like buildMatcher, but each match grows to the whole word around it (letters and their vowel signs),
+// so a part of a word is never set apart from the rest of it.
+export function buildWordMatcher(words) {
+  const matcher = buildMatcher(words);
+  if (!matcher) return null;
+  const letters = '[\\p{L}\\p{M}\\u200c\\u200d]*';
+  return new RegExp(`${letters}(?:${matcher.source})${letters}`, 'giu');
+}

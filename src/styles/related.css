@@ -16,6 +16,7 @@
 .related-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 
 .related-text{margin:0;font-family:var(--f-read),serif;font-size:.9375rem;line-height:1.7;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.related-match{font-weight:700;color:var(--match-text)}
 .related-reason{margin:0;font-size:.7375rem;color:var(--ink3)}
 .related-skel{height:14px;width:90%}
 

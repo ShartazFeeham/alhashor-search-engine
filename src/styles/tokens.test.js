@@ -8,7 +8,7 @@ const required = [
   '--accent', '--accent2', '--on-accent', '--accent-soft', '--hl', '--hl-ink',
   '--ok', '--warn', '--bad', '--link',
   '--bk-bukhari', '--bk-muslim', '--bk-tirmidhi', '--bk-abudawud', '--bk-ibnmajah', '--bk-nasai', '--on-bk',
-  '--shadow', '--rs', '--rlh', '--rw',
+  '--shadow', '--rs', '--rlh', '--rw', '--match-text',
 ];
 
 test.each(required)('the light theme defines %s', (name) => {
@@ -89,6 +89,17 @@ describe.each(names)('contrast in the %s theme', (name) => {
 
   test('--ink2 (the home daily card text and citation) on the card surface is at least 4.5:1', () => {
     expect(ratio(t['--ink2'], t['--surface'])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  test.each(['--page', '--bg', '--surface', '--surface2'])('--match-text (bold matching words) on %s is at least 4.5:1', (bg) => {
+    expect(ratio(t['--match-text'], t[bg])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  test('--match-text is one step lighter than --ink2, the colour of the similar hadis text, and not lighter than --ink3', () => {
+    const contrast = (token) => ratio(t[token], t['--surface']);
+    expect(contrast('--match-text')).toBeLessThan(contrast('--ink2'));
+    expect(contrast('--match-text')).toBeGreaterThanOrEqual(contrast('--ink3'));
+    expect(t['--match-text']).not.toBe(t['--ink2']);
   });
 
   test('--ink3 stays quieter than --ink2 (the hierarchy is kept)', () => {

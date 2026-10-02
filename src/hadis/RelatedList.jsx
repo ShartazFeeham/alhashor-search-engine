@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
+import { buildWordMatcher, highlightParts } from '../lib/matchPattern';
 import { sharedWordCount } from '../lib/similarWords';
 import { useDigits } from '../lib/useDigits';
 import { loadHadisText, useHadisText } from '../lib/useHadisText';
@@ -22,6 +23,7 @@ function RelatedItem({ tag, words }) {
   const { status, text } = useHadisText(tag);
   const href = hadisHref(book.id, number);
   const saying = status === 'ok' ? splitHadis(text).body || text : '';
+  const parts = useMemo(() => highlightParts(saying, buildWordMatcher(words)), [saying, words]);
   const shared = status === 'ok' ? sharedWordCount(text, words) : 0;
 
   // A mouse convenience, as on the search cards: a plain click on the text or empty space opens the
@@ -43,7 +45,11 @@ function RelatedItem({ tag, words }) {
           {book.name} {digits(number)}
         </Link>
         {status === 'loading' && <div className="hadis-skel related-skel" aria-hidden="true" />}
-        {saying !== '' && <p className="related-text">{saying}</p>}
+        {saying !== '' && (
+          <p className="related-text">
+            {parts.map((part, index) => (part.match ? <strong key={index} className="related-match">{part.text}</strong> : part.text))}
+          </p>
+        )}
         {shared > 0 && <p className="related-reason">{digits(shared)} টি শব্দ মিলেছে</p>}
       </div>
     </li>
