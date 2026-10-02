@@ -17,6 +17,7 @@ import Pager from './Pager';
 import ResultItem from './ResultItem';
 import SearchBox from './SearchBox';
 import { searchClient } from './searchClient';
+import { prefixFromSearch } from './searchConfig';
 import { normalizeQuery } from './searchIndex';
 import { useProximity } from './useProximity';
 
@@ -46,6 +47,9 @@ export default function SearchPage() {
   const bookParam = params.get('book');
   const book = BOOKS.some((b) => b.id === bookParam) ? bookParam : 'all';
   const near = params.get('near') === '1';
+  // ?idx=2|3 is a developer switch (searchConfig.js): it stays in the address when the search changes
+  const idx = prefixFromSearch('tags', params.toString());
+  const withSwitch = (next) => (idx ? { ...next, idx: String(idx) } : next);
 
   const [text, setText] = useState(query);
   const [tags, setTags] = useState([]);
@@ -102,18 +106,18 @@ export default function SearchPage() {
     if (values.book && values.book !== 'all') next.book = values.book;
     if (values.near ?? near) next.near = '1';
     if (values.page) next.page = String(values.page);
-    setParams(next);
+    setParams(withSwitch(next));
   };
 
   function submit(event) {
     event.preventDefault();
     const q = normalizeQuery(text).join(' ');
     if (q === '') return;
-    setParams(near ? { q, near: '1' } : { q });
+    setParams(withSwitch(near ? { q, near: '1' } : { q }));
   }
 
   function pickSuggestion(corrected) {
-    setParams(near ? { q: corrected, near: '1' } : { q: corrected });
+    setParams(withSwitch(near ? { q: corrected, near: '1' } : { q: corrected }));
   }
 
   return (

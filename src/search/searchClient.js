@@ -5,7 +5,12 @@
 // search(words) and suggest(words, { resultCount }) return { promise, cancel }. cancel() resolves
 // the promise with null at once, stops the work at its next step and ignores a late answer. Asking
 // for a search never throws: a failure gives no results.
+//
+// The search switches (searchConfig.js) are read from the page's address, which a worker cannot
+// see, so each request reads the tags prefix here and carries it, to the worker in its message and
+// to the local index in its options.
 
+import { getTagsPrefix } from './searchConfig';
 import { searchTags, suggest } from './searchIndex';
 
 export function createSearchClient({ startWorker, index }) {
@@ -49,6 +54,7 @@ export function createSearchClient({ startWorker, index }) {
 
   function request(type, payload) {
     const id = nextId++;
+    const tagsPrefix = getTagsPrefix();
     let settle;
     let done = false;
     let cancelled = false;
@@ -64,8 +70,8 @@ export function createSearchClient({ startWorker, index }) {
     const runHere = () => {
       const isCancelled = () => cancelled;
       const work = type === 'search'
-        ? index.searchTags(payload.words, { isCancelled })
-        : index.suggest(payload.words, { resultCount: payload.resultCount, isCancelled });
+        ? index.searchTags(payload.words, { isCancelled, tagsPrefix })
+        : index.suggest(payload.words, { resultCount: payload.resultCount, isCancelled, tagsPrefix });
       work.then(
         (value) => settle(cancelled ? null : value),
         () => settle(cancelled ? null : [])
@@ -76,7 +82,7 @@ export function createSearchClient({ startWorker, index }) {
     const target = workerOrNull();
     if (target) {
       pending.set(id, runHere);
-      target.postMessage({ id, type, ...payload });
+      target.postMessage({ id, type, ...payload, tagsPrefix });
     } else {
       runHere();
     }

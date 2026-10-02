@@ -1,15 +1,20 @@
 // Looks hadis up in the static data files under /json:
-//   tags/<first two characters>.json       word -> hadis tags containing it
-//   substring/<first two characters>.json  word -> longer words that contain it
+//   tags/<first 2 characters>.json  or  tags3/<first 3 characters>.json   word -> hadis tags containing it
+//   substring/<first 2 characters>.json                                   word -> longer words that contain it
+// Which of the two tags folders is used is a switch (searchConfig.js): the default, ?idx=2|3 on the
+// page address, or a prefix given with the request (the Web Worker gets it that way).
 //
 // The files spell some Bengali letters two ways (য় as one character or as য + ়, ো as one
-// character or as ে + া, ...), and a word is filed under the first two characters of whichever
+// character or as ে + া, ...), and a word is filed under the first characters of whichever
 // spelling was used. So a lookup compares words by their normalized spelling, and checks the
-// file of every raw spelling of the word's start.
+// file of every raw spelling of the word's start (candidateShards in src/lib/indexShards.js,
+// which also builds the file names the generator wrote).
 
 import { BASE_PATH } from "../Helpers/basePath";
 import { normalizeBengali } from "../Helpers/bengali";
 import { candidatesFor, hasBengali, rankSuggestions } from "../lib/didYouMean";
+import { candidateShards } from "../lib/indexShards";
+import { folderFor, prefixOrDefault } from "./searchConfig";
 
 export { normalizeBengali };
 
@@ -26,65 +31,62 @@ const FEW_RESULTS = 3;
 const MAX_EXTRA_FILES = 6;
 const MAX_WEAK_WORDS = 3;
 
-// [normalized form, other spelling used in the data]
-const SPELLINGS = [
-    ["য়", "য়"], // য়
-    ["ড়", "ড়"], // ড়
-    ["ঢ়", "ঢ়"], // ঢ়
-    ["ো", "ো"], // ো
-    ["ৌ", "ৌ"], // ৌ
-];
-
 export function normalizeQuery(text) {
     if (typeof text !== "string") return [];
     return text.replace(PUNCTUATION, "").split(/\s+/).filter(Boolean);
 }
 
-// The file names a normalized word could be stored under: the first two characters of each
-// way its start may be spelled. (Invisible joiners inside those two characters are not covered.)
-function rawPrefixes(word) {
-    const start = word.substring(0, 4);
-    let spellings = [""];
-    for (let i = 0; i < start.length;) {
-        const spelling = SPELLINGS.find(([normalized]) => start.startsWith(normalized, i));
-        const options = spelling ? spelling : [start[i]];
-        spellings = spellings.flatMap((so) => options.map((option) => so + option));
-        i += spelling ? spelling[0].length : 1;
-    }
-    return [...new Set(spellings.map((spelling) => spelling.substring(0, 2)))];
+// The prefix lengths of one search: { tags, substring }. A value given with the request wins (and
+// must be a layout that exists), then the configured one.
+function layoutOf({ tagsPrefix, substringPrefix } = {}) {
+    return { tags: prefixOrDefault("tags", tagsPrefix), substring: prefixOrDefault("substring", substringPrefix) };
 }
 
 function fetchJson(url) {
     return fetch(url).then((res) => {
-        if (!res.ok) throw new Error(`Could not load ${url}`);
+        if (!res.ok) throw Object.assign(new Error(`Could not load ${url}`), { status: res.status });
         return res.json();
     });
 }
 
-// normalized word -> everything filed under it (both spellings merged)
+// normalized word -> [{ word as the file spells it, its entries }], one per spelling filed under it
 function indexFile(data) {
     const index = new Map();
     if (data === null || typeof data !== "object") return index;
     for (const [word, entries] of Object.entries(data)) {
         if (!Array.isArray(entries)) continue;
         const key = normalizeBengali(word);
-        index.set(key, index.has(key) ? index.get(key).concat(entries) : entries);
+        if (!index.has(key)) index.set(key, []);
+        index.get(key).push({ word, entries });
     }
     return index;
+}
+
+// Everything filed under a normalized word in the files given, spellings merged. Spellings are
+// merged in the order of their raw spelling, so the order of the entries does not depend on how the
+// files are cut (2 or 3 letters) or in what order a file lists its words.
+function entriesOf(indexes, normalized) {
+    const spellings = indexes.flatMap((index) => index.get(normalized) || []);
+    if (spellings.length === 1) return spellings[0].entries;
+    return spellings.sort((a, b) => (a.word < b.word ? -1 : a.word > b.word ? 1 : 0)).flatMap(({ entries }) => entries);
 }
 
 export function createSearchIndex(load = fetchJson) {
     const files = new Map(); // url -> Promise of the file's index
 
-    function loadFile(kind, prefix) {
-        const url = `${BASE_PATH}/json/${kind}/${prefix}.json`;
+    const urlOf = (kind, shard, layout) => `${BASE_PATH}/json/${folderFor(kind, layout[kind])}/${shard}.json`;
+
+    // A file that does not exist (404) is an empty file, remembered for the life of the page; any
+    // other failure is also empty this time but tried again on the next search.
+    function loadFile(kind, shard, layout) {
+        const url = urlOf(kind, shard, layout);
         if (!files.has(url)) {
             files.set(
                 url,
                 load(url)
                     .then(indexFile)
-                    .catch(() => {
-                        files.delete(url); // try again on the next search
+                    .catch((error) => {
+                        if (error?.status !== 404) files.delete(url);
                         return new Map();
                     })
             );
@@ -92,25 +94,25 @@ export function createSearchIndex(load = fetchJson) {
         return files.get(url);
     }
 
-    async function lookup(kind, word) {
+    async function lookup(kind, word, layout) {
         const normalized = normalizeBengali(word);
-        const indexes = await Promise.all(rawPrefixes(normalized).map((prefix) => loadFile(kind, prefix)));
-        return indexes.flatMap((index) => index.get(normalized) || []);
+        const indexes = await Promise.all(candidateShards(normalized, layout[kind]).map((shard) => loadFile(kind, shard, layout)));
+        return entriesOf(indexes, normalized);
     }
 
     // Map of tag -> true if the word itself is in that hadis, false if only a longer word containing it is.
     // `isCancelled` (optional) is asked between the steps; a stale search stops early with nothing.
-    async function tagsForWord(word, shortQuery, isCancelled = () => false) {
-        const ownTags = lookup("tags", word);
+    async function tagsForWord(word, shortQuery, layout, isCancelled = () => false) {
+        const ownTags = lookup("tags", word, layout);
         const longerWords = shortQuery
-            ? lookup("substring", word)
-            : ownTags.then((own) => (new Set(own).size > COMMON_WORD_HADIS ? [] : lookup("substring", word)));
+            ? lookup("substring", word, layout)
+            : ownTags.then((own) => (new Set(own).size > COMMON_WORD_HADIS ? [] : lookup("substring", word, layout)));
         const [own, longer] = await Promise.all([ownTags, longerWords]);
         if (isCancelled()) return new Map();
 
         const found = new Map();
         own.forEach((tag) => found.set(tag, true));
-        const longerTags = await Promise.all([...new Set(longer)].map((longerWord) => lookup("tags", longerWord)));
+        const longerTags = await Promise.all([...new Set(longer)].map((longerWord) => lookup("tags", longerWord, layout)));
         longerTags.forEach((list) => list.forEach((tag) => {
             if (!found.has(tag)) found.set(tag, false);
         }));
@@ -118,9 +120,11 @@ export function createSearchIndex(load = fetchJson) {
     }
 
     // Hadis tags, best matches first: the most of the searched words, then the most of them exactly.
-    async function searchTags(words, { requireAll = false, isCancelled = () => false } = {}) {
+    // `tagsPrefix` (2 or 3, optional) chooses the tags folder for this search; see searchConfig.js.
+    async function searchTags(words, { requireAll = false, isCancelled = () => false, tagsPrefix } = {}) {
+        const layout = layoutOf({ tagsPrefix });
         const shortQuery = words.length < SHORT_QUERY_WORDS;
-        const foundPerWord = await Promise.all(words.map((word) => tagsForWord(word, shortQuery, isCancelled)));
+        const foundPerWord = await Promise.all(words.map((word) => tagsForWord(word, shortQuery, layout, isCancelled)));
         if (isCancelled()) return [];
 
         const matches = new Map(); // tag -> { words matched, words matched exactly }
@@ -142,39 +146,41 @@ export function createSearchIndex(load = fetchJson) {
 
     // How many hadis a word returns, counted exactly only when it could matter: a word with at
     // least `enough` hadis of its own is reported by that count alone.
-    async function wordHits(word, enough) {
-        const own = new Set(await lookup("tags", word)).size;
+    async function wordHits(word, enough, layout) {
+        const own = new Set(await lookup("tags", word, layout)).size;
         if (own >= enough) return own;
-        if ((await lookup("substring", word)).length === 0) return own;
-        return (await tagsForWord(word, true)).size;
+        if ((await lookup("substring", word, layout)).length === 0) return own;
+        return (await tagsForWord(word, true, layout)).size;
     }
 
     // The words of the data file(s) a word is filed in, with how many hadis each has.
-    async function vocabularyOf(word) {
-        const indexes = await Promise.all(rawPrefixes(normalizeBengali(word)).map((prefix) => loadFile("tags", prefix)));
+    async function vocabularyOf(word, layout) {
+        const indexes = await Promise.all(candidateShards(normalizeBengali(word), layout.tags).map((shard) => loadFile("tags", shard, layout)));
         const vocabulary = new Map();
         for (const index of indexes) {
-            for (const [key, entries] of index) vocabulary.set(key, (vocabulary.get(key) || 0) + entries.length);
+            for (const [key, spellings] of index) {
+                vocabulary.set(key, spellings.reduce((count, { entries }) => count + entries.length, vocabulary.get(key) || 0));
+            }
         }
         return vocabulary;
     }
 
     // Candidates with the number of hadis each really returns. A spelling whose data file is not
     // loaded yet costs a download, so only a few such files are opened (best candidates first).
-    async function checkCandidates(candidates, vocabulary) {
+    async function checkCandidates(candidates, vocabulary, layout) {
         let opened = 0;
         const chosen = [];
         for (const candidate of candidates) {
             // a word already in a loaded file costs nothing; a missing file counts as a download
-            const fresh = vocabulary.has(candidate.word) ? 0 : rawPrefixes(normalizeBengali(candidate.word))
-                .filter((prefix) => !files.has(`${BASE_PATH}/json/tags/${prefix}.json`)).length;
+            const fresh = vocabulary.has(candidate.word) ? 0 : candidateShards(normalizeBengali(candidate.word), layout.tags)
+                .filter((shard) => !files.has(urlOf("tags", shard, layout))).length;
             if (opened + fresh > MAX_EXTRA_FILES) continue;
             opened += fresh;
             chosen.push(candidate);
         }
         return Promise.all(chosen.map(async (candidate) => ({
             ...candidate,
-            hits: new Set(await lookup("tags", candidate.word)).size,
+            hits: new Set(await lookup("tags", candidate.word, layout)).size,
         })));
     }
 
@@ -184,10 +190,11 @@ export function createSearchIndex(load = fetchJson) {
     // file) are checked against the data, and only ones that return more hadis are kept.
     // Returns up to three { query, changed: [{ from, to }], kind, hits }, the best first; every
     // weak word that has a better spelling is corrected in each, the first weak word in the ways listed.
-    async function suggest(words, { resultCount = 0, isCancelled = () => false } = {}) {
+    async function suggest(words, { resultCount = 0, isCancelled = () => false, tagsPrefix } = {}) {
+        const layout = layoutOf({ tagsPrefix });
         const enough = resultCount < FEW_RESULTS ? FEW_RESULTS : 1;
         const checkable = words.map((word, position) => ({ word, position })).filter(({ word }) => hasBengali(word));
-        const hits = await Promise.all(checkable.map(({ word }) => wordHits(word, enough)));
+        const hits = await Promise.all(checkable.map(({ word }) => wordHits(word, enough, layout)));
         if (isCancelled()) return [];
 
         const weak = checkable
@@ -196,10 +203,10 @@ export function createSearchIndex(load = fetchJson) {
             .slice(0, MAX_WEAK_WORDS);
         const options = [];
         for (const entry of weak) {
-            const vocabulary = await vocabularyOf(entry.word);
+            const vocabulary = await vocabularyOf(entry.word, layout);
             const candidates = candidatesFor(entry.word, vocabulary);
             if (isCancelled()) return [];
-            const ranked = rankSuggestions(entry.hits, await checkCandidates(candidates, vocabulary));
+            const ranked = rankSuggestions(entry.hits, await checkCandidates(candidates, vocabulary, layout));
             if (isCancelled()) return [];
             if (ranked.length > 0) options.push({ ...entry, ranked });
         }

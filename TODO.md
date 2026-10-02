@@ -30,3 +30,10 @@ These files in `public/json` are produced by one-time scripts, so their rules ar
 - **`narrators/`.** `scripts/build-narrators.mjs`, `src/lib/narratorName.js` and `src/data/narratorVariants.js`. The primary narrator is the last name before "থেকে বর্ণিত". Abu Hurayrah shows 3,606 because 16.9% of texts have no recognisable chain. "আবদুল্লাহ" alone is ambiguous, and the variants table needs your additions.
 - **`short-hadis.json`.** `scripts/build-short-hadis.mjs`. The hadis of 60 words or fewer (18,409). Is 60 the right cutoff for the daily hadis?
 - **`daily-picks.json`.** `scripts/build-daily-picks.mjs`. The picks come from the same function as the daily page, and `prebuild` renews them. We haven't discussed the pick rule: books take turns, with a fixed step inside each list.
+
+## Open after the 3-letter tags shards
+
+- **The default is 3 letters before its prerequisites.** The decision wanted the substring cap (top 50 containing words) and the word list shipped first: until then common words can fetch more files, and a typo in a word's third letter gets fewer "did you mean" suggestions (`src/search/searchIndex.golden.test.js` pins three examples). `?idx=2` goes back to the 2-letter files at any time.
+- **`substring/` is still 2 letters.** Add `substringPrefix` and `?sub=` in `src/search/searchConfig.js` (the layout table has the place), a generator next to `scripts/build-index-3.mjs`, and a golden test like the one for `tags/`.
+- **17 words with an invisible joiner in their first three letters** (`ইব‌ন`, `ব‍্যক্তিরা`, ...) cannot be reached through their own file (15 with 2 letters). Their other spellings are unaffected.
+- **Delete `tags/`** (and its `?idx=2` path) one release after the 3-letter default has been green.

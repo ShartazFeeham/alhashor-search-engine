@@ -62,6 +62,29 @@ afterEach(() => {
   delete global.fetch;
 });
 
+describe('the developer switch ?idx=2|3 stays in the address while searching', () => {
+  test('a new search keeps a valid idx', () => {
+    serve({});
+    renderSearch('/search?q=%E0%A6%A8%E0%A6%BE%E0%A6%AE%E0%A6%BE%E0%A6%AF&idx=2');
+    search('রোজা');
+    expect(where()).toHaveTextContent(/^\/search\?q=রোজা&idx=2$/);
+  });
+
+  test('it stays together with the other options in the address', () => {
+    serve({});
+    renderSearch('/search?q=%E0%A6%A8%E0%A6%BE%E0%A6%AE%E0%A6%BE%E0%A6%AF&idx=3&near=1');
+    search('রোজা নামায');
+    expect(where()).toHaveTextContent(/^\/search\?q=রোজা\+নামায&near=1&idx=3$/);
+  });
+
+  test('a value that is not 2 or 3 is dropped, and no idx adds none', () => {
+    serve({});
+    renderSearch('/search?q=x&idx=9');
+    search('রোজা');
+    expect(where()).toHaveTextContent(/^\/search\?q=রোজা$/);
+  });
+});
+
 test('an empty search does nothing', () => {
   serve({});
   renderSearch();

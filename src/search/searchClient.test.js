@@ -1,4 +1,5 @@
 import { createSearchClient } from './searchClient';
+import { setTagsPrefixForTests } from './searchConfig';
 
 // A stand-in for the browser's Worker: records what is posted and lets a test answer it.
 class FakeWorker {
@@ -60,7 +61,7 @@ describe('search client with a worker', () => {
   test('posts the search to the worker and resolves with its answer', async () => {
     const { client, worker } = setup();
     const { promise } = client.search(['রোজা', 'নামায']);
-    expect(worker().sent).toEqual([{ id: expect.any(Number), type: 'search', words: ['রোজা', 'নামায'] }]);
+    expect(worker().sent).toEqual([{ id: expect.any(Number), type: 'search', words: ['রোজা', 'নামায'], tagsPrefix: 2 }]);
     worker().reply({ id: worker().sent[0].id, type: 'result', value: ['BUK-1', 'BUK-2'] });
     expect(await promise).toEqual(['BUK-1', 'BUK-2']);
   });
@@ -176,5 +177,55 @@ describe('search client without a worker (jsdom, old browsers)', () => {
     const client = createSearchClient({ startWorker: null, index });
     expect(await client.search(['ক']).promise).toEqual([]);
     expect(await client.suggest(['ক'], { resultCount: 0 }).promise).toEqual([]);
+  });
+});
+
+describe('the tags prefix travels with every request', () => {
+  test('the page reads the configured prefix and sends it to the worker, with a search and with a suggest', () => {
+    const { client, worker } = setup();
+    setTagsPrefixForTests(3);
+    client.search(['রোজা']);
+    client.suggest(['রোজা'], { resultCount: 1 });
+    expect(worker().sent.map(({ type, tagsPrefix }) => [type, tagsPrefix])).toEqual([['search', 3], ['suggest', 3]]);
+  });
+
+  test('it is read at each request, so a change of the address or switch takes effect on the next search', () => {
+    const { client, worker } = setup();
+    setTagsPrefixForTests(3);
+    client.search(['ক']);
+    setTagsPrefixForTests(2);
+    client.search(['খ']);
+    expect(worker().sent.map((message) => message.tagsPrefix)).toEqual([3, 2]);
+  });
+
+  test('the address is read on the page: ?idx=2 reaches the worker', () => {
+    setTagsPrefixForTests(null);
+    window.history.replaceState(null, '', '/search?q=x&idx=2');
+    try {
+      const { client, worker } = setup();
+      client.search(['ক']);
+      expect(worker().sent[0].tagsPrefix).toBe(2);
+    } finally {
+      window.history.replaceState(null, '', '/');
+    }
+  });
+
+  test('on the main thread (no worker) the same prefix is handed to the index', async () => {
+    const index = localIndex();
+    const client = createSearchClient({ startWorker: null, index });
+    setTagsPrefixForTests(3);
+    await client.search(['রোজা']).promise;
+    await client.suggest(['রোজা'], { resultCount: 0 }).promise;
+    expect(index.calls.map(([, , options]) => options.tagsPrefix)).toEqual([3, 3]);
+  });
+
+  test('when the worker fails part-way, the search runs here with the prefix it was asked with', async () => {
+    const { client, worker, index } = setup();
+    setTagsPrefixForTests(3);
+    const waiting = client.search(['ক']);
+    setTagsPrefixForTests(2);
+    worker().crash();
+    await waiting.promise;
+    expect(index.calls[0][2].tagsPrefix).toBe(3);
   });
 });

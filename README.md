@@ -63,7 +63,11 @@ src/
 public/json/
   hadis/<Book>/<0001>/text.txt   one hadis (a JSON string); folders Bukhari, Muslim, Tirmiji, Daud, Majah, Nasae
   tags/<first two letters>.json  word -> tags of hadis containing it (e.g. "BUK-124"); 1,645 files
-  substring/<..>.json            word -> longer words containing it; 1,164 files
+  tags3/<first three letters>.json  the same words cut at three letters (a word of fewer than three
+                                 letters: the whole word and "_"); 9,655 files, 21.6 MB, made from
+                                 tags/ by scripts/build-index-3.mjs. The search reads these by default;
+                                 ?idx=2 on /search switches back to tags/ (see src/search/searchConfig.js)
+  substring/<..>.json            word -> longer words containing it; 1,164 files (still two letters)
   short-hadis.json               numbers of hadis of 60 words or fewer, per book code (daily pick)
   related/<CODE>-<n>.json        up to 3 related hadis per hadis, 100 hadis per shard (BUK-0.json ...)
 docs/         redesign-plan.md (decisions, phases, deviations), redesign-ideas.md, design/ (D2 and D5 references)
@@ -96,6 +100,7 @@ scripts/with-server.sh 3000 "npm start" node scripts/theme-shots.mjs http://loca
 Run once from the repo root when the data changes. Both read `public/json/hadis` and tolerate a text with a raw control character.
 
 - `node scripts/build-short-hadis.mjs` writes `public/json/short-hadis.json` (hadis of 60 words or fewer, used by the daily pick).
+- `node scripts/build-index-3.mjs` regroups `public/json/tags/*.json` into `public/json/tags3/<first three letters>.json` (no network; the same output every time; it reads `tags/` and replaces `tags3/`; `src/lib/indexShards.test.js` checks that both folders hold the same words and tags). Run it again whenever `tags/` changes.
 - `node scripts/build-related.mjs` writes `public/json/related/<CODE>-<n>.json`: for each hadis up to 3 related ones, by words they share weighted by rarity, with a small bonus for another book; two near-identical texts in different books are marked as the same report. The method is described at the top of the script.
 
 ## Deploy notes

@@ -37,6 +37,8 @@ expect_title() { # <route> <exact title> <what>
 expect_status /json/hadis/Bukhari/0001/text.txt 200
 expect_status "/json/tags/%E0%A6%B0%E0%A7%8B.json" 200
 expect_status /photos/copy.png 200
+expect_status "/json/tags3/%E0%A6%B0%E0%A7%8B%E0%A6%9C.json" 200  # the 3-letter word files (search switch idx=3)
+expect_status /json/tags3/qqqq.json 404
 expect_status /json/tags/qqqq.json 404        # Review Focus 3: a missing data file is a real 404
 expect_status /no-such-page 404
 expect_status /hadis/bukhari/6628 200

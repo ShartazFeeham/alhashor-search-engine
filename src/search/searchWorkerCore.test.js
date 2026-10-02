@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { createSearchIndex } from './searchIndex';
 import { createWorkerHandler } from './searchWorkerCore';
 
 function fakeIndex({ delay = 0 } = {}) {
@@ -81,6 +82,46 @@ describe('the worker side of the search protocol', () => {
     await handle({ id: 1, type: 'launch' });
     await handle(undefined);
     expect(posted).toEqual([]);
+  });
+});
+
+describe('the tags prefix in the message', () => {
+  test('is handed to the index for a search and for a suggest', async () => {
+    const index = fakeIndex();
+    const handle = createWorkerHandler(index, () => {});
+    await handle({ id: 1, type: 'search', words: ['রোজা'], tagsPrefix: 3 });
+    await handle({ id: 2, type: 'suggest', words: ['রোজা'], resultCount: 0, tagsPrefix: 2 });
+    expect(index.calls[0][2]).toMatchObject({ tagsPrefix: 3 });
+    expect(index.calls[1][2]).toMatchObject({ tagsPrefix: 2 });
+  });
+
+  test('a message without one leaves the choice to the index', async () => {
+    const index = fakeIndex();
+    const handle = createWorkerHandler(index, () => {});
+    await handle({ id: 1, type: 'search', words: ['রোজা'] });
+    expect(index.calls[0][2].tagsPrefix).toBeUndefined();
+  });
+
+  test('with the real index: the worker reads the folder the message names, whatever its own configuration says', async () => {
+    const asked = [];
+    const posted = [];
+    const load = async (url) => {
+      asked.push(url);
+      return url.includes('/json/tags') ? { 'নামায': ['BUK-1'] } : {};
+    };
+    const handle = createWorkerHandler(createSearchIndex(load), (message) => posted.push(message));
+    await handle({ id: 1, type: 'search', words: ['নামায'], tagsPrefix: 3 }); // setupTests pins the page to 2
+    expect(asked.filter((url) => url.includes('/json/tags'))).toEqual(['/json/tags3/নাম.json']);
+    await handle({ id: 2, type: 'search', words: ['নামায'], tagsPrefix: 2 });
+    expect(asked.filter((url) => url.includes('/json/tags'))).toEqual(['/json/tags3/নাম.json', '/json/tags/না.json']);
+    expect(posted).toEqual([{ id: 1, type: 'result', value: ['BUK-1'] }, { id: 2, type: 'result', value: ['BUK-1'] }]);
+  });
+
+  test('a value that is not a layout is not trusted: the index falls back to its configuration', async () => {
+    const asked = [];
+    const handle = createWorkerHandler(createSearchIndex(async (url) => { asked.push(url); return {}; }), () => {});
+    await handle({ id: 1, type: 'search', words: ['নামায'], tagsPrefix: 9 });
+    expect(asked).toContain('/json/tags/না.json'); // 2: what setupTests pins
   });
 });
 
