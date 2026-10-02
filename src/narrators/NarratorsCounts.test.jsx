@@ -56,9 +56,9 @@ const menu = () => screen.getByRole('navigation', { name: 'বর্ণনাক
 const rows = () => within(menu()).getAllByRole('link');
 const sortBox = () => screen.getByRole('combobox', { name: 'সাজান' });
 const headings = () => within(menu()).queryAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-const nameOf = (row) => row.querySelector('.topics-row-name').textContent;
+const nameOf = (row) => row.querySelector('.topics-row-name').textContent.replace(/ \(রাঃ\)$/, '');
 const countOf = (row) => row.querySelector('.topics-row-count').textContent;
-const loaded = () => screen.findByRole('link', { name: /^আবূ হুরায়রা [০-৯,]+$/ });
+const loaded = () => screen.findByRole('link', { name: /^আবূ হুরায়রা(?: \(রাঃ\))? [০-৯,]+$/ });
 
 describe('the counts', () => {
   test('every row shows the narrator and the real count with thousands commas, in Bengali digits', async () => {
@@ -68,7 +68,7 @@ describe('the counts', () => {
     const first = rows()[0];
     expect(nameOf(first)).toBe(LARGEST[1]);
     expect(countOf(first)).toBe(digits(LARGEST[2]));
-    const abu = screen.getByRole('link', { name: /^আবূ হুরায়রা [০-৯,]+$/ });
+    const abu = screen.getByRole('link', { name: /^আবূ হুরায়রা(?: \(রাঃ\))? [০-৯,]+$/ });
     expect(countOf(abu)).toBe('৩,৬০৬');
     for (const row of rows()) expect(countOf(row)).toMatch(/^[০-৯,]+$/);
   });
@@ -76,7 +76,7 @@ describe('the counts', () => {
   test('the digit style of the visitor is respected', async () => {
     localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
     show('/narrators');
-    await screen.findByRole('link', { name: /^আবূ হুরায়রা [0-9,]+$/ });
+    await screen.findByRole('link', { name: /^আবূ হুরায়রা(?: \(রাঃ\))? [0-9,]+$/ });
     expect(await screen.findByText('3,606')).toBeInTheDocument();
     expect(rows()[0].querySelector('.topics-row-count').textContent).toBe(LARGEST[2].toLocaleString('en-US'));
   });
@@ -84,7 +84,7 @@ describe('the counts', () => {
   test('the counts stay in filtered results and in the phone overlay', async () => {
     show('/narrators', 390);
     const dialog = screen.getByRole('dialog', { name: 'বর্ণনাকারীসূচি' });
-    await within(dialog).findByRole('link', { name: /^আয়িশা [০-৯,]+$/ });
+    await within(dialog).findByRole('link', { name: /^আয়িশা(?: \(রাঃ\))? [০-৯,]+$/ });
     fireEvent.change(screen.getByRole('textbox', { name: 'বর্ণনাকারী খুঁজুন' }), { target: { value: 'আয়িশা' } });
     const found = within(dialog).getAllByRole('link');
     expect(found.length).toBeGreaterThan(0);
@@ -169,7 +169,7 @@ describe('the four sort options', () => {
       expect(sortBox()).toHaveValue(value);
     }
     fireEvent.change(sortBox(), { target: { value: 'name-asc' } });
-    expect(decodeURIComponent(screen.getByRole('link', { name: /^আবূ হুরায়রা [০-৯,]+$/ }).getAttribute('href'))).toBe('/narrators?name=abu-hurayrah&sort=name-asc');
+    expect(decodeURIComponent(screen.getByRole('link', { name: /^আবূ হুরায়রা(?: \(রাঃ\))? [০-৯,]+$/ }).getAttribute('href'))).toBe('/narrators?name=abu-hurayrah&sort=name-asc');
   });
 
   test('narratorHref writes the four sorts and maps the old ones', () => {

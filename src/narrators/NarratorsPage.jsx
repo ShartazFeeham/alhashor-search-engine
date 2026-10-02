@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useRef } from 'react';
 import PageTitle from '../Helpers/PageTitle';
 import { tagOf } from '../lib/hadisRoute';
-import { bookFromParam, narratorHref, narratorSortFrom } from '../lib/narrators';
+import { bookFromParam, honorific, narratorHref, narratorSortFrom } from '../lib/narrators';
 import { usePageFocus } from '../lib/pageFocus';
 import { toTop } from '../lib/toTop';
 import { useDigits } from '../lib/useDigits';
@@ -14,6 +14,7 @@ import { MenuButton } from '../topics/NameMenu';
 import { useMenuOverlay } from '../topics/useMenuOverlay';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
+import NarratorBooks from './NarratorBooks';
 import NarratorIndex from './NarratorIndex';
 import { DONE, LOADING, useNarratorHadis, useNarratorIndex } from './useNarrators';
 
@@ -118,8 +119,9 @@ export default function NarratorsPage() {
           {narrator && (
             <>
               <h2 className="topics-name" ref={nameRef} tabIndex={-1}>
-                {narrator.name} <span className="topics-name-n">{digits(narrator.count)} টি হাদীস</span>
+                {[narrator.name, honorific(narrator.name)].filter(Boolean).join(' ')} <span className="topics-name-n">{digits(narrator.count)} টি হাদীস</span>
               </h2>
+              <NarratorBooks perBook={narrator.perBook} />
               <p className="topics-note">{NOTE}</p>
               {lookup.status !== LOADING && lookup.status !== DONE ? (
                 <div className="topics-problem">

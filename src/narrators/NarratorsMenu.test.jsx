@@ -54,11 +54,11 @@ const opener = () => screen.queryByRole('button', { name: 'বর্ণনাক
 const address = () => decodeURIComponent(getUrl().pathname + getUrl().search);
 const menu = () => screen.getByRole('navigation', { name: 'বর্ণনাকারীসূচি' });
 const chips = () => within(menu()).getAllByRole('link');
-const nameText = (row) => row.querySelector('.topics-row-name').textContent;
+const nameText = (row) => row.querySelector('.topics-row-name').textContent.replace(/ \(রাঃ\)$/, '');
 const box = () => screen.getByRole('textbox', { name: 'বর্ণনাকারী খুঁজুন' });
 const sortBox = () => screen.getByRole('combobox', { name: 'সাজান' });
 const headings = () => within(menu()).getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-const loaded = () => screen.findByRole('link', { name: /^আবূ হুরায়রা [০-৯,]+$/ });
+const loaded = () => screen.findByRole('link', { name: /^আবূ হুরায়রা(?: \(রাঃ\))? [০-৯,]+$/ });
 
 describe('the menu on a desktop (900px and wider)', () => {
   test('is always open, once, with the search, the sort and no overlay or opener button', async () => {
@@ -115,7 +115,7 @@ describe('the menu on a desktop (900px and wider)', () => {
     fireEvent.change(sortBox(), { target: { value: 'name-desc' } });
     expect(address()).toBe('/narrators?name=abu-hurayrah&sort=name-desc');
     expect(sortBox()).toHaveValue('name-desc');
-    expect(decodeURIComponent(screen.getByRole('link', { name: /^আয়িশা [০-৯,]+$/ }).getAttribute('href'))).toBe('/narrators?name=aisha&sort=name-desc');
+    expect(decodeURIComponent(screen.getByRole('link', { name: /^আয়িশা(?: \(রাঃ\))? [০-৯,]+$/ }).getAttribute('href'))).toBe('/narrators?name=aisha&sort=name-desc');
   });
 
   test('the search filters live, hides empty blocks and says so when nothing is found', async () => {
@@ -134,7 +134,7 @@ describe('the menu on a desktop (900px and wider)', () => {
 
   test('choosing a narrator goes to /narrators?name=<id> and keeps the menu', async () => {
     show('/narrators', 1200);
-    fireEvent.click(await screen.findByRole('link', { name: /^আয়িশা [০-৯,]+$/ }));
+    fireEvent.click(await screen.findByRole('link', { name: /^আয়িশা(?: \(রাঃ\))? [০-৯,]+$/ }));
     expect(address()).toBe('/narrators?name=aisha');
     expect(screen.getAllByRole('navigation', { name: 'বর্ণনাকারীসূচি' })).toHaveLength(1);
     expect(await screen.findByRole('heading', { level: 2, name: /আয়িশা/ })).toBeInTheDocument();
@@ -157,7 +157,7 @@ describe('the menu on a phone (under 900px)', () => {
     expect(within(box1).getByRole('button', { name: 'বন্ধ করুন' })).toHaveTextContent('×');
     expect(document.body.style.overflow).toBe('hidden');
     expect(screen.getAllByRole('textbox', { name: 'বর্ণনাকারী খুঁজুন' })).toHaveLength(1);
-    await within(box1).findByRole('link', { name: /^আয়িশা [০-৯,]+$/ });
+    await within(box1).findByRole('link', { name: /^আয়িশা(?: \(রাঃ\))? [০-৯,]+$/ });
   });
 
   test('with a narrator the overlay is closed and a slim button at the top reopens it', async () => {
@@ -176,7 +176,7 @@ describe('the menu on a phone (under 900px)', () => {
 
   test('choosing a narrator closes the overlay and shows that narrator', async () => {
     show('/narrators', 390);
-    fireEvent.click(await within(dialog()).findByRole('link', { name: /^আয়িশা [০-৯,]+$/ }));
+    fireEvent.click(await within(dialog()).findByRole('link', { name: /^আয়িশা(?: \(রাঃ\))? [০-৯,]+$/ }));
     expect(address()).toBe('/narrators?name=aisha');
     expect(dialog()).not.toBeInTheDocument();
     expect(opener()).toBeInTheDocument();
@@ -202,7 +202,7 @@ describe('the menu on a phone (under 900px)', () => {
     expect(opener()).toHaveFocus();
     fireEvent.click(opener());
     expect(dialog()).toBeInTheDocument();
-    await within(dialog()).findByRole('link', { name: /^আয়িশা [০-৯,]+$/ });
+    await within(dialog()).findByRole('link', { name: /^আয়িশা(?: \(রাঃ\))? [০-৯,]+$/ });
   });
 });
 

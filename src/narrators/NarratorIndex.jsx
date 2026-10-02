@@ -1,9 +1,10 @@
 'use client';
 
 import { useMemo } from 'react';
+import BookBar from './BookBar';
 import NameMenu from '../topics/NameMenu';
 import { compareNames } from '../lib/topicBlocks';
-import { filterNarrators, narratorHref } from '../lib/narrators';
+import { filterNarrators, honorific, narratorHref } from '../lib/narrators';
 
 const LABELS = {
   title: 'বর্ণনাকারীসূচি',
@@ -20,7 +21,7 @@ const SORTS = [
 ];
 
 // The narrators menu (see NameMenu, the one /topics uses): each narrator is a row, the name with
-// the hadis count, linking to /narrators?name=<id>. By count it is one flat list (ties by name);
+// the hadis count and a thin bar split by book, linking to /narrators?name=<id>. By count it is one flat list (ties by name);
 // by name it is in letter blocks. `narrators` is the index (useNarratorIndex); `empty` shows while
 // it has not loaded.
 export default function NarratorIndex({ id, page = 0, book = 'all', sort = 'count-desc', narrators, empty, overlay = false, onClose, onPick }) {
@@ -35,7 +36,10 @@ export default function NarratorIndex({ id, page = 0, book = 'all', sort = 'coun
       items={items}
       nameOf={(narrator) => narrator.name}
       keyOf={(narrator) => narrator.id}
+      batch={50}
       countOf={(narrator) => narrator.count}
+      suffixOf={(narrator) => honorific(narrator.name)}
+      decorOf={(narrator) => <BookBar perBook={narrator.perBook} />}
       filter={filterNarrators}
       hrefOf={(narrator) => narratorHref(narrator.id, 0, 'all', sort)}
       sortHref={(next) => narratorHref(id, page, book, next)}

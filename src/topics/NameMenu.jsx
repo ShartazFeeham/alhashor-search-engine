@@ -31,9 +31,9 @@ export function MenuButton({ label, onClick, buttonRef }) {
 // `items` are names or objects with a name (`nameOf`, `keyOf`); `filter(items, text)` narrows them,
 // `hrefOf(item)` and `sortHref(sort)` give the addresses, `isCurrent(item)` marks the chosen one
 // (`current` changes when it does, to scroll it into view). `empty` shows while there is no item.
-// `labels` holds the texts: title, search, none, found(count). Optional, used by the narrators menu:
+// `batch` (the narrators menu) draws only that many names at first and more as the end of the list scrolls into view. `labels` holds the texts: title, search, none, found(count). Optional, used by the narrators menu:
 // `countOf(item)` turns each name into a row with its count at the right (formatted with the
-// visitor's digits), `flat` lists the rows with no letter blocks (the items come in the order to
+// visitor's digits; `suffixOf(item)` shows a text after the name (display only; the part before it shrinks first), `decorOf(item)` adds a decoration along the row's bottom edge), `flat` lists the rows with no letter blocks (the items come in the order to
 // show), `sortOptions` [{ value, label }] replaces the two topics sorts, and `blockSort` ('asc' or
 // 'desc') orders the letter blocks when `sort` is not one of those two. The search row sticks to
 // the top of the scrolling area.
@@ -47,7 +47,10 @@ export default function NameMenu({
   isCurrent,
   current,
   sort = 'asc',
+  batch = 0,
   countOf,
+  decorOf,
+  suffixOf,
   flat = false,
   sortOptions = SORT_OPTIONS,
   blockSort = sort,
@@ -61,11 +64,48 @@ export default function NameMenu({
   const router = useRouter();
   const [text, setText] = useState('');
   const shown = filter(items, text);
-  const blocks = flat ? [{ letter: '', names: shown }] : groupTopics(shown, blockSort === 'desc' ? 'desc' : 'asc', nameOf);
+  const everything = flat ? [{ letter: '', names: shown }] : groupTopics(shown, blockSort === 'desc' ? 'desc' : 'asc', nameOf);
   const count = shown.length;
   const filtering = text.trim() !== '';
   const scrollRef = useRef(null);
   const closeRef = useRef(null);
+  const sentinelRef = useRef(null);
+
+  // Infinite scrolling (`batch` names at first, `batch` more each time the end of the list comes into
+  // view). It starts again from the first batch when the search or the sort changes, and always
+  // reaches the chosen name. Without IntersectionObserver every name is drawn.
+  const [limit, setLimit] = useState(batch);
+  const [lastQuery, setLastQuery] = useState(`${text}\n${sort}`);
+  const query = `${text}\n${sort}`;
+  if (query !== lastQuery) {
+    setLastQuery(query);
+    setLimit(batch);
+  }
+  const lazy = Boolean(batch) && typeof IntersectionObserver !== 'undefined';
+  const order = everything.flatMap((block) => block.names);
+  const reach = current === undefined ? 0 : order.findIndex((item) => isCurrent(item)) + 1;
+  const upTo = lazy ? Math.max(limit, reach) : order.length;
+  const more = order.length > upTo;
+  const blocks = lazy
+    ? everything.flatMap((block, at) => {
+        const before = everything.slice(0, at).reduce((sum, { names }) => sum + names.length, 0);
+        const names = block.names.slice(0, Math.max(0, upTo - before));
+        return names.length > 0 ? [{ ...block, names }] : [];
+      })
+    : everything;
+
+  useEffect(() => {
+    const end = sentinelRef.current;
+    if (!lazy || !more || !end) return undefined;
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) setLimit(upTo + batch);
+      },
+      { root: scrollRef.current, rootMargin: '200px' }
+    );
+    watcher.observe(end);
+    return () => watcher.disconnect();
+  }, [lazy, more, upTo, batch]);
 
   // A topic opened from a link can sit far down the menu: bring it into view, centred, when it is
   // out of sight (moving the menu only, never the page, and never when it is already visible).
@@ -165,8 +205,16 @@ export default function NameMenu({
                   >
                     {countOf ? (
                       <>
-                        <span className="topics-row-name">{nameOf(item)}</span>
+                        {suffixOf?.(item) ? (
+                          <span className="topics-row-name with-hon">
+                            <span className="narr-plain">{nameOf(item)}</span>
+                            <span className="narr-hon"> {suffixOf(item)}</span>
+                          </span>
+                        ) : (
+                          <span className="topics-row-name">{nameOf(item)}</span>
+                        )}
                         <span className="topics-row-count">{digits(countOf(item))}</span>
+                        {decorOf?.(item)}
                       </>
                     ) : (
                       nameOf(item)
@@ -184,6 +232,7 @@ export default function NameMenu({
             </section>
           );
         })}
+        {lazy && more && <div ref={sentinelRef} className="topics-sentinel" aria-hidden="true" data-testid="menu-sentinel" />}
       </div>
     </>
   );

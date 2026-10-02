@@ -25,6 +25,11 @@ export function narratorSortFrom(param) {
   return NARRATOR_SORTS.includes(param) ? param : DEFAULT_SORT;
 }
 
+// (রাঃ) after a narrator's name, for display only (the id, the search and the sorts use the plain
+// name). A name that already ends with a bracketed honorific gets none, so it is never doubled.
+export const HONORIFIC = '(রাঃ)';
+export const honorific = (name) => (name.trim() === '' || /[(（[][^)）\]]*[)）\]]\s*$/.test(name) ? '' : HONORIFIC);
+
 // The address of a narrator's page (0-based `page`; the first page has no "?page="), optionally
 // narrowed to one book ('all' or a book id); `sort` only orders the menu (see narratorSortFrom;
 // the default, most hadis first, is left out). No id is the list of narrators.

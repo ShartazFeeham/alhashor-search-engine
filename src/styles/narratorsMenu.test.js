@@ -14,9 +14,9 @@ test('the narrators page uses the topics classes for the sidebar, the top row, t
   expect(read('src/narrators/NarratorIndex.jsx')).toContain('NameMenu');
 });
 
-test('the old narrators layout is gone: no narr- classes, no narrators.css, one menu component for both pages', () => {
+test('the old narrators layout is gone: no narr- classes in the page (the bars live in their own components), no narrators.css, one menu component for both pages', () => {
   expect(existsSync(path.resolve(process.cwd(), 'src/styles/narrators.css'))).toBe(false);
-  for (const file of ['NarratorList', 'NarratorPager', 'NarratorBookFilter', 'BookBar']) {
+  for (const file of ['NarratorList', 'NarratorPager', 'NarratorBookFilter']) {
     expect(existsSync(path.resolve(process.cwd(), `src/narrators/${file}.jsx`))).toBe(false);
   }
   expect(read('src/narrators/NarratorsPage.jsx')).not.toMatch(/narr-/);
