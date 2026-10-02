@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useRef } from 'react';
 import PageTitle from '../Helpers/PageTitle';
 import { tagOf } from '../lib/hadisRoute';
-import { bookFromParam, narratorHref } from '../lib/narrators';
+import { bookFromParam, narratorHref, narratorSortFrom } from '../lib/narrators';
 import { usePageFocus } from '../lib/pageFocus';
 import { toTop } from '../lib/toTop';
 import { useDigits } from '../lib/useDigits';
@@ -28,11 +28,11 @@ const Loading = () => (
 );
 
 /*
-    /narrators?name=<id>&page=<n>&book=<bookId>&sort=desc: the address is the whole state. The
-    page is laid out like /topics: a menu of the narrators in letter blocks (a sticky sidebar from
+    /narrators?name=<id>&page=<n>&book=<bookId>&sort=<count-asc|name-asc|name-desc>: the address is the whole state. The
+    page is laid out like /topics: a menu of the narrators (each with its hadis count) (a sticky sidebar from
     900px wide, on a phone a full-screen overlay open at first when no narrator is chosen), and
     for the chosen one the listing of /search and /topics (ResultsListing) over the narrator's
-    ready list of hadis. `sort` only orders the menu. The index and the lists come from static
+    ready list of hadis. `sort` only orders the menu (most hadis first by default; by name, the letter blocks). The index and the lists come from static
     files built once by scripts/build-narrators.mjs, so nothing is worked out in the browser.
 */
 export default function NarratorsPage() {
@@ -40,7 +40,7 @@ export default function NarratorsPage() {
   const router = useRouter();
   const digits = useDigits();
   const id = (params.get('name') || '').trim();
-  const sort = params.get('sort') === 'desc' ? 'desc' : 'asc';
+  const sort = narratorSortFrom(params.get('sort'));
   const book = bookFromParam(params.get('book'));
   const pageParam = params.get('page');
   const pageNumber = Math.max(1, parseInt(pageParam ?? '', 10) || 1);

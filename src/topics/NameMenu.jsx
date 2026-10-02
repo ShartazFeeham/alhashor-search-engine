@@ -9,6 +9,10 @@ import { toTop } from '../lib/toTop';
 import { useDigits } from '../lib/useDigits';
 import Icon from '../ui/Icon';
 
+const SORT_OPTIONS = [
+  { value: 'asc', label: 'আরোহী (ক → হ)' },
+  { value: 'desc', label: 'অবরোহী (হ → ক)' },
+];
 const FOCUSABLE = 'a[href],button:not([disabled]),input,select';
 
 // The slim button that opens the menu on a phone (it is only rendered there).
@@ -27,7 +31,12 @@ export function MenuButton({ label, onClick, buttonRef }) {
 // `items` are names or objects with a name (`nameOf`, `keyOf`); `filter(items, text)` narrows them,
 // `hrefOf(item)` and `sortHref(sort)` give the addresses, `isCurrent(item)` marks the chosen one
 // (`current` changes when it does, to scroll it into view). `empty` shows while there is no item.
-// `labels` holds the texts: title, search, none, found(count).
+// `labels` holds the texts: title, search, none, found(count). Optional, used by the narrators menu:
+// `countOf(item)` turns each name into a row with its count at the right (formatted with the
+// visitor's digits), `flat` lists the rows with no letter blocks (the items come in the order to
+// show), `sortOptions` [{ value, label }] replaces the two topics sorts, and `blockSort` ('asc' or
+// 'desc') orders the letter blocks when `sort` is not one of those two. The search row sticks to
+// the top of the scrolling area.
 export default function NameMenu({
   items,
   nameOf = (item) => item,
@@ -38,6 +47,10 @@ export default function NameMenu({
   isCurrent,
   current,
   sort = 'asc',
+  countOf,
+  flat = false,
+  sortOptions = SORT_OPTIONS,
+  blockSort = sort,
   labels,
   empty = null,
   overlay = false,
@@ -47,8 +60,9 @@ export default function NameMenu({
   const digits = useDigits();
   const router = useRouter();
   const [text, setText] = useState('');
-  const blocks = groupTopics(filter(items, text), sort, nameOf);
-  const count = blocks.reduce((sum, block) => sum + block.names.length, 0);
+  const shown = filter(items, text);
+  const blocks = flat ? [{ letter: '', names: shown }] : groupTopics(shown, blockSort === 'desc' ? 'desc' : 'asc', nameOf);
+  const count = shown.length;
   const filtering = text.trim() !== '';
   const scrollRef = useRef(null);
   const closeRef = useRef(null);
@@ -61,7 +75,8 @@ export default function NameMenu({
     if (!chip) return;
     const box = list.getBoundingClientRect();
     const at = chip.getBoundingClientRect();
-    if (at.top < box.top || at.bottom > box.bottom) list.scrollTop += at.top - box.top - (box.height - at.height) / 2;
+    const bar = list.querySelector('.topics-menu-row')?.offsetHeight ?? 0; // the sticky search row covers the top
+    if (at.top < box.top + bar || at.bottom > box.bottom) list.scrollTop += at.top - box.top - (box.height - at.height) / 2;
   }, [current, overlay]);
 
   // The overlay takes focus when it opens.
@@ -104,57 +119,71 @@ export default function NameMenu({
         </div>
       )}
       {!overlay && <h2 className="sr-only">{labels.title}</h2>}
-      <div className="topics-menu-row">
-        <label className="topics-field">
-          <Icon name="search" size={16} />
-          <input
-            type="text"
-            lang="bn"
-            value={text}
-            placeholder={labels.search}
-            aria-label={labels.search}
-            autoComplete="off"
-            onChange={(event) => setText(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') event.preventDefault();
-            }}
-          />
-        </label>
-        <select
-          className="topics-sort"
-          aria-label="সাজান"
-          value={sort === 'desc' ? 'desc' : 'asc'}
-          onChange={(event) => router.replace(sortHref(event.target.value), { scroll: false })}
-        >
-          <option value="asc">আরোহী (ক → হ)</option>
-          <option value="desc">অবরোহী (হ → ক)</option>
-        </select>
-      </div>
-      <p className={filtering && count === 0 ? 'topics-filter-none' : 'sr-only'} role="status">
-        {filtering && (count > 0 ? labels.found(digits(count)) : labels.none)}
-      </p>
       <div className="topics-scroll" ref={scrollRef}>
+        <div className="topics-menu-row">
+          <label className="topics-field">
+            <Icon name="search" size={16} />
+            <input
+              type="text"
+              lang="bn"
+              value={text}
+              placeholder={labels.search}
+              aria-label={labels.search}
+              autoComplete="off"
+              onChange={(event) => setText(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') event.preventDefault();
+              }}
+            />
+          </label>
+          <select
+            className="topics-sort"
+            aria-label="সাজান"
+            value={sortOptions.some((option) => option.value === sort) ? sort : sortOptions[0].value}
+            onChange={(event) => router.replace(sortHref(event.target.value), { scroll: false })}
+          >
+            {sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        </div>
+        <p className={filtering && count === 0 ? 'topics-filter-none' : 'sr-only'} role="status">
+          {filtering && (count > 0 ? labels.found(digits(count)) : labels.none)}
+        </p>
         {items.length === 0 && empty}
-        {blocks.map(({ letter, names }) => (
-          <section key={letter} className="topics-block" aria-labelledby={`topics-letter-${letter}`}>
-            <h3 className="topics-letter" id={`topics-letter-${letter}`}>{letter}</h3>
-            <ul className="topics-chips">
+        {blocks.map(({ letter, names }) => {
+          const list = (
+            <ul className={countOf ? 'topics-rows' : 'topics-chips'}>
               {names.map((item) => (
                 <li key={keyOf(item)}>
                   <Link
                     href={hrefOf(item)}
-                    className="topics-chip"
+                    className={countOf ? 'topics-row' : 'topics-chip'}
                     aria-current={isCurrent(item) ? 'page' : undefined}
                     scroll={false}
                     onClick={pick}
                   >
-                    {nameOf(item)}
+                    {countOf ? (
+                      <>
+                        <span className="topics-row-name">{nameOf(item)}</span>
+                        <span className="topics-row-count">{digits(countOf(item))}</span>
+                      </>
+                    ) : (
+                      nameOf(item)
+                    )}
                   </Link>
                 </li>
               ))}
             </ul>
-          </section>
-        ))}
+          );
+          if (flat) return <div key="flat">{list}</div>;
+          return (
+            <section key={letter} className="topics-block" aria-labelledby={`topics-letter-${letter}`}>
+              <h3 className="topics-letter" id={`topics-letter-${letter}`}>{letter}</h3>
+              {list}
+            </section>
+          );
+        })}
       </div>
     </>
   );

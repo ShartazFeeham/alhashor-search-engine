@@ -5,7 +5,7 @@ import { normalizeBengali } from '../Helpers/bengali';
 export const LETTER_ORDER = Array.from('অআইঈউঊঋএঐওঔ' + 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ');
 
 const collator = typeof Intl !== 'undefined' ? new Intl.Collator('bn') : null;
-const compareNames = (a, b) => (collator ? collator.compare(a, b) : 0) || (a < b ? -1 : a > b ? 1 : 0);
+export const compareNames = (a, b) => (collator ? collator.compare(a, b) : 0) || (a < b ? -1 : a > b ? 1 : 0);
 
 // The first letter of a name once normalised (stray spaces and joiners ignored).
 export function firstLetter(name) {

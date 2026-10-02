@@ -50,13 +50,13 @@ describe('/narrators with no narrator chosen', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'বর্ণনাকারী' })).toBeInTheDocument();
     expect(screen.getByText(NOTE)).toBeInTheDocument();
     expect(screen.getByText('একজন বর্ণনাকারী বেছে নিন')).toBeInTheDocument();
-    await screen.findByRole('link', { name: 'আয়িশা' });
+    await screen.findByRole('link', { name: /^আয়িশা [০-৯,]+$/ });
   });
 
   test('says it is looking while the index loads', async () => {
     show('/narrators');
     expect(screen.getByText('খুঁজছি...')).toBeInTheDocument();
-    await screen.findByRole('link', { name: 'আয়িশা' });
+    await screen.findByRole('link', { name: /^আয়িশা [০-৯,]+$/ });
     expect(screen.queryByText('খুঁজছি...')).not.toBeInTheDocument();
   });
 
@@ -66,7 +66,7 @@ describe('/narrators with no narrator chosen', () => {
     expect(await screen.findByText(/বর্ণনাকারীদের তালিকা আনা যায়নি/)).toBeInTheDocument();
     serveRealData();
     fireEvent.click(screen.getByRole('button', { name: 'আবার চেষ্টা করুন' }));
-    expect(await screen.findByRole('link', { name: 'আয়িশা' })).toBeInTheDocument();
+    expect(await screen.findByRole('link', { name: /^আয়িশা [০-৯,]+$/ })).toBeInTheDocument();
     expect(screen.queryByText(/বর্ণনাকারীদের তালিকা আনা যায়নি/)).not.toBeInTheDocument();
   });
 });
@@ -103,10 +103,10 @@ describe('one narrator (/narrators?name=<id>)', () => {
   });
 
   test('the pager keeps the book and the sort in the address', async () => {
-    show('/narrators?name=aisha&book=bukhari&sort=desc');
+    show('/narrators?name=aisha&book=bukhari&sort=name-desc');
     const pager = await screen.findByRole('navigation', { name: 'পাতা' });
     fireEvent.click(within(pager).getByRole('button', { name: /পরের/ }));
-    expect(address()).toBe('/narrators?name=aisha&page=2&book=bukhari&sort=desc');
+    expect(address()).toBe('/narrators?name=aisha&page=2&book=bukhari&sort=name-desc');
     await screen.findAllByText(/হাদীস নং/);
   });
 
@@ -151,7 +151,7 @@ describe('focus', () => {
     const heading = await screen.findByRole('heading', { level: 2, name: new RegExp(AISHA[1]) });
     expect(heading).toHaveAttribute('tabindex', '-1');
     expect(heading).not.toHaveFocus();
-    fireEvent.click(screen.getByRole('link', { name: 'আবূ হুরায়রা' }));
+    fireEvent.click(screen.getByRole('link', { name: /^আবূ হুরায়রা [০-৯,]+$/ }));
     await waitFor(() => expect(screen.getByRole('heading', { level: 2, name: /আবূ হুরায়রা/ })).toHaveFocus());
     await screen.findAllByText(/হাদীস নং/);
   });

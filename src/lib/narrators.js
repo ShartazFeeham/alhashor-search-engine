@@ -15,15 +15,26 @@ export const NARRATORS_PATH = '/narrators';
 export const indexUrl = () => `${BASE_PATH}/json/narrators/index.json`;
 export const narratorUrl = (id) => `${BASE_PATH}/json/narrators/${encodeURIComponent(id)}.json`;
 
+// The sorts of the narrators menu: by hadis count (most first is the default) or by name. The old
+// "?sort=desc" and "?sort=asc" links mean the name sorts. Anything else is the default.
+export const NARRATOR_SORTS = ['count-desc', 'count-asc', 'name-asc', 'name-desc'];
+export const DEFAULT_SORT = 'count-desc';
+export function narratorSortFrom(param) {
+  if (param === 'desc') return 'name-desc';
+  if (param === 'asc') return 'name-asc';
+  return NARRATOR_SORTS.includes(param) ? param : DEFAULT_SORT;
+}
+
 // The address of a narrator's page (0-based `page`; the first page has no "?page="), optionally
-// narrowed to one book ('all' or a book id); `sort` 'desc' only orders the menu. No id is the
-// list of narrators.
-export function narratorHref(id, page = 0, book = 'all', sort = 'asc') {
+// narrowed to one book ('all' or a book id); `sort` only orders the menu (see narratorSortFrom;
+// the default, most hadis first, is left out). No id is the list of narrators.
+export function narratorHref(id, page = 0, book = 'all', sort = DEFAULT_SORT) {
   const params = new URLSearchParams();
   if (id) params.set('name', id);
   if (id && page > 0) params.set('page', String(page + 1));
   if (id && bookById(book) && book !== 'all') params.set('book', book);
-  if (sort === 'desc') params.set('sort', 'desc');
+  const order = narratorSortFrom(sort);
+  if (order !== DEFAULT_SORT) params.set('sort', order);
   const query = params.toString();
   return query ? `${NARRATORS_PATH}?${query}` : NARRATORS_PATH;
 }

@@ -54,10 +54,11 @@ const opener = () => screen.queryByRole('button', { name: 'বর্ণনাক
 const address = () => decodeURIComponent(getUrl().pathname + getUrl().search);
 const menu = () => screen.getByRole('navigation', { name: 'বর্ণনাকারীসূচি' });
 const chips = () => within(menu()).getAllByRole('link');
+const nameText = (row) => row.querySelector('.topics-row-name').textContent;
 const box = () => screen.getByRole('textbox', { name: 'বর্ণনাকারী খুঁজুন' });
 const sortBox = () => screen.getByRole('combobox', { name: 'সাজান' });
 const headings = () => within(menu()).getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-const loaded = () => screen.findByRole('link', { name: 'আবূ হুরায়রা' });
+const loaded = () => screen.findByRole('link', { name: /^আবূ হুরায়রা [০-৯,]+$/ });
 
 describe('the menu on a desktop (900px and wider)', () => {
   test('is always open, once, with the search, the sort and no overlay or opener button', async () => {
@@ -71,12 +72,12 @@ describe('the menu on a desktop (900px and wider)', () => {
     expect(box().getAttribute('placeholder')).toBe('বর্ণনাকারী খুঁজুন');
   });
 
-  test('lists every narrator once as a compact chip, in blocks with a heading for the first letter', async () => {
-    show('/narrators', 1200);
+  test('with the name sorts the narrators are in blocks with a heading for the first letter, one row each', async () => {
+    show('/narrators?sort=name-asc', 1200);
     await loaded();
     expect(chips()).toHaveLength(INDEX.length);
-    expect(chips().every((chip) => chip.classList.contains('topics-chip'))).toBe(true);
-    const names = chips().map((chip) => normalizeBengali(chip.textContent));
+    expect(chips().every((chip) => chip.classList.contains('topics-row'))).toBe(true);
+    const names = chips().map((chip) => normalizeBengali(nameText(chip)));
     expect(new Set(names).size).toBe(names.length);
     const shown = headings();
     expect(shown[0]).toBe('অ');
@@ -93,36 +94,36 @@ describe('the menu on a desktop (900px and wider)', () => {
     expect(chips().filter((link) => link.hasAttribute('aria-current'))).toHaveLength(1);
   });
 
-  test('the sort is ascending by default and descending with &sort=desc', async () => {
+  test('the name sorts follow the collated order of the blocks (see NarratorsCounts.test.jsx for the counts)', async () => {
     const first = (blocks) => blocks.flatMap((block) => block.names);
     const asc = first(groupTopics(NAMES, 'asc'));
     const desc = first(groupTopics(NAMES, 'desc'));
-    const view = show('/narrators', 1200);
+    const view = show('/narrators?sort=name-asc', 1200);
     await loaded();
-    expect(sortBox()).toHaveValue('asc');
-    expect(chips().slice(0, 5).map((c) => c.textContent)).toEqual(asc.slice(0, 5));
+    expect(sortBox()).toHaveValue('name-asc');
+    expect(chips().slice(0, 5).map(nameText)).toEqual(asc.slice(0, 5));
     view.unmount();
-    show('/narrators?sort=desc', 1200);
+    show('/narrators?sort=name-desc', 1200);
     await loaded();
-    expect(sortBox()).toHaveValue('desc');
-    expect(chips().slice(0, 5).map((c) => c.textContent)).toEqual(desc.slice(0, 5));
+    expect(sortBox()).toHaveValue('name-desc');
+    expect(chips().slice(0, 5).map(nameText)).toEqual(desc.slice(0, 5));
   });
 
-  test('changing the sort keeps the narrator and puts &sort=desc in the address; the links keep it', async () => {
+  test('changing the sort keeps the narrator and puts it in the address; the links keep it', async () => {
     show('/narrators?name=abu-hurayrah', 1200);
     await loaded();
-    fireEvent.change(sortBox(), { target: { value: 'desc' } });
-    expect(address()).toBe('/narrators?name=abu-hurayrah&sort=desc');
-    expect(sortBox()).toHaveValue('desc');
-    expect(decodeURIComponent(screen.getByRole('link', { name: 'আয়িশা' }).getAttribute('href'))).toBe('/narrators?name=aisha&sort=desc');
+    fireEvent.change(sortBox(), { target: { value: 'name-desc' } });
+    expect(address()).toBe('/narrators?name=abu-hurayrah&sort=name-desc');
+    expect(sortBox()).toHaveValue('name-desc');
+    expect(decodeURIComponent(screen.getByRole('link', { name: /^আয়িশা [০-৯,]+$/ }).getAttribute('href'))).toBe('/narrators?name=aisha&sort=name-desc');
   });
 
   test('the search filters live, hides empty blocks and says so when nothing is found', async () => {
-    show('/narrators', 1200);
+    show('/narrators?sort=name-asc', 1200);
     await loaded();
     const before = headings().length;
     fireEvent.change(box(), { target: { value: 'আয়িশা' } });
-    expect(chips().every((chip) => /আয়িশা/.test(chip.textContent.normalize('NFC')))).toBe(true);
+    expect(chips().every((chip) => /আয়িশা/.test(nameText(chip).normalize('NFC')))).toBe(true);
     expect(headings().length).toBeLessThan(before);
     expect(headings()).toHaveLength(1);
     fireEvent.change(box(), { target: { value: 'ঝঝঝঝঝ' } });
@@ -133,7 +134,7 @@ describe('the menu on a desktop (900px and wider)', () => {
 
   test('choosing a narrator goes to /narrators?name=<id> and keeps the menu', async () => {
     show('/narrators', 1200);
-    fireEvent.click(await screen.findByRole('link', { name: 'আয়িশা' }));
+    fireEvent.click(await screen.findByRole('link', { name: /^আয়িশা [০-৯,]+$/ }));
     expect(address()).toBe('/narrators?name=aisha');
     expect(screen.getAllByRole('navigation', { name: 'বর্ণনাকারীসূচি' })).toHaveLength(1);
     expect(await screen.findByRole('heading', { level: 2, name: /আয়িশা/ })).toBeInTheDocument();
@@ -156,7 +157,7 @@ describe('the menu on a phone (under 900px)', () => {
     expect(within(box1).getByRole('button', { name: 'বন্ধ করুন' })).toHaveTextContent('×');
     expect(document.body.style.overflow).toBe('hidden');
     expect(screen.getAllByRole('textbox', { name: 'বর্ণনাকারী খুঁজুন' })).toHaveLength(1);
-    await within(box1).findByRole('link', { name: 'আয়িশা' });
+    await within(box1).findByRole('link', { name: /^আয়িশা [০-৯,]+$/ });
   });
 
   test('with a narrator the overlay is closed and a slim button at the top reopens it', async () => {
@@ -175,7 +176,7 @@ describe('the menu on a phone (under 900px)', () => {
 
   test('choosing a narrator closes the overlay and shows that narrator', async () => {
     show('/narrators', 390);
-    fireEvent.click(await within(dialog()).findByRole('link', { name: 'আয়িশা' }));
+    fireEvent.click(await within(dialog()).findByRole('link', { name: /^আয়িশা [০-৯,]+$/ }));
     expect(address()).toBe('/narrators?name=aisha');
     expect(dialog()).not.toBeInTheDocument();
     expect(opener()).toBeInTheDocument();
@@ -201,7 +202,7 @@ describe('the menu on a phone (under 900px)', () => {
     expect(opener()).toHaveFocus();
     fireEvent.click(opener());
     expect(dialog()).toBeInTheDocument();
-    await within(dialog()).findByRole('link', { name: 'আয়িশা' });
+    await within(dialog()).findByRole('link', { name: /^আয়িশা [০-৯,]+$/ });
   });
 });
 
@@ -223,11 +224,11 @@ describe('the listing (the one of /search and /topics)', () => {
   });
 
   test('a book chip and the pager change the address (keeping the sort)', async () => {
-    show('/narrators?name=abu-hurayrah&sort=desc', 1200);
+    show('/narrators?name=abu-hurayrah&sort=name-desc', 1200);
     const filter = await screen.findByRole('group', { name: 'বই অনুযায়ী ছাঁকুন' });
     fireEvent.click(within(filter).getByRole('button', { name: /মুসলিম/ }));
-    expect(address()).toBe('/narrators?name=abu-hurayrah&book=muslim&sort=desc');
+    expect(address()).toBe('/narrators?name=abu-hurayrah&book=muslim&sort=name-desc');
     fireEvent.click(within(screen.getByRole('navigation', { name: 'পাতা' })).getByRole('button', { name: /পরের/ }));
-    expect(address()).toBe('/narrators?name=abu-hurayrah&page=2&book=muslim&sort=desc');
+    expect(address()).toBe('/narrators?name=abu-hurayrah&page=2&book=muslim&sort=name-desc');
   });
 });

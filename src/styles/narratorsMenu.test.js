@@ -22,3 +22,26 @@ test('the old narrators layout is gone: no narr- classes, no narrators.css, one 
   expect(read('src/narrators/NarratorsPage.jsx')).not.toMatch(/narr-/);
   expect(read('src/topics/TopicIndex.jsx')).toContain('NameMenu');
 });
+
+const css = read('src/styles/topics.css');
+const rule = (selector) => {
+  const start = css.indexOf(`${selector}{`);
+  if (start === -1) throw new Error(`no rule ${selector}`);
+  return css.slice(start + selector.length + 1, css.indexOf('}', start));
+};
+
+test('a narrator is one row of the menu width: 36px high, name left with an ellipsis, count right in muted tabular numbers', () => {
+  const row = rule('.topics-row');
+  expect(row).toMatch(/display:flex/);
+  expect(row).toMatch(/height:36px/);
+  expect(row).toMatch(/font-size:13px/);
+  expect(rule('.topics-row-name')).toMatch(/flex:1/);
+  expect(rule('.topics-row-name')).toMatch(/min-width:0/);
+  expect(rule('.topics-row-name')).toMatch(/text-overflow:ellipsis/);
+  expect(rule('.topics-row-name')).toMatch(/white-space:nowrap/);
+  const count = rule('.topics-row-count');
+  expect(count).toMatch(/margin-left:auto|flex:none/);
+  expect(count).toMatch(/color:var\(--ink2\)/);
+  expect(count).toMatch(/font-variant-numeric:tabular-nums/);
+  expect(rule('.topics-row::after')).toMatch(/inset:-4px 0/);
+});
