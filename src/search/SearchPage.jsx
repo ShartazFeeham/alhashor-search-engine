@@ -17,7 +17,7 @@ import Pager from './Pager';
 import ResultItem from './ResultItem';
 import SearchBox from './SearchBox';
 import { searchClient } from './searchClient';
-import { prefixFromSearch } from './searchConfig';
+import { switchParams } from './searchConfig';
 import { normalizeQuery } from './searchIndex';
 import { useProximity } from './useProximity';
 
@@ -47,9 +47,10 @@ export default function SearchPage() {
   const bookParam = params.get('book');
   const book = BOOKS.some((b) => b.id === bookParam) ? bookParam : 'all';
   const near = params.get('near') === '1';
-  // ?idx=2|3 is a developer switch (searchConfig.js): it stays in the address when the search changes
-  const idx = prefixFromSearch('tags', params.toString());
-  const withSwitch = (next) => (idx ? { ...next, idx: String(idx) } : next);
+  // ?idx=2|3, ?sub=2|3 and ?cap= are developer switches (searchConfig.js): they stay in the address
+  // when the search changes
+  const switches = switchParams(params.toString());
+  const withSwitch = (next) => ({ ...next, ...switches });
 
   const [text, setText] = useState(query);
   const [tags, setTags] = useState([]);

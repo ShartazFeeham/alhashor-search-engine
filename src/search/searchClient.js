@@ -7,10 +7,11 @@
 // for a search never throws: a failure gives no results.
 //
 // The search switches (searchConfig.js) are read from the page's address, which a worker cannot
-// see, so each request reads the tags prefix here and carries it, to the worker in its message and
-// to the local index in its options.
+// see, so each request reads the switches here (the tags prefix, the substring prefix and the cap on
+// the containing words) and carries them, to the worker in its message and to the local index in
+// its options.
 
-import { getTagsPrefix } from './searchConfig';
+import { getContainingCap, getSubstringPrefix, getTagsPrefix } from './searchConfig';
 import { searchTags, suggest } from './searchIndex';
 
 export function createSearchClient({ startWorker, index }) {
@@ -54,7 +55,7 @@ export function createSearchClient({ startWorker, index }) {
 
   function request(type, payload) {
     const id = nextId++;
-    const tagsPrefix = getTagsPrefix();
+    const switches = { tagsPrefix: getTagsPrefix(), substringPrefix: getSubstringPrefix(), containingCap: getContainingCap() };
     let settle;
     let done = false;
     let cancelled = false;
@@ -70,8 +71,8 @@ export function createSearchClient({ startWorker, index }) {
     const runHere = () => {
       const isCancelled = () => cancelled;
       const work = type === 'search'
-        ? index.searchTags(payload.words, { isCancelled, tagsPrefix })
-        : index.suggest(payload.words, { resultCount: payload.resultCount, isCancelled, tagsPrefix });
+        ? index.searchTags(payload.words, { isCancelled, ...switches })
+        : index.suggest(payload.words, { resultCount: payload.resultCount, isCancelled, ...switches });
       work.then(
         (value) => settle(cancelled ? null : value),
         () => settle(cancelled ? null : [])
@@ -82,7 +83,7 @@ export function createSearchClient({ startWorker, index }) {
     const target = workerOrNull();
     if (target) {
       pending.set(id, runHere);
-      target.postMessage({ id, type, ...payload, tagsPrefix });
+      target.postMessage({ id, type, ...payload, ...switches });
     } else {
       runHere();
     }

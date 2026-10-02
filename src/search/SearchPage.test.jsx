@@ -83,6 +83,20 @@ describe('the developer switch ?idx=2|3 stays in the address while searching', (
     search('রোজা');
     expect(where()).toHaveTextContent(/^\/search\?q=রোজা$/);
   });
+
+  test('?sub=2|3 and ?cap= stay too', () => {
+    serve({});
+    renderSearch('/search?q=x&idx=2&sub=3&cap=0&near=1');
+    search('রোজা');
+    expect(where()).toHaveTextContent(/^\/search\?q=রোজা&near=1&idx=2&sub=3&cap=0$/);
+  });
+
+  test('a sub or cap that is not valid is dropped', () => {
+    serve({});
+    renderSearch('/search?q=x&sub=7&cap=501');
+    search('রোজা');
+    expect(where()).toHaveTextContent(/^\/search\?q=রোজা$/);
+  });
 });
 
 test('an empty search does nothing', () => {

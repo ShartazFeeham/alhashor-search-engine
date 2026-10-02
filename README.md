@@ -67,13 +67,32 @@ public/json/
                                  letters: the whole word and "_"); 9,655 files, 21.6 MB, made from
                                  tags/ by scripts/build-index-3.mjs. The search reads these by default;
                                  ?idx=2 on /search switches back to tags/ (see src/search/searchConfig.js)
-  substring/<..>.json            word -> longer words containing it; 1,164 files (still two letters)
+  substring/<first two letters>.json  word -> longer words containing it; 1,164 files, 8.6 MB (the lists
+                                 are in no useful order)
+  substring3/<first three letters of the word>.json  the same keys cut at three letters (a key of fewer
+                                 than three letters: the whole key and "_"); 6,123 files, 8.6 MB, the
+                                 largest কার.json 126 KB (the largest 2-letter file is 351 KB). Each list is
+                                 sorted by the words' hadis count, the most first, so the search can take
+                                 the first N (the cap). Made from substring/ and tags/ by
+                                 scripts/build-substring-3.mjs. The search reads these by default
   short-hadis.json               numbers of hadis of 60 words or fewer, per book code (daily pick)
   related/<CODE>-<n>.json        up to 3 related hadis per hadis, 100 hadis per shard (BUK-0.json ...)
 docs/         redesign-plan.md (decisions, phases, deviations), redesign-ideas.md, design/ (D2 and D5 references)
 ```
 
 Tests sit next to the code they cover (`*.test.js`, `*.test.jsx`). Some use the real files in `public/json`.
+
+### Search switches
+
+The search reads its settings from `src/search/searchConfig.js`. Three of them can be overridden on the page address of `/search` at any moment (a developer switch: nothing in Settings; an invalid value is ignored, and a switch stays in the address while the visitor searches again). The page hands the values to the Web Worker with each request.
+
+| Switch | Values | Default | What it does |
+|---|---|---|---|
+| `?idx=` | `2`, `3` | `3` | word files: `tags/` (2 letters) or `tags3/` (3 letters) |
+| `?sub=` | `2`, `3` | `3` | containing-word files: `substring/` or `substring3/` |
+| `?cap=` | `0` (off), `1` to `500` | `50` | how many of the longer words that contain a query word have their `tags` file loaded: the first N of the word's `substring3` list (the ones with the most hadis). Works only with `?sub=3`; with `?sub=2` it is ignored |
+
+`?idx=2&sub=2` is exactly the old behaviour, `?sub=3&cap=0` finds the same hadis in the same order as `?sub=2` but opens many more files for common words (about 4,900 against 2,070 for 20 common words), and the default (`cap=50`) opens about 360 of them while keeping 98% of the hadis (more in `docs/redesign-plan.md`).
 
 ## Self-contained rule
 
@@ -101,6 +120,7 @@ Run once from the repo root when the data changes. Both read `public/json/hadis`
 
 - `node scripts/build-short-hadis.mjs` writes `public/json/short-hadis.json` (hadis of 60 words or fewer, used by the daily pick).
 - `node scripts/build-index-3.mjs` regroups `public/json/tags/*.json` into `public/json/tags3/<first three letters>.json` (no network; the same output every time; it reads `tags/` and replaces `tags3/`; `src/lib/indexShards.test.js` checks that both folders hold the same words and tags). Run it again whenever `tags/` changes.
+- `node scripts/build-substring-3.mjs` regroups `public/json/substring/*.json` into `public/json/substring3/<first three letters of the key>.json` and sorts each list by the words' hadis count (read from `public/json/tags`), the most first, ties by code point order (no network; the same output every time; about 4 s; it replaces `substring3/`). `src/lib/substringShards.test.js` checks that both folders hold the same (key, word) pairs and that every list is sorted. Run it again whenever `substring/` or `tags/` changes.
 - `node scripts/build-related.mjs` writes `public/json/related/<CODE>-<n>.json`: for each hadis up to 3 related ones, by words they share weighted by rarity, with a small bonus for another book; two near-identical texts in different books are marked as the same report. The method is described at the top of the script.
 
 ## Deploy notes

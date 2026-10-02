@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { beforeEach, vi } from 'vitest';
 import { clearHadisTextCache } from './lib/useHadisText';
 import { resetNavigation } from './test/nextNavigation';
-import { resetPrefixesForTests, setTagsPrefixForTests } from './search/searchConfig';
+import { resetPrefixesForTests, setContainingCapForTests, setSubstringPrefixForTests, setTagsPrefixForTests } from './search/searchConfig';
 
 // Every test runs against in-memory versions of the Next.js router and link.
 vi.mock('next/navigation', () => import('./test/nextNavigation'));
@@ -28,8 +28,12 @@ beforeEach(() => {
   localStorage.clear();
   resetNavigation();
   clearHadisTextCache();
-  // The older search tests serve 2-letter data files (/json/tags/xx.json), so every test starts on
-  // the 2-letter layout; the tests of the 3-letter layout pin it themselves (setTagsPrefixForTests).
+  // The older search tests serve 2-letter data files (/json/tags/xx.json, /json/substring/xx.json)
+  // and expect every containing word to be loaded, so every test starts on the 2-letter layouts with
+  // the cap off; the tests of the 3-letter layouts and of the cap pin them themselves
+  // (setTagsPrefixForTests, setSubstringPrefixForTests, setContainingCapForTests).
   resetPrefixesForTests();
   setTagsPrefixForTests(2);
+  setSubstringPrefixForTests(2);
+  setContainingCapForTests(0);
 });

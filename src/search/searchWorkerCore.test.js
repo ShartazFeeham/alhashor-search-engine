@@ -125,6 +125,54 @@ describe('the tags prefix in the message', () => {
   });
 });
 
+describe('the substring prefix and the cap in the message', () => {
+  test('are handed to the index for a search and for a suggest', async () => {
+    const index = fakeIndex();
+    const handle = createWorkerHandler(index, () => {});
+    await handle({ id: 1, type: 'search', words: ['রোজা'], substringPrefix: 3, containingCap: 50 });
+    await handle({ id: 2, type: 'suggest', words: ['রোজা'], resultCount: 0, substringPrefix: 2, containingCap: 0 });
+    expect(index.calls[0][2]).toMatchObject({ substringPrefix: 3, containingCap: 50 });
+    expect(index.calls[1][2]).toMatchObject({ substringPrefix: 2, containingCap: 0 });
+  });
+
+  test('a message without them leaves the choice to the index', async () => {
+    const index = fakeIndex();
+    await createWorkerHandler(index, () => {})({ id: 1, type: 'search', words: ['রোজা'] });
+    expect(index.calls[0][2].substringPrefix).toBeUndefined();
+    expect(index.calls[0][2].containingCap).toBeUndefined();
+  });
+
+  test('with the real index: the worker reads the folder and the cap the message names, whatever its own configuration says', async () => {
+    const asked = [];
+    const posted = [];
+    const files = {
+      '/json/substring3/নাম.json': { নামায: ['নামাযা', 'নামাযে'] },
+      '/json/substring/না.json': { নামায: ['নামাযা', 'নামাযে'] },
+      '/json/tags/না.json': { নামায: ['BUK-1'], নামাযা: ['BUK-2'], নামাযে: ['BUK-3'] },
+    };
+    const load = async (url) => {
+      asked.push(url);
+      if (url in files) return files[url];
+      throw Object.assign(new Error('404'), { status: 404 });
+    };
+    const handle = createWorkerHandler(createSearchIndex(load), (message) => posted.push(message));
+    // setupTests pins the page to 2-letter files and the cap off
+    await handle({ id: 1, type: 'search', words: ['নামায'], substringPrefix: 3, containingCap: 1 });
+    expect(asked.filter((url) => url.includes('/json/substring'))).toEqual(['/json/substring3/নাম.json']);
+    expect(posted[0].value).toEqual(['BUK-1', 'BUK-2']); // one containing word only
+    await handle({ id: 2, type: 'search', words: ['নামায'], substringPrefix: 2, containingCap: 1 });
+    expect(asked.filter((url) => url.includes('/json/substring'))).toEqual(['/json/substring3/নাম.json', '/json/substring/না.json']);
+    expect(posted[1].value).toEqual(['BUK-1', 'BUK-2', 'BUK-3']); // 2-letter lists: the cap is ignored
+  });
+
+  test('values that are not valid are not trusted: the index falls back to its configuration', async () => {
+    const asked = [];
+    const handle = createWorkerHandler(createSearchIndex(async (url) => { asked.push(url); return {}; }), () => {});
+    await handle({ id: 1, type: 'search', words: ['নামায'], substringPrefix: 9, containingCap: 'many' });
+    expect(asked).toContain('/json/substring/না.json'); // 2: what setupTests pins
+  });
+});
+
 describe('the worker file', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/search/search.worker.js'), 'utf8');
 

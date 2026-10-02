@@ -1,8 +1,11 @@
 // Looks hadis up in the static data files under /json:
 //   tags/<first 2 characters>.json  or  tags3/<first 3 characters>.json   word -> hadis tags containing it
-//   substring/<first 2 characters>.json                                   word -> longer words that contain it
-// Which of the two tags folders is used is a switch (searchConfig.js): the default, ?idx=2|3 on the
-// page address, or a prefix given with the request (the Web Worker gets it that way).
+//   substring/<first 2 characters>.json  or  substring3/<first 3 characters>.json
+//                                                                         word -> longer words that contain it
+// Which of the two folders of each kind is used is a switch (searchConfig.js): the default, ?idx=2|3
+// (tags) and ?sub=2|3 (substring) on the page address, or a prefix given with the request (the Web
+// Worker gets it that way). substring3 lists are sorted by hadis count, the most first, which is what
+// lets `containingCap` (?cap=) load the tags files of only the first N containing words of a word.
 //
 // The files spell some Bengali letters two ways (য় as one character or as য + ়, ো as one
 // character or as ে + া, ...), and a word is filed under the first characters of whichever
@@ -14,7 +17,7 @@ import { BASE_PATH } from "../Helpers/basePath";
 import { normalizeBengali } from "../Helpers/bengali";
 import { candidatesFor, hasBengali, rankSuggestions } from "../lib/didYouMean";
 import { candidateShards } from "../lib/indexShards";
-import { folderFor, prefixOrDefault } from "./searchConfig";
+import { capOrDefault, folderFor, prefixOrDefault } from "./searchConfig";
 
 export { normalizeBengali };
 
@@ -36,10 +39,13 @@ export function normalizeQuery(text) {
     return text.replace(PUNCTUATION, "").split(/\s+/).filter(Boolean);
 }
 
-// The prefix lengths of one search: { tags, substring }. A value given with the request wins (and
-// must be a layout that exists), then the configured one.
-function layoutOf({ tagsPrefix, substringPrefix } = {}) {
-    return { tags: prefixOrDefault("tags", tagsPrefix), substring: prefixOrDefault("substring", substringPrefix) };
+// The switches of one search: { tags, substring, cap }, the prefix lengths of the two folders and the
+// cap on the containing words (0: off). A value given with the request wins (and must be a layout
+// that exists, or a cap from 0 to 500), then the configured one. The cap only works on the 3-letter
+// substring files, whose lists are sorted by hadis count; with the 2-letter ones it is off.
+function layoutOf({ tagsPrefix, substringPrefix, containingCap } = {}) {
+    const substring = prefixOrDefault("substring", substringPrefix);
+    return { tags: prefixOrDefault("tags", tagsPrefix), substring, cap: substring === 3 ? capOrDefault(containingCap) : 0 };
 }
 
 function fetchJson(url) {
@@ -62,13 +68,18 @@ function indexFile(data) {
     return index;
 }
 
-// Everything filed under a normalized word in the files given, spellings merged. Spellings are
-// merged in the order of their raw spelling, so the order of the entries does not depend on how the
-// files are cut (2 or 3 letters) or in what order a file lists its words.
-function entriesOf(indexes, normalized) {
+// Everything filed under a normalized word in the files given, one { word, entries } per spelling,
+// in the order of their raw spelling, so the order does not depend on how the files are cut (2 or 3
+// letters) or in what order a file lists its words.
+function spellingsOf(indexes, normalized) {
     const spellings = indexes.flatMap((index) => index.get(normalized) || []);
-    if (spellings.length === 1) return spellings[0].entries;
-    return spellings.sort((a, b) => (a.word < b.word ? -1 : a.word > b.word ? 1 : 0)).flatMap(({ entries }) => entries);
+    return spellings.length === 1 ? spellings : spellings.sort((a, b) => (a.word < b.word ? -1 : a.word > b.word ? 1 : 0));
+}
+
+// The entries of all the spellings, merged.
+function entriesOf(indexes, normalized) {
+    const spellings = spellingsOf(indexes, normalized);
+    return spellings.length === 1 ? spellings[0].entries : spellings.flatMap(({ entries }) => entries);
 }
 
 export function createSearchIndex(load = fetchJson) {
@@ -94,10 +105,29 @@ export function createSearchIndex(load = fetchJson) {
         return files.get(url);
     }
 
+    async function lookupSpellings(kind, word, layout) {
+        const normalized = normalizeBengali(word);
+        const indexes = await Promise.all(candidateShards(normalized, layout[kind]).map((shard) => loadFile(kind, shard, layout)));
+        return spellingsOf(indexes, normalized);
+    }
+
     async function lookup(kind, word, layout) {
         const normalized = normalizeBengali(word);
         const indexes = await Promise.all(candidateShards(normalized, layout[kind]).map((shard) => loadFile(kind, shard, layout)));
         return entriesOf(indexes, normalized);
+    }
+
+    // The longer words that contain a word, without repeats. With the cap on (layout.cap, 3-letter
+    // substring files only) the first `cap` words of each list: those have the most hadis. A word
+    // the data spells two ways has a list for each spelling, so each gets its own first `cap`.
+    // The words come back sorted: the order of a list differs between the two folders (substring3
+    // is by hadis count, substring is in no useful order), and the order the words are read in
+    // decides which of two equally good hadis comes first, which must not depend on the folder.
+    async function containingWords(word, layout) {
+        const spellings = await lookupSpellings("substring", word, layout);
+        const lists = spellings.map(({ entries }) => [...new Set(entries)]);
+        if (layout.cap > 0) lists.forEach((list, i) => { lists[i] = list.slice(0, layout.cap); });
+        return [...new Set(lists.flat())].sort();
     }
 
     // Map of tag -> true if the word itself is in that hadis, false if only a longer word containing it is.
@@ -105,14 +135,14 @@ export function createSearchIndex(load = fetchJson) {
     async function tagsForWord(word, shortQuery, layout, isCancelled = () => false) {
         const ownTags = lookup("tags", word, layout);
         const longerWords = shortQuery
-            ? lookup("substring", word, layout)
-            : ownTags.then((own) => (new Set(own).size > COMMON_WORD_HADIS ? [] : lookup("substring", word, layout)));
+            ? containingWords(word, layout)
+            : ownTags.then((own) => (new Set(own).size > COMMON_WORD_HADIS ? [] : containingWords(word, layout)));
         const [own, longer] = await Promise.all([ownTags, longerWords]);
         if (isCancelled()) return new Map();
 
         const found = new Map();
         own.forEach((tag) => found.set(tag, true));
-        const longerTags = await Promise.all([...new Set(longer)].map((longerWord) => lookup("tags", longerWord, layout)));
+        const longerTags = await Promise.all(longer.map((longerWord) => lookup("tags", longerWord, layout)));
         longerTags.forEach((list) => list.forEach((tag) => {
             if (!found.has(tag)) found.set(tag, false);
         }));
@@ -120,9 +150,10 @@ export function createSearchIndex(load = fetchJson) {
     }
 
     // Hadis tags, best matches first: the most of the searched words, then the most of them exactly.
-    // `tagsPrefix` (2 or 3, optional) chooses the tags folder for this search; see searchConfig.js.
-    async function searchTags(words, { requireAll = false, isCancelled = () => false, tagsPrefix } = {}) {
-        const layout = layoutOf({ tagsPrefix });
+    // `tagsPrefix` and `substringPrefix` (2 or 3, optional) choose the folders for this search and
+    // `containingCap` (0 to 500, optional) the cap on the containing words; see searchConfig.js.
+    async function searchTags(words, { requireAll = false, isCancelled = () => false, tagsPrefix, substringPrefix, containingCap } = {}) {
+        const layout = layoutOf({ tagsPrefix, substringPrefix, containingCap });
         const shortQuery = words.length < SHORT_QUERY_WORDS;
         const foundPerWord = await Promise.all(words.map((word) => tagsForWord(word, shortQuery, layout, isCancelled)));
         if (isCancelled()) return [];
@@ -149,7 +180,7 @@ export function createSearchIndex(load = fetchJson) {
     async function wordHits(word, enough, layout) {
         const own = new Set(await lookup("tags", word, layout)).size;
         if (own >= enough) return own;
-        if ((await lookup("substring", word, layout)).length === 0) return own;
+        if ((await containingWords(word, layout)).length === 0) return own;
         return (await tagsForWord(word, true, layout)).size;
     }
 
@@ -190,8 +221,8 @@ export function createSearchIndex(load = fetchJson) {
     // file) are checked against the data, and only ones that return more hadis are kept.
     // Returns up to three { query, changed: [{ from, to }], kind, hits }, the best first; every
     // weak word that has a better spelling is corrected in each, the first weak word in the ways listed.
-    async function suggest(words, { resultCount = 0, isCancelled = () => false, tagsPrefix } = {}) {
-        const layout = layoutOf({ tagsPrefix });
+    async function suggest(words, { resultCount = 0, isCancelled = () => false, tagsPrefix, substringPrefix, containingCap } = {}) {
+        const layout = layoutOf({ tagsPrefix, substringPrefix, containingCap });
         const enough = resultCount < FEW_RESULTS ? FEW_RESULTS : 1;
         const checkable = words.map((word, position) => ({ word, position })).filter(({ word }) => hasBengali(word));
         const hits = await Promise.all(checkable.map(({ word }) => wordHits(word, enough, layout)));

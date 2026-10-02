@@ -1,5 +1,5 @@
 import { createSearchClient } from './searchClient';
-import { setTagsPrefixForTests } from './searchConfig';
+import { setContainingCapForTests, setSubstringPrefixForTests, setTagsPrefixForTests } from './searchConfig';
 
 // A stand-in for the browser's Worker: records what is posted and lets a test answer it.
 class FakeWorker {
@@ -61,7 +61,7 @@ describe('search client with a worker', () => {
   test('posts the search to the worker and resolves with its answer', async () => {
     const { client, worker } = setup();
     const { promise } = client.search(['রোজা', 'নামায']);
-    expect(worker().sent).toEqual([{ id: expect.any(Number), type: 'search', words: ['রোজা', 'নামায'], tagsPrefix: 2 }]);
+    expect(worker().sent).toEqual([{ id: expect.any(Number), type: 'search', words: ['রোজা', 'নামায'], tagsPrefix: 2, substringPrefix: 2, containingCap: 0 }]);
     worker().reply({ id: worker().sent[0].id, type: 'result', value: ['BUK-1', 'BUK-2'] });
     expect(await promise).toEqual(['BUK-1', 'BUK-2']);
   });
@@ -227,5 +227,71 @@ describe('the tags prefix travels with every request', () => {
     worker().crash();
     await waiting.promise;
     expect(index.calls[0][2].tagsPrefix).toBe(3);
+  });
+});
+
+describe('the substring prefix and the cap travel with every request too', () => {
+  test('are read on the page and sent to the worker, with a search and with a suggest', () => {
+    const { client, worker } = setup();
+    setSubstringPrefixForTests(3);
+    setContainingCapForTests(50);
+    client.search(['রোজা']);
+    client.suggest(['রোজা'], { resultCount: 1 });
+    expect(worker().sent.map(({ type, substringPrefix, containingCap }) => [type, substringPrefix, containingCap]))
+      .toEqual([['search', 3, 50], ['suggest', 3, 50]]);
+  });
+
+  test('are read at each request, so a change of the address or switch takes effect on the next search', () => {
+    const { client, worker } = setup();
+    setSubstringPrefixForTests(3);
+    setContainingCapForTests(50);
+    client.search(['ক']);
+    setSubstringPrefixForTests(2);
+    setContainingCapForTests(0);
+    client.search(['খ']);
+    expect(worker().sent.map(({ substringPrefix, containingCap }) => [substringPrefix, containingCap])).toEqual([[3, 50], [2, 0]]);
+  });
+
+  test('the address is read on the page: ?sub=2&cap=20 reaches the worker, an invalid value does not', () => {
+    setSubstringPrefixForTests(null);
+    setContainingCapForTests(null);
+    try {
+      window.history.replaceState(null, '', '/search?q=x&sub=2&cap=20');
+      const first = setup();
+      first.client.search(['ক']);
+      expect(first.worker().sent[0]).toMatchObject({ substringPrefix: 2, containingCap: 20 });
+      window.history.replaceState(null, '', '/search?q=x&sub=7&cap=9000');
+      const second = setup();
+      second.client.search(['ক']);
+      expect(second.worker().sent[0]).toMatchObject({ substringPrefix: 3, containingCap: 50 });
+      window.history.replaceState(null, '', '/search?q=x&cap=0');
+      const third = setup();
+      third.client.search(['ক']);
+      expect(third.worker().sent[0]).toMatchObject({ substringPrefix: 3, containingCap: 0 });
+    } finally {
+      window.history.replaceState(null, '', '/');
+    }
+  });
+
+  test('on the main thread (no worker) the same values are handed to the index', async () => {
+    const index = localIndex();
+    const client = createSearchClient({ startWorker: null, index });
+    setSubstringPrefixForTests(3);
+    setContainingCapForTests(20);
+    await client.search(['রোজা']).promise;
+    await client.suggest(['রোজা'], { resultCount: 0 }).promise;
+    expect(index.calls.map(([, , options]) => [options.substringPrefix, options.containingCap])).toEqual([[3, 20], [3, 20]]);
+  });
+
+  test('when the worker fails part-way, the search runs here with the values it was asked with', async () => {
+    const { client, worker, index } = setup();
+    setSubstringPrefixForTests(3);
+    setContainingCapForTests(30);
+    const waiting = client.search(['ক']);
+    setSubstringPrefixForTests(2);
+    setContainingCapForTests(0);
+    worker().crash();
+    await waiting.promise;
+    expect(index.calls[0][2]).toMatchObject({ substringPrefix: 3, containingCap: 30 });
   });
 });
