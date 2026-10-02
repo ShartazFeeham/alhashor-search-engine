@@ -14,6 +14,13 @@ const withoutPublic = ['./public/**/*'];
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Dev only (`next build` and production never read it). The dev server answers
+  // its own /_next/* scripts and the HMR socket only to localhost unless the page's address is
+  // listed here. Opened from a phone at http://192.168.x.x:3000 the HTML arrives but every script
+  // is refused (403), so the page never hydrates: no search, no daily card. Patterns match the
+  // hostname only (one label per `*`): the home Wi-Fi (its address changes on reconnect), the
+  // other private ranges, and Bonjour names such as my-mac.local.
+  allowedDevOrigins: ['localhost', '127.0.0.1', '192.168.*.*', '10.*.*.*', '172.*.*.*', '*.local'],
   // Pin the project root: there is another package-lock.json higher up in the home folder.
   turbopack: { root: path.dirname(fileURLToPath(import.meta.url)) },
   outputFileTracingIncludes: {
