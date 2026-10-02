@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-// The hero search bar is the most important element of Home: dark text, accent border and glow,
-// a solid "খুঁজুন" pill, and a short one-time glow pulse that reduced motion switches off.
+// The hero search bar is the most important element of Home: muted text (as before), accent border and glow,
+// a solid "খুঁজুন" pill, and a continuous blinking glow that reduced motion switches off.
 const read = (name) => readFileSync(path.resolve(process.cwd(), 'src/styles', name), 'utf8');
 const home = read('home.css');
 const tokens = read('tokens.css');
@@ -45,18 +45,18 @@ const bar = rule(home, '.home-search');
 const token = (declaration, property) => new RegExp(`(?:^|;)${property}:var\\((--[\\w-]+)\\)`).exec(declaration)?.[1];
 
 describe('hero search bar stands out', () => {
-  test('text uses --ink (not --ink3) at weight 600, 17px', () => {
-    expect(token(bar, 'color')).toBe('--ink');
-    expect(bar).toMatch(/font-weight:600/);
-    expect(bar).toMatch(/font-size:17px/);
+  test('text is back to its earlier style: --ink3, inherited normal weight and size (no 600, no 17px)', () => {
+    expect(token(bar, 'color')).toBe('--ink3');
+    expect(bar).not.toMatch(/font-weight/);
+    expect(bar).not.toMatch(/font-size/);
   });
 
-  test.each(Object.keys(themes))('text on the bar background is at least 7:1 and darker than --ink3 in the %s theme', (name) => {
+  test.each(Object.keys(themes))('text on the bar background is at least 4.5:1 in the %s theme', (name) => {
     const t = themes[name];
     const bg = t[token(bar, 'background')];
     const fg = t[token(bar, 'color')];
-    expect(ratio(fg, bg)).toBeGreaterThanOrEqual(7);
-    expect(ratio(fg, bg)).toBeGreaterThan(ratio(t['--ink3'], bg));
+    console.log(`contrast ${name}: ${ratio(fg, bg).toFixed(2)}`);
+    expect(ratio(fg, bg)).toBeGreaterThanOrEqual(4.5);
   });
 
   test('2px accent border and an accent glow shadow, with a stronger hover and focus state', () => {
@@ -90,10 +90,16 @@ describe('hero search bar stands out', () => {
     expect(pill).toMatch(/flex:none/);
   });
 
-  test('a one-time two-cycle glow pulse, only when motion is allowed', () => {
-    expect(home).toMatch(/@keyframes home-search-pulse/);
-    const block = /@media \(prefers-reduced-motion: no-preference\)\{\s*\.home-search\{([^}]*)\}/.exec(home)?.[1] ?? '';
-    expect(block).toMatch(/animation:home-search-pulse [^;]* 2(?:;|$)/);
-    expect(home).not.toMatch(/infinite/);
+  test('a continuous blinking glow (infinite, box-shadow only), only when motion is allowed, paused on hover and focus', () => {
+    const keyframes = /@keyframes home-search-pulse\{([\s\S]*?\}\s*)\}/.exec(home)?.[1] ?? '';
+    expect(keyframes).toMatch(/0%,100%\{box-shadow:/);
+    expect(keyframes).toMatch(/50%\{box-shadow:[^}]*0 0 0 4px color-mix\(in srgb,var\(--accent\) 35%,transparent\)[^}]*0 0 26px 6px color-mix\(in srgb,var\(--accent\) 55%,transparent\)/);
+    expect(keyframes.replace(/box-shadow:[^}]*/g, '')).not.toMatch(/(?:width|height|margin|padding|top|left|transform)\s*:/);
+    const media = /@media \(prefers-reduced-motion: no-preference\)\{([\s\S]*?)\n\}/.exec(home)?.[1] ?? '';
+    const anim = /\.home-search\{([^}]*)\}/.exec(media)?.[1] ?? '';
+    expect(anim).toMatch(/animation:home-search-pulse 1\.[6-9]s ease-in-out infinite/);
+    expect(media).toMatch(/\.home-search:hover,\.home-search:focus-visible\{animation-play-state:paused\}/);
+    // outside the reduced-motion guard the bar stays steady
+    expect(home.replace(media, '')).not.toMatch(/animation:/);
   });
 });
