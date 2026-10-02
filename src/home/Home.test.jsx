@@ -222,13 +222,30 @@ describe('the daily hadis card', () => {
 describe('the new-features row', () => {
   const row = () => screen.getByRole('navigation', { name: 'নতুন সুবিধা' });
 
-  test('has exactly four cards: topics first, then the daily hadis, the plans and the narrators', () => {
+  test('has exactly four cards: topics, narrators, the daily hadis, then the plans', () => {
     renderHome();
-    expect(within(row()).getAllByRole('link').map((link) => [link.textContent, link.getAttribute('href')])).toEqual([
+    expect(within(row()).getAllByRole('link').map((link) => [link.getAttribute('aria-label') ?? link.querySelector('b').textContent, link.getAttribute('href')])).toEqual([
       ['বিষয়ভিত্তিক হাদীস', '/topics'],
+      ['বর্ণনাকারী', '/narrators'],
       ['আজকের হাদীস', '/daily'],
       ['পরিকল্পনা', '/daily?tab=plans'],
-      ['বর্ণনাকারী', '/narrators'],
+    ]);
+  });
+
+  test('each card has a short description under its title, which is its accessible description', () => {
+    renderHome();
+    const notes = within(row()).getAllByRole('link').map((link) => {
+      const note = link.querySelector('.home-quick-note');
+      expect(note).toBeInTheDocument();
+      expect(link).toHaveAccessibleDescription(note.textContent);
+      expect(link.querySelector('b').compareDocumentPosition(note) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      return note.textContent;
+    });
+    expect(notes).toEqual([
+      'বিষয় ধরে হাদীস খুঁজুন',
+      'বর্ণনাকারী ধরে তাঁর হাদীস দেখুন',
+      'প্রতিদিন একটি নির্বাচিত হাদীস',
+      'দিনে একটি করে হাদীস, ধাপে ধাপে পড়ুন',
     ]);
   });
 

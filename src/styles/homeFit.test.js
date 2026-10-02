@@ -51,7 +51,7 @@ describe('Home first view: compact spacing', () => {
     expect(home).not.toMatch(/\.home-tile/);
   });
 
-  test('the four cards: 4 across on wide screens, 2 x 2 on phones, icon beside the text, 44px tall', () => {
+  test('the four cards: 4 across on wide screens, 2 x 2 on phones, icon beside the text, tall enough to tap', () => {
     expect(rule(daily, '.home-quick-links')).toMatch(/grid-template-columns:repeat\(2,1fr\)/);
     expect(wide(daily)).toMatch(/\.home-quick-links\{grid-template-columns:repeat\(4,1fr\)\}/);
     const card = rule(daily, '.home-quick-links a');
@@ -60,10 +60,13 @@ describe('Home first view: compact spacing', () => {
     expect(px(card, 'gap')).toBeLessThanOrEqual(8);
   });
 
-  test('the four cards are 50% taller than the old 44px: 66px, content centred', () => {
+  test('the four cards are thick enough for a title and a wrapped description: 96px, content centred', () => {
     const card = rule(daily, '.home-quick-links a');
-    expect(px(card, 'min-height')).toBe(66);
+    expect(px(card, 'min-height')).toBe(96);
     expect(card).toMatch(/align-items:center/);
+    expect(rule(daily, '.home-quick-text')).toMatch(/min-width:0/);
+    expect(rule(daily, '.home-quick-note')).toMatch(/overflow-wrap:anywhere/);
+    expect(px(rule(daily, '.home-quick-note'), 'font-size')).toBeGreaterThanOrEqual(12);
   });
 
   test('the shelf is compact (padding, plank) but the spines keep their 140 to 180 px length (heights are set in Home.jsx)', () => {

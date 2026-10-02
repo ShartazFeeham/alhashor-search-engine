@@ -13,6 +13,14 @@ const MOST = Math.max(...BOOKS.map(hadisCount));
 // Spine heights follow the real hadis counts, between 140 and 180 px.
 const spineHeight = (book) => Math.round(140 + (hadisCount(book) / MOST) * 40);
 
+// The new-features cards: a title and one plain line saying what the page is.
+const QUICK = [
+  { id: 'topics', href: '/topics', icon: 'tag', title: 'বিষয়ভিত্তিক হাদীস', note: 'বিষয় ধরে হাদীস খুঁজুন' },
+  { id: 'narrators', href: '/narrators', icon: 'user', title: 'বর্ণনাকারী', note: 'বর্ণনাকারী ধরে তাঁর হাদীস দেখুন' },
+  { id: 'daily', href: '/daily', icon: 'clock', title: 'আজকের হাদীস', note: 'প্রতিদিন একটি নির্বাচিত হাদীস' },
+  { id: 'plan', href: '/daily?tab=plans', icon: 'plan', title: 'পরিকল্পনা', note: 'দিনে একটি করে হাদীস, ধাপে ধাপে পড়ুন' },
+];
+
 export default function Home() {
   const digits = useDigits();
   return (
@@ -54,13 +62,16 @@ export default function Home() {
       <nav className="home-quick" aria-labelledby="home-quick-title">
         <h2 className="h2" id="home-quick-title">নতুন সুবিধা</h2>
         <div className="home-quick-links">
-          <Link href="/topics" aria-describedby="home-topics-note"><Icon name="tag" size={20} />বিষয়ভিত্তিক হাদীস</Link>
-          <Link href="/daily"><Icon name="clock" size={20} />আজকের হাদীস</Link>
-          <Link href="/daily?tab=plans"><Icon name="plan" size={20} />পরিকল্পনা</Link>
-          <Link href="/narrators" aria-describedby="home-narrators-note"><Icon name="user" size={20} />বর্ণনাকারী</Link>
+          {QUICK.map(({ id, href, icon, title, note }) => (
+            <Link key={id} href={href} aria-labelledby={`home-${id}-t`} aria-describedby={`home-${id}-n`}>
+              <Icon name={icon} size={22} />
+              <span className="home-quick-text">
+                <b id={`home-${id}-t`}>{title}</b>
+                <span className="home-quick-note" id={`home-${id}-n`}>{note}</span>
+              </span>
+            </Link>
+          ))}
         </div>
-        <span id="home-topics-note" hidden>নামাজ, রোজা, ঈমান, আমলসহ শতাধিক বিষয়</span>
-        <span id="home-narrators-note" hidden>সাহাবী ও রাবীদের নাম ধরে তাঁদের বর্ণিত হাদীস</span>
       </nav>
     </main>
   );
