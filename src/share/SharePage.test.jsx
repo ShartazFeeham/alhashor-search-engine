@@ -64,7 +64,7 @@ test('names the page and the hadis, shows a placeholder while the text loads', a
   expect(screen.getByLabelText('লোড হচ্ছে')).toBeInTheDocument();
   expect(await screen.findByRole('heading', { level: 1, name: 'শেয়ার করুন' })).toBeInTheDocument();
   expect(screen.getByText('বুখারী শরীফ - হাদীস নং ৬,৬২৮')).toBeInTheDocument();
-  expect(document.title).toBe('শেয়ার - বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+  expect(document.title).toBe('শেয়ার - বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
 });
 
 test('previews the card as a picture described by its text', async () => {
@@ -130,7 +130,7 @@ describe('image buttons', () => {
     await ready();
     fireEvent.click(screen.getByRole('button', { name: 'ছবি ডাউনলোড' }));
     await waitFor(() => expect(anchors).toHaveLength(1));
-    expect(anchors[0]).toEqual({ href: 'blob:card', download: 'boikotha-bukhari-6628.png' });
+    expect(anchors[0]).toEqual({ href: 'blob:card', download: 'alhashor-bukhari-6628.png' });
     expect(HTMLCanvasElement.prototype.toBlob).toHaveBeenCalledWith(expect.any(Function), 'image/png');
     expect(await screen.findByText('ছবি ডাউনলোড হচ্ছে')).toBeInTheDocument();
   });
@@ -169,7 +169,7 @@ describe('image buttons', () => {
     const data = native.mock.calls[0][0];
     expect(data.files).toHaveLength(1);
     expect(data.files[0]).toBeInstanceOf(File);
-    expect(data.files[0].name).toBe('boikotha-bukhari-6628.png');
+    expect(data.files[0].name).toBe('alhashor-bukhari-6628.png');
     expect(data.files[0].type).toBe('image/png');
     expect(data.title).toBe(CITE);
     expect(data.text).toBe(`${CITE}\n${URL_6628}`);

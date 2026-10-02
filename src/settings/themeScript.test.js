@@ -11,7 +11,7 @@ beforeEach(() => {
 });
 
 test('the inline script sets the reading size, line gap and width before first paint', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'sepia', size: 22, lineHeight: 2.1, width: 40 }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia', size: 22, lineHeight: 2.1, width: 40 }));
   run();
   expect(root.getAttribute('data-theme')).toBe('sepia');
   expect(root.style.getPropertyValue('--rs')).toBe('22px');
@@ -33,7 +33,7 @@ test.each([
   { size: '20', lineHeight: '1.6', width: '30' },
   { size: 'big', lineHeight: null, width: undefined },
 ])('the script clamps %j exactly as the settings code does', (saved) => {
-  localStorage.setItem('boikotha.settings', JSON.stringify(saved));
+  localStorage.setItem('alhashor.settings', JSON.stringify(saved));
   run();
   const clamped = clampSettings(saved);
   const get = (name) => root.style.getPropertyValue(name);
@@ -44,10 +44,10 @@ test.each([
 });
 
 test('unreadable saved text does not throw and changes nothing', () => {
-  localStorage.setItem('boikotha.settings', '{not json');
+  localStorage.setItem('alhashor.settings', '{not json');
   expect(run).not.toThrow();
   expect(root.style.getPropertyValue('--rs')).toBe('');
-  localStorage.setItem('boikotha.settings', 'null');
+  localStorage.setItem('alhashor.settings', 'null');
   expect(run).not.toThrow();
 });
 
@@ -64,7 +64,59 @@ test('blocked storage does not throw (reading localStorage itself throws)', () =
 });
 
 test('the theme is applied even when the reading numbers are unusable', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark', size: 'x' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'dark', size: 'x' }));
   run();
   expect(root.getAttribute('data-theme')).toBe('dark');
+});
+
+describe('settings saved under the old site name (boikotha.settings)', () => {
+  test('only the old key present: the theme and sizes are applied and copied to the new key', () => {
+    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark', size: 22 }));
+    run();
+    expect(root.getAttribute('data-theme')).toBe('dark');
+    expect(root.style.getPropertyValue('--rs')).toBe('22px');
+    expect(JSON.parse(localStorage.getItem('alhashor.settings'))).toEqual({ theme: 'dark', size: 22 });
+    expect(localStorage.getItem('boikotha.settings')).not.toBeNull();
+  });
+
+  test('only the new key present: it is used and the old key is not created', () => {
+    localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia', size: 20 }));
+    run();
+    expect(root.getAttribute('data-theme')).toBe('sepia');
+    expect(root.style.getPropertyValue('--rs')).toBe('20px');
+    expect(localStorage.getItem('boikotha.settings')).toBeNull();
+  });
+
+  test('both present: the new key wins and is left as it was', () => {
+    localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia', size: 20 }));
+    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark', size: 26 }));
+    run();
+    expect(root.getAttribute('data-theme')).toBe('sepia');
+    expect(root.style.getPropertyValue('--rs')).toBe('20px');
+    expect(JSON.parse(localStorage.getItem('alhashor.settings')).theme).toBe('sepia');
+  });
+
+  test('blocked storage (reading localStorage throws) changes nothing and does not throw', () => {
+    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
+    const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+    Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError'); } });
+    try {
+      expect(run).not.toThrow();
+      expect(root.hasAttribute('data-theme')).toBe(false);
+    } finally {
+      Object.defineProperty(globalThis, 'localStorage', original);
+    }
+  });
+
+  test('a write that fails (full storage) still applies the old settings', () => {
+    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
+    const original = localStorage.setItem;
+    localStorage.setItem = () => { throw new DOMException('full', 'QuotaExceededError'); };
+    try {
+      run();
+      expect(root.getAttribute('data-theme')).toBe('dark');
+    } finally {
+      localStorage.setItem = original;
+    }
+  });
 });

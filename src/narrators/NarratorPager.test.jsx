@@ -35,7 +35,7 @@ test('shows "page n / m" in the visitor\'s digits', () => {
 });
 
 test('shows English digits when the visitor chose them', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   show({ page: 2, lastPage: 5 });
   expect(pager()).toHaveTextContent('পাতা 3 / 6');
 });

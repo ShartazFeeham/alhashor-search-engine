@@ -53,7 +53,7 @@ export default function SharePage({ bookId, number }) {
   const title = `${book.full} - হাদীস নং ${digits(number)}`;
   const cite = citation(book, number, settings.digits);
   const url = status === 'ok' ? permanentUrl(bookId, number) : '';
-  const fileName = `boikotha-${bookId}-${number}.png`;
+  const fileName = `alhashor-${bookId}-${number}.png`;
 
   const chooseRatio = (next) => {
     if (next === ratio) return;

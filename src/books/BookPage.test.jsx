@@ -43,11 +43,11 @@ const cardNumbers = () =>
 describe('the page', () => {
   test('is titled with the book on every page (the pre-built title cannot know the page)', async () => {
     const { unmount } = show('muslim');
-    expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - BoiKotha');
+    expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - Alhashor');
     await screen.findByText(file('Muslim', 20));
     unmount();
     show('muslim', '/books/muslim?page=3');
-    expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - BoiKotha');
+    expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - Alhashor');
     await screen.findByText(file('Muslim', 60));
   });
 

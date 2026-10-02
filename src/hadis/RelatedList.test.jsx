@@ -95,7 +95,7 @@ test('shows the book badge of each item', async () => {
 
 test('numbers follow the digit style', async () => {
   serveShard();
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   show('nasai', 903);
   expect(await screen.findByRole('link', { name: 'তিরমিযী 243' })).toBeInTheDocument();
 });

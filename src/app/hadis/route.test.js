@@ -6,7 +6,7 @@ const at = (book, number) => ({ params: Promise.resolve({ book, number }) });
 
 test('the title names the book and the number in Bengali', async () => {
   const metadata = await generateMetadata(at('bukhari', '6628'));
-  expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+  expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
 });
 
 test('the description is the saying, and the preview tags and canonical address are absolute', async () => {
@@ -19,13 +19,13 @@ test('the description is the saying, and the preview tags and canonical address 
 
 test('a number with no file is titled as usual but kept out of search results', async () => {
   const metadata = await generateMetadata(at('bukhari', '63'));
-  expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬৩ - BoiKotha');
+  expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬৩ - Alhashor');
   expect(metadata.robots).toEqual({ index: false, follow: true });
 });
 
 test('an invalid address gets the not-found title and is kept out of search results', async () => {
   const metadata = await generateMetadata(at('bukhari', '0'));
-  expect(metadata.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha');
+  expect(metadata.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - Alhashor');
   expect(metadata.robots).toEqual({ index: false });
 });
 

@@ -13,7 +13,7 @@ test('uses Bengali digits by default', () => {
 });
 
 test('uses English digits when the visitor chose them', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   render(<SettingsProvider><Probe /></SettingsProvider>);
   expect(screen.getByTestId('out')).toHaveTextContent('6,628');
 });

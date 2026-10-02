@@ -95,7 +95,7 @@ test('the route answers with RSS read from the real texts', async () => {
 
 test('the daily page announces the feed to feed readers, with no other change to its title', () => {
   expect(dailyMetadata.alternates.types['application/rss+xml']).toBe('/daily/rss.xml');
-  expect(dailyMetadata.title).toBe('আজকের হাদীস - BoiKotha');
+  expect(dailyMetadata.title).toBe('আজকের হাদীস - Alhashor');
 });
 
 test('the route is rebuilt at most once an hour', async () => {

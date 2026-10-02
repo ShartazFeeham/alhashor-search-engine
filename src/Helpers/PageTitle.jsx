@@ -1,7 +1,7 @@
-const SITE = 'BoiKotha';
-const HOME_TITLE = 'BoiKotha - হাদীস সম্ভার';
+const SITE = 'Alhashor';
+const HOME_TITLE = 'Alhashor - হাদীস সম্ভার';
 
-// pageTitle() is the home title; pageTitle("হাদীস সার্চ") gives "হাদীস সার্চ - BoiKotha".
+// pageTitle() is the home title; pageTitle("হাদীস সার্চ") gives "হাদীস সার্চ - Alhashor".
 // Empty parts are skipped, so pageTitle(query, "হাদীস সার্চ") works before anything is typed.
 export function pageTitle(...parts) {
   const named = parts.filter(Boolean);

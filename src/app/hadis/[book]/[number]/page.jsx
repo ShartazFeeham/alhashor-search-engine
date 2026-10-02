@@ -26,7 +26,7 @@ async function textFor(book, number) {
 export async function generateMetadata({ params }) {
   const { book: slug, number: text } = await params;
   const parsed = parseHadisParams(slug, text);
-  if (!parsed) return { title: 'পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha', robots: { index: false } };
+  if (!parsed) return { title: 'পৃষ্ঠাটি পাওয়া যায়নি - Alhashor', robots: { index: false } };
   return hadisMetadata(parsed.book, parsed.number, await textFor(parsed.book, parsed.number));
 }
 

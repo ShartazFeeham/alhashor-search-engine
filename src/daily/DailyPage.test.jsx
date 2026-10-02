@@ -100,11 +100,11 @@ describe('the tab links', () => {
 // the page keeps, so a fresh load and a client-side visit agree. The tab names are the h1.
 describe('page titles', () => {
   test.each([
-    ['/daily', 'আজকের হাদীস - BoiKotha'],
-    ['/daily?tab=plans', 'আজকের হাদীস - BoiKotha'],
-    [`/daily?tab=plans&plan=${PLANS[0].id}`, 'আজকের হাদীস - BoiKotha'],
-    ['/daily?tab=khutbah', 'আজকের হাদীস - BoiKotha'],
-    ['/daily?tab=nonsense', 'আজকের হাদীস - BoiKotha'],
+    ['/daily', 'আজকের হাদীস - Alhashor'],
+    ['/daily?tab=plans', 'আজকের হাদীস - Alhashor'],
+    [`/daily?tab=plans&plan=${PLANS[0].id}`, 'আজকের হাদীস - Alhashor'],
+    ['/daily?tab=khutbah', 'আজকের হাদীস - Alhashor'],
+    ['/daily?tab=nonsense', 'আজকের হাদীস - Alhashor'],
   ])('%s is titled %s', (address, title) => {
     setUrl(address);
     show();

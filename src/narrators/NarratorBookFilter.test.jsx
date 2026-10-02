@@ -46,7 +46,7 @@ test('the chips keep the page where it is, and ask for the heading to take focus
 });
 
 test('English digits when the visitor chose them', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   show();
   expect(within(filter()).getByRole('link', { name: /বুখারী/ })).toHaveTextContent('বুখারী 1,500');
 });

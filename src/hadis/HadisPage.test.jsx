@@ -110,7 +110,7 @@ test('sets the page title', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);
   await loaded();
-  expect(document.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+  expect(document.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
 });
 
 describe('share', () => {

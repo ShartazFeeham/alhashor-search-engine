@@ -5,7 +5,7 @@ const BADGE = 96;
 const FOOTER = 150; // the rule, the citation and the site name
 const LINE_HEIGHT = 1.75;
 const LINK_ROOM = 64; // the "full hadis" line under an excerpt
-const SITE_NAME = 'BoiKotha · বইকথা';
+const SITE_NAME = 'Alhashor · বইকথা';
 
 // A rounded rectangle path (ctx.roundRect is not in every browser we serve).
 function roundedRect(ctx, x, y, w, h, r) {

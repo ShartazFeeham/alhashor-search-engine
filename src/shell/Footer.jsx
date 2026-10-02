@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="shell-footer-brand">
         <span className="shell-logo small"><Icon name="book" size={18} /></span>
         <div>
-          <b className="lat">BoiKotha</b> <b>বইকথা</b>
+          <b className="lat">Alhashor</b> <b>বইকথা</b>
           <div className="tiny">হাদীস সম্ভার</div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import {
+  LEGACY_KEY,
   MAX_COMPARE,
   STORAGE_KEY,
   addId,
@@ -138,5 +139,34 @@ describe('the selection kept for this visit (sessionStorage)', () => {
     expect(() => saveSelection(['bukhari-1'], blocked)).not.toThrow();
     expect(loadSelection(null)).toEqual([]);
     expect(() => saveSelection(['bukhari-1'], null)).not.toThrow();
+  });
+});
+
+describe('the selection saved under the old site name', () => {
+  const makeStorage = (initial = {}) => {
+    const data = new Map(Object.entries(initial));
+    return { getItem: (k) => (data.has(k) ? data.get(k) : null), setItem: (k, v) => data.set(k, v), data };
+  };
+
+  test('the keys are the new and the old name', () => {
+    expect(STORAGE_KEY).toBe('alhashor.compare');
+    expect(LEGACY_KEY).toBe('boikotha.compare');
+  });
+
+  test('only the old key present: the list is read and copied to the new key', () => {
+    const storage = makeStorage({ 'boikotha.compare': 'bukhari-1,muslim-5' });
+    expect(loadSelection(storage)).toEqual(['bukhari-1', 'muslim-5']);
+    expect(storage.data.get('alhashor.compare')).toBe('bukhari-1,muslim-5');
+  });
+
+  test('only the new key present', () => {
+    const storage = makeStorage({ 'alhashor.compare': 'muslim-5' });
+    expect(loadSelection(storage)).toEqual(['muslim-5']);
+    expect(storage.data.has('boikotha.compare')).toBe(false);
+  });
+
+  test('both present: the new key wins, even when it is an emptied list', () => {
+    expect(loadSelection(makeStorage({ 'alhashor.compare': 'muslim-5', 'boikotha.compare': 'bukhari-1' }))).toEqual(['muslim-5']);
+    expect(loadSelection(makeStorage({ 'alhashor.compare': '', 'boikotha.compare': 'bukhari-1' }))).toEqual([]);
   });
 });

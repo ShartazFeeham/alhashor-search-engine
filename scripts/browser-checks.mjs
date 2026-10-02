@@ -37,7 +37,7 @@ const report = (ok, what, detail = '') => {
   const page = await openPage(`${base}/`);
   try {
     await page.waitFor(`document.readyState === 'complete'`, 'the home page');
-    await page.eval(`localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }))`);
+    await page.eval(`localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'dark' }))`);
     await page.eval('location.reload()');
     await new Promise((resolve) => setTimeout(resolve, 800));
     await page.waitFor(`document.readyState === 'complete'`, 'the reloaded page');
@@ -67,7 +67,7 @@ const report = (ok, what, detail = '') => {
     }
     report(allRings, 'every control reached by Tab shows a focus ring', order.join(' | '));
     // The skip link is the first stop; then the brand, then the navigation.
-    report(order[0].includes('মূল অংশে') && order[1].includes('BoiKotha') && order.indexOf('হোম') < order.indexOf('হাদীস বই'),'the tab order follows the page (brand, then navigation)');
+    report(order[0].includes('মূল অংশে') && order[1].includes('Alhashor') && order.indexOf('হোম') < order.indexOf('হাদীস বই'),'the tab order follows the page (brand, then navigation)');
 
     const toggle = await page.eval(`(() => { const b = [...document.querySelectorAll('button')].find((e) => e.textContent.includes('বর্ণনায়')); b.focus(); return true; })()`);
     await page.key('Enter');

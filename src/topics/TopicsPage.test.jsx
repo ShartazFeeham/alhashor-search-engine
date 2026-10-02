@@ -49,7 +49,7 @@ const address = () => decodeURIComponent(getUrl().pathname + getUrl().search);
 describe('with no topic chosen', () => {
   test('is titled as the topics page and asks for a topic', () => {
     show('/topics');
-    expect(document.title).toBe('বিষয়ভিত্তিক হাদীস - BoiKotha');
+    expect(document.title).toBe('বিষয়ভিত্তিক হাদীস - Alhashor');
     expect(screen.getByRole('heading', { level: 1, name: 'বিষয়ভিত্তিক হাদীস' })).toBeInTheDocument();
     expect(screen.getByText('একটি বিষয় বেছে নিন')).toBeInTheDocument();
   });
@@ -67,7 +67,7 @@ describe('with no topic chosen', () => {
 describe('a chosen topic (/topics?topic=<name>)', () => {
   test('is titled with the topic', async () => {
     show('/topics?topic=ঈমান');
-    expect(document.title).toBe('ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha');
+    expect(document.title).toBe('ঈমান - বিষয়ভিত্তিক হাদীস - Alhashor');
     await screen.findAllByRole('button', { name: /কপি/ });
   });
 
@@ -85,7 +85,7 @@ describe('a chosen topic (/topics?topic=<name>)', () => {
   });
 
   test('numbers are shown in the visitor\'s digit style', async () => {
-    localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+    localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
     show('/topics?topic=ঈমান');
     expect(await screen.findByText(/মোট 45 টি হাদীস/)).toBeInTheDocument();
     expect(screen.getByText('1 - 20 পর্যন্ত দেখানো হচ্ছে')).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe('a chosen topic (/topics?topic=<name>)', () => {
     show('/topics?topic=জ্ঞান অর্জন', { search });
     await screen.findByText(/মোট ১ টি হাদীস/);
     expect(search).toHaveBeenCalledWith(['জ্ঞান', 'অর্জন'], { requireAll: true });
-    expect(document.title).toBe('জ্ঞান অর্জন - বিষয়ভিত্তিক হাদীস - BoiKotha');
+    expect(document.title).toBe('জ্ঞান অর্জন - বিষয়ভিত্তিক হাদীস - Alhashor');
   });
 
   test('shows hadis from the real index, with their real books and numbers', async () => {
@@ -193,7 +193,7 @@ describe('the address is the whole state', () => {
     expect(address()).toBe('/topics?topic=নামায');
     expect(await screen.findByText(/মোট ৪৫ টি হাদীস/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'নামায' })).toHaveAttribute('aria-current', 'true');
-    expect(document.title).toBe('নামায - বিষয়ভিত্তিক হাদীস - BoiKotha');
+    expect(document.title).toBe('নামায - বিষয়ভিত্তিক হাদীস - Alhashor');
   });
 
   test('choosing another topic starts again from its first page', async () => {

@@ -21,7 +21,7 @@ beforeEach(() => {
 });
 
 test('starts from the saved settings and applies them to the page', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'sepia' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia' }));
   render(<SettingsProvider><Probe /></SettingsProvider>);
   expect(screen.getByTestId('theme')).toHaveTextContent('sepia');
   expect(document.documentElement.getAttribute('data-theme')).toBe('sepia');
@@ -32,7 +32,7 @@ test('an update is applied, saved and shared with every reader', () => {
   act(() => screen.getByText('dark').click());
   expect(screen.getByTestId('theme')).toHaveTextContent('dark');
   expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-  expect(JSON.parse(localStorage.getItem('boikotha.settings')).theme).toBe('dark');
+  expect(JSON.parse(localStorage.getItem('alhashor.settings')).theme).toBe('dark');
 });
 
 test('reset goes back to the defaults', () => {
@@ -45,7 +45,7 @@ test('reset goes back to the defaults', () => {
 
 test('the inline theme script applies a saved theme before first paint (Review Focus 5)', async () => {
   const { themeScript } = await import('./themeScript');
-  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'dark' }));
   new Function(themeScript)();
   expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 });
@@ -57,7 +57,7 @@ test('useSettings outside the provider explains the mistake', () => {
 });
 
 test('the first render uses the defaults, so the server and the browser agree (hydration)', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   const seen = [];
   function Spy() {
     seen.push(useSettings().settings.digits);
@@ -69,7 +69,7 @@ test('the first render uses the defaults, so the server and the browser agree (h
 });
 
 test('a saved theme already on the page is never removed while the saved settings load (no flash)', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'dark' }));
   document.documentElement.setAttribute('data-theme', 'dark'); // what the inline script did before first paint
   const removed = vi.spyOn(document.documentElement, 'removeAttribute');
   render(<SettingsProvider><Probe /></SettingsProvider>);
@@ -92,7 +92,7 @@ test('the provider renders when the browser blocks storage entirely', () => {
 
 test('reading values set before first paint are still there while the saved settings load, and match afterwards', async () => {
   const { themeScript } = await import('./themeScript');
-  localStorage.setItem('boikotha.settings', JSON.stringify({ size: 22, width: 40 }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ size: 22, width: 40 }));
   document.documentElement.removeAttribute('style');
   new Function(themeScript)();
   const removed = vi.spyOn(document.documentElement.style, 'removeProperty');

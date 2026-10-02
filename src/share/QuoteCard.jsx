@@ -27,7 +27,7 @@ async function loadFonts(fonts, text) {
     document.fonts.load(`500 40px ${fonts.read}`, text.slice(0, 60) || 'আ'),
     document.fonts.load(`600 40px ${fonts.ui}`, 'বুখারী'),
     document.fonts.load(`700 40px ${fonts.ui}`, 'বুখারী'),
-    document.fonts.load(`700 40px ${fonts.lat}`, 'BoiKotha'),
+    document.fonts.load(`700 40px ${fonts.lat}`, 'Alhashor'),
   ]);
 }
 

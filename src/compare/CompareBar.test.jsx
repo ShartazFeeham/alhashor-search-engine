@@ -62,7 +62,7 @@ test('it is not shown on the compare page itself', () => {
 });
 
 test('it comes back from the saved choice after a reload', () => {
-  sessionStorage.setItem('boikotha.compare', 'muslim-5,bukhari-1');
+  sessionStorage.setItem('alhashor.compare', 'muslim-5,bukhari-1');
   show();
   expect(screen.getByRole('link', { name: 'তুলনা (২)' })).toHaveAttribute('href', '/compare?ids=muslim-5,bukhari-1');
 });

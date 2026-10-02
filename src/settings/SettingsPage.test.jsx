@@ -11,7 +11,7 @@ beforeEach(() => {
 
 test('is titled and lists the four themes, with auto pressed at first', () => {
   show();
-  expect(document.title).toBe('পড়ার সেটিংস - BoiKotha');
+  expect(document.title).toBe('পড়ার সেটিংস - Alhashor');
   expect(screen.getByRole('button', { name: 'স্বয়ংক্রিয়' })).toHaveAttribute('aria-pressed', 'true');
   for (const name of ['হালকা', 'গাঢ়', 'সেপিয়া']) {
     expect(screen.getByRole('button', { name })).toHaveAttribute('aria-pressed', 'false');
@@ -23,7 +23,7 @@ test('choosing a theme applies and saves it', () => {
   fireEvent.click(screen.getByRole('button', { name: 'গাঢ়' }));
   expect(screen.getByRole('button', { name: 'গাঢ়' })).toHaveAttribute('aria-pressed', 'true');
   expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-  expect(JSON.parse(localStorage.getItem('boikotha.settings')).theme).toBe('dark');
+  expect(JSON.parse(localStorage.getItem('alhashor.settings')).theme).toBe('dark');
 });
 
 test('the text size steps up and down within its limits', () => {
@@ -44,7 +44,7 @@ test('the digit style can be switched and shows in the page', () => {
   expect(screen.getByText(/১৬/)).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'English' }));
   expect(screen.getByText(/16/)).toBeInTheDocument();
-  expect(JSON.parse(localStorage.getItem('boikotha.settings')).digits).toBe('en');
+  expect(JSON.parse(localStorage.getItem('alhashor.settings')).digits).toBe('en');
 });
 
 test('the preview uses the real reading text', () => {

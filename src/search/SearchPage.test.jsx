@@ -368,10 +368,10 @@ test('the list is an unboxed list of results', async () => {
 
 test('titles: bare, and with the words searched', () => {
   renderSearch();
-  expect(document.title).toBe('হাদীস সার্চ - BoiKotha');
+  expect(document.title).toBe('হাদীস সার্চ - Alhashor');
   serve({});
   renderSearch('/search?q=রোজা');
-  expect(document.title).toBe('রোজা - হাদীস সার্চ - BoiKotha');
+  expect(document.title).toBe('রোজা - হাদীস সার্চ - Alhashor');
 });
 
 test('a narrator-name search highlights the name in the chain when the saying has no match (Review: narrator search)', async () => {

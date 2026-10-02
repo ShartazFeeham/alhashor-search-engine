@@ -25,7 +25,7 @@ export default function TopNav() {
         <Link href="/" className="shell-brand">
           <span className="shell-logo"><Icon name="book" size={20} /></span>
           <span>
-            <b>BoiKotha</b>
+            <b>Alhashor</b>
             <small>বইকথা · হাদীস সম্ভার</small>
           </span>
         </Link>

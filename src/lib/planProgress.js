@@ -1,6 +1,9 @@
+import { readWithLegacy } from './legacyStorage';
+
 // Which days of each reading plan are done, kept on the visitor's device only.
 // The shape is { [planId]: [day numbers, 0-based, sorted] }; a plan with nothing done has no entry.
-export const STORAGE_KEY = 'boikotha.plan-progress';
+export const STORAGE_KEY = 'alhashor.plan-progress';
+export const LEGACY_KEY = 'boikotha.plan-progress'; // the key before the site was renamed; read once, then copied
 
 const isDay = (value) => Number.isInteger(value) && value >= 0;
 
@@ -26,7 +29,7 @@ function clean(value) {
 
 export function loadProgress(storage = defaultStorage()) {
   try {
-    const raw = storage.getItem(STORAGE_KEY);
+    const raw = readWithLegacy(storage, STORAGE_KEY, LEGACY_KEY);
     return raw ? clean(JSON.parse(raw)) : {};
   } catch {
     return {};

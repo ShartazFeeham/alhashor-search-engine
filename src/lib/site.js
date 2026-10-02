@@ -2,7 +2,7 @@
 // RSS feed. Set NEXT_PUBLIC_SITE_URL to serve the site from another address.
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://hadis.feeham.com').replace(/\/+$/, '');
 
-export const SITE_NAME = 'BoiKotha · বইকথা';
+export const SITE_NAME = 'Alhashor · বইকথা';
 
 // "/hadis/bukhari/6628" -> "https://hadis.feeham.com/hadis/bukhari/6628"
 export function absoluteUrl(pathname) {

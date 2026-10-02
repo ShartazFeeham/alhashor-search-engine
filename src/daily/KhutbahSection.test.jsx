@@ -252,7 +252,7 @@ describe('copying and printing', () => {
     expect(within(sheet).getByRole('heading', { level: 2, name: 'খুতবার হাদীস তালিকা' })).toBeInTheDocument();
     expect(sheet.querySelectorAll('.khut-item')).toHaveLength(2);
     const foot = sheet.querySelector('.khut-foot');
-    expect(foot).toHaveTextContent('BoiKotha');
+    expect(foot).toHaveTextContent('Alhashor');
     expect(foot).toHaveTextContent('২ অক্টোবর ২০২৬');
     // every control (move, remove) and the form are hidden in print
     for (const control of screen.getAllByRole('button', { name: /^(উপরে|নিচে) সরান|^বাদ দিন/ })) {

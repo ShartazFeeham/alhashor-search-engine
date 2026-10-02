@@ -1,12 +1,14 @@
 import { bookById, hasHadis } from './books';
 import { parseTag, tagOf } from './hadisRoute';
+import { readWithLegacy } from './legacyStorage';
 
 // The hadis chosen for comparison, as ids like "bukhari-1234" (the book id, a dash, a plain
 // number). The same text is the address (?ids=bukhari-1234,muslim-5) and the copy kept for this
 // visit. Anything that is not a real hadis, or is a repeat, is dropped, and at most four are kept,
 // so a hand-edited address or stale storage cannot break the page.
 export const MAX_COMPARE = 4;
-export const STORAGE_KEY = 'boikotha.compare';
+export const STORAGE_KEY = 'alhashor.compare';
+export const LEGACY_KEY = 'boikotha.compare'; // the key before the site was renamed; read once, then copied
 
 const ID = /^([a-z]+)-([1-9]\d*)$/;
 
@@ -80,7 +82,7 @@ function defaultStorage() {
 
 export function loadSelection(storage = defaultStorage()) {
   try {
-    return parseIds(storage.getItem(STORAGE_KEY));
+    return parseIds(readWithLegacy(storage, STORAGE_KEY, LEGACY_KEY));
   } catch {
     return [];
   }

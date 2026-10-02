@@ -9,7 +9,7 @@ test('says the page was not found and links home', () => {
 
 test('sets its own page title', () => {
   render(<NotFound />);
-  expect(document.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha');
+  expect(document.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - Alhashor');
 });
 
 test('is a page of its own: a main area with a heading and a button-styled link home', () => {

@@ -1,4 +1,4 @@
-# BoiKotha (Alhashor Search Engine)
+# Alhashor Search Engine
 
 A Bengali hadis site covering six books: Bukhari, Muslim, Tirmidhi, Abu Dawud, Ibn Majah and Nasa'i (32,886 hadis files). It is a Next.js 16 / React 19 app that reads static JSON files shipped with it. There is no database and no outside service. All hadis text is Bengali.
 
@@ -106,7 +106,7 @@ With the cap off, the 2-letter and the 3-letter files return the same hadis in t
 
 ## Self-contained rule
 
-Everything ships with the app: no database, no CDN fonts, analytics, third-party scripts or APIs, no hosted storage or accounts. Fonts are files in `src/assets/fonts`. The only storage is the visitor's own device (`localStorage`: `boikotha.settings`, `boikotha.plan-progress`, `boikotha.compare`). Details are in section 11 of `docs/redesign-plan.md`.
+Everything ships with the app: no database, no CDN fonts, analytics, third-party scripts or APIs, no hosted storage or accounts. Fonts are files in `src/assets/fonts`. The only storage is the visitor's own device (`localStorage`: `alhashor.settings`, `alhashor.plan-progress`, `alhashor.compare`; values saved under the old site name, `boikotha.*`, are still read once and copied across, see `LEGACY_KEY` in `src/settings/settings.js`, `src/lib/planProgress.js` and `src/lib/compareList.js`). Details are in section 11 of `docs/redesign-plan.md`.
 
 Checks (they use headless Google Chrome; the default path is the macOS one, override it with `CHROME=/path/to/chrome`). Build first, then run each against a server. `scripts/with-server.sh <port> "<start command>" <command...>` starts the server, waits for it, runs the command and stops the server:
 

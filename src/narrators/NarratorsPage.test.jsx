@@ -61,7 +61,7 @@ const withSeparators = (n) => digits(n.toLocaleString('en-US'));
 describe('/narrators (the list)', () => {
   test('is titled, has one h1 and a filter box', async () => {
     show('/narrators');
-    expect(document.title).toBe('বর্ণনাকারী - BoiKotha');
+    expect(document.title).toBe('বর্ণনাকারী - Alhashor');
     expect(screen.getByRole('heading', { level: 1, name: 'বর্ণনাকারী' })).toBeInTheDocument();
     expect(box()).toBeInTheDocument();
     await screen.findByRole('list', { name: 'বর্ণনাকারী' });
@@ -165,7 +165,7 @@ describe('/narrators (the list)', () => {
   });
 
   test('numbers are shown in the visitor\'s digit style', async () => {
-    localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+    localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
     show('/narrators');
     await screen.findByRole('list', { name: 'বর্ণনাকারী' });
     expect(rows()[0]).toHaveTextContent(`${ABU_HURAYRAH[2].toLocaleString('en-US')} টি হাদীস`);
@@ -198,7 +198,7 @@ describe('one narrator (/narrators?name=<id>)', () => {
   test('names the narrator as the h1, and titles the page with the name', async () => {
     show('/narrators?name=abu-hurayrah');
     expect(await screen.findByRole('heading', { level: 1, name: ABU_HURAYRAH[1] })).toBeInTheDocument();
-    expect(document.title).toBe(`${ABU_HURAYRAH[1]} - বর্ণনাকারী - BoiKotha`);
+    expect(document.title).toBe(`${ABU_HURAYRAH[1]} - বর্ণনাকারী - Alhashor`);
     await screen.findAllByRole('button', { name: /কপি/ });
   });
 
@@ -284,7 +284,7 @@ describe('one narrator (/narrators?name=<id>)', () => {
     show('/narrators?name=no-such-narrator');
     expect(await screen.findByText('এই বর্ণনাকারীকে পাওয়া যায়নি।')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'সব বর্ণনাকারী দেখুন' })).toHaveAttribute('href', '/narrators');
-    expect(document.title).toBe('বর্ণনাকারী - BoiKotha');
+    expect(document.title).toBe('বর্ণনাকারী - Alhashor');
     expect(cardTitles()).toEqual([]);
   });
 

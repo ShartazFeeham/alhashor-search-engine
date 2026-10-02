@@ -6,7 +6,7 @@ const show = () => render(<SettingsProvider><BooksIndex /></SettingsProvider>);
 
 test('is titled as the books page', () => {
   show();
-  expect(document.title).toBe('হাদীসের বই - BoiKotha');
+  expect(document.title).toBe('হাদীসের বই - Alhashor');
   expect(screen.getByRole('heading', { level: 1, name: 'হাদীসের বই' })).toBeInTheDocument();
 });
 

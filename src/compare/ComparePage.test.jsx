@@ -269,5 +269,5 @@ describe('adding by number', () => {
 
 test('the page is titled', () => {
   show();
-  expect(document.title).toBe('হাদীস তুলনা - BoiKotha');
+  expect(document.title).toBe('হাদীস তুলনা - Alhashor');
 });

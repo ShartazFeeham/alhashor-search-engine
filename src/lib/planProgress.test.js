@@ -1,5 +1,5 @@
 import {
-  STORAGE_KEY, doneCount, isDone, loadProgress, nextDay, percentDone, resetPlan, saveProgress, toggleDay,
+  LEGACY_KEY, STORAGE_KEY, doneCount, isDone, loadProgress, nextDay, percentDone, resetPlan, saveProgress, toggleDay,
 } from './planProgress';
 
 const blocked = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
@@ -67,7 +67,7 @@ describe('saving and loading', () => {
   test('round-trips through storage under its own key', () => {
     saveProgress({ a: [0, 4] });
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY))).toEqual({ a: [0, 4] });
-    expect(STORAGE_KEY).not.toBe('boikotha.settings');
+    expect(STORAGE_KEY).not.toBe('alhashor.settings');
     expect(loadProgress()).toEqual({ a: [0, 4] });
   });
 
@@ -109,5 +109,31 @@ describe('saving and loading', () => {
   test('a full storage (quota error on write) is tolerated', () => {
     const full = { getItem: () => null, setItem() { throw new DOMException('full', 'QuotaExceededError'); } };
     expect(() => saveProgress({ a: [0] }, full)).not.toThrow();
+  });
+});
+
+describe('progress saved under the old site name', () => {
+  test('the keys are the new and the old name', () => {
+    expect(STORAGE_KEY).toBe('alhashor.plan-progress');
+    expect(LEGACY_KEY).toBe('boikotha.plan-progress');
+  });
+
+  test('only the old key present: the progress is read and copied to the new key', () => {
+    localStorage.setItem('boikotha.plan-progress', JSON.stringify({ a: [0, 2] }));
+    expect(loadProgress()).toEqual({ a: [0, 2] });
+    expect(JSON.parse(localStorage.getItem('alhashor.plan-progress'))).toEqual({ a: [0, 2] });
+    expect(localStorage.getItem('boikotha.plan-progress')).not.toBeNull();
+  });
+
+  test('only the new key present', () => {
+    localStorage.setItem('alhashor.plan-progress', JSON.stringify({ b: [1] }));
+    expect(loadProgress()).toEqual({ b: [1] });
+    expect(localStorage.getItem('boikotha.plan-progress')).toBeNull();
+  });
+
+  test('both present: the new key wins', () => {
+    localStorage.setItem('alhashor.plan-progress', JSON.stringify({ b: [1] }));
+    localStorage.setItem('boikotha.plan-progress', JSON.stringify({ a: [0, 2] }));
+    expect(loadProgress()).toEqual({ b: [1] });
   });
 });

@@ -31,7 +31,7 @@ test('the server markup has no <title> of its own: the route metadata sets the o
 });
 
 test('a page that must fetch its own text still sets its title', () => {
-  expect(toMarkup(wrap(<HadisPage bookId="bukhari" number={6628} />))).toContain('<title>বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha</title>');
+  expect(toMarkup(wrap(<HadisPage bookId="bukhari" number={6628} />))).toContain('<title>বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor</title>');
 });
 
 test('the server markup of a hadis with no file is the message page, with previous and next', () => {

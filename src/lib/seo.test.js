@@ -12,7 +12,7 @@ test('a shard file is named by book code and shard', () => {
 });
 
 test('the title names the book and the number in Bengali, as the page title always did', () => {
-  expect(titleFor(bookById('bukhari'), 6628)).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+  expect(titleFor(bookById('bukhari'), 6628)).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
 });
 
 test('the description is the saying only: no number, no narrator chain', () => {
@@ -55,7 +55,7 @@ describe('hadisMetadata', () => {
   const metadata = hadisMetadata(book, 6628, text);
 
   test('has the title, the saying as the description and an absolute canonical address', () => {
-    expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+    expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
     expect(metadata.description).toBe(descriptionFor(text));
     expect(metadata.alternates.canonical).toBe('https://hadis.feeham.com/hadis/bukhari/6628');
   });
@@ -63,7 +63,7 @@ describe('hadisMetadata', () => {
   test('has the link-preview tags: an article on the site, in Bengali, with the logo', () => {
     expect(metadata.openGraph).toMatchObject({
       type: 'article',
-      siteName: 'BoiKotha · বইকথা',
+      siteName: 'Alhashor · বইকথা',
       locale: 'bn_BD',
       url: 'https://hadis.feeham.com/hadis/bukhari/6628',
       title: metadata.title,

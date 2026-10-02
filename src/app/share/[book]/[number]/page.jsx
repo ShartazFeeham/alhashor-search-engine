@@ -15,8 +15,8 @@ const NO_INDEX = { index: false, follow: false };
 export async function generateMetadata({ params }) {
   const { book: slug, number: text } = await params;
   const parsed = parseHadisParams(slug, text);
-  if (!parsed) return { title: 'পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha', robots: NO_INDEX };
-  return { title: `শেয়ার - ${parsed.book.full} - হাদীস নং ${formatNumber(parsed.number)} - BoiKotha`, robots: NO_INDEX };
+  if (!parsed) return { title: 'পৃষ্ঠাটি পাওয়া যায়নি - Alhashor', robots: NO_INDEX };
+  return { title: `শেয়ার - ${parsed.book.full} - হাদীস নং ${formatNumber(parsed.number)} - Alhashor`, robots: NO_INDEX };
 }
 
 export default async function Page({ params }) {

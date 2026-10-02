@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, applySettings, clampSettings, loadSettings, saveSettings } from './settings';
+import { DEFAULT_SETTINGS, LEGACY_KEY, STORAGE_KEY, applySettings, clampSettings, loadSettings, saveSettings } from './settings';
 
 function memoryStorage(initial = {}) {
   const data = { ...initial };
@@ -29,7 +29,7 @@ test('saved settings come back', () => {
 
 test('nothing saved, garbage saved or a broken storage all give the defaults', () => {
   expect(loadSettings(memoryStorage())).toEqual(DEFAULT_SETTINGS);
-  expect(loadSettings(memoryStorage({ 'boikotha.settings': '{not json' }))).toEqual(DEFAULT_SETTINGS);
+  expect(loadSettings(memoryStorage({ 'alhashor.settings': '{not json' }))).toEqual(DEFAULT_SETTINGS);
   const broken = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
   expect(loadSettings(broken)).toEqual(DEFAULT_SETTINGS);
   expect(() => saveSettings(DEFAULT_SETTINGS, broken)).not.toThrow();
@@ -55,4 +55,49 @@ test('storage that throws the moment it is read (site data blocked) does not bre
   } finally {
     Object.defineProperty(globalThis, 'localStorage', original);
   }
+});
+
+describe('settings saved under the old site name (boikotha.settings)', () => {
+  test('the keys are the new and the old name', () => {
+    expect(STORAGE_KEY).toBe('alhashor.settings');
+    expect(LEGACY_KEY).toBe('boikotha.settings');
+  });
+
+  test('only the old key present: the settings are read and copied to the new key', () => {
+    const storage = memoryStorage({ 'boikotha.settings': JSON.stringify({ theme: 'dark', size: 22 }) });
+    expect(loadSettings(storage)).toMatchObject({ theme: 'dark', size: 22 });
+    expect(JSON.parse(storage.data['alhashor.settings'])).toMatchObject({ theme: 'dark', size: 22 });
+    expect(storage.data['boikotha.settings']).toBeDefined();
+  });
+
+  test('only the new key present', () => {
+    const storage = memoryStorage({ 'alhashor.settings': JSON.stringify({ theme: 'sepia' }) });
+    expect(loadSettings(storage).theme).toBe('sepia');
+    expect(storage.data['boikotha.settings']).toBeUndefined();
+  });
+
+  test('both present: the new key wins', () => {
+    const storage = memoryStorage({
+      'alhashor.settings': JSON.stringify({ theme: 'sepia' }),
+      'boikotha.settings': JSON.stringify({ theme: 'dark' }),
+    });
+    expect(loadSettings(storage).theme).toBe('sepia');
+    expect(JSON.parse(storage.data['alhashor.settings']).theme).toBe('sepia');
+  });
+
+  test('blocked storage still gives the defaults', () => {
+    const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+    Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError'); } });
+    try {
+      expect(loadSettings()).toEqual(DEFAULT_SETTINGS);
+    } finally {
+      Object.defineProperty(globalThis, 'localStorage', original);
+    }
+  });
+
+  test('saving writes only the new key', () => {
+    const storage = memoryStorage();
+    saveSettings({ ...DEFAULT_SETTINGS, theme: 'dark' }, storage);
+    expect(Object.keys(storage.data)).toEqual(['alhashor.settings']);
+  });
 });

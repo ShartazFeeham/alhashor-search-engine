@@ -57,7 +57,7 @@ test('shows the real text of each hadis in its shared card', async () => {
 });
 
 test('numbers follow the visitor\'s digit style', async () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   show();
   const items = screen.getAllByRole('listitem');
   ['1', '2', '3'].forEach((no, i) => expect(within(items[i]).getByText(no, { selector: '.topics-start-no' })).toBeInTheDocument());

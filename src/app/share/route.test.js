@@ -2,12 +2,12 @@ import { generateMetadata } from './[book]/[number]/page';
 
 test('the title names the share page, the book and the number in Bengali', async () => {
   const metadata = await generateMetadata({ params: Promise.resolve({ book: 'bukhari', number: '6628' }) });
-  expect(metadata.title).toBe('শেয়ার - বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+  expect(metadata.title).toBe('শেয়ার - বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
 });
 
 test('an invalid address gets the not-found title', async () => {
   const metadata = await generateMetadata({ params: Promise.resolve({ book: 'bukhari', number: '0' }) });
-  expect(metadata.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha');
+  expect(metadata.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - Alhashor');
 });
 
 test('an invalid address asks Next.js for a 404', async () => {

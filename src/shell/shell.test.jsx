@@ -46,7 +46,7 @@ test('the top navigation links to the daily hadis page', () => {
 
 test('the brand links home and a settings link exists', () => {
   show(<TopNav />);
-  expect(screen.getByRole('link', { name: /BoiKotha/ })).toHaveAttribute('href', '/');
+  expect(screen.getByRole('link', { name: /Alhashor/ })).toHaveAttribute('href', '/');
   expect(screen.getByRole('link', { name: 'পড়ার সেটিংস' })).toHaveAttribute('href', '/settings');
 });
 
@@ -104,7 +104,7 @@ test('the "more" menu links the compare page', () => {
 });
 
 test('with hadis chosen, both compare links carry them (so the page opens with that comparison)', () => {
-  sessionStorage.setItem('boikotha.compare', 'bukhari-1,muslim-4774');
+  sessionStorage.setItem('alhashor.compare', 'bukhari-1,muslim-4774');
   show(
     <CompareProvider>
       <TopNav />
@@ -138,7 +138,7 @@ test('elsewhere the "more" button is not marked', () => {
 test('the footer names the site, counts the hadis and links the main pages', () => {
   show(<Footer />);
   expect(screen.getByText(/৩২,৮৮৬/)).toBeInTheDocument();
-  expect(screen.getByText('BoiKotha')).toBeInTheDocument();
+  expect(screen.getByText('Alhashor')).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' })).toHaveAttribute('href', '/topics');
   expect(screen.getByRole('link', { name: 'আজকের হাদীস' })).toHaveAttribute('href', '/daily');
 });

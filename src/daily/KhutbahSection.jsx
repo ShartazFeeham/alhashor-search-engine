@@ -147,7 +147,7 @@ export default function KhutbahSection() {
             ))}
           </ol>
         )}
-        <footer className="khut-foot">BoiKotha · বইকথা{dateText && ` · ${dateText}`}</footer>
+        <footer className="khut-foot">Alhashor · বইকথা{dateText && ` · ${dateText}`}</footer>
       </section>
     </>
   );

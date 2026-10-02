@@ -48,20 +48,20 @@ test.each(pages)('page %s renders without React warnings', (path, Page) => {
 });
 
 test.each([
-  ['/', 'BoiKotha - হাদীস সম্ভার', HomePage],
-  ['/search', 'হাদীস সার্চ - BoiKotha', SearchPage],
-  ['/search?q=রোজা', 'রোজা - হাদীস সার্চ - BoiKotha', SearchPage],
-  ['/books', 'হাদীসের বই - BoiKotha', BooksPage],
-  ['/topics', 'বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
-  ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
-  ['/daily', 'আজকের হাদীস - BoiKotha', DailyRoute],
-  ['/daily?tab=plans', 'আজকের হাদীস - BoiKotha', DailyRoute],
-  ['/daily?tab=khutbah', 'আজকের হাদীস - BoiKotha', DailyRoute],
-  ['/compare', 'হাদীস তুলনা - BoiKotha', CompareRoute],
-  ['/compare?ids=bukhari-1,muslim-4774', 'হাদীস তুলনা - BoiKotha', CompareRoute],
-  ['/narrators', 'বর্ণনাকারী - BoiKotha', NarratorsRoute],
-  ['/narrators?name=abu-hurayrah', 'বর্ণনাকারী - BoiKotha', NarratorsRoute], // the narrator's name joins the title once the index has loaded (NarratorsPage.test.jsx)
-  ['/settings', 'পড়ার সেটিংস - BoiKotha', SettingsRoute],
+  ['/', 'Alhashor - হাদীস সম্ভার', HomePage],
+  ['/search', 'হাদীস সার্চ - Alhashor', SearchPage],
+  ['/search?q=রোজা', 'রোজা - হাদীস সার্চ - Alhashor', SearchPage],
+  ['/books', 'হাদীসের বই - Alhashor', BooksPage],
+  ['/topics', 'বিষয়ভিত্তিক হাদীস - Alhashor', TopicsPage],
+  ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - Alhashor', TopicsPage],
+  ['/daily', 'আজকের হাদীস - Alhashor', DailyRoute],
+  ['/daily?tab=plans', 'আজকের হাদীস - Alhashor', DailyRoute],
+  ['/daily?tab=khutbah', 'আজকের হাদীস - Alhashor', DailyRoute],
+  ['/compare', 'হাদীস তুলনা - Alhashor', CompareRoute],
+  ['/compare?ids=bukhari-1,muslim-4774', 'হাদীস তুলনা - Alhashor', CompareRoute],
+  ['/narrators', 'বর্ণনাকারী - Alhashor', NarratorsRoute],
+  ['/narrators?name=abu-hurayrah', 'বর্ণনাকারী - Alhashor', NarratorsRoute], // the narrator's name joins the title once the index has loaded (NarratorsPage.test.jsx)
+  ['/settings', 'পড়ার সেটিংস - Alhashor', SettingsRoute],
 ])('%s is titled %s', (route, title, Page) => {
   setUrl(route);
   render(<SettingsProvider><Page /></SettingsProvider>);
@@ -69,11 +69,11 @@ test.each([
 });
 
 test('the daily route has a pre-built title for the first paint', () => {
-  expect(dailyMetadata.title).toBe('আজকের হাদীস - BoiKotha');
+  expect(dailyMetadata.title).toBe('আজকের হাদীস - Alhashor');
 });
 
 test('the compare route has a pre-built title for the first paint', () => {
-  expect(compareMetadata.title).toBe('হাদীস তুলনা - BoiKotha');
+  expect(compareMetadata.title).toBe('হাদীস তুলনা - Alhashor');
 });
 
 test('the narrators route is static and sets no pre-built title (the page sets one that includes the narrator\'s name)', () => {

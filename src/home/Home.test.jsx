@@ -168,11 +168,11 @@ describe('the new-features row', () => {
 
 test('sets the home page title', () => {
   renderHome();
-  expect(document.title).toBe('BoiKotha - হাদীস সম্ভার');
+  expect(document.title).toBe('Alhashor - হাদীস সম্ভার');
 });
 
 test('counts switch to English digits when chosen', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   renderHome();
   expect(screen.getByRole('link', { name: /মুসলিম/ })).toHaveTextContent('7,281');
   expect(screen.getByText(/বাংলায় হাদীস পড়ুন ও খুঁজুন/)).toHaveTextContent(

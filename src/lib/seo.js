@@ -14,7 +14,7 @@ export const shardFile = (code, number) => `${code}-${shardOf(number)}.json`;
 
 // The page title, as the hadis page has always had it.
 export function titleFor(book, number) {
-  return `${book.full} - হাদীস নং ${formatNumber(number)} - BoiKotha`;
+  return `${book.full} - হাদীস নং ${formatNumber(number)} - Alhashor`;
 }
 
 const DESCRIPTION_LENGTH = 160;

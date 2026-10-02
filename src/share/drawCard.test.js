@@ -61,14 +61,14 @@ test('draws the book badge and name, the citation and the site name', () => {
   expect(drawn).toContain('বু');
   expect(drawn).toContain('বুখারী শরীফ');
   expect(drawn).toContain('সহীহ বুখারী, হাদীস নং ৬,৬২৮');
-  expect(drawn).toContain('BoiKotha · বইকথা');
+  expect(drawn).toContain('Alhashor · বইকথা');
 });
 
 test('the citation and site name are at the bottom, below the saying', () => {
   const { texts } = draw();
   const lastBody = Math.max(...texts.filter((t) => t.font.includes('ReadFont')).map((t) => t.y));
   const cite = texts.find((t) => t.text.startsWith('সহীহ বুখারী'));
-  const site = texts.find((t) => t.text.startsWith('BoiKotha'));
+  const site = texts.find((t) => t.text.startsWith('Alhashor'));
   expect(cite.y).toBeGreaterThan(lastBody);
   expect(site.y).toBeGreaterThan(cite.y);
   expect(site.y).toBeLessThan(1080);
@@ -101,7 +101,7 @@ test('the taller card has more room, so a mid-length text is not smaller than on
 
 test('on the tall card the citation sits at the bottom of the taller canvas', () => {
   const { texts } = draw({ ...CARD_SIZES.tall });
-  const site = texts.find((t) => t.text.startsWith('BoiKotha'));
+  const site = texts.find((t) => t.text.startsWith('Alhashor'));
   expect(site.y).toBeGreaterThan(1080);
   expect(site.y).toBeLessThan(1350);
 });

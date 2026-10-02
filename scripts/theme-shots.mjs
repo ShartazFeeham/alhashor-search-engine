@@ -31,7 +31,7 @@ const page = await openPage(`${base}/`, { width: 1200, height: 900 });
 try {
   await page.waitFor(`document.readyState === 'complete'`, 'the first page');
   for (const theme of ['light', 'dark', 'sepia']) {
-    await page.eval(`localStorage.setItem('boikotha.settings', JSON.stringify({ theme: '${theme}' }))`);
+    await page.eval(`localStorage.setItem('alhashor.settings', JSON.stringify({ theme: '${theme}' }))`);
     for (const [sizeName, width, height] of sizes) {
       await page.resize(width, height);
       for (const [name, route] of routes) {
