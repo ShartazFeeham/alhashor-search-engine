@@ -1,0 +1,174 @@
+{
+  "id": "ahle-bayat",
+  "number": 4,
+  "title": "উম্মতের মাঝে শ্রেষ্ঠতম: আহলে বায়াত ও তাঁদের ফজিলত",
+  "description": "নবীজির পরিবার, আহলে বাইত ও তাঁদের মর্যাদা বিষয়ে সহীহ হাদীস",
+  "items": [
+    {
+      "line": "হাদীসে সাকালাইন: কুরআন ও আহলে বাইত",
+      "book": "muslim",
+      "number": 6007,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আয়াতে তাতহীর ও চাদরের হাদীস",
+      "book": "tirmidhi",
+      "number": 3205,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "মুবাহালায় আহলে বাইত",
+      "book": "muslim",
+      "number": 6002,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "গাদীরে খুম: \"আমি যার মাওলা, আলী তার মাওলা\"",
+      "book": "ibnmajah",
+      "number": 116,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "হাসান-হোসাইন জান্নাতি যুবকদের নেতা",
+      "book": "ibnmajah",
+      "number": 118,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "নবীজির কাঁধে হাসান-হোসাইনের চড়া",
+      "book": "bukhari",
+      "number": 3477,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"আমার দুই ফুল\"",
+      "book": "bukhari",
+      "number": 5568,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "খুতবা থামিয়ে হাসান-হোসাইনকে কোলে নেওয়া",
+      "book": "nasai",
+      "number": 1416,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "\"হে আল্লাহ, আমি তাদের ভালোবাসি, আপনিও ভালোবাসুন\"",
+      "book": "muslim",
+      "number": 6038,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ফাতিমা (রাঃ) জান্নাতি নারীদের নেত্রী",
+      "book": "bukhari",
+      "number": 5849,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"ফাতিমা আমার অংশ\"",
+      "book": "muslim",
+      "number": 6089,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির সাথে ফাতিমার সম্পর্ক",
+      "book": "abudawud",
+      "number": 5127,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "\"আমার কাছে তুমি হারূনের মতো\"",
+      "book": "bukhari",
+      "number": 3441,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "খাইবারের পতাকা আলী (রাঃ)-কে",
+      "book": "bukhari",
+      "number": 2740,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আলী ও ফাতিমার বিয়ে",
+      "book": "nasai",
+      "number": 3224,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "আহলে বাইতের জন্য দরূদ",
+      "book": "bukhari",
+      "number": 3131,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মাহদী, আহলে বাইত থেকে",
+      "book": "abudawud",
+      "number": 4236,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "খাদিজা (রাঃ)-এর ফযীলত",
+      "book": "bukhari",
+      "number": 3543,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আয়িশা (রাঃ)-এর ফযীলত",
+      "book": "bukhari",
+      "number": 3499,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "জাফর (রাঃ) জান্নাতে ডানায় উড়ছেন",
+      "book": "bukhari",
+      "number": 3938,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আব্বাস (রাঃ): \"আমার চাচা পিতৃতুল্য\"",
+      "book": "abudawud",
+      "number": 1623,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "যাইদ ও উসামা (রাঃ)",
+      "book": "bukhari",
+      "number": 4117,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির কন্যাগণ ও পুত্র ইবরাহীম",
+      "book": "muslim",
+      "number": 5818,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": [
+    "\"আহলে বাইতের ব্যাপারে আল্লাহকে স্মরণ করাচ্ছি\"",
+    "মুমিন ছাড়া আলী (রাঃ)-কে কেউ ভালোবাসে না",
+    "হামযা (রাঃ) শহীদদের নেতা"
+  ]
+}
