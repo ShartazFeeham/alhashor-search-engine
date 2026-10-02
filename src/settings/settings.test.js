@@ -10,14 +10,14 @@ function memoryStorage(initial = {}) {
 }
 
 test('defaults are the comfortable reading values', () => {
-  expect(DEFAULT_SETTINGS).toEqual({ theme: 'auto', size: 18, lineHeight: 1.9, width: 34, digits: 'bn' });
+  expect(DEFAULT_SETTINGS).toEqual({ theme: 'auto', size: 16, lineHeight: 1.9, width: 34, digits: 'bn' });
 });
 
 test('clampSettings keeps every value in range and falls back for bad input', () => {
   expect(clampSettings({ size: 99, lineHeight: 0, width: 5, theme: 'neon', digits: 'xx' })).toEqual({
     theme: 'auto', size: 28, lineHeight: 1.5, width: 26, digits: 'bn',
   });
-  expect(clampSettings({ size: 'abc' }).size).toBe(18);
+  expect(clampSettings({ size: 'abc' }).size).toBe(16);
   expect(clampSettings({ theme: 'dark', digits: 'en', size: 22 })).toMatchObject({ theme: 'dark', digits: 'en', size: 22 });
 });
 

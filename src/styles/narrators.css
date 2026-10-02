@@ -3,11 +3,11 @@
    Colours come from the theme tokens, so the three themes need nothing special. */
 .narrators{max-width:760px}
 
-.narr-back{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;min-height:44px;margin:-8px 0 -8px -4px;padding:0 4px;color:var(--accent2);font-weight:600;font-size:14px;text-decoration:none}
+.narr-back{align-self:flex-start;display:inline-flex;align-items:center;gap:4px;min-height:44px;margin:-8px 0 -8px -4px;padding:0 4px;color:var(--accent2);font-weight:600;font-size:12px;text-decoration:none}
 .narr-back:hover{text-decoration:underline}
 .narr-title{overflow-wrap:anywhere}
 .narr-intro{margin:0;color:var(--ink2);line-height:1.7}
-.narr-note{margin:0;padding:10px 14px;border-radius:14px;background:var(--surface2);color:var(--ink2);font-size:14px;line-height:1.7}
+.narr-note{margin:0;padding:10px 14px;border-radius:14px;background:var(--surface2);color:var(--ink2);font-size:12px;line-height:1.7}
 
 .narr-field{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:4px 4px 4px 14px;transition:border-color .2s,box-shadow .2s}
 .narr-field:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
@@ -18,8 +18,8 @@
 .narr-indicator{display:flex;align-items:center;gap:12px;color:var(--accent2);font-weight:600}
 .narr-indicator i{display:block;width:90px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);background-size:200% 100%;animation:narr-slide 1.1s linear infinite}
 @keyframes narr-slide{to{background-position:-200% 0}}
-.narr-total{margin:0;display:flex;flex-direction:column;gap:2px;font-size:17px;font-weight:500}
-.narr-total b{font-size:14px;font-weight:400;color:var(--ink2)}
+.narr-total{margin:0;display:flex;flex-direction:column;gap:2px;font-size:15px;font-weight:500}
+.narr-total b{font-size:12px;font-weight:400;color:var(--ink2)}
 .narr-none,.narr-problem{margin:0;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));color:var(--ink)}
 .narr-problem{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
 .narr-problem p{margin:0}
@@ -28,8 +28,8 @@
 .narr-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
 .narr-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;min-height:44px;padding:12px 16px;border-radius:16px;background:var(--surface);box-shadow:var(--shadow);color:var(--ink);text-decoration:none;transition:background .18s}
 .narr-row:hover{background:var(--accent-soft)}
-.narr-name{font-weight:700;font-size:16px;line-height:1.4;overflow-wrap:anywhere}
-.narr-count{font-size:13px;color:var(--ink2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.narr-name{font-weight:700;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.narr-count{font-size:12px;color:var(--ink2);white-space:nowrap;font-variant-numeric:tabular-nums}
 .narr-bar{grid-column:1 / -1;display:flex;gap:2px;height:6px;border-radius:99px;overflow:hidden;background:var(--surface2)}
 .narr-bar i{display:block;min-width:3px}
 .narr-more{align-self:center;min-height:44px}
@@ -45,7 +45,7 @@ a.narr-chip:hover{border-color:var(--accent)}
 .narr-item{min-width:0}
 
 .narr-pager{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:8px}
-.narr-pager a,.narr-pager [aria-disabled="true"]{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:0 12px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);font-weight:700;font-size:14px;color:var(--ink);text-decoration:none}
+.narr-pager a,.narr-pager [aria-disabled="true"]{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:0 12px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);font-weight:700;font-size:12px;color:var(--ink);text-decoration:none}
 .narr-pager a:hover{background:var(--accent-soft)}
 .narr-pager [aria-disabled="true"]{opacity:.4;box-shadow:none}
-.narr-pager-now{grid-column:1 / -1;grid-row:1;text-align:center;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.narr-pager-now{grid-column:1 / -1;grid-row:1;text-align:center;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}

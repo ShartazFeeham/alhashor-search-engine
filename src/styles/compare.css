@@ -32,23 +32,23 @@ body.has-cmp-bar .ui-fab{bottom:calc(var(--tabbar-h) + 80px)}
 /* ---------- the page ---------- */
 .cmp-head p{margin-top:6px}
 .cmp-add{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
-.cmp-add .h3{margin:0;font-size:16px}
+.cmp-add .h3{margin:0;font-size:14px}
 .cmp-add-form{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:18px;padding:4px 4px 4px 14px;background:var(--surface);transition:border-color .2s,box-shadow .2s}
 .cmp-add-form:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
 .cmp-add-form input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);padding:8px 2px}
 .cmp-add .ui-btn,.cmp-add .ui-chip{min-height:44px}
 .cmp-add-msg:empty{display:none}
-.cmp-add-msg{font-weight:600;font-size:14px;line-height:1.6;color:var(--accent2)}
+.cmp-add-msg{font-weight:600;font-size:12px;line-height:1.6;color:var(--accent2)}
 .cmp-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .cmp-tools .ui-btn:last-child{margin-left:auto}
 
 /* The marking: a tint, bold and an underline together, so it still reads without colour (colour-blind
    visitors, any of the three themes). The tint and its ink are the highlight pair of each theme. */
 .cmp-diff{background:var(--hl);color:var(--hl-ink);font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px;border-radius:4px;padding:0 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
-.cmp-legend{margin:0;font-size:13.5px;line-height:1.9;color:var(--ink2)}
+.cmp-legend{margin:0;font-size:12.5px;line-height:1.9;color:var(--ink2)}
 
 .cmp-empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 18px;border-radius:20px;border:2px dashed var(--line);text-align:center}
-.cmp-empty b{font-size:16.5px}
+.cmp-empty b{font-size:14.5px}
 .cmp-empty p{margin:0;max-width:34em;color:var(--ink2);line-height:1.7}
 .cmp-empty-icon{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;background:var(--accent-soft);color:var(--accent2)}
 
@@ -64,17 +64,17 @@ body.has-cmp-bar .ui-fab{bottom:calc(var(--tabbar-h) + 80px)}
 }
 .cmp-col{display:flex;flex-direction:column;min-width:0;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden;border-top:3px solid var(--bk)}
 .cmp-col-head{display:flex;align-items:center;gap:10px;padding:10px 6px 10px 14px;background:color-mix(in srgb,var(--bk) 13%,var(--surface))}
-.cmp-col-head h2{flex:1;min-width:0;margin:0;font-size:15px;line-height:1.3}
+.cmp-col-head h2{flex:1;min-width:0;margin:0;font-size:13px;line-height:1.3}
 .cmp-col-head a{display:inline-flex;align-items:center;min-height:44px;color:var(--ink);text-decoration:none}
 .cmp-col-head a:hover{text-decoration:underline;text-underline-offset:3px}
 .cmp-remove{flex:none;display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--ink2);cursor:pointer}
 .cmp-remove:hover{background:var(--surface2);color:var(--bad)}
 .cmp-col-body{padding:12px 14px}
-.cmp-text{margin:0;font-family:var(--f-read),serif;font-size:calc(var(--rs) - 2px);line-height:1.9;overflow-wrap:anywhere}
+.cmp-text{margin:0;font-family:var(--f-read),serif;font-size:calc(var(--rs) - 1px);line-height:1.9;overflow-wrap:anywhere}
 .cmp-skeleton{display:flex;flex-direction:column;gap:10px}
 .cmp-note{margin:0;color:var(--ink2);display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .cmp-note p{margin:0}
-.cmp-count{margin:0;padding:0 14px 14px;font-size:12.5px;font-weight:600;color:var(--ink2)}
+.cmp-count{margin:0;padding:0 14px 14px;font-size:11.5px;font-weight:600;color:var(--ink2)}
 
 /* ---------- print ---------- */
 @media print{

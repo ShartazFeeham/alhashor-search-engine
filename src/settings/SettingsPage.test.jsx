@@ -29,19 +29,21 @@ test('choosing a theme applies and saves it', () => {
 test('the text size steps up and down within its limits', () => {
   show();
   fireEvent.click(screen.getByRole('button', { name: 'লেখা বড় করুন' }));
-  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('20px');
+  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('18px');
   fireEvent.click(screen.getByRole('button', { name: 'লেখা ছোট করুন' }));
   fireEvent.click(screen.getByRole('button', { name: 'লেখা ছোট করুন' }));
-  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('16px');
+  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('14px');
   for (let i = 0; i < 20; i++) fireEvent.click(screen.getByRole('button', { name: 'লেখা ছোট করুন' }));
   expect(document.documentElement.style.getPropertyValue('--rs')).toBe('14px');
+  for (let i = 0; i < 20; i++) fireEvent.click(screen.getByRole('button', { name: 'লেখা বড় করুন' }));
+  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('28px');
 });
 
 test('the digit style can be switched and shows in the page', () => {
   show();
-  expect(screen.getByText(/১৮/)).toBeInTheDocument();
+  expect(screen.getByText(/১৬/)).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'English' }));
-  expect(screen.getByText(/18/)).toBeInTheDocument();
+  expect(screen.getByText(/16/)).toBeInTheDocument();
   expect(JSON.parse(localStorage.getItem('boikotha.settings')).digits).toBe('en');
 });
 
@@ -56,5 +58,5 @@ test('reset goes back to the defaults', () => {
   fireEvent.click(screen.getByRole('button', { name: 'লেখা বড় করুন' }));
   fireEvent.click(screen.getByRole('button', { name: 'আগের মতো করুন' }));
   expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
-  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('18px');
+  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('16px');
 });

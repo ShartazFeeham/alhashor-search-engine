@@ -1,6 +1,6 @@
 export const STORAGE_KEY = 'boikotha.settings';
 
-export const DEFAULT_SETTINGS = { theme: 'auto', size: 18, lineHeight: 1.9, width: 34, digits: 'bn' };
+export const DEFAULT_SETTINGS = { theme: 'auto', size: 16, lineHeight: 1.9, width: 34, digits: 'bn' };
 
 const THEMES = ['auto', 'light', 'dark', 'sepia'];
 const DIGITS = ['bn', 'en'];

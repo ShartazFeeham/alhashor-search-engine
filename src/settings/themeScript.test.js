@@ -38,7 +38,7 @@ test.each([
   const clamped = clampSettings(saved);
   const get = (name) => root.style.getPropertyValue(name);
   // A value that is not a number is left to the stylesheet, which holds the same defaults.
-  expect(get('--rs') || '18px').toBe(`${clamped.size}px`);
+  expect(get('--rs') || '16px').toBe(`${clamped.size}px`);
   expect(get('--rlh') || '1.9').toBe(String(clamped.lineHeight));
   expect(get('--rw') || '34em').toBe(`${clamped.width}em`);
 });
