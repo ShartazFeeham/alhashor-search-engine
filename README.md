@@ -23,7 +23,7 @@ Needs Node 20.9 or newer (`.nvmrc` says 20). The browser scripts under `scripts/
 ```sh
 npm ci            # install
 npm run dev       # dev server at http://localhost:3000
-npm run build     # production build (first runs `prebuild`: packs the hadis texts into .data/hadis)
+npm run build     # production build (first runs `prebuild`: packs the hadis texts into .data/hadis and renews public/json/daily-picks.json when it has under 60 days left)
 npm start         # serve the production build at http://localhost:3000
 npm test          # Vitest in watch mode; npm test -- --run runs once
 npm run lint      # ESLint, zero warnings allowed (includes jsx-a11y)

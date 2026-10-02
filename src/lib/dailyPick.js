@@ -66,3 +66,11 @@ export function pickPrecomputed(file, date) {
   if (!book || !/^\d+$/.test(digits ?? '') || number < 1) return null;
   return { book, number };
 }
+
+// True while the precomputed file covers the date and `marginDays` days after it. The build uses
+// this to refresh the file only when it is running low (scripts/build-daily-picks.mjs --if-stale).
+export function picksCover(file, date, marginDays) {
+  if (!file || !Number.isInteger(file.from) || !Array.isArray(file.picks) || file.picks.length === 0) return false;
+  const today = dayNumber(date);
+  return today >= file.from && today + marginDays <= file.from + file.picks.length - 1;
+}

@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { dayNumber, pickDaily, pickPrecomputed } from './dailyPick';
+import { dayNumber, pickDaily, picksCover, pickPrecomputed } from './dailyPick';
 
 const read = (name) => JSON.parse(readFileSync(path.resolve(process.cwd(), 'public/json', name), 'utf8'));
 const LIST = read('short-hadis.json');
@@ -15,9 +15,34 @@ test('the precomputed file is small', () => {
   expect(readFileSync(path.resolve(process.cwd(), 'public/json/daily-picks.json')).length).toBeLessThan(8000);
 });
 
-test('it covers at least a year starting no later than today (2 October 2026)', () => {
+test('it covers at least a year and starts no later than today', () => {
   expect(FILE.picks.length).toBeGreaterThanOrEqual(366);
-  expect(FILE.from).toBeLessThanOrEqual(dayNumber(new Date(2026, 9, 2, 12)));
+  expect(FILE.from).toBeLessThanOrEqual(dayNumber(new Date()));
+});
+
+describe('picksCover (the build refreshes the file only when it runs low)', () => {
+  const file = { from: dayNumber(new Date(2026, 9, 1, 12)), picks: new Array(10).fill('BUK:1') }; // 1 to 10 October 2026
+  const day = (d) => new Date(2026, 9, d, 12);
+
+  test('is true while the date and the margin after it are inside the file', () => {
+    expect(picksCover(file, day(1), 0)).toBe(true);
+    expect(picksCover(file, day(10), 0)).toBe(true);
+    expect(picksCover(file, day(5), 5)).toBe(true);
+  });
+
+  test('is false once the margin runs past the end of the file', () => {
+    expect(picksCover(file, day(6), 5)).toBe(false);
+    expect(picksCover(file, day(11), 0)).toBe(false);
+  });
+
+  test('is false before the file starts', () => {
+    expect(picksCover(file, new Date(2026, 8, 30, 12), 0)).toBe(false);
+  });
+
+  test('is false for a missing or empty file', () => {
+    expect(picksCover(null, day(5), 0)).toBe(false);
+    expect(picksCover({ from: file.from, picks: [] }, day(1), 0)).toBe(false);
+  });
 });
 
 test('every date in the file gives exactly the hadis pickDaily gives from the full list (/daily agrees)', () => {

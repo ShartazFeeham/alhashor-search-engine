@@ -1,6 +1,8 @@
 // Script: writes the hadis of the day for a run of dates, so the home page need not load the whole
 // short-hadis list (88 KB) just to pick one number.
-// Run: node scripts/build-daily-picks.mjs   (writes public/json/daily-picks.json)
+// Run: node scripts/build-daily-picks.mjs   (writes public/json/daily-picks.json, 450 days from a week ago)
+//      node scripts/build-daily-picks.mjs --if-stale   (does nothing while the file still covers the next
+//      60 days; this is how `npm run build` runs it, so the file renews itself before it runs out)
 //
 // The picks are made by the very same pickDaily function the daily page uses (src/lib/dailyPick.js
 // with src/lib/books.js, loaded read-only), from public/json/short-hadis.json, so a date gives the
@@ -15,13 +17,25 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const FIRST = [2026, 8, 30]; // 30 September 2026 (month is 0-based)
 const DAYS = 450;
+const MARGIN_DAYS = 60; // --if-stale rebuilds when fewer than this many days are left
+const OUT = path.join(root, 'public/json/daily-picks.json');
+const now = new Date();
+const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7, 12); // a week of slack for old links and time zones
+const FIRST = [start.getFullYear(), start.getMonth(), start.getDate()];
 
 // Joins books.js and dailyPick.js into one module (the second one's import of the first goes).
 const books = await readFile(path.join(root, 'src/lib/books.js'), 'utf8');
 const pick = (await readFile(path.join(root, 'src/lib/dailyPick.js'), 'utf8')).replace(/^import .*$/m, '');
-const { dayNumber, pickDaily } = await import(`data:text/javascript;base64,${Buffer.from(`${books}\n${pick}`).toString('base64')}`);
+const { dayNumber, pickDaily, picksCover } = await import(`data:text/javascript;base64,${Buffer.from(`${books}\n${pick}`).toString('base64')}`);
+
+if (process.argv.includes('--if-stale')) {
+  const existing = await readFile(OUT, 'utf8').then(JSON.parse, () => null);
+  if (picksCover(existing, now, MARGIN_DAYS)) {
+    console.log(`daily picks are fresh (${existing.picks.length} days from day ${existing.from}); not rewriting`);
+    process.exit(0);
+  }
+}
 
 const list = JSON.parse(await readFile(path.join(root, 'public/json/short-hadis.json'), 'utf8'));
 const first = new Date(FIRST[0], FIRST[1], FIRST[2], 12);
@@ -33,5 +47,5 @@ for (let i = 0; i < DAYS; i++) {
   const { book, number } = pickDaily(list, date);
   picks.push(`${book.code}:${number}`);
 }
-await writeFile(path.join(root, 'public/json/daily-picks.json'), `${JSON.stringify({ from, picks })}\n`);
+await writeFile(OUT, `${JSON.stringify({ from, picks })}\n`);
 console.log(`wrote ${picks.length} picks from day ${from}`);
