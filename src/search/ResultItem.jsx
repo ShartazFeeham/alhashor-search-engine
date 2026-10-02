@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useId } from 'react';
 import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
@@ -17,6 +18,7 @@ import { useToast } from '../ui/Toast';
 export default function ResultItem({ tag, matcher }) {
   const digits = useDigits();
   const toast = useToast();
+  const router = useRouter();
   const titleId = useId();
   const { status, text } = useHadisText(tag);
   const parsed = parseTag(tag);
@@ -29,6 +31,15 @@ export default function ResultItem({ tag, matcher }) {
       () => toast('কপি করা হয়েছে'),
       () => toast('কপি করা যায়নি')
     );
+  };
+
+  // A mouse convenience: a plain click on the text or empty space opens the full hadis. Buttons and
+  // links keep their own behaviour, and selecting text by dragging does not navigate.
+  const openFromCard = (event) => {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    if (event.target.closest('a, button, input, select, textarea')) return;
+    if (window.getSelection?.()?.toString()) return;
+    router.push(href);
   };
 
   let content = <div className="hadis-skel" style={{ width: '90%' }} />;
@@ -53,7 +64,9 @@ export default function ResultItem({ tag, matcher }) {
   }
 
   return (
-    <li className="search-item">
+    // The card click is a mouse convenience only; the title link is the keyboard and screen-reader way in.
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+    <li className="search-item" onClick={openFromCard}>
       <div className="search-item-main">
         <div className="search-item-head">
           <BookBadge bookId={book.id} size="sm" />
@@ -66,7 +79,6 @@ export default function ResultItem({ tag, matcher }) {
         {status === 'ok' && <button type="button" aria-describedby={titleId} onClick={copy}>কপি</button>}
         {status === 'ok' && <ShareButton book={book} number={number} text={text} variant="link" describedBy={titleId} />}
         {status === 'ok' && <CompareToggle bookId={book.id} number={number} variant="link" describedBy={titleId} />}
-        <Link href={href} className="primary" aria-describedby={titleId}>হাদীস পাতা</Link>
       </div>
     </li>
   );

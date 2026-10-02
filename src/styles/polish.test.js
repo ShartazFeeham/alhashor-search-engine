@@ -51,9 +51,10 @@ describe('search tap targets', () => {
   const search = read('search.css');
   const px = (declarations, property) => Number(new RegExp(`(?:^|;)${property}:(\\d+)px`).exec(declarations)?.[1] ?? 0);
 
-  test('the result actions are 36px pill buttons with a 44px tap area from a ::after', () => {
+  test('the result actions are small pill buttons with a 44px vertical tap area from a ::after', () => {
     const declarations = rule(search, '.search-item-actions a,.search-item-actions button');
-    expect(px(declarations, 'min-height')).toBeGreaterThanOrEqual(36);
+    expect(px(declarations, 'min-height')).toBeGreaterThanOrEqual(26);
+    expect(px(declarations, 'min-height')).toBeLessThanOrEqual(28);
     expect(declarations).toMatch(/display:inline-flex/);
     expect(declarations).toMatch(/position:relative/);
     const hit = rule(search, '.search-item-actions a::after,.search-item-actions button::after');
@@ -279,38 +280,41 @@ describe('search page: result cards, action buttons, small option chips, boxed p
     expect(num(rule(search, '.search-list'), 'gap')).toBe(8);
   });
 
-  test('wide: two columns, a flexible text column and a 150 to 190px actions column on the right', () => {
+  test('the card is one column; the actions are one nowrap row at the bottom, right-aligned, scrolling inside itself', () => {
     const item = rule(search, '.search-item');
     expect(item).toMatch(/display:grid/);
-    const [, width] = /grid-template-columns:minmax\(0,1fr\) (\d+)px/.exec(item);
-    expect(Number(width)).toBeGreaterThanOrEqual(150);
-    expect(Number(width)).toBeLessThanOrEqual(190);
+    expect(item).toMatch(/grid-template-columns:minmax\(0,1fr\)(?:;|$)/);
     expect(rule(search, '.search-item-main')).toMatch(/min-width:0/);
     const actions = rule(search, '.search-item-actions');
-    expect(actions).toMatch(/flex-direction:column/);
-    expect(actions).toMatch(/align-items:flex-end/);
+    expect(actions).toMatch(/display:flex/);
+    expect(actions).toMatch(/flex-direction:row/);
+    expect(actions).toMatch(/flex-wrap:nowrap/);
+    expect(actions).toMatch(/justify-content:flex-end/);
+    expect(actions).toMatch(/overflow-x:auto/);
+    expect(actions).toMatch(/scrollbar-width:none/);
+    expect(actions).toMatch(/-webkit-overflow-scrolling:touch/);
+    expect(num(actions, 'gap')).toBe(3);
+    expect(num(actions, 'margin-top')).toBe(4);
+    expect(search).toMatch(/\.search-item-actions::-webkit-scrollbar\{display:none\}/);
+    expect(search).not.toMatch(/max-width: ?640px\)\{[^}]*\.search-item-actions\{[^}]*flex-wrap:wrap/);
   });
 
-  test('the actions are compact pills: 13px text, line border, accent2 text, accent hover, filled primary', () => {
+  test('the actions are compact pills: 12px text, 2px 7px padding, line border, accent2 text, accent hover', () => {
     const pill = rule(search, '.search-item-actions a,.search-item-actions button');
-    expect(num(pill, 'font-size')).toBe(13);
+    expect(num(pill, 'font-size')).toBe(12);
     expect(pill).toMatch(/border-radius:99px/);
     expect(pill).toMatch(/border:1px solid var\(--line\)/);
     expect(pill).toMatch(/color:var\(--accent2\)/);
-    expect(pill).toMatch(/padding:6px 12px/);
+    expect(pill).toMatch(/padding:2px 7px/);
+    expect(pill).toMatch(/white-space:nowrap/);
+    expect(pill).toMatch(/flex:none/);
     expect(rule(search, '.search-item-actions a:hover,.search-item-actions button:hover')).toMatch(/border-color:var\(--accent\)/);
-    const primary = rule(search, '.search-item-actions .primary');
-    expect(primary).toMatch(/background:var\(--accent\)/);
-    expect(primary).toMatch(/color:var\(--on-accent\)/);
+    expect(search).not.toMatch(/\.search-item-actions \.primary/);
   });
 
-  test('phones: one column, the actions are a wrapped row at the bottom, aligned right', () => {
-    const phone = /@media \(max-width: ?640px\)\{([\s\S]*)\}\s*$/.exec(search)[1];
-    expect(rule(phone, '.search-item')).toMatch(/grid-template-columns:minmax\(0,1fr\)(?:;|$)/);
-    const actions = rule(phone, '.search-item-actions');
-    expect(actions).toMatch(/flex-direction:row/);
-    expect(actions).toMatch(/flex-wrap:wrap/);
-    expect(actions).toMatch(/justify-content:flex-end/);
+  test('the card reads as clickable: pointer cursor and an accent border on hover', () => {
+    expect(rule(search, '.search-item')).toMatch(/cursor:pointer/);
+    expect(rule(search, '.search-item:hover')).toMatch(/border-color:var\(--accent\)/);
   });
 
   test('the example chips are small: 12px text, 3px 9px padding, 6px gap, light, no shadow, 44px tap area', () => {

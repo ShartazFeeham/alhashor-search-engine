@@ -29,20 +29,22 @@
 .search-count-n{font-size:11.5px;opacity:.8}
 
 .search-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-/* Each result is a card: text on the left, the actions as pill buttons in a column on the right. */
-.search-item{display:grid;grid-template-columns:minmax(0,1fr) 170px;gap:6px 12px;align-items:start;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;min-width:0}
+/* Each result is a card: the text across the full width, the actions as one small row of pills at the bottom. The whole card opens the hadis. */
+.search-item{display:grid;grid-template-columns:minmax(0,1fr);gap:0;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;min-width:0;cursor:pointer;transition:border-color .15s}
+.search-item:hover{border-color:var(--accent)}
 .search-item-main{min-width:0}
 .search-item-head{display:flex;align-items:center;gap:8px;font-weight:600}
 .search-item-head a{color:var(--ink);text-decoration:none;padding:10px 0;margin:-10px 0}
 .search-item-head a:hover{color:var(--accent2)}
 .search-text{margin:2px 0 4px;font-family:var(--f-read),serif;font-size:calc(var(--rs) - 1px);line-height:calc(var(--rlh) * .85);overflow-wrap:anywhere}
 .search-missing{margin:2px 0 4px;color:var(--ink3)}
-.search-item-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-/* 36px visible pills; the ::after reaches 4px above and below, so the tap area is 44px (the 8px gap keeps neighbours apart). */
-.search-item-actions a,.search-item-actions button{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:99px;background:var(--surface2);color:var(--accent2);font:inherit;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer;transition:border-color .15s}
-.search-item-actions a::after,.search-item-actions button::after{content:"";position:absolute;inset:-4px 0}
+/* One line always; when it is wider than the card (about 300px phones) it scrolls inside itself, not the page. */
+.search-item-actions{display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:flex-end;align-items:center;gap:3px;margin-top:4px;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.search-item-actions::-webkit-scrollbar{display:none}
+/* 27px visible pills; the ::after reaches 9px above and below (vertical only, so neighbours do not overlap), so the tap area is 44px high. */
+.search-item-actions a,.search-item-actions button{position:relative;flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:26px;box-sizing:border-box;padding:2px 7px;border:1px solid var(--line);border-radius:99px;background:var(--surface2);color:var(--accent2);font:inherit;font-size:12px;font-weight:600;line-height:1.4;text-decoration:none;white-space:nowrap;cursor:pointer;transition:border-color .15s}
+.search-item-actions a::after,.search-item-actions button::after{content:"";position:absolute;inset:-9px 0}
 .search-item-actions a:hover,.search-item-actions button:hover{border-color:var(--accent)}
-.search-item-actions .primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .search-item .search-item-actions .cmp-link-btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);text-decoration:none}
 
 /* The pager is a card too; previous and next are solid accent pills with arrows. */
@@ -70,8 +72,6 @@
 
 /* Phones: the book chips are one row of 44px chips that scrolls sideways instead of wrapping to three rows. */
 @media (max-width: 640px){
-  .search-item{grid-template-columns:minmax(0,1fr)}
-  .search-item-actions{flex-direction:row;flex-wrap:wrap;justify-content:flex-end}
   .search-filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px 0;margin:-2px 0}
   .search-filters::-webkit-scrollbar{display:none}
 }

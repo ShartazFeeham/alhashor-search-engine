@@ -2,7 +2,8 @@ import { render, screen, fireEvent, waitFor, act, within } from '@testing-librar
 import { StrictMode } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { SettingsProvider } from '../settings/SettingsProvider';
-import { setUrl } from '../test/nextNavigation';
+import { getUrl, setUrl } from '../test/nextNavigation';
+import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { ToastProvider } from '../ui/Toast';
 import SearchPage from './SearchPage';
 
@@ -421,7 +422,7 @@ describe('headings, focus and announcements', () => {
     for (const name of ['কপি', 'শেয়ার', 'তুলনায় যোগ করুন']) {
       expect(first.getByRole('button', { name })).toHaveAccessibleDescription(title);
     }
-    expect(first.getByRole('link', { name: 'হাদীস পাতা' })).toHaveAccessibleDescription(title);
+    expect(first.queryByRole('link', { name: 'হাদীস পাতা' })).not.toBeInTheDocument();
     // the second result is described by its own title
     const second = within(screen.getAllByRole('listitem')[1]);
     expect(second.getByRole('button', { name: 'কপি' })).toHaveAccessibleDescription(/হাদীস নং ২$/);
@@ -506,7 +507,7 @@ describe('result cards, actions and boxed pager (structure)', () => {
     expect(text.compareDocumentPosition(copy) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(within(card).getByRole('button', { name: 'শেয়ার' })).toBeInTheDocument();
     expect(within(card).getByRole('button', { name: 'তুলনায় যোগ করুন' })).toBeInTheDocument();
-    expect(within(card).getByRole('link', { name: 'হাদীস পাতা' })).toHaveClass('primary');
+    expect(within(card).queryByRole('link', { name: 'হাদীস পাতা' })).not.toBeInTheDocument();
   });
 
   test('the pager is one named container with filled previous and next buttons that have arrow icons', async () => {
@@ -521,5 +522,61 @@ describe('result cards, actions and boxed pager (structure)', () => {
     expect(prev).toBeDisabled();
     expect(within(nav).getAllByRole('button')).toHaveLength(2);
     expect(within(nav).getByText('পাতা ১ / ৩')).toHaveClass('search-pager-label');
+  });
+});
+
+describe('the whole result card opens the full hadis', () => {
+  const target = () => {
+    const { book, number } = parseTag('BUK-1');
+    return hadisHref(book.id, number);
+  };
+  const open = async () => {
+    servePaged('copyword', 1);
+    renderSearch('/search?q=copyword');
+    const text = await screen.findByText('t1');
+    return { text, card: screen.getAllByRole('listitem')[0] };
+  };
+  afterEach(() => vi.restoreAllMocks());
+
+  test('clicking the snippet text opens /hadis/<book>/<number>', async () => {
+    const { text } = await open();
+    fireEvent.click(text);
+    expect(getUrl().pathname).toBe(target());
+  });
+
+  test('clicking the empty area of the card (the li itself) opens it', async () => {
+    const { card } = await open();
+    fireEvent.click(card);
+    expect(getUrl().pathname).toBe(target());
+  });
+
+  test('the copy, share and compare buttons do not open it', async () => {
+    Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue() } });
+    await open();
+    for (const name of ['কপি', 'শেয়ার', 'তুলনায় যোগ করুন']) {
+      fireEvent.click(screen.getByRole('button', { name }));
+      expect(getUrl().pathname).toBe('/search');
+    }
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('t1');
+  });
+
+  test('a click with selected text does not open it', async () => {
+    const { text } = await open();
+    vi.spyOn(window, 'getSelection').mockReturnValue({ toString: () => 'selected' });
+    fireEvent.click(text);
+    expect(getUrl().pathname).toBe('/search');
+  });
+
+  test('ctrl, meta, shift, alt and non-primary clicks do not open it from the card', async () => {
+    const { text } = await open();
+    for (const modifier of ['ctrlKey', 'metaKey', 'shiftKey', 'altKey']) fireEvent.click(text, { [modifier]: true });
+    fireEvent.click(text, { button: 1 });
+    expect(getUrl().pathname).toBe('/search');
+  });
+
+  test('the card gets no link role or tab stop of its own', async () => {
+    const { card } = await open();
+    expect(card).not.toHaveAttribute('tabindex');
+    expect(card).not.toHaveAttribute('role');
   });
 });
