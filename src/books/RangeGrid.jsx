@@ -13,11 +13,11 @@ export default function RangeGrid({ book, firstNumber }) {
   const ranges = rangeGrid(book);
   const grid = useRef(null);
 
-  // The grid scrolls on its own; keep the current range in the middle of it, without moving the page.
+  // The strip scrolls sideways on its own; keep the current range in the middle of it, without moving the page.
   useEffect(() => {
     const box = grid.current;
     const current = box?.querySelector('[aria-current="true"]');
-    if (current) box.scrollTop = current.offsetTop - (box.clientHeight - current.offsetHeight) / 2;
+    if (current) box.scrollLeft = current.offsetLeft - (box.clientWidth - current.offsetWidth) / 2;
   }, [book, firstNumber]);
 
   return (

@@ -2,55 +2,73 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { bookHref, checkJump, pageOfNumber, parseJump } from '../lib/bookBrowse';
+import { useEffect, useState } from 'react';
+import { bookHref, checkJump, pageOfNumber } from '../lib/bookBrowse';
+import { toEnglishDigits } from '../lib/digits';
 import { neighbours } from '../lib/hadisRoute';
 import { useDigits } from '../lib/useDigits';
 import Button from '../ui/Button';
-import Chip from '../ui/Chip';
+import BookHead from './BookHead';
 
-const EXAMPLES = ['বুখারী ১২৩৪', 'মুসলিম ১০৬৯', 'তিরমিযী ৯৮৭'];
+const WARNING_FOR = 3000; // how long "only digits" stays on screen
 
-// "বুখারী ১২৩৪" (or just "১২৩৪" for the open book) goes to that book's page and points at the hadis.
-// What cannot be opened is explained: unreadable text, a number past the end, a number with no file.
+// The title band of the book page with the jump form at its right end. The box takes a whole number
+// (Bangla or English digits) and goes to that hadis of the open book. What cannot be opened is
+// explained: an empty box, a number past the end, a number with no file.
 export default function JumpBox({ book }) {
   const router = useRouter();
   const digits = useDigits();
   const [text, setText] = useState('');
   const [problem, setProblem] = useState(null);
+  const [warning, setWarning] = useState(false);
+
+  useEffect(() => {
+    if (!warning) return undefined;
+    const timer = setTimeout(() => setWarning(false), WARNING_FOR);
+    return () => clearTimeout(timer);
+  }, [warning]);
+
+  // Only digits get in (typed or pasted); anything else is dropped with a short warning.
+  function change(event) {
+    const value = event.target.value;
+    const kept = value.replace(/[^০-৯0-9]/g, '');
+    setText(kept);
+    setProblem(null);
+    setWarning(kept !== value);
+  }
 
   function submit(event) {
     event.preventDefault();
-    const target = parseJump(text, book);
-    if (!target) {
-      setProblem({ kind: 'unreadable' });
+    if (!text) {
+      setProblem({ kind: 'empty' });
       return;
     }
-    const check = checkJump(target.book, target.number);
+    const number = Number(toEnglishDigits(text));
+    const check = checkJump(book, number);
     if (!check.ok) {
-      setProblem({ kind: check.reason, book: target.book, number: target.number, max: check.max });
+      setProblem({ kind: check.reason, number, max: check.max });
       return;
     }
     setProblem(null);
     // The book page scrolls to the hadis itself, once it is on the page.
-    router.push(bookHref(target.book, pageOfNumber(target.book, target.number), target.number), { scroll: false });
+    router.push(bookHref(book, pageOfNumber(book, number), number), { scroll: false });
   }
 
   let message = null;
-  if (problem?.kind === 'unreadable') {
-    message = <p>গ্রন্থের নাম আর নম্বর লিখুন, যেমন: বুখারী ১২৩৪।</p>;
+  if (problem?.kind === 'empty') {
+    message = <p>একটি সংখ্যা লিখুন</p>;
   } else if (problem?.kind === 'range') {
-    message = <p>{`${problem.book.full}ে সর্বোচ্চ ${digits(problem.max)} নম্বর পর্যন্ত আছে।`}</p>;
+    message = <p>{`${book.full}ে সর্বোচ্চ ${digits(problem.max)} নম্বর পর্যন্ত আছে।`}</p>;
   } else if (problem?.kind === 'gap') {
-    const { prev, next } = neighbours(problem.book, problem.number);
+    const { prev, next } = neighbours(book, problem.number);
     const link = (number) => (
-      <Link key={number} href={bookHref(problem.book, pageOfNumber(problem.book, number), number)}>
+      <Link key={number} href={bookHref(book, pageOfNumber(book, number), number)}>
         হাদীস নং {digits(number)}
       </Link>
     );
     message = (
       <p>
-        {`${problem.book.full}ে ${digits(problem.number)} নম্বরের কোনো হাদীস নেই।`}
+        {`${book.full}ে ${digits(problem.number)} নম্বরের কোনো হাদীস নেই।`}
         {(prev || next) && ' কাছের হাদীস: '}
         {prev && link(prev)}
         {prev && next && ', '}
@@ -60,28 +78,22 @@ export default function JumpBox({ book }) {
   }
 
   return (
-    <section className="books-jump" aria-labelledby="books-jump-title">
-      <h2 className="h3" id="books-jump-title">নম্বরে যান</h2>
-      <form className="books-jump-form" onSubmit={submit} autoComplete="off">
-        <input
-          type="text"
-          lang="bn"
-          value={text}
-          onChange={(event) => {
-            setText(event.target.value);
-            setProblem(null);
-          }}
-          placeholder="যেমন: বুখারী ১২৩৪"
-          aria-label="হাদীস নম্বরে যান"
-        />
-        <Button variant="primary" size="sm" type="submit">যান</Button>
-      </form>
+    <div className="books-band">
+      <BookHead book={book}>
+        <form className="books-jump-form" onSubmit={submit} autoComplete="off">
+          <input
+            type="text"
+            inputMode="numeric"
+            value={text}
+            onChange={change}
+            placeholder="নম্বর"
+            aria-label="হাদীস নম্বরে যান"
+          />
+          <Button variant="primary" size="sm" type="submit">যান</Button>
+        </form>
+      </BookHead>
       <div className="books-jump-msg" role="status">{message}</div>
-      <div className="books-jump-examples">
-        {EXAMPLES.map((example) => (
-          <Chip key={example} onClick={() => setText(example)}>{example}</Chip>
-        ))}
-      </div>
-    </section>
+      <div className="books-jump-warn" role="status">{warning && 'শুধু সংখ্যা লিখুন'}</div>
+    </div>
   );
 }

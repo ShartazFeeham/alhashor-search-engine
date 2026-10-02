@@ -1,3 +1,6 @@
+/* eslint-disable testing-library/no-node-access -- the layout checks look at class names and containers */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { ToastProvider } from '../ui/Toast';
@@ -34,11 +37,17 @@ function show(bookId, address) {
   );
 }
 
-const cardNumbers = () =>
-  screen
-    .getAllByRole('heading', { level: 2 })
-    .map((h) => h.textContent)
-    .filter((text) => /হাদীস নং/.test(text));
+// The title links of the cards (the cards are the search result cards).
+const cardNumbers = () => [...document.querySelectorAll('.search-item-head a')].map((a) => a.textContent);
+
+const css = readFileSync(path.resolve(process.cwd(), 'src/styles/books.css'), 'utf8');
+// The declarations of the first rule whose selector is exactly `selector`.
+function rule(selector) {
+  const start = css.indexOf(`${selector}{`);
+  if (start === -1) throw new Error(`no rule ${selector}`);
+  return css.slice(start + selector.length + 1, css.indexOf('}', start));
+}
+const px = (declarations, property) => Number(new RegExp(`(?:^|;)${property}:(\\d+(?:\\.\\d+)?)px`).exec(declarations)?.[1]);
 
 describe('the page', () => {
   test('is titled with the book on every page (the pre-built title cannot know the page)', async () => {
@@ -213,52 +222,102 @@ describe('jump to a number', () => {
   });
 
   const box = () => screen.getByRole('textbox', { name: 'হাদীস নম্বরে যান' });
+  const type = (text) => fireEvent.change(box(), { target: { value: text } });
   const go = (text) => {
-    fireEvent.change(box(), { target: { value: text } });
+    type(text);
     fireEvent.click(screen.getByRole('button', { name: 'যান' }));
   };
+  const note = () => document.querySelector('.books-jump-msg');
+  const warning = () => document.querySelector('.books-jump-warn');
 
-  test('"মুসলিম ৪৫" opens the page of that hadis, in that book, and points at it', () => {
-    show('bukhari');
-    go('মুসলিম ৪৫');
-    expect(getUrl().pathname + getUrl().search).toBe('/books/muslim?page=3&hadis=45');
-  });
-
-  test('a hadis on the first page has no page in the address', () => {
-    show('muslim', '/books/muslim?page=5');
-    go('মুসলিম ৫');
-    expect(getUrl().pathname + getUrl().search).toBe('/books/muslim?hadis=5');
-  });
-
-  test('a number alone means the book that is open, and English digits work', () => {
+  test('a number opens the page of that hadis in the open book, and points at it', () => {
     show('muslim');
     go('45');
     expect(getUrl().pathname + getUrl().search).toBe('/books/muslim?page=3&hadis=45');
   });
 
-  test('Roman-letter book names work', () => {
-    show('muslim');
-    go('Bukhari 64');
+  test('Bangla digits work, and the box keeps the digits as typed', () => {
+    show('bukhari');
+    go('৬৪');
     expect(getUrl().pathname + getUrl().search).toBe('/books/bukhari?page=4&hadis=64');
+    expect(box()).toHaveValue('৬৪');
   });
 
-  test('explains what to type when it cannot read the text, and stays put', () => {
+  test('mixed Bangla and English digits work', () => {
     show('muslim');
-    go('রোজা');
-    expect(screen.getByText(/গ্রন্থের নাম আর নম্বর লিখুন, যেমন: বুখারী ১২৩৪/)).toBeInTheDocument();
+    go('4৫');
+    expect(getUrl().pathname + getUrl().search).toBe('/books/muslim?page=3&hadis=45');
+  });
+
+  test('a hadis on the first page has no page in the address', () => {
+    show('muslim', '/books/muslim?page=5');
+    go('5');
+    expect(getUrl().pathname + getUrl().search).toBe('/books/muslim?hadis=5');
+  });
+
+  test('the box wants a number: numeric keyboard, short placeholder', () => {
+    show('muslim');
+    expect(box()).toHaveAttribute('inputmode', 'numeric');
+    expect(box()).toHaveAttribute('placeholder', 'নম্বর');
+  });
+
+  test('letters, spaces and signs are not accepted, and a short warning says so', () => {
+    show('muslim');
+    type('4a');
+    expect(box()).toHaveValue('4');
+    expect(warning()).toHaveAttribute('role', 'status');
+    expect(warning()).toHaveTextContent('শুধু সংখ্যা লিখুন');
+    type('4 5');
+    expect(box()).toHaveValue('45');
+    type('-4.5');
+    expect(box()).toHaveValue('45');
+    type('মুসলিম ৪৫');
+    expect(box()).toHaveValue('৪৫');
+  });
+
+  test('a pasted text is cleaned to its digits and warns when something was dropped', () => {
+    show('muslim');
+    type('বুখারী ১২৩৪');
+    expect(box()).toHaveValue('১২৩৪');
+    expect(warning()).toHaveTextContent('শুধু সংখ্যা লিখুন');
+  });
+
+  test('digits alone give no warning, and the warning goes away after about 3 seconds', () => {
+    vi.useFakeTimers();
+    try {
+      show('muslim');
+      type('12');
+      expect(warning()).toBeEmptyDOMElement();
+      type('12x');
+      expect(warning()).toHaveTextContent('শুধু সংখ্যা লিখুন');
+      act(() => {
+        vi.advanceTimersByTime(3100);
+      });
+      expect(warning()).toBeEmptyDOMElement();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  test('an empty box asks for a number and stays put', () => {
+    show('muslim');
+    fireEvent.click(screen.getByRole('button', { name: 'যান' }));
+    expect(note()).toHaveTextContent('একটি সংখ্যা লিখুন');
     expect(getUrl().pathname).toBe('/books/muslim');
   });
 
-  test('a number past the end names the highest one', () => {
+  test('a number past the end names the highest one, and so does 0', () => {
     show('muslim');
-    go('বুখারী ৯৯৯৯');
-    expect(screen.getByText('বুখারী শরীফে সর্বোচ্চ ৭,০৫৩ নম্বর পর্যন্ত আছে।')).toBeInTheDocument();
+    go('9999999');
+    expect(screen.getByText('মুসলিম শরীফে সর্বোচ্চ ৭,২৮১ নম্বর পর্যন্ত আছে।')).toBeInTheDocument();
     expect(getUrl().pathname).toBe('/books/muslim');
+    go('0');
+    expect(screen.getByText('মুসলিম শরীফে সর্বোচ্চ ৭,২৮১ নম্বর পর্যন্ত আছে।')).toBeInTheDocument();
   });
 
   test('a number with no file says so and offers the hadis either side', () => {
-    show('muslim');
-    go('বুখারী ৬৩');
+    show('bukhari');
+    go('৬৩');
     expect(screen.getByText(/বুখারী শরীফে ৬৩ নম্বরের কোনো হাদীস নেই/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'হাদীস নং ৬২' })).toHaveAttribute('href', '/books/bukhari?page=4&hadis=62');
     expect(screen.getByRole('link', { name: 'হাদীস নং ৬৪' })).toHaveAttribute('href', '/books/bukhari?page=4&hadis=64');
@@ -266,35 +325,124 @@ describe('jump to a number', () => {
 
   test('a jump leaves the scrolling to the page, so it can wait for the hadis', () => {
     show('muslim');
-    go('মুসলিম ৪৫');
+    go('45');
     expect(getLastPushOptions()).toEqual({ scroll: false });
   });
 
-  test('the message goes away as soon as the box is edited', () => {
+  test('the message goes away as soon as the box is edited, and once a jump works', () => {
     show('muslim');
-    go('রোজা');
-    expect(screen.getByText(/গ্রন্থের নাম আর নম্বর/)).toBeInTheDocument();
-    fireEvent.change(box(), { target: { value: 'মুসলিম ১' } });
-    expect(screen.queryByText(/গ্রন্থের নাম আর নম্বর/)).not.toBeInTheDocument();
+    go('9999999');
+    expect(note()).toHaveTextContent('সর্বোচ্চ');
+    type('1');
+    expect(note()).toBeEmptyDOMElement();
+    go('9999999');
+    go('45');
+    expect(note()).toBeEmptyDOMElement();
+  });
+});
+
+describe('the layout of the book page', () => {
+  beforeEach(() => {
+    global.fetch = vi.fn(() => new Promise(() => {}));
   });
 
-  test('the examples are plain buttons, not toggles', () => {
-    show('muslim');
-    expect(screen.getByRole('button', { name: 'বুখারী ১২৩৪' })).not.toHaveAttribute('aria-pressed');
+  test('the book cards are slim: 36 to 40px high in a row, tight padding, a 44px tap area', () => {
+    const link = rule('.books-switch a');
+    expect(link).toMatch(/flex-direction:row/);
+    expect(px(link, 'height')).toBeGreaterThanOrEqual(36);
+    expect(px(link, 'height')).toBeLessThanOrEqual(40);
+    expect(Number(/padding:(\d+)px/.exec(link)[1])).toBeLessThanOrEqual(6);
+    expect(rule('.books-switch a::after')).toMatch(/inset:-\d+px 0/);
   });
 
-  test('the message goes away once a jump works', () => {
-    show('muslim');
-    go('রোজা');
-    go('মুসলিম ৪৫');
-    expect(screen.queryByText(/গ্রন্থের নাম আর নম্বর/)).not.toBeInTheDocument();
+  test('the range strip is one line that scrolls sideways, with 30 to 32px chips and a 44px tap area', () => {
+    const strip = rule('.books-ranges');
+    expect(strip).toMatch(/display:flex/);
+    expect(strip).toMatch(/flex-wrap:nowrap/);
+    expect(strip).toMatch(/overflow-x:auto/);
+    expect(px(strip, 'gap')).toBe(6);
+    const chip = rule('.books-ranges a,.books-ranges span');
+    expect(px(chip, 'min-height')).toBeGreaterThanOrEqual(30);
+    expect(px(chip, 'min-height')).toBeLessThanOrEqual(32);
+    expect(chip).toMatch(/flex:none/);
+    expect(rule('.books-ranges a::after,.books-ranges span::after')).toMatch(/inset:-\d+px 0/);
   });
 
-  test('an example fills the box and does not jump', () => {
+  test('the jump box and its button sit inside the title band, next to the h1', () => {
+    show('bukhari');
+    const band = screen.getByRole('heading', { level: 1 }).closest('header');
+    expect(within(band).getByRole('textbox', { name: 'হাদীস নম্বরে যান' })).toHaveAttribute('placeholder', 'নম্বর');
+    expect(within(band).getByRole('button', { name: 'যান' })).toBeInTheDocument();
+  });
+
+  test('there is no separate jump card and no example chips', () => {
+    show('bukhari');
+    expect(screen.queryByRole('heading', { name: 'নম্বরে যান' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'বুখারী ১২৩৪' })).not.toBeInTheDocument();
+    expect(screen.queryByText('তিরমিযী ৯৮৭')).not.toBeInTheDocument();
+  });
+
+  test('the band is one row at every width: no wrapping, the title shrinks, the form stays small', () => {
+    const band = rule('.books-head');
+    expect(band).toMatch(/flex-wrap:nowrap/);
+    expect(band).toMatch(/align-items:center/);
+    expect(rule('.books-head-title')).toMatch(/min-width:0/);
+    expect(rule('.books-head h1')).toMatch(/text-overflow:ellipsis/);
+    expect(rule('.books-jump-form')).toMatch(/flex:0 1 \d+px/);
+    expect(rule('.books-jump-form .ui-btn.sm')).toMatch(/min-height:3\d?px/);
+    expect(rule('.books-jump-form .ui-btn.sm::after')).toMatch(/inset:-\d+px/);
+  });
+
+  test('the jump messages stay in a status region that takes no room when empty', () => {
+    show('bukhari');
+    const msg = document.querySelector('.books-jump-msg');
+    expect(msg).toHaveAttribute('role', 'status');
+    expect(msg.textContent).toBe('');
+    expect(rule('.books-jump-msg:empty')).toMatch(/display:none/);
+  });
+
+  test('the range label and the pager (above the list) share one row', () => {
+    show('bukhari', '/books/bukhari?page=4');
+    const label = screen.getByText('হাদীস নং ৬১ - ৮১');
+    const pager = screen.getByRole('navigation', { name: 'পাতা (উপরে)' });
+    expect(label.parentElement).toBe(pager.parentElement);
+    expect(label.parentElement).toHaveClass('books-bar');
+    expect(rule('.books-bar')).toMatch(/display:flex/);
+  });
+});
+
+describe('the list uses the search result cards', () => {
+  const items = () => screen.getByRole('list', { name: 'হাদীসের তালিকা' }).querySelectorAll(':scope > li');
+
+  test('each hadis has the title link, the snippet (no highlight) and the compact buttons', async () => {
     show('muslim');
-    fireEvent.click(screen.getByRole('button', { name: 'বুখারী ১২৩৪' }));
-    expect(box()).toHaveValue('বুখারী ১২৩৪');
+    await screen.findByText(file('Muslim', 20));
+    const first = items()[0];
+    expect(first).toHaveClass('search-item');
+    expect(first.id).toBe('h1');
+    expect(within(first).getByRole('link', { name: 'মুসলিম শরীফ - হাদীস নং ১' })).toHaveAttribute('href', '/hadis/muslim/1');
+    expect(first.querySelector('.search-text')).toHaveTextContent(file('Muslim', 1));
+    expect(first.querySelector('mark')).toBeNull();
+    expect(within(first).getByRole('button', { name: 'কপি' })).toBeInTheDocument();
+    expect(within(first).getByRole('button', { name: 'শেয়ার' })).toBeInTheDocument();
+    expect(within(first).getByRole('button', { name: 'তুলনায় যোগ করুন' })).toBeInTheDocument();
+  });
+
+  test('a plain click on the text opens the hadis page, a click on a button does not', async () => {
+    show('muslim');
+    const text = (await screen.findByText(file('Muslim', 2)));
+    fireEvent.click(within(text.closest('li')).getByRole('button', { name: 'কপি' }));
     expect(getUrl().pathname).toBe('/books/muslim');
+    fireEvent.click(text);
+    expect(getUrl().pathname).toBe('/hadis/muslim/2');
+  });
+
+  test('a long hadis is cut with the "full hadis" link', async () => {
+    global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(`১। ${'শব্দ '.repeat(200)}`) }));
+    show('muslim');
+    const links = await screen.findAllByRole('link', { name: 'সম্পূর্ণ হাদীস দেখুন...' });
+    expect(links).toHaveLength(20);
+    expect(rule('.books-list .search-text')).toMatch(/-webkit-line-clamp:3/);
   });
 });
 

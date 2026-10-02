@@ -15,7 +15,11 @@ import { useToast } from '../ui/Toast';
 
 // One search result: the book and number (a link), the text around the match with the matched
 // words highlighted, and quiet actions.
-export default function ResultItem({ tag, matcher }) {
+//
+// The book page reuses it for its list: `anchor` gives the item its id (h<number>), `marked` flags
+// the hadis a jump points at, and `plain` shows the beginning of the text (number removed) with
+// nothing highlighted.
+export default function ResultItem({ tag, matcher = null, anchor, marked = false, plain = false }) {
   const digits = useDigits();
   const toast = useToast();
   const router = useRouter();
@@ -49,8 +53,9 @@ export default function ResultItem({ tag, matcher }) {
   } else if (status === 'ok') {
     // The snippet is about the saying; when the words matched only the chain or the number
     // (a search for a narrator), it is taken from the whole text so the match is shown.
-    const { body } = splitHadis(text);
-    const snippet = makeSnippet(hasMatch(body, matcher) ? body : text, matcher);
+    const { chain, body } = splitHadis(text);
+    const source = plain ? [chain, body].filter(Boolean).join(' ') : hasMatch(body, matcher) ? body : text;
+    const snippet = makeSnippet(source, matcher);
     cut = snippet.cutStart || snippet.cutEnd;
     content = (
       <p className="search-text">
@@ -66,7 +71,12 @@ export default function ResultItem({ tag, matcher }) {
   return (
     // The card click is a mouse convenience only; the title link is the keyboard and screen-reader way in.
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
-    <li className="search-item" onClick={openFromCard}>
+    <li
+      id={anchor}
+      className={anchor ? 'search-item books-item' : 'search-item'}
+      data-target={marked ? 'true' : undefined}
+      onClick={openFromCard}
+    >
       <div className="search-item-main">
         <div className="search-item-head">
           <BookBadge bookId={book.id} size="sm" />

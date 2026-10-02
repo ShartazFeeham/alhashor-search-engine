@@ -11,43 +11,68 @@
 .books-card-text span{font-size:12.5px;color:var(--ink2)}
 .books-card .ui-icon{color:var(--ink3)}
 
+.screen.books-book{padding-top:8px;gap:8px}
 .books-switch{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.books-switch a{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;border-radius:18px;background:var(--surface);border:2px solid transparent;box-shadow:var(--shadow);font-weight:600;font-size:12px;color:var(--ink);text-decoration:none;min-width:0;transition:border-color .18s,background .18s}
+/* Slim cards: badge, name and count on one line, 38px high; the ::after reaches 3px above and below for a 44px tap area. */
+.books-switch a{position:relative;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:5px;height:38px;padding:3px 4px;box-sizing:border-box;border-radius:12px;background:var(--surface);border:2px solid transparent;box-shadow:var(--shadow);font-weight:600;font-size:12px;color:var(--ink);text-decoration:none;white-space:nowrap;overflow:hidden;min-width:0;transition:border-color .18s,background .18s}
+.books-switch a::after{content:"";position:absolute;inset:-3px 0}
 .books-switch a:hover{border-color:var(--bk)}
-.books-switch small{font-weight:500;color:var(--ink2);font-size:11.5px}
+.books-switch .ui-badge{flex:none;width:22px;height:22px;border-radius:8px;font-size:12px}
+.books-switch-text{display:flex;flex-direction:column;min-width:0;text-align:left}
+.books-switch-text>span{display:block;overflow:hidden;text-overflow:ellipsis;line-height:1.15}
+.books-switch small{display:block;font-weight:500;color:var(--ink2);font-size:12px;line-height:1.15}
 .books-switch a[aria-current="page"]{border-color:var(--bk);background:color-mix(in srgb,var(--bk) 12%,var(--surface))}
 
-.books-head{display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:color-mix(in srgb,var(--bk) 14%,var(--surface))}
-.books-head h1{margin:0;font-size:15px;line-height:1.3}
-.books-head p{margin:2px 0 0;font-size:12px;color:var(--ink2)}
+/* The title band: title block at the left, the jump form at the right end (under the title on phones). */
+.books-head{display:flex;flex-wrap:nowrap;align-items:center;gap:8px;padding:10px 12px;border-radius:20px;background:color-mix(in srgb,var(--bk) 14%,var(--surface))}
+.books-head .ui-badge{flex:none}
+.books-head-title{flex:1 1 0;min-width:0}
+.books-head h1{margin:0;font-size:15px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.books-head p{margin:2px 0 0;font-size:12px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.books-jump{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
-.books-jump .h3{margin:0;font-size:14px}
-.books-jump-form{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:18px;padding:4px 4px 4px 14px;background:var(--surface);transition:border-color .2s,box-shadow .2s}
+.books-band{position:relative;display:flex;flex-direction:column}
+/* The form stays on the title's row at every width: a narrow box and a compact button on phones. */
+.books-jump-form{flex:0 1 160px;min-width:0;display:flex;align-items:center;gap:4px;border:2px solid var(--line);border-radius:18px;padding:2px 2px 2px 10px;background:var(--surface);transition:border-color .2s,box-shadow .2s}
 .books-jump-form:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
-.books-jump-form input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);padding:8px 2px}
+.books-jump-form input{flex:1 1 0;width:0;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);padding:4px 2px}
+.books-jump-form .ui-btn.sm{position:relative;flex:none;min-height:36px;padding:0 10px}
+.books-jump-form .ui-btn.sm::after{content:"";position:absolute;inset:-4px -2px}
 .books-jump-msg:empty{display:none}
-.books-jump-msg p{margin:0;color:var(--bad);font-weight:600;font-size:12px;line-height:1.6}
+.books-jump-msg{margin-top:8px}
+/* The 3-second warning floats under the band, so nothing moves when it shows. */
+.books-jump-warn:empty{display:none}
+.books-jump-warn{position:absolute;left:12px;right:12px;top:100%;margin-top:4px;z-index:2;padding:4px 12px;border-radius:10px;background:var(--surface);box-shadow:var(--shadow);color:var(--bad);font-weight:600;font-size:13px}
+.books-jump-msg p{margin:0;color:var(--bad);font-weight:600;font-size:13px;line-height:1.6}
 .books-jump-msg a{color:var(--accent2)}
-.books-jump-examples{display:flex;flex-wrap:wrap;gap:8px}
 
-.books-ranges{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-height:240px;overflow-y:auto;padding:2px;scrollbar-width:thin}
-.books-ranges a,.books-ranges span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:4px;border-radius:12px;background:var(--surface2);font-weight:600;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:center;color:var(--ink);text-decoration:none}
+/* The ranges: one line that scrolls sideways inside itself. 32px chips; the ::after makes the tap area 44px high. */
+.books-ranges{position:relative;display:flex;flex-direction:row;flex-wrap:nowrap;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:6px 0;margin:-6px 0}
+.books-ranges::-webkit-scrollbar{display:none}
+.books-ranges a,.books-ranges span{position:relative;flex:none;display:flex;align-items:center;justify-content:center;min-height:32px;box-sizing:border-box;padding:0 12px;border-radius:99px;background:var(--surface2);font-weight:600;font-size:12.5px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);text-decoration:none}
+.books-ranges a::after,.books-ranges span::after{content:"";position:absolute;inset:-6px 0}
 .books-ranges a:hover{background:var(--surface);box-shadow:inset 0 0 0 2px var(--bk)}
 .books-ranges a[aria-current="true"]{background:var(--bk);color:var(--on-bk)}
 .books-ranges span[aria-disabled="true"]{opacity:.4}
 
-.books-range{margin:0;text-align:center;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+/* The range label at the left, the pager at the right, on one row (the pager drops under the label on very narrow phones). */
+.books-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.books-range{margin:0;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
 
 .books-pager{display:grid;grid-template-columns:auto 1fr 1fr auto;align-items:center;gap:8px}
 .books-pager a,.books-pager [aria-disabled="true"]{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:0 12px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);font-weight:700;font-size:12px;color:var(--ink);text-decoration:none}
 .books-pager a:hover{background:var(--accent-soft)}
 .books-pager [aria-disabled="true"]{opacity:.4;box-shadow:none}
 .books-pager-now{grid-column:1 / -1;grid-row:1;text-align:center;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.books-bar .books-pager{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;min-width:0;margin-left:auto}
+.books-bar .books-pager a,.books-bar .books-pager [aria-disabled="true"]{min-width:40px;box-sizing:border-box;padding:0 4px}
+.books-bar .books-pager .ui-icon{display:none}
+.books-bar .books-pager-now{padding:0 4px;white-space:nowrap}
 
-.books-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:18px}
-.books-item{scroll-margin-top:84px;min-width:0;border-radius:22px}
-.books-item[data-target="true"] .hcard{box-shadow:0 0 0 3px var(--bk),var(--shadow)}
+.books-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.books-item{scroll-margin-top:84px}
+.books-item[data-target="true"]{border-color:var(--bk);box-shadow:0 0 0 2px var(--bk)}
+/* The hadis cards are the search result cards; the text is cut after about three lines. */
+.books-list .search-text{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
 /* the hadis card */
 .hcard{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
@@ -66,5 +91,6 @@
 @media (min-width: 641px){
   .books-grid{grid-template-columns:1fr 1fr}
   .books-switch{grid-template-columns:repeat(6,1fr)}
-  .books-ranges{grid-template-columns:repeat(6,1fr);max-height:none;overflow:visible}
+  .books-jump-form{flex:1 1 220px;max-width:300px;margin-left:auto;padding-left:14px}
+  .books-head{gap:12px;padding:10px 14px}
 }

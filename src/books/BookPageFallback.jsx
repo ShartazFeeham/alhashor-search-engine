@@ -10,7 +10,7 @@ import BookSwitcher from './BookSwitcher';
 export default function BookPageFallback({ bookId }) {
   const book = bookById(bookId);
   return (
-    <main id="main" tabIndex={-1} className="screen books" style={{ '--bk': `var(${book.colorVar})` }}>
+    <main id="main" tabIndex={-1} className="screen books books-book" style={{ '--bk': `var(${book.colorVar})` }}>
       <PageTitle parts={[book.full, 'হাদীসের বই']} />
       <BookSwitcher bookId={bookId} />
       <BookHead book={book} />

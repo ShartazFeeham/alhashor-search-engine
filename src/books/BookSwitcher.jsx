@@ -19,8 +19,10 @@ export default function BookSwitcher({ bookId }) {
           style={{ '--bk': `var(${book.colorVar})` }}
         >
           <BookBadge bookId={book.id} size="sm" />
-          <span>{book.name}</span>
-          <small>{digits(hadisCount(book))}</small>
+          <span className="books-switch-text">
+            <span>{book.name}</span>
+            <small>{digits(hadisCount(book))}</small>
+          </span>
         </Link>
       ))}
     </nav>
