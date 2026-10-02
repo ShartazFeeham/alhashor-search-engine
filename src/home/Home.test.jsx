@@ -38,6 +38,15 @@ test('has a clear title and a search entry that opens the search page', () => {
   expect(getUrl().pathname).toBe('/search');
 });
 
+test('the lead names what you can search by, with the total in Bengali digits', () => {
+  renderHome();
+  const lead = screen.getByText(/বাংলায় হাদীস পড়ুন ও খুঁজুন/);
+  expect(lead.textContent.trim()).toBe(
+    'বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, ৩২,৮৮৬ হাদীস। শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন',
+  );
+  expect(lead).not.toHaveTextContent('বিনামূল্যে');
+});
+
 test('offers the three ways in, each a real link', () => {
   renderHome();
   fireEvent.click(screen.getByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ }));
@@ -155,4 +164,7 @@ test('counts switch to English digits when chosen', () => {
   localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
   renderHome();
   expect(screen.getByRole('link', { name: /মুসলিম/ })).toHaveTextContent('7,281');
+  expect(screen.getByText(/বাংলায় হাদীস পড়ুন ও খুঁজুন/)).toHaveTextContent(
+    'বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, 32,886 হাদীস। শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন',
+  );
 });

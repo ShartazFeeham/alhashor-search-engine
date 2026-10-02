@@ -23,7 +23,7 @@ export default function Home() {
         <p className="home-eyebrow">আসসালামু আলাইকুম</p>
         <h1 className="h1">হাদীস সম্ভার</h1>
         <p className="home-lead">
-          বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, {digits(TOTAL)} হাদীস, সম্পূর্ণ বিনামূল্যে।
+          বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, {digits(TOTAL)} হাদীস। শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন
         </p>
         <Link href="/search" className="home-search">
           <Icon name="search" size={22} />
