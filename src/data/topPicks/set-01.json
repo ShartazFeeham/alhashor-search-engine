@@ -1,0 +1,131 @@
+{
+  "id": "nabi-prem",
+  "number": 1,
+  "title": "নবীপ্রেম",
+  "description": "নবীজির প্রতি সাহাবীদের ভালোবাসা ও ঈমানের শর্ত হিসেবে নবীপ্রেম",
+  "items": [
+    {
+      "line": "ঈমানের শর্ত নবীপ্রেম: \"তোমাদের কেউ মুমিন হবে না, যতক্ষণ না আমি তার কাছে তার পিতা, সন্তান ও সব মানুষের চেয়ে প্রিয় হই\"",
+      "book": "bukhari",
+      "number": 14,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "উমর (রাঃ)-এর \"আপনি আমার প্রাণের চেয়েও প্রিয়\"",
+      "book": "bukhari",
+      "number": 6178,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"তুমি যাকে ভালোবাসো, তার সাথেই থাকবে\"",
+      "book": "bukhari",
+      "number": 6668,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আনাস (রাঃ)-এর খুশি: \"নবীজি, আবূ বকর ও উমরকে ভালোবাসি\"",
+      "book": "muslim",
+      "number": 6472,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "উহুদ পাহাড় \"আমাদের ভালোবাসে, আমরা তাকে ভালোবাসি\"",
+      "book": "bukhari",
+      "number": 3783,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আবূ তালহা (রাঃ)-এর \"আমার প্রাণ আপনার প্রাণের ঢাল\"",
+      "book": "bukhari",
+      "number": 3539,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির ইন্তেকালে সাহাবীদের শোক",
+      "book": "bukhari",
+      "number": 4111,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আনাস (রাঃ)-এর \"নবীজির আগমনের দিনের চেয়ে ভালো দিন দেখিনি\"",
+      "book": "ibnmajah",
+      "number": 1631,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "উম্মু আয়মান (রাঃ)-এর কান্না",
+      "book": "muslim",
+      "number": 6096,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "রাবীআ (রাঃ)-এর \"জান্নাতে আপনার সঙ্গ চাই\"",
+      "book": "nasai",
+      "number": 1141,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আনসারদের ভালোবাসা ঈমানের আলামত",
+      "book": "bukhari",
+      "number": 16,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "সাহাবীদের নবীজির চুল ও উযূর পানি নেওয়া",
+      "book": "muslim",
+      "number": 3024,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির ঘাম সংগ্রহ করা",
+      "book": "muslim",
+      "number": 5847,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আসমা (রাঃ)-এর কাছে নবীজির জুব্বা, ধুয়ে রোগীকে পান করানো",
+      "book": "muslim",
+      "number": 5235,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "উমর (রাঃ)-এর আব্বাস (রাঃ)-এর ওসীলায় বৃষ্টি চাওয়া",
+      "book": "bukhari",
+      "number": 955,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "অন্ধ সাহাবীর ওসীলার দু'আ",
+      "book": "ibnmajah",
+      "number": 1385,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "সোমবারের রোযা: \"এই দিনে আমি জন্মেছি\"",
+      "book": "muslim",
+      "number": 2621,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": [
+    "বিলাল (রাঃ)-এর বিচ্ছেদে আযান থেমে যাওয়া",
+    "\"যে আমার সুন্নাত ভালোবাসল সে আমাকে ভালোবাসল\""
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "id": "rasul-theke-pawa",
+  "number": 3,
+  "title": "রাসুল (সাঃ) থেকে পাওয়া",
+  "description": "নবীজির আকৃতি, চরিত্র ও আচরণ এবং উম্মতের জন্য তাঁর শাফাআত ও মর্যাদা",
+  "items": [
+    {
+      "line": "নবীজির চেহারা ও দেহগঠন",
+      "book": "bukhari",
+      "number": 5430,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির চুল",
+      "book": "bukhari",
+      "number": 3299,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির হাঁটার ধরন",
+      "book": "abudawud",
+      "number": 4787,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "নবীজির কথা বলা",
+      "book": "muslim",
+      "number": 7237,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির পোশাক",
+      "book": "muslim",
+      "number": 5267,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির খাবার",
+      "book": "bukhari",
+      "number": 5015,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির হাসি",
+      "book": "bukhari",
+      "number": 5662,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মোহরে নবুওয়াত",
+      "book": "bukhari",
+      "number": 189,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির দয়া",
+      "book": "bukhari",
+      "number": 674,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির নম্রতা",
+      "book": "muslim",
+      "number": 5805,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির ক্ষমা",
+      "book": "bukhari",
+      "number": 3004,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির লজ্জা",
+      "book": "bukhari",
+      "number": 3310,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির সাহস",
+      "book": "bukhari",
+      "number": 2707,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির দানশীলতা",
+      "book": "bukhari",
+      "number": 3302,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "শিশুদের প্রতি নবীজির স্নেহ",
+      "book": "bukhari",
+      "number": 5571,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "স্ত্রীদের সাথে নবীজির ব্যবহার",
+      "book": "ibnmajah",
+      "number": 1977,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "নিজের জন্য প্রতিশোধ না নেওয়া",
+      "book": "bukhari",
+      "number": 6329,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"আমি রহমত হিসেবে প্রেরিত\"",
+      "book": "muslim",
+      "number": 6376,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"ইয়া রব, উম্মতী\"",
+      "book": "bukhari",
+      "number": 4353,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "সিজদায় উম্মতের জন্য দীর্ঘ কান্না",
+      "book": "nasai",
+      "number": 1485,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "জিবরীলের মাধ্যমে আল্লাহর সান্ত্বনা",
+      "book": "muslim",
+      "number": 393,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"প্রত্যেক নবীর একটি দু'আ আমি শাফাআতের জন্য রেখেছি\"",
+      "book": "bukhari",
+      "number": 6966,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মাকামে মাহমূদ",
+      "book": "bukhari",
+      "number": 4359,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "হাশরে নবীজির সিজদা ও সুপারিশ",
+      "book": "muslim",
+      "number": 376,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "কবীরা গুনাহগারের জন্য নবীজির সুপারিশ",
+      "book": "abudawud",
+      "number": 4666,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "জান্নাতের দরজা প্রথম খোলা",
+      "book": "muslim",
+      "number": 382,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "জান্নাতে সবার আগে প্রবেশ",
+      "book": "muslim",
+      "number": 380,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"আমি আদমসন্তানের নেতা, এতে গর্ব নেই\"",
+      "book": "ibnmajah",
+      "number": 4308,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "শেষ নবী, ইটের শূন্যস্থানের উপমা",
+      "book": "bukhari",
+      "number": 3283,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "হাউযে কাউসার",
+      "book": "bukhari",
+      "number": 6130,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": []
+}

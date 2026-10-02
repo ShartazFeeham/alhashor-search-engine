@@ -1,0 +1,187 @@
+{
+  "id": "durud-salam",
+  "number": 2,
+  "title": "দরূদ ও সালামের ফযীলত",
+  "description": "দরূদ ও সালামের ফযীলত, মদীনা ও কবর যিয়ারতের শিক্ষা এবং নবীজির মুজিযা",
+  "items": [
+    {
+      "line": "একবার দরূদে দশ রহমত",
+      "book": "muslim",
+      "number": 797,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "দরূদে দশ গুনাহ মাফ ও দশ মর্যাদা বৃদ্ধি",
+      "book": "nasai",
+      "number": 1300,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "জুমআর দিনে বেশি দরূদ",
+      "book": "abudawud",
+      "number": 1531,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "দরূদ-সালাম নবীজির কাছে পৌঁছে দেওয়া হয়",
+      "book": "nasai",
+      "number": 1285,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "নাম শুনে দরূদ না পড়লে কৃপণতা",
+      "book": "tirmidhi",
+      "number": 3546,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "দু'আর আগে দরূদ",
+      "book": "tirmidhi",
+      "number": 3477,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "দরূদে ইবরাহীমী শেখানো",
+      "book": "bukhari",
+      "number": 5917,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "কিয়ামতে নবীজির সবচেয়ে কাছে থাকবে বেশি দরূদ পাঠকারী",
+      "book": "tirmidhi",
+      "number": 484,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "মদীনার ফযীলত",
+      "book": "bukhari",
+      "number": 1755,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মদীনার জন্য বরকতের দু'আ",
+      "book": "muslim",
+      "number": 3196,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ঘর ও মিম্বরের মাঝে জান্নাতের বাগান",
+      "book": "bukhari",
+      "number": 1121,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মসজিদে নববীর নামাযের সওয়াব",
+      "book": "bukhari",
+      "number": 1117,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মদীনায় মৃত্যুর ফযীলত",
+      "book": "ibnmajah",
+      "number": 3112,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "রওযা যিয়ারত",
+      "book": "abudawud",
+      "number": 2038,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "কবর যিয়ারতের অনুমতি ও কারণ",
+      "book": "muslim",
+      "number": 2131,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "কবরস্থানের সালাম ও দু'আ",
+      "book": "muslim",
+      "number": 2129,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "বাকীতে নবীজির রাতে যাওয়া",
+      "book": "muslim",
+      "number": 2127,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আয়িশা (রাঃ)-কে শেখানো কবর যিয়ারতের দু'আ",
+      "book": "muslim",
+      "number": 2128,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির আঙুল থেকে পানি",
+      "book": "bukhari",
+      "number": 200,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "চাঁদ দ্বিখণ্ডিত হওয়া",
+      "book": "bukhari",
+      "number": 3376,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "অল্প খাবারে বরকত",
+      "book": "bukhari",
+      "number": 3325,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "খেজুর গাছের খুঁটির কান্না",
+      "book": "bukhari",
+      "number": 872,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "রোগ নিরাময়",
+      "book": "bukhari",
+      "number": 3891,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "গায়েবের খবর",
+      "book": "bukhari",
+      "number": 6151,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মিরাজ",
+      "book": "bukhari",
+      "number": 3106,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": [
+    "গাছের সালাম",
+    "নবীজির হাতে কঙ্কর তাসবীহ পড়া"
+  ]
+}
