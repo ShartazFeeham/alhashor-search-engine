@@ -100,8 +100,6 @@ export default function SearchBox({ text, onText, query, onSubmit }) {
     <form className="search-form" role="search" onSubmit={onSubmit}>
       <p className="search-note">
         হাদীসের ক্রম কিংবা বর্ণনাকারীর নাম দিয়ে হাদীস খুঁজুন। অথবা যেকোনো শব্দ/বিষয় কিংবা হাদীসের অংশ লিখে সার্চ করুন।
-        <br />
-        <b>সমস্ত হাদীস বাংলায়, অতএব শুধু বাংলায় লিখে সার্চ করুন!</b>
       </p>
       <div className="search-box">
         <Icon name="search" size={20} />

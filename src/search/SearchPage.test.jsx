@@ -11,7 +11,7 @@ import SearchPage from './SearchPage';
 // SearchBox.test.jsx.
 vi.mock('../lib/roman', () => ({ loadRoman: () => Promise.resolve(), romanReady: () => true, romanToBangla: (roman) => roman }));
 
-const NOT_FOUND = /কোনো ফলাফল না পাওয়া গেলে/;
+const NOT_FOUND = /কোনো ফলাফল পাওয়া যায়নি। বানান পরিবর্তন করে বা অন্য শব্দ দিয়ে খুঁজুন।/;
 const BOX = { name: 'খোঁজার শব্দ' };
 
 function Where() {
@@ -133,6 +133,16 @@ test('a search with no results shows the not-found note and stops loading', asyn
   search('ghost');
   expect(await screen.findByText(NOT_FOUND)).toBeInTheDocument();
   expect(screen.queryByText('খুঁজছি...')).not.toBeInTheDocument();
+});
+
+test('has no outdated "type only Bangla" notes, before or after a search', async () => {
+  serve({});
+  const { container } = renderSearch();
+  expect(container.textContent).not.toContain('শুধু বাংলায় লিখে');
+  search('ghost');
+  await screen.findByText(NOT_FOUND);
+  expect(container.textContent).not.toContain('শুধু বাংলায় লিখে');
+  expect(container.textContent).not.toContain('কেবল মাত্র');
 });
 
 test('does not show the not-found note while the search is still running', async () => {
@@ -353,9 +363,9 @@ test('typing English letters offers no suggestion list under the box', () => {
   expect(screen.queryByRole('button', { name: 'নামাজ' })).not.toBeInTheDocument();
 });
 
-test('the Bengali-only note and the example chips show before the first search', () => {
+test('the example chips show before the first search, with no red Bengali-only note', () => {
   renderSearch();
-  expect(screen.getByText(/বাংলায় লিখে সার্চ করুন/)).toBeInTheDocument();
+  expect(screen.queryByText(/বাংলায় লিখে সার্চ করুন/)).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'নফল নামায' })).toBeInTheDocument();
 });
 

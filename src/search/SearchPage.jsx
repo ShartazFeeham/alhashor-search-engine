@@ -137,7 +137,7 @@ export default function SearchPage() {
         )}
         {status === DONE && tags.length === 0 && (
           <p className="search-nf">
-            কেবল মাত্র বাংলা লেখায় সার্চ করুন। কোনো ফলাফল না পাওয়া গেলে বানান পরিবর্তন করে লিখুন।
+            কোনো ফলাফল পাওয়া যায়নি। বানান পরিবর্তন করে বা অন্য শব্দ দিয়ে খুঁজুন।
           </p>
         )}
         {status === DONE && tags.length > 0 && (

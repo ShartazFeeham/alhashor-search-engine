@@ -96,7 +96,7 @@ describe('did you mean', () => {
   test('offers no spelling that has no data to show (the word must be checked first)', async () => {
     serve({});
     renderSearch('/search?q=' + encodeURIComponent('জাকাত'));
-    await screen.findByText(/কোনো ফলাফল না পাওয়া গেলে/);
+    await screen.findByText(/কোনো ফলাফল পাওয়া যায়নি। বানান পরিবর্তন করে বা অন্য শব্দ দিয়ে খুঁজুন।/);
     await act(async () => { await new Promise((resolve) => setTimeout(resolve, 20)); });
     expect(screen.queryByText(DID_YOU_MEAN)).not.toBeInTheDocument();
   });
