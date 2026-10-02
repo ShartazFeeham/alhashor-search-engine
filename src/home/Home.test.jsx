@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { clearDailyPicksCache } from '../daily/useHomePick';
 import { clearShortListCache } from '../daily/useShortList';
 import { pickDaily } from '../lib/dailyPick';
@@ -38,13 +38,59 @@ test('has a clear title and a search entry that opens the search page', () => {
   expect(getUrl().pathname).toBe('/search');
 });
 
-test('the lead names what you can search by, with the total in Bengali digits', () => {
+test('has no lead paragraph under the heading', () => {
   renderHome();
-  const lead = screen.getByText(/বাংলায় হাদীস পড়ুন ও খুঁজুন/);
-  expect(lead.textContent.trim()).toBe(
-    'বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, ৩২,৮৮৬ হাদীস। শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন',
-  );
-  expect(lead).not.toHaveTextContent('বিনামূল্যে');
+  expect(screen.queryByText(/বাংলায় হাদীস পড়ুন ও খুঁজুন/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/ছয়টি প্রধান গ্রন্থ/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/৩২,৮৮৬/)).not.toBeInTheDocument();
+});
+
+describe('the hero', () => {
+  const hero = () => screen.getByRole('region', { name: 'হাদীস সম্ভার' });
+  const follows = (first, second) => Boolean(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+  test('holds the eyebrow, the heading, the daily card and the search link, in that order', () => {
+    renderHome();
+    const eyebrow = within(hero()).getByText('আসসালামু আলাইকুম');
+    const heading = within(hero()).getByRole('heading', { level: 1, name: 'হাদীস সম্ভার' });
+    const card = within(hero()).getByRole('region', { name: 'আজকের হাদীস' });
+    const search = within(hero()).getByRole('link', { name: /হাদীস খুঁজুন/ });
+    expect(search).toHaveAttribute('href', '/search');
+    expect(follows(eyebrow, heading)).toBe(true);
+    expect(follows(heading, card)).toBe(true);
+    expect(follows(card, search)).toBe(true);
+    expect(card).not.toContainElement(search);
+  });
+
+  test('has the card nowhere else on the page: exactly one daily card', () => {
+    renderHome();
+    expect(screen.getAllByRole('region', { name: 'আজকের হাদীস' })).toHaveLength(1);
+    expect(screen.getAllByRole('heading', { name: 'আজকের হাদীস' })).toHaveLength(1);
+    expect(within(hero()).getAllByRole('region', { name: 'আজকের হাদীস' })).toHaveLength(1);
+  });
+
+  test('keeps the tiles, the shelf and the quick-link row below the hero', () => {
+    renderHome();
+    for (const below of [
+      screen.getByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ }),
+      screen.getByRole('heading', { name: 'হাদীসের তাক' }),
+      screen.getByRole('navigation', { name: 'নতুন সুবিধা' }),
+    ]) {
+      expect(hero().contains(below)).toBe(false);
+      expect(follows(hero(), below)).toBe(true);
+    }
+  });
+
+  test('leaves no card and no empty gap in the hero when the daily pick cannot load', async () => {
+    global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
+    renderHome();
+    await waitFor(() => expect(screen.queryByRole('region', { name: 'আজকের হাদীস' })).not.toBeInTheDocument());
+    expect(hero()).not.toHaveTextContent('আজকের হাদীস');
+    const heading = within(hero()).getByRole('heading', { level: 1 });
+    const search = within(hero()).getByRole('link', { name: /হাদীস খুঁজুন/ });
+    expect(follows(heading, search)).toBe(true);
+    expect(within(hero()).queryAllByRole('region')).toHaveLength(0);
+  });
 });
 
 test('offers the two tiles (topics and books), each a real link', () => {
@@ -87,31 +133,54 @@ test('no longer has the placeholder tile saying more is coming', () => {
 describe('the daily hadis card', () => {
   const card = () => screen.getByRole('region', { name: 'আজকের হাদীস' });
   const today = () => pickDaily(realShortList(), new Date(2026, 9, 2, 10, 0));
+  const flat = (text) => text.replace(/\s+/g, ' ');
 
-  test('shows the start of today\'s hadis with its citation, and links to the daily page', async () => {
+  test('shows the citation above the start of today\'s hadis, without its number', async () => {
     renderHome();
     const pick = today();
     const { chain, body } = splitHadis(realText(pick.book.id, pick.number));
-    const start = `${chain} ${body}`.trim().replace(/\s+/g, ' ').slice(0, 40);
-    const excerpt = await within(card()).findByTestId('home-daily-text');
-    expect(excerpt.textContent.replace(/\s+/g, ' ')).toContain(start);
-    expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
+    const whole = flat(`${chain} ${body}`.trim());
+    const excerpt = await screen.findByTestId('home-daily-text');
+    expect(flat(excerpt.textContent).slice(0, 40)).toBe(whole.slice(0, 40));
+    expect(excerpt.textContent).not.toMatch(/^\s*[০-৯0-9]/);
+    const cite = within(card()).getByText(new RegExp(pick.book.cite));
+    expect(cite).toHaveTextContent(/হাদীস নং/);
+    expect(cite.compareDocumentPosition(excerpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(within(card()).getByText('২ অক্টোবর ২০২৬')).toBeInTheDocument();
-    fireEvent.click(within(card()).getByRole('link', { name: /আরও দেখুন/ }));
-    expect(getUrl().pathname).toBe('/daily');
   });
 
-  test('is a short excerpt, not the whole text of a long one', async () => {
+  test('cuts a long real hadis at a word with an ellipsis', async () => {
     renderHome();
-    const excerpt = await within(card()).findByTestId('home-daily-text');
-    expect(excerpt.textContent.length).toBeLessThanOrEqual(190);
+    const pick = today();
+    const { chain, body } = splitHadis(realText(pick.book.id, pick.number));
+    const whole = flat(`${chain} ${body}`.trim());
+    const excerpt = flat((await screen.findByTestId('home-daily-text')).textContent);
+    expect(whole.length).toBeGreaterThan(excerpt.length);
+    expect(excerpt.endsWith('…')).toBe(true);
+    expect(excerpt.length).toBeLessThanOrEqual(110);
+    const kept = excerpt.slice(0, -1);
+    expect(whole.startsWith(kept)).toBe(true);
+    expect(whole[kept.length]).toBe(' ');
+  });
+
+  test('has a quiet "আরও দেখুন" link to the full hadis page', async () => {
+    renderHome();
+    const pick = today();
+    await screen.findByTestId('home-daily-text');
+    const link = within(card()).getByRole('link', { name: 'আরও দেখুন' });
+    expect(link).toHaveAttribute('href', `/hadis/${pick.book.id}/${pick.number}`);
+    expect(link).toHaveClass('home-daily-more');
+    expect(link).toContainHTML('<svg');
+    expect(within(card()).queryByRole('button')).not.toBeInTheDocument();
+    fireEvent.click(link);
+    expect(getUrl().pathname).toBe(`/hadis/${pick.book.id}/${pick.number}`);
   });
 
   const urlsFetched = () => global.fetch.mock.calls.map(([url]) => url);
 
   test('picks from the small precomputed file and never loads the 88 KB list', async () => {
     renderHome();
-    await within(card()).findByTestId('home-daily-text');
+    await screen.findByTestId('home-daily-text');
     expect(urlsFetched()).toContain('/json/daily-picks.json');
     expect(urlsFetched()).not.toContain('/json/short-hadis.json');
   });
@@ -125,7 +194,7 @@ describe('the daily hadis card', () => {
     global.fetch = vi.fn((url) => (url.endsWith('daily-picks.json') ? Promise.resolve({ ok: false }) : diskFetch(url)));
     renderHome();
     const pick = today();
-    await within(card()).findByTestId('home-daily-text');
+    await screen.findByTestId('home-daily-text');
     expect(urlsFetched()).toContain('/json/short-hadis.json');
     expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
   });
@@ -134,16 +203,9 @@ describe('the daily hadis card', () => {
     vi.setSystemTime(new Date(2029, 5, 15, 10, 0));
     renderHome();
     const pick = pickDaily(realShortList(), new Date(2029, 5, 15, 10, 0));
-    await within(card()).findByTestId('home-daily-text');
+    await screen.findByTestId('home-daily-text');
     expect(urlsFetched()).toContain('/json/short-hadis.json');
     expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
-  });
-
-  test('still offers the daily page when the list cannot be loaded', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
-    renderHome();
-    expect(await within(card()).findByText(/আজকের হাদীসটি আনা যায়নি/)).toBeInTheDocument();
-    expect(within(card()).getByRole('link', { name: /আরও দেখুন/ })).toHaveAttribute('href', '/daily');
   });
 });
 
@@ -175,7 +237,4 @@ test('counts switch to English digits when chosen', () => {
   localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   renderHome();
   expect(screen.getByRole('link', { name: /মুসলিম/ })).toHaveTextContent('7,281');
-  expect(screen.getByText(/বাংলায় হাদীস পড়ুন ও খুঁজুন/)).toHaveTextContent(
-    'বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, 32,886 হাদীস। শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন',
-  );
 });

@@ -8,7 +8,6 @@ import { bookHref } from '../lib/bookBrowse';
 import { useDigits } from '../lib/useDigits';
 import Icon from '../ui/Icon';
 
-const TOTAL = BOOKS.reduce((sum, book) => sum + hadisCount(book), 0);
 const MOST = Math.max(...BOOKS.map(hadisCount));
 
 // Spine heights follow the real hadis counts, between 140 and 180 px.
@@ -19,12 +18,10 @@ export default function Home() {
   return (
     <main id="main" tabIndex={-1} className="screen home">
       <PageTitle />
-      <section className="home-hero">
+      <section className="home-hero" aria-labelledby="home-title">
         <p className="home-eyebrow">আসসালামু আলাইকুম</p>
-        <h1 className="h1">হাদীস সম্ভার</h1>
-        <p className="home-lead">
-          বাংলায় হাদীস পড়ুন ও খুঁজুন। ছয়টি প্রধান গ্রন্থ, {digits(TOTAL)} হাদীস। শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন
-        </p>
+        <h1 className="h1" id="home-title">হাদীস সম্ভার</h1>
+        <HomeDailyCard />
         <Link href="/search" className="home-search">
           <Icon name="search" size={22} />
           <span>হাদীস খুঁজুন: শব্দ, বিষয় বা হাদীস নম্বর</span>
@@ -43,8 +40,6 @@ export default function Home() {
           <span className="home-tile-text">{digits(BOOKS.length)}টি প্রধান গ্রন্থ, শুরু থেকে শেষ</span>
         </Link>
       </div>
-
-      <HomeDailyCard />
 
       <section className="home-shelf-wrap" aria-labelledby="home-shelf-title">
         <div className="home-shelf-head">

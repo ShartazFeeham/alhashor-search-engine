@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { formatDate } from '../lib/bnDate';
-import { tagOf } from '../lib/hadisRoute';
+import { hadisHref, tagOf } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
@@ -12,63 +13,133 @@ import { citationOf } from './citation';
 import { useHomePick } from './useHomePick';
 import { useToday } from './useToday';
 
-const LIMIT = 170;
+const LIMIT = 110; // about two lines of the card
 
-// Cut at the last space before the limit so a word is never split.
-function excerptOf(text) {
-  return text.length > LIMIT ? `${text.slice(0, LIMIT).replace(/\s\S*$/, '')} ...` : text;
+// { text, cut }: cut at the last space before the limit so a word is never split; a short text
+// stays whole.
+export function excerptOf(text) {
+  if (text.length <= LIMIT) return { text, cut: false };
+  return { text: `${text.slice(0, LIMIT).replace(/\s+\S*$/, '')}…`, cut: true };
 }
 
-function Excerpt({ book, number }) {
-  const { status, text } = useHadisText(tagOf(book.id, number));
-  if (status === 'loading') {
-    return (
-      <div aria-busy="true" aria-label="লোড হচ্ছে" className="home-daily-skeleton">
-        <div className="hadis-skel" style={{ width: '94%' }} />
-        <div className="hadis-skel" style={{ width: '70%' }} />
-      </div>
-    );
-  }
-  if (status !== 'ok') return <p className="home-daily-note">আজকের হাদীসটি আনা যায়নি। পুরো পাতায় গিয়ে দেখুন।</p>;
-  const { chain, body } = splitHadis(text);
-  return <p className="home-daily-text" data-testid="home-daily-text">{excerptOf(`${chain} ${body}`.trim())}</p>;
-}
+const MORE = (
+  <>
+    আরও দেখুন <Icon name="cr" size={16} />
+  </>
+);
 
-// The compact daily-hadis card on the home page: the start of today's hadis, its citation and a
-// link to the daily page.
-export default function HomeDailyCard() {
-  const today = useToday();
-  const digits = useDigits();
-  const { settings } = useSettings();
-  const { status, pick } = useHomePick(today);
-
-  let body;
-  if (status === 'error') {
-    body = <p className="home-daily-note">আজকের হাদীসটি আনা যায়নি। পুরো পাতায় গিয়ে দেখুন।</p>;
-  } else if (!pick) {
-    body = (
-      <div aria-busy="true" aria-label="লোড হচ্ছে" className="home-daily-skeleton">
-        <div className="hadis-skel" style={{ width: '94%' }} />
-        <div className="hadis-skel" style={{ width: '70%' }} />
-      </div>
-    );
-  } else {
-    body = <Excerpt book={pick.book} number={pick.number} />;
-  }
-
+function Skeleton() {
   return (
-    <section className="home-daily" aria-labelledby="home-daily-title">
+    <div aria-busy="true" aria-label="লোড হচ্ছে" className="home-daily-skeleton">
+      <div className="hadis-skel" style={{ width: '94%' }} />
+      <div className="hadis-skel" style={{ width: '70%' }} />
+    </div>
+  );
+}
+
+function Shell({ today, loading = false, children }) {
+  const { settings } = useSettings();
+  return (
+    <section className={loading ? 'home-daily home-daily-loading' : 'home-daily'} aria-labelledby="home-daily-title">
       <div className="home-daily-top">
         <h2 id="home-daily-title">আজকের হাদীস</h2>
         {today && <span className="home-daily-date">{formatDate(today, settings.digits)}</span>}
       </div>
-      {body}
-      <div className="home-daily-foot">
-        <span className="home-daily-cite">{pick ? citationOf(pick.book, pick.number, digits) : ''}</span>
-        <Link href="/daily" className="ui-btn sm">
-          আরও দেখুন <Icon name="cr" size={16} />
-        </Link>
-      </div>
+      {children}
     </section>
   );
+}
+
+// The excerpt (at most two lines) and the "আরও দেখুন" link. While the text is short the link
+// follows its last word on the same line. When the text is cut (or still needs more than two
+// lines, which only the browser can tell: a narrow screen, a big text size) the link moves to the
+// bottom right corner, beside the end of the second line.
+function Body({ excerpt, cut, href }) {
+  const [overflow, setOverflow] = useState(false);
+  const [round, setRound] = useState(0); // bumped to measure again
+  const bodyRef = useRef(null);
+  const textRef = useRef(null);
+  const seen = useRef('');
+  const corner = cut || overflow;
+
+  // Measured with the link inline, before the browser paints.
+  useLayoutEffect(() => {
+    const el = textRef.current;
+    if (!corner && el && el.scrollHeight > el.clientHeight + 1) setOverflow(true);
+  }, [corner, round, excerpt]);
+
+  // A new width or text size can make the text fit again (or not): measure again from the start.
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const sign = () => `${Math.round(el.getBoundingClientRect().width)}|${getComputedStyle(el).fontSize}`;
+    seen.current = sign();
+    const observer = new ResizeObserver(() => {
+      const now = sign();
+      if (now !== seen.current) {
+        seen.current = now;
+        setOverflow(false);
+        setRound((n) => n + 1);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="home-daily-body" data-testid="home-daily-body" data-link={corner ? 'corner' : 'inline'} ref={bodyRef}>
+      <p className="home-daily-text" ref={textRef}>
+        <span className="home-daily-flow" data-testid="home-daily-flow">
+          <span data-testid="home-daily-text">{excerpt}</span>
+          {!corner && (
+            <>
+              {' '}
+              <Link href={href} className="home-daily-more">{MORE}</Link>
+            </>
+          )}
+        </span>
+      </p>
+      {corner && <Link href={href} className="home-daily-more">{MORE}</Link>}
+    </div>
+  );
+}
+
+// Today's hadis once the pick is known: the citation, a short excerpt and the link to the full
+// page. Nothing at all when the text cannot be had.
+function Picked({ today, pick }) {
+  const digits = useDigits();
+  const { status, text } = useHadisText(tagOf(pick.book.id, pick.number));
+  if (status === 'missing' || status === 'error') return null;
+  if (status === 'loading') {
+    return (
+      <Shell today={today} loading>
+        <Skeleton />
+      </Shell>
+    );
+  }
+  const { chain, body } = splitHadis(text);
+  const { text: excerpt, cut } = excerptOf(`${chain} ${body}`.replace(/\s+/g, ' ').trim());
+  return (
+    <Shell today={today}>
+      <p className="home-daily-cite">{citationOf(pick.book, pick.number, digits)}</p>
+      <Body excerpt={excerpt} cut={cut} href={hadisHref(pick.book.id, pick.number)} />
+    </Shell>
+  );
+}
+
+// The daily-hadis card in the home hero: a short excerpt of today's hadis with its citation and a
+// "আরও দেখুন" link to the full page. While the pick loads it holds its place; if it cannot load
+// there is no card at all.
+export default function HomeDailyCard() {
+  const today = useToday();
+  const { status, pick } = useHomePick(today);
+  if (status === 'error') return null;
+  if (!pick) {
+    return (
+      <Shell today={today} loading>
+        <Skeleton />
+      </Shell>
+    );
+  }
+  return <Picked today={today} pick={pick} />;
 }

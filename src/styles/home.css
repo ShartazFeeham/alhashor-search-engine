@@ -1,11 +1,11 @@
 /* Home, ported from the D2 design. */
-.home-hero{position:relative;overflow:hidden;border-radius:26px;padding:22px 18px 18px;background:linear-gradient(160deg,var(--accent-soft),var(--surface));box-shadow:var(--shadow)}
+.home-hero{position:relative;overflow:hidden;border-radius:26px;padding:20px 16px 12px;background:linear-gradient(160deg,var(--accent-soft),var(--surface));box-shadow:var(--shadow)}
 .home-hero::before,.home-hero::after{content:"";position:absolute;border-radius:50%;background:var(--accent);opacity:.1}
 .home-hero::before{width:170px;height:170px;right:-50px;top:-60px}
 .home-hero::after{width:90px;height:90px;right:40px;bottom:-40px}
 .home-hero>*{position:relative}
 .home-eyebrow{margin:0 0 4px;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--accent2)}
-.home-lead{margin:8px 0 16px;color:var(--ink2);max-width:34em}
+.home-hero .home-search{margin-top:10px}
 .home-search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:18px;padding:14px 16px;color:var(--ink3);box-shadow:var(--shadow);border:2px solid transparent;text-decoration:none}
 .home-search:hover{border-color:var(--accent)}
 
@@ -31,7 +31,7 @@
 .home-plank{height:14px;margin:0 -16px;background:linear-gradient(var(--surface2),var(--line));border-top:2px solid var(--line)}
 
 @media (min-width: 641px){
-  .home-hero{padding:34px 32px 28px}
+  .home-hero{padding:30px 28px 12px}
   .home-tiles{grid-template-columns:repeat(2,1fr)}
   .home-tile.soon{grid-column:1 / -1}
   .home-spine{max-width:72px}
