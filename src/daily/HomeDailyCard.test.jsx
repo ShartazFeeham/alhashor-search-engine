@@ -111,6 +111,19 @@ test('clamps the excerpt to two lines, on every width, in the stylesheet', () =>
   expect(css.slice(css.indexOf('@media (min-width: 641px)'))).not.toContain('.home-daily-text');
 });
 
+test('the excerpt has the same size and colour as the citation line, from shared tokens', () => {
+  const excerpt = cssRule('.home-daily-text');
+  const cite = cssRule('.home-daily-cite');
+  expect(excerpt).toContain('font-size:var(--home-daily-fs)');
+  expect(cite).toContain('font-size:var(--home-daily-fs)');
+  expect(excerpt).toContain('color:var(--home-daily-ink)');
+  expect(cite).toContain('color:var(--home-daily-ink)');
+  const card = cssRule('.home-daily');
+  expect(card).toMatch(/--home-daily-fs:12px/);
+  expect(card).toContain('--home-daily-ink:var(--ink2)');
+  expect(excerpt).toMatch(/line-height:1\.[67]\d*[;}]/);
+});
+
 test('the excerpt is short enough for about two lines', async () => {
   renderCard();
   const excerpt = await screen.findByTestId('home-daily-text');

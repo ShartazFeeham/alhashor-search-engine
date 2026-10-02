@@ -87,6 +87,10 @@ describe.each(names)('contrast in the %s theme', (name) => {
     expect(ratio(t['--ink3'], t[bg])).toBeGreaterThanOrEqual(4.5);
   });
 
+  test('--ink2 (the home daily card text and citation) on the card surface is at least 4.5:1', () => {
+    expect(ratio(t['--ink2'], t['--surface'])).toBeGreaterThanOrEqual(4.5);
+  });
+
   test('--ink3 stays quieter than --ink2 (the hierarchy is kept)', () => {
     expect(ratio(t['--ink3'], t['--page'])).toBeLessThan(ratio(t['--ink2'], t['--page']));
   });

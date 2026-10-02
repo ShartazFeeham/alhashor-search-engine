@@ -29,6 +29,7 @@ function screenCss(source) {
 function toPx(value, rs) {
   const expr = value
     .replace(/var\(--rs\)/g, `(${rs})`)
+    .replace(/var\(--home-daily-fs\)/g, '12px')
     .replace(/([\d.]+)rem/g, '($1*16)')
     .replace(/([\d.]+)vw/g, '($1*0)')
     .replace(/([\d.]+)em/g, '($1*15)')
@@ -81,13 +82,22 @@ test.each([
 });
 
 test('hadis reading text stays at 15px or more at the default size', () => {
-  const reading = ['.hadis-read', '.hcard-text', '.search-text', '.cmp-text', '.khut-text', '.daily-text', '.home-daily-text', '.related-text', '.hadis-chain-full'];
+  const reading = ['.hadis-read', '.hcard-text', '.search-text', '.cmp-text', '.khut-text', '.daily-text', '.related-text', '.hadis-chain-full'];
   const all = sizes(DEFAULT_SETTINGS.size);
   for (const name of reading) {
     const hit = all.filter((s) => s.selector === name);
     expect(hit.length, name).toBeGreaterThan(0);
     for (const s of hit) expect(s.px, name).toBeGreaterThanOrEqual(15);
   }
+});
+
+// The owner asked for the Home daily card's excerpt to match its citation line (12px, set by
+// --home-daily-fs), so it is the one reading text deliberately under the 15px floor, but not under 12px.
+test('the home daily excerpt is as small as its citation, and no smaller than 12px', () => {
+  const all = sizes(DEFAULT_SETTINGS.size);
+  const of = (selector) => all.find((s) => s.selector === selector)?.px;
+  expect(of('.home-daily-text')).toBe(of('.home-daily-cite'));
+  expect(of('.home-daily-text')).toBeGreaterThanOrEqual(12);
 });
 
 test('the main sizes after the change', () => {
