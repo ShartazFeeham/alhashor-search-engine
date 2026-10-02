@@ -1,14 +1,17 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
+import { useRef } from 'react';
 import PageTitle from '../Helpers/PageTitle';
 import { HADIS_PER_PAGE, lastPageOf, pageFromParam, pageSlice } from '../Helpers/paging';
 import HadisCard from '../hadis/HadisCard';
+import { usePageFocus } from '../lib/pageFocus';
 import { curatedFor } from '../lib/topics';
 import { useDigits } from '../lib/useDigits';
 import { searchTags } from '../search/searchIndex';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
+import PageStatus from '../ui/PageStatus';
 import StartHere from './StartHere';
 import TopicIndex from './TopicIndex';
 import TopicPager from './TopicPager';
@@ -29,9 +32,12 @@ export default function TopicsPage({ curated = {}, search = searchTags }) {
   const lastPage = lastPageOf(hadis.length);
   const picks = curatedFor(curated, topic);
   const showPicks = picks.length > 0 && page === 0;
+  // A chip or the pager asks for focus (see pageFocus.js); it goes to the topic's heading.
+  const nameRef = useRef(null);
+  usePageFocus(`${topic}|${page}`, nameRef);
 
   return (
-    <main className="screen topics">
+    <main id="main" tabIndex={-1} className="screen topics">
       <PageTitle parts={[topic, 'বিষয়ভিত্তিক হাদীস']} />
       <h1 className="h1">বিষয়ভিত্তিক হাদীস</h1>
       <TopicIndex topic={topic} />
@@ -46,7 +52,8 @@ export default function TopicsPage({ curated = {}, search = searchTags }) {
 
       {topic !== '' && (
         <>
-          <h2 className="topics-name">{topic}</h2>
+          <h2 className="topics-name" ref={nameRef} tabIndex={-1}>{topic}</h2>
+          <PageStatus page={page} />
           {/* One live region, always on the page, so the changing state is announced to screen readers. */}
           <div className="topics-live" role="status">
             {status === LOADING && (
@@ -83,7 +90,7 @@ export default function TopicsPage({ curated = {}, search = searchTags }) {
               <ol className="topics-list">
                 {pageSlice(hadis, page).map(({ bookId, number }) => (
                   <li key={`${bookId}-${number}`} className="topics-item">
-                    <HadisCard bookId={bookId} number={number} />
+                    <HadisCard bookId={bookId} number={number} level={3} />
                   </li>
                 ))}
               </ol>

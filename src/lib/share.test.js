@@ -8,7 +8,9 @@ const read = (folder, number) =>
   JSON.parse(readFileSync(`public/json/hadis/${folder}/${String(number).padStart(4, '0')}/text.txt`, 'utf8'));
 const BUKHARI_6628 = read('Bukhari', 6628); // short saying, short chain
 const BUKHARI_6 = read('Bukhari', 6); // very long
-const BUKHARI_264 = read('Bukhari', 264); // a long chain of narrators
+// A long chain of narrators (87 characters). Bukhari 264 used to stand here, but it opens with an
+// Arabic chapter heading, so the splitter now (rightly) finds no chain in it.
+const BUKHARI_10 = read('Bukhari', 10);
 const MAJAH_100 = read('Majah', 100); // number written "৮/১০০।"
 
 const bukhari = bookById('bukhari');
@@ -60,9 +62,9 @@ describe('cleanText', () => {
   });
 
   test('drops a long narrator line and keeps only the saying', () => {
-    const { chain, body } = splitHadis(BUKHARI_264);
+    const { chain, body } = splitHadis(BUKHARI_10);
     expect(chain.length).toBeGreaterThan(80);
-    expect(cleanText(BUKHARI_264)).toBe(body);
+    expect(cleanText(BUKHARI_10)).toBe(body);
   });
 
   test('understands a number like ৮/১০০', () => {

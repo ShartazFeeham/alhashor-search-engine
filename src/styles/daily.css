@@ -12,11 +12,14 @@
 .daily-muted{color:var(--ink2)}
 
 /* the three sections: links, not buttons, so each has its own address */
-.daily-tabs{display:flex;gap:4px;padding:4px;border-radius:99px;background:var(--surface2)}
-.daily-tabs a{flex:1 1 0;min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:4px 8px;border-radius:99px;font-weight:600;font-size:14.5px;line-height:1.3;text-align:center;color:var(--ink2);text-decoration:none;transition:background .18s,color .18s}
+.daily-tabs{display:flex;gap:4px;padding:4px;border-radius:99px;background:var(--surface2);overflow-x:auto;scrollbar-width:none}
+.daily-tabs::-webkit-scrollbar{display:none}
+.daily-tabs a{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:4px 8px;white-space:nowrap;border-radius:99px;font-weight:600;font-size:14.5px;line-height:1.3;text-align:center;color:var(--ink2);text-decoration:none;transition:background .18s,color .18s}
 .daily-tabs a:hover{background:var(--surface)}
+/* the group scrolls, which would clip an outside ring */
+.daily-tabs a:focus-visible{outline-offset:-3px}
 .daily-tabs a[aria-current="page"]{background:var(--surface);color:var(--accent2);box-shadow:var(--shadow)}
-.daily-tab-count{min-width:22px;height:22px;padding:0 6px;border-radius:99px;display:inline-grid;place-items:center;background:var(--accent);color:var(--on-accent);font-size:12px;font-weight:700;flex:none}
+.daily-tab-count{min-width:20px;height:20px;padding:0 5px;border-radius:99px;display:inline-grid;place-items:center;background:var(--accent);color:var(--on-accent);font-size:12px;font-weight:700;flex:none}
 
 /* today's hadis */
 .daily-card{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:0 0 18px;border-radius:26px;background:var(--surface);box-shadow:var(--shadow)}
@@ -78,12 +81,14 @@
 .plan-day-note{margin:0 0 0 38px;color:var(--ink2);display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .plan-day-note p{margin:0}
 .plan-day-links{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-left:38px}
-.plan-day-more{display:inline-flex;align-items:center;min-height:44px;color:var(--link);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.plan-day-more{display:inline-flex;align-items:center;min-height:44px;color:var(--accent2);font-weight:600;text-decoration:none;text-underline-offset:3px}
+.plan-day-more:hover,.plan-day-more:focus-visible{text-decoration:underline}
 
 /* khutbah sheet */
 .khut-add{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
 .khut-add .h3{margin:0;font-size:16px}
-.khut-add .tiny a{color:var(--link);font-weight:600}
+.khut-add .tiny a{color:var(--accent2);font-weight:600;text-decoration:none;text-underline-offset:3px}
+.khut-add .tiny a:hover,.khut-add .tiny a:focus-visible{text-decoration:underline}
 .khut-add-form{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:18px;padding:4px 4px 4px 14px;background:var(--surface);transition:border-color .2s,box-shadow .2s}
 .khut-add-form:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
 .khut-add-form input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:16px;color:var(--ink);padding:8px 2px}
@@ -160,6 +165,7 @@
   .shell-nav,.shell-tabbar,.shell-footer,.shell-more,.ui-fab,.ui-toast,.no-print,.daily-tabs{display:none !important}
   .daily[data-tab="khutbah"] .daily-head{display:none}
   html,body{background:#fff !important;color:#000 !important}
+  body{display:block;min-height:0;padding:0 !important}
   .daily{max-width:none;padding:0;gap:0}
   .khut-sheet,.khut-sheet.is-paper{padding:0 0 16mm;border-radius:0;background:#fff;color:#000;box-shadow:none;font-family:var(--f-read),serif}
   .khut-sheet-head{border-bottom:2px solid #000;margin-bottom:8mm}

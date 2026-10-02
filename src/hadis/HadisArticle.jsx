@@ -9,6 +9,7 @@ import { useDigits } from '../lib/useDigits';
 import BookBadge from '../ui/BookBadge';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
+import CompareToggle from '../compare/CompareToggle';
 import ShareButton from '../share/ShareButton';
 import { useToast } from '../ui/Toast';
 
@@ -51,6 +52,7 @@ export default function HadisArticle({ book, number, text, id }) {
         <Button size="sm" variant="ghost" onClick={() => copy(`${book.cite}, হাদীস নং ${digits(number)}`)}>উদ্ধৃতি কপি</Button>
         <Button size="sm" variant="ghost" onClick={() => copy(`${window.location.origin}${href}`)}><Icon name="link" size={16} />লিংক কপি</Button>
         <ShareButton book={book} number={number} text={text} />
+        <CompareToggle bookId={book.id} number={number} />
         <Link href={shareHref(book.id, number)} className="ui-btn ghost sm">ছবি বানান</Link>
       </div>
       <p className="hadis-permalink">স্থায়ী লিংক: <code>{href}</code></p>

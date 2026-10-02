@@ -56,14 +56,14 @@ export default function SearchBox({ text, onText, query, onSubmit }) {
         <button type="submit" className="search-go">খুঁজুন</button>
       </div>
       {suggestions.length > 0 && (
-        <div className="search-chips" aria-label="বাংলা প্রস্তাব">
+        <div className="search-chips" role="group" aria-label="বাংলা প্রস্তাব">
           {suggestions.map((word) => (
             <button key={word} type="button" className="ui-chip" onClick={() => onText(word)}>{word}</button>
           ))}
         </div>
       )}
       {query === '' && (
-        <div className="search-chips" aria-label="উদাহরণ">
+        <div className="search-chips" role="group" aria-label="উদাহরণ">
           {EXAMPLES.map((word) => (
             <button key={word} type="button" className="ui-chip" onClick={() => onText(word)}>{word}</button>
           ))}

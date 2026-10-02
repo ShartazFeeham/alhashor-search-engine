@@ -8,7 +8,7 @@ import Icon from '../ui/Icon';
 
 // A control that is a link when it can go somewhere and plain, dimmed text when it cannot.
 function Step({ href, label, children }) {
-  if (href === null) return <span role="button" aria-disabled="true" aria-label={label}>{children}</span>;
+  if (href === null) return <span aria-disabled="true" aria-label={label}>{children}</span>;
   return <Link href={href} aria-label={label} scroll={false} onClick={toTop}>{children}</Link>;
 }
 

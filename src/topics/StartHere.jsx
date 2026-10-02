@@ -21,7 +21,7 @@ export default function StartHere({ entries }) {
             <span className="topics-start-no" aria-hidden="true">{digits(index + 1)}</span>
             <div className="topics-start-body">
               <p className="topics-note">{entry.note}</p>
-              <HadisCard bookId={entry.book} number={entry.number} />
+              <HadisCard bookId={entry.book} number={entry.number} level={3} />
             </div>
           </li>
         ))}

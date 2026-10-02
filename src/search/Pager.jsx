@@ -1,5 +1,6 @@
 'use client';
 
+import { toTop } from '../lib/toTop';
 import { useDigits } from '../lib/useDigits';
 
 // Previous / next with "page n / m" between; changing page goes back to the top of the list.
@@ -7,7 +8,7 @@ export default function Pager({ page, lastPage, onPage }) {
   const digits = useDigits();
   const go = (target) => {
     onPage(target);
-    document.documentElement.scrollTop = 0;
+    toTop();
   };
   return (
     <nav className="search-pager" aria-label="পাতা">

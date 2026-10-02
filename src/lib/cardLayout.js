@@ -9,11 +9,11 @@ export const CARD_SIZES = {
 // The book colours of the light theme (src/styles/tokens.css). A card always uses these, whatever
 // theme the visitor reads in, so a shared image looks the same everywhere.
 export const CARD_COLOURS = {
-  bukhari: '#0f8a66',
+  bukhari: '#0f8663',
   muslim: '#3a63c8',
-  tirmidhi: '#c08108',
+  tirmidhi: '#9e6a07',
   abudawud: '#8a4bb8',
-  ibnmajah: '#d3582a',
+  ibnmajah: '#c45227',
   nasai: '#c3387f',
 };
 

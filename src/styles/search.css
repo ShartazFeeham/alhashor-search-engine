@@ -7,7 +7,7 @@
 .search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
 .search-box .ui-icon{color:var(--ink3)}
 .search-box input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:10px 2px;font:inherit;font-size:16px;color:var(--ink)}
-.search-go{border:0;border-radius:99px;padding:10px 20px;background:var(--accent);color:var(--on-accent);font:inherit;font-weight:700;cursor:pointer;min-height:42px}
+.search-go{border:0;border-radius:99px;padding:10px 20px;background:var(--accent);color:var(--on-accent);font:inherit;font-weight:700;cursor:pointer;min-height:44px}
 .search-chips{display:flex;flex-wrap:wrap;gap:8px}
 
 .search-indicator{display:flex;align-items:center;gap:12px;color:var(--accent2);font-weight:600}
@@ -25,14 +25,28 @@
 .search-item{padding:24px 0;border-top:1px solid var(--line);min-width:0}
 .search-item:first-child{border-top:0;padding-top:10px}
 .search-item-head{display:flex;align-items:center;gap:10px;font-weight:600}
-.search-item-head a{color:var(--ink);text-decoration:none}
+.search-item-head a{color:var(--ink);text-decoration:none;padding:10px 0;margin:-10px 0}
 .search-item-head a:hover{color:var(--accent2)}
 .search-text{margin:12px 0 10px;font-family:var(--f-read),serif;font-size:calc(var(--rs) * .92);line-height:var(--rlh);overflow-wrap:anywhere}
 .search-missing{margin:12px 0 10px;color:var(--ink3)}
-.search-item-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;font-size:14px}
-.search-item-actions a,.search-item-actions button{color:var(--accent2);font:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;text-decoration:none}
+/* Actions are 44px tall to tap; the row pulls the extra height back so the list looks as light as before. */
+.search-item-actions{display:flex;flex-wrap:wrap;align-items:center;gap:0 18px;font-size:14px;margin:-10px 0 -11px}
+.search-item-actions a,.search-item-actions button{display:inline-flex;align-items:center;min-height:44px;color:var(--accent2);font:inherit;font-weight:600;background:none;border:0;padding:0;cursor:pointer;text-decoration:none}
 .search-item-actions a:hover,.search-item-actions button:hover{text-decoration:underline;text-underline-offset:3px}
 .search-item-actions .quiet{color:var(--ink3);font-weight:500}
 
 .search-pager{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;border-top:1px solid var(--line);color:var(--ink3);font-size:14px}
 .search-live:empty{display:none}
+
+/* Did you mean: a line under the count with the corrected spellings as chips (44 px targets). */
+.search-dym{margin:10px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;color:var(--ink2);font-size:15px}
+.search-dym-item{display:inline-flex;align-items:center;gap:10px}
+.search-dym .ui-chip{min-height:44px;font-weight:700;color:var(--accent2);border-color:var(--accent)}
+.search-dym .ui-chip:hover{background:var(--accent-soft,var(--surface))}
+
+/* Words near each other: a quiet toggle chip under the count, then what it did. */
+.search-near{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.search-near .ui-chip{min-height:44px}
+.search-near-live:empty{display:none}
+.search-near-note{margin:0;font-size:14px;line-height:1.6;color:var(--ink2)}
+.search-indicator small{font-size:13px;font-weight:500;color:var(--ink3)}

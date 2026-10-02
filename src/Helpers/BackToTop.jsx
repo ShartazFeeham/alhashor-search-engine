@@ -6,6 +6,7 @@ import Icon from '../ui/Icon';
 const SHOW_AFTER = 300;
 
 // A round button that appears once the page has been scrolled down and jumps back to the top.
+// While it is out of sight it is also out of the tab order and the accessibility tree.
 export default function BackToTop() {
   const [shown, setShown] = useState(false);
 
@@ -21,17 +22,15 @@ export default function BackToTop() {
   };
 
   return (
-    <div
+    <button
+      type="button"
       className={shown ? 'ui-fab show' : 'ui-fab'}
-      role="button"
       tabIndex={shown ? 0 : -1}
-      aria-label="Back to top"
+      aria-hidden={shown ? undefined : true}
+      aria-label="উপরে যান"
       onClick={toTop}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') toTop();
-      }}
     >
       <Icon name="up" size={20} />
-    </div>
+    </button>
   );
 }

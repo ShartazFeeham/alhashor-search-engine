@@ -7,7 +7,9 @@ import { pageFromParam } from '../Helpers/paging';
 import HadisCard from '../hadis/HadisCard';
 import { bookById, hadisCount } from '../lib/books';
 import { hadisAnchor, pageNumbers } from '../lib/bookBrowse';
+import { usePageFocus } from '../lib/pageFocus';
 import { useDigits } from '../lib/useDigits';
+import PageStatus from '../ui/PageStatus';
 import BookHead from './BookHead';
 import BookPager from './BookPager';
 import BookSwitcher from './BookSwitcher';
@@ -32,17 +34,20 @@ export default function BookPage({ bookId }) {
   const target = numbers.includes(pointed) ? pointed : null;
   const listRef = useRef(null);
   useScrollToHadis(target, listRef);
+  // After a pager link or a range is used, the list takes focus (see pageFocus.js).
+  usePageFocus(page, listRef);
 
   return (
-    <main className="screen books" style={{ '--bk': `var(${book.colorVar})` }}>
+    <main id="main" tabIndex={-1} className="screen books" style={{ '--bk': `var(${book.colorVar})` }}>
       <PageTitle parts={[book.full, 'হাদীসের বই']} />
       <BookSwitcher bookId={bookId} />
       <BookHead book={book} />
       <JumpBox key={bookId} book={book} />
       <RangeGrid book={book} firstNumber={numbers[0]} />
       <p className="books-range" aria-live="polite">হাদীস নং {digits(numbers[0])} - {digits(numbers[numbers.length - 1])}</p>
+      <PageStatus page={page} />
       <BookPager book={book} page={page} where="উপরে" />
-      <ol className="books-list" ref={listRef}>
+      <ol className="books-list" ref={listRef} tabIndex={-1} aria-label="হাদীসের তালিকা">
         {numbers.map((number) => (
           <li key={number} id={hadisAnchor(number)} className="books-item" data-target={number === target ? 'true' : undefined}>
             <HadisCard bookId={bookId} number={number} />

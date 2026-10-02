@@ -12,7 +12,7 @@ import Icon from '../ui/Icon';
 export default function BooksIndex() {
   const digits = useDigits();
   return (
-    <main className="screen books">
+    <main id="main" tabIndex={-1} className="screen books">
       <PageTitle parts={['হাদীসের বই']} />
       <header className="books-intro">
         <h1 className="h1">হাদীসের বই</h1>

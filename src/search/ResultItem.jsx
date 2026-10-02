@@ -1,11 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useId } from 'react';
 import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
 import { hasMatch, highlightParts, makeSnippet } from '../lib/matchPattern';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
+import CompareToggle from '../compare/CompareToggle';
 import ShareButton from '../share/ShareButton';
 import BookBadge from '../ui/BookBadge';
 import { useToast } from '../ui/Toast';
@@ -15,6 +17,7 @@ import { useToast } from '../ui/Toast';
 export default function ResultItem({ tag, matcher }) {
   const digits = useDigits();
   const toast = useToast();
+  const titleId = useId();
   const { status, text } = useHadisText(tag);
   const parsed = parseTag(tag);
   if (!parsed) return null;
@@ -53,14 +56,15 @@ export default function ResultItem({ tag, matcher }) {
     <li className="search-item">
       <div className="search-item-head">
         <BookBadge bookId={book.id} size="sm" />
-        <Link href={href}>{book.full} - হাদীস নং {digits(number)}</Link>
+        <Link href={href} id={titleId}>{book.full} - হাদীস নং {digits(number)}</Link>
       </div>
       {content}
       <div className="search-item-actions">
-        {cut && <Link href={href}>সম্পূর্ণ হাদীস দেখুন...</Link>}
-        {status === 'ok' && <button type="button" onClick={copy}>কপি</button>}
-        {status === 'ok' && <ShareButton book={book} number={number} text={text} variant="link" />}
-        <Link href={href} className="quiet">হাদীস পাতা</Link>
+        {cut && <Link href={href} aria-describedby={titleId}>সম্পূর্ণ হাদীস দেখুন...</Link>}
+        {status === 'ok' && <button type="button" aria-describedby={titleId} onClick={copy}>কপি</button>}
+        {status === 'ok' && <ShareButton book={book} number={number} text={text} variant="link" describedBy={titleId} />}
+        {status === 'ok' && <CompareToggle bookId={book.id} number={number} variant="link" describedBy={titleId} />}
+        <Link href={href} className="quiet" aria-describedby={titleId}>হাদীস পাতা</Link>
       </div>
     </li>
   );

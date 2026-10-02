@@ -2,7 +2,6 @@
 
 import { useSearchParams } from 'next/navigation';
 import { PLANS } from '../data/readingPlans';
-import PageTitle from '../Helpers/PageTitle';
 import { planOf } from '../lib/dailyRoute';
 import PlanDetail from './PlanDetail';
 import PlanList from './PlanList';
@@ -17,16 +16,10 @@ export default function PlansSection({ plans = PLANS }) {
   const { items } = useKhutbahList();
 
   if (plan) {
-    return (
-      <>
-        <PageTitle parts={[plan.title, 'পরিকল্পনা']} />
-        <PlanDetail plan={plan} progress={progress} onToggle={toggle} onReset={reset} items={items} />
-      </>
-    );
+    return <PlanDetail plan={plan} progress={progress} onToggle={toggle} onReset={reset} items={items} />;
   }
   return (
     <>
-      <PageTitle parts={['পরিকল্পনা']} />
       {params.get('plan') && <p className="daily-note">এই পরিকল্পনাটি পাওয়া যায়নি। অন্য একটি বেছে নিন।</p>}
       <PlanList plans={plans} progress={progress} items={items} />
     </>

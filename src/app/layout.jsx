@@ -9,11 +9,15 @@ import '../styles/books.css';
 import '../styles/topics.css';
 import '../styles/share.css';
 import '../styles/daily.css';
+import '../styles/related.css';
+import '../styles/compare.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import TopNav from '../shell/TopNav';
 import TabBar from '../shell/TabBar';
 import Footer from '../shell/Footer';
 import { ToastProvider } from '../ui/Toast';
+import CompareBar from '../compare/CompareBar';
+import { CompareProvider } from '../compare/CompareProvider';
 import BackToTop from '../Helpers/BackToTop';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { themeScript } from '../settings/themeScript';
@@ -25,7 +29,13 @@ export const metadata = {
   icons: { icon: '/favicon.ico', apple: '/logo192.png' },
 };
 
-export const viewport = { themeColor: '#000000' };
+// The phone's browser bar follows the page colour (light page, dark page), not black.
+export const viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f2f8f6' },
+    { media: '(prefers-color-scheme: dark)', color: '#0c1714' },
+  ],
+};
 
 export default function RootLayout({ children }) {
   return (
@@ -34,13 +44,17 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
+        <a href="#main" className="skip-link">মূল অংশে যান</a>
         <SettingsProvider>
           <ToastProvider>
-            <TopNav />
-            {children}
-            <Footer />
-            <TabBar />
-            <BackToTop />
+            <CompareProvider>
+              <TopNav />
+              {children}
+              <Footer />
+              <TabBar />
+              <CompareBar />
+              <BackToTop />
+            </CompareProvider>
           </ToastProvider>
         </SettingsProvider>
       </body>

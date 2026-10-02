@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { formatDate } from '../lib/bnDate';
-import { pickDaily } from '../lib/dailyPick';
 import { tagOf } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
 import { useDigits } from '../lib/useDigits';
@@ -10,7 +9,7 @@ import { useHadisText } from '../lib/useHadisText';
 import { useSettings } from '../settings/SettingsProvider';
 import Icon from '../ui/Icon';
 import { citationOf } from './citation';
-import { useShortList } from './useShortList';
+import { useHomePick } from './useHomePick';
 import { useToday } from './useToday';
 
 const LIMIT = 170;
@@ -39,13 +38,12 @@ function Excerpt({ book, number }) {
 // link to the daily page.
 export default function HomeDailyCard() {
   const today = useToday();
-  const short = useShortList();
   const digits = useDigits();
   const { settings } = useSettings();
-  const pick = today && short.status === 'ok' ? pickDaily(short.list, today) : null;
+  const { status, pick } = useHomePick(today);
 
   let body;
-  if (short.status === 'error' || (short.status === 'ok' && !pick && today)) {
+  if (status === 'error') {
     body = <p className="home-daily-note">আজকের হাদীসটি আনা যায়নি। পুরো পাতায় গিয়ে দেখুন।</p>;
   } else if (!pick) {
     body = (

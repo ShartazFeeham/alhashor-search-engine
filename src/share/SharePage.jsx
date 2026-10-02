@@ -93,7 +93,7 @@ export default function SharePage({ bookId, number }) {
   };
 
   return (
-    <main className="screen share-page">
+    <main id="main" tabIndex={-1} className="screen share-page">
       <PageTitle parts={['শেয়ার', title]} />
       <Link href={hadisHref(bookId, number)} className="share-back">
         <Icon name="cl" size={16} />

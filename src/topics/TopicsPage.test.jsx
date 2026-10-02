@@ -38,9 +38,10 @@ function show(address, props = {}) {
   );
 }
 
+// A hadis card's title is an h3: it sits under the topic's own h2.
 const cardTitles = () =>
   screen
-    .queryAllByRole('heading', { level: 2 })
+    .queryAllByRole('heading', { level: 3 })
     .map((h) => h.textContent)
     .filter((text) => /হাদীস নং/.test(text));
 const address = () => decodeURIComponent(getUrl().pathname + getUrl().search);
@@ -143,7 +144,7 @@ describe('a chosen topic (/topics?topic=<name>)', () => {
 
   test('shows hadis from the real index, with their real books and numbers', async () => {
     show('/topics?topic=ইল্লীন', { search: undefined });
-    expect(await screen.findByRole('heading', { level: 2, name: 'আবু দাউদ শরীফ - হাদীস নং ১,২৮৮' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 3, name: 'আবু দাউদ শরীফ - হাদীস নং ১,২৮৮' })).toBeInTheDocument();
     expect(cardTitles()).toContain('আবু দাউদ শরীফ - হাদীস নং ৩,৯৪৬');
   });
 });
@@ -248,7 +249,7 @@ describe('the "start here" block', () => {
 
     const all = screen.getByRole('heading', { level: 2, name: 'সব হাদীস' });
     expect(block.compareDocumentPosition(all) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 2, name: 'বুখারী শরীফ - হাদীস নং ১' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 3, name: 'বুখারী শরীফ - হাদীস নং ১' })).toBeInTheDocument();
   });
 
   test('is shown at once, without waiting for the search', async () => {
@@ -280,5 +281,32 @@ describe('the "start here" block', () => {
     show(`/topics?topic=${encodeURIComponent('পয়গাম')}`, { curated: other });
     expect(startBlock()).toBeInTheDocument();
     await screen.findByText(/মোট ৪৫/);
+  });
+});
+
+describe('focus and announcements', () => {
+  const name = () => screen.getByRole('heading', { level: 2, name: 'ঈমান' });
+
+  test('the topic heading can take focus, and does not on first view', async () => {
+    show('/topics?topic=ঈমান');
+    await screen.findByText('মোট ৪৫ টি হাদীস পাওয়া গেছে');
+    expect(name()).toHaveAttribute('tabindex', '-1');
+    expect(name()).not.toHaveFocus();
+  });
+
+  test('moving to the next page focuses the heading and announces the page', async () => {
+    show('/topics?topic=ঈমান');
+    await screen.findByText('মোট ৪৫ টি হাদীস পাওয়া গেছে');
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'পাতা' })).getByRole('link', { name: /পরের/ }));
+    await screen.findByText(/২১ - ৪০ পর্যন্ত/);
+    expect(name()).toHaveFocus();
+    expect(screen.getByText('পাতা ২', { selector: '.sr-only' })).toHaveAttribute('role', 'status');
+  });
+
+  test('choosing a topic chip moves focus to that topic\'s heading', async () => {
+    show('/topics');
+    fireEvent.click(screen.getByRole('link', { name: 'ঈমান' }));
+    await screen.findByText('মোট ৪৫ টি হাদীস পাওয়া গেছে');
+    expect(name()).toHaveFocus();
   });
 });

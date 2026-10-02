@@ -16,7 +16,8 @@ dump() { # <route> -> page HTML after scripts ran
   "$CHROME" --headless=new --disable-gpu --no-sandbox --user-data-dir="$profile" \
     --virtual-time-budget=12000 --dump-dom "$BASE$1" >"$out" 2>/dev/null &
   pid=$!
-  for _ in $(seq 1 40); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
+  # Chrome can linger after printing the page, so stop as soon as the closing tag is in the output.
+  for _ in $(seq 1 80); do kill -0 "$pid" 2>/dev/null || break; grep -q '</html>' "$out" 2>/dev/null && break; sleep 0.5; done
   kill "$pid" 2>/dev/null; pkill -9 -f "$profile" 2>/dev/null
   cat "$out"; rm -rf "$profile" "$out"
 }
@@ -49,6 +50,8 @@ expect_status "/daily?tab=plans&plan=ramadan-30" 200
 expect_status "/daily?tab=khutbah&ids=bukhari-1234,muslim-5" 200
 expect_status /share/bukhari/6628 200         # the quote-card page of a hadis
 expect_status /share/bukhari/0 404
+expect_status /compare 200                    # compare: the address holds the hadis, so a link is a saved comparison
+expect_status "/compare?ids=bukhari-1,muslim-4774" 200
 expect_status /hadis/bukhari/63 200           # a gap number is a valid address; the page says so
 
 expect_text "/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE&page=2" "মোট ৪০৩" "deep link to page 2 of a Bengali search renders (Review Focus 1)"
@@ -68,6 +71,8 @@ expect_text /daily "গত ৭ দিন" "the daily page renders today's hadis 
 expect_text "/daily?tab=plans" "রমযানের ৩০ দিন" "the plans tab lists the reading plans"
 expect_text "/daily?tab=plans&plan=ramadan-30" "দিন ৩০" "a plan deep link renders its day-by-day checklist"
 expect_text "/daily?tab=khutbah&ids=bukhari-1234,muslim-5" "হাদীস নং ১,২৩৪" "a khutbah list in the address renders its hadis"
+expect_text "/compare?ids=bukhari-1,muslim-4774" "অন্যদের সাথে মিলেছে" "a compare link renders both hadis and the count of shared words"
+expect_text /compare "তুলনা করতে দুটি হাদীস যোগ করুন" "the compare page with nothing chosen asks for two hadis"
 expect_text /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি" "the not-found page renders"
 # Page titles on a fresh load (Next.js used to overwrite the page title with the layout's title)
 expect_title / "BoiKotha - হাদীস সম্ভার" "home title"
@@ -79,6 +84,8 @@ expect_title "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "ঈমান 
 expect_title /hadis/bukhari/6628 "বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha" "hadis title on a fresh load"
 expect_title /share/bukhari/6628 "শেয়ার - বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha" "share page title on a fresh load"
 expect_title /daily "আজকের হাদীস - BoiKotha" "daily title on a fresh load"
-expect_title "/daily?tab=khutbah" "খুতবার তালিকা - BoiKotha" "khutbah tab title on a fresh load"
+expect_title "/daily?tab=khutbah" "আজকের হাদীস - BoiKotha" "khutbah tab keeps the one daily title on a fresh load"
+expect_title "/daily?tab=plans" "আজকের হাদীস - BoiKotha" "plans tab keeps the one daily title on a fresh load"
+expect_title /compare "হাদীস তুলনা - BoiKotha" "compare title on a fresh load"
 expect_title /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha" "not-found title"
 exit $fail

@@ -39,7 +39,7 @@ export default function SettingsPage() {
   const fraction = (n) => (settings.digits === 'en' ? String(n) : toBengaliDigits(String(n)));
 
   return (
-    <main className="screen settings">
+    <main id="main" tabIndex={-1} className="screen settings">
       <PageTitle parts={['পড়ার সেটিংস']} />
       <h1 className="h1">পড়ার সেটিংস</h1>
       <p className="muted">এগুলো শুধু এই ডিভাইসে সংরক্ষিত থাকে। কোথাও পাঠানো হয় না।</p>

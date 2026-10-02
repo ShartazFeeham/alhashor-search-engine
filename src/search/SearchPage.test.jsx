@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act, within } from '@testing-library/react';
 import { StrictMode } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { SettingsProvider } from '../settings/SettingsProvider';
@@ -356,4 +356,86 @@ test('the result count and the not-found note are inside one live region that is
   search('zoneword');
   await screen.findByText(/মোট ১ টি হাদিস পাওয়া গেছে/);
   expect(region).toHaveTextContent('মোট ১ টি হাদিস পাওয়া গেছে');
+});
+
+describe('headings, focus and announcements', () => {
+  test('each result\'s actions are described by its title, so 20 "কপি" buttons can be told apart', async () => {
+    servePaged('descword', 2);
+    renderSearch('/search?q=descword');
+    await screen.findByText('t2');
+    const first = within(screen.getAllByRole('listitem')[0]);
+    const title = first.getAllByRole('link')[0].textContent;
+    expect(title).toMatch(/হাদীস নং ১$/);
+    for (const name of ['কপি', 'শেয়ার', 'তুলনায় যোগ করুন']) {
+      expect(first.getByRole('button', { name })).toHaveAccessibleDescription(title);
+    }
+    expect(first.getByRole('link', { name: 'হাদীস পাতা' })).toHaveAccessibleDescription(title);
+    // the second result is described by its own title
+    const second = within(screen.getAllByRole('listitem')[1]);
+    expect(second.getByRole('button', { name: 'কপি' })).toHaveAccessibleDescription(/হাদীস নং ২$/);
+  });
+
+  test('the page has exactly one h1, named after the page, ahead of the search box', () => {
+    serve({});
+    renderSearch();
+    const h1s = screen.getAllByRole('heading', { level: 1 });
+    expect(h1s).toHaveLength(1);
+    expect(h1s[0]).toHaveTextContent('হাদীস সার্চ');
+    expect(h1s[0]).toHaveClass('sr-only');
+    expect(h1s[0].compareDocumentPosition(screen.getByRole('textbox', BOX)) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  test('it is still the only h1 with results on the page', async () => {
+    servePaged('oneheading', 3);
+    renderSearch('/search?q=oneheading');
+    await screen.findByText('t1');
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+  });
+
+  test('the Roman-letter suggestions and the examples are named groups', () => {
+    serve({});
+    renderSearch();
+    expect(screen.getByRole('group', { name: 'উদাহরণ' })).toBeInTheDocument();
+  });
+
+  test('choosing the next page moves focus to the results list', async () => {
+    servePaged('focusword', 45);
+    renderSearch('/search?q=focusword');
+    await screen.findByText('t1');
+    fireEvent.click(screen.getByRole('button', { name: 'পরের' }));
+    await screen.findByText('t21');
+    const list = screen.getByRole('list', { name: 'ফলাফল' });
+    expect(list).toHaveAttribute('tabindex', '-1');
+    expect(list).toHaveFocus();
+  });
+
+  test('the page says which page it moved to', async () => {
+    servePaged('sayword', 45);
+    renderSearch('/search?q=sayword');
+    await screen.findByText('t1');
+    fireEvent.click(screen.getByRole('button', { name: 'পরের' }));
+    await screen.findByText('t21');
+    const live = screen.getAllByRole('status').find((region) => within(region).queryByText('পাতা ২'));
+    expect(live).toBeDefined();
+  });
+
+  test('a new search does not pull focus away from the search box', async () => {
+    servePaged('firstword', 45);
+    renderSearch('/search?q=firstword&page=2');
+    await screen.findByText('t21');
+    servePaged('secondword', 45);
+    const box = screen.getByRole('textbox', BOX);
+    fireEvent.change(box, { target: { value: 'secondword' } });
+    box.focus();
+    fireEvent.click(screen.getByRole('button', { name: 'খুঁজুন' }));
+    await screen.findByText('t1');
+    expect(screen.getByRole('list', { name: 'ফলাফল' })).not.toHaveFocus();
+  });
+
+  test('the first view of a page does not take focus', async () => {
+    servePaged('xyquietword', 45);
+    renderSearch('/search?q=xyquietword&page=2');
+    await screen.findByText('t21');
+    expect(screen.getByRole('list', { name: 'ফলাফল' })).not.toHaveFocus();
+  });
 });

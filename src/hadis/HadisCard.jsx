@@ -1,12 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { useId } from 'react';
 import { bookById } from '../lib/books';
 import { hadisHref, tagOf } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import BookBadge from '../ui/BookBadge';
+import CompareToggle from '../compare/CompareToggle';
 import ShareButton from '../share/ShareButton';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
@@ -21,10 +23,13 @@ function shorten(text) {
 
 // One hadis as a card, shared by the book, topic and compare lists: the book badge and title
 // (a link to the hadis page), the text, and copy. A long text is cut with a link to the full page.
-export default function HadisCard({ bookId, number }) {
+// `level` is the heading level of the title: 2 under a page title, 3 under a section heading.
+export default function HadisCard({ bookId, number, level = 2 }) {
+  const Heading = `h${level}`;
   const book = bookById(bookId);
   const digits = useDigits();
   const toast = useToast();
+  const titleId = useId();
   const { status, text, retry } = useHadisText(tagOf(bookId, number));
   const href = hadisHref(bookId, number);
   const title = `${book.full} - হাদীস নং ${digits(number)}`;
@@ -66,16 +71,17 @@ export default function HadisCard({ bookId, number }) {
     <article className="hcard" style={{ '--bk': `var(${book.colorVar})` }}>
       <header className="hcard-head">
         <BookBadge bookId={bookId} />
-        <h2><Link href={href}>{title}</Link></h2>
+        <Heading><Link href={href} id={titleId}>{title}</Link></Heading>
       </header>
       <div className="hcard-body">
         {body}
-        {cut && <Link href={href} className="hcard-more">সম্পূর্ণ হাদীস দেখুন...</Link>}
+        {cut && <Link href={href} className="hcard-more" aria-describedby={titleId}>সম্পূর্ণ হাদীস দেখুন...</Link>}
       </div>
       {status === 'ok' && (
         <footer className="hcard-foot">
-          <Button size="sm" onClick={copy}><Icon name="copy" size={16} />কপি</Button>
-          <ShareButton book={book} number={number} text={text} variant="icon" />
+          <Button size="sm" aria-describedby={titleId} onClick={copy}><Icon name="copy" size={16} />কপি</Button>
+          <ShareButton book={book} number={number} text={text} variant="icon" describedBy={titleId} />
+          <CompareToggle bookId={bookId} number={number} variant="icon" describedBy={titleId} />
         </footer>
       )}
     </article>

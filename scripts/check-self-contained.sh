@@ -15,7 +15,8 @@ for route in "${ROUTES[@]}"; do
     --disable-default-apps --disable-domain-reliability \
     --log-net-log="$netlog" --virtual-time-budget=8000 --dump-dom "$BASE$route" >"$dom" 2>/dev/null &
   pid=$!
-  for _ in $(seq 1 40); do kill -0 "$pid" 2>/dev/null || break; sleep 1; done
+  # Chrome can linger after printing the page, so stop as soon as the closing tag is in the output.
+  for _ in $(seq 1 80); do kill -0 "$pid" 2>/dev/null || break; grep -q '</html>' "$dom" 2>/dev/null && break; sleep 0.5; done
   kill "$pid" 2>/dev/null; pkill -9 -f "$profile" 2>/dev/null
   hosts="$(python3 "$(dirname "$0")/outside-hosts.py" "$netlog" "$(echo "$BASE" | sed -E 's#^(https?://[^/]+).*#\1#')")"
   if [ -n "$hosts" ]; then

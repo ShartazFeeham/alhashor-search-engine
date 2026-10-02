@@ -89,3 +89,17 @@ test('the provider renders when the browser blocks storage entirely', () => {
     Object.defineProperty(globalThis, 'localStorage', original);
   }
 });
+
+test('reading values set before first paint are still there while the saved settings load, and match afterwards', async () => {
+  const { themeScript } = await import('./themeScript');
+  localStorage.setItem('boikotha.settings', JSON.stringify({ size: 22, width: 40 }));
+  document.documentElement.removeAttribute('style');
+  new Function(themeScript)();
+  const removed = vi.spyOn(document.documentElement.style, 'removeProperty');
+  render(<SettingsProvider><Probe /></SettingsProvider>);
+  expect(removed).not.toHaveBeenCalled();
+  expect(document.documentElement.style.getPropertyValue('--rs')).toBe('22px');
+  expect(document.documentElement.style.getPropertyValue('--rw')).toBe('40em');
+  removed.mockRestore();
+  document.documentElement.removeAttribute('style');
+});

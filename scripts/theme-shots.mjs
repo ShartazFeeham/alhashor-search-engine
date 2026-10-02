@@ -13,8 +13,14 @@ const routes = [
   ['books', '/books'],
   ['book', '/books/bukhari?page=4'],
   ['topics', '/topics'],
-  ['topic', '/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8'],
+  ['topic', `/topics?topic=${encodeURIComponent('নামায')}`],
+  ['daily', '/daily'],
+  ['daily-plans', '/daily?tab=plans&plan=ramadan-30'],
+  ['daily-khutbah', '/daily?tab=khutbah&ids=bukhari-1,muslim-5'],
+  ['compare', '/compare?ids=bukhari-1,muslim-5'],
+  ['share', '/share/bukhari/307'],
   ['settings', '/settings'],
+  ['notfound', '/no-such-page'],
 ];
 const sizes = [['phone', 390, 844], ['desktop', 1200, 900]];
 let failed = false;

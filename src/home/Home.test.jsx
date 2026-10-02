@@ -1,4 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { clearDailyPicksCache } from '../daily/useHomePick';
 import { clearShortListCache } from '../daily/useShortList';
 import { pickDaily } from '../lib/dailyPick';
 import { splitHadis } from '../lib/hadisText';
@@ -20,6 +21,7 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(new Date(2026, 9, 2, 10, 0));
   clearShortListCache();
+  clearDailyPicksCache();
   global.fetch = vi.fn(diskFetch);
 });
 
@@ -83,6 +85,38 @@ describe('the daily hadis card', () => {
     renderHome();
     const excerpt = await within(card()).findByTestId('home-daily-text');
     expect(excerpt.textContent.length).toBeLessThanOrEqual(190);
+  });
+
+  const urlsFetched = () => global.fetch.mock.calls.map(([url]) => url);
+
+  test('picks from the small precomputed file and never loads the 88 KB list', async () => {
+    renderHome();
+    await within(card()).findByTestId('home-daily-text');
+    expect(urlsFetched()).toContain('/json/daily-picks.json');
+    expect(urlsFetched()).not.toContain('/json/short-hadis.json');
+  });
+
+  test('starts the picks request as soon as the card mounts, before any other request', () => {
+    renderHome();
+    expect(urlsFetched()[0]).toBe('/json/daily-picks.json');
+  });
+
+  test('shows the hadis the daily page shows (the full list) when the picks file is missing', async () => {
+    global.fetch = vi.fn((url) => (url.endsWith('daily-picks.json') ? Promise.resolve({ ok: false }) : diskFetch(url)));
+    renderHome();
+    const pick = today();
+    await within(card()).findByTestId('home-daily-text');
+    expect(urlsFetched()).toContain('/json/short-hadis.json');
+    expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
+  });
+
+  test('falls back to the full list for a date beyond the precomputed range, with the same pick as /daily', async () => {
+    vi.setSystemTime(new Date(2029, 5, 15, 10, 0));
+    renderHome();
+    const pick = pickDaily(realShortList(), new Date(2029, 5, 15, 10, 0));
+    await within(card()).findByTestId('home-daily-text');
+    expect(urlsFetched()).toContain('/json/short-hadis.json');
+    expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
   });
 
   test('still offers the daily page when the list cannot be loaded', async () => {

@@ -17,7 +17,7 @@ const spineHeight = (book) => Math.round(140 + (hadisCount(book) / MOST) * 40);
 export default function Home() {
   const digits = useDigits();
   return (
-    <main className="screen home">
+    <main id="main" tabIndex={-1} className="screen home">
       <PageTitle />
       <section className="home-hero">
         <p className="home-eyebrow">আসসালামু আলাইকুম</p>

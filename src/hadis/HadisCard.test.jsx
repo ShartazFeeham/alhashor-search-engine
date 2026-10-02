@@ -127,3 +127,32 @@ describe('share', () => {
     expect(copied.length).toBeLessThan(700);
   });
 });
+
+test('the title is an h2 by default and takes the level the page needs (below a section heading)', () => {
+  serve({});
+  const { unmount } = show('muslim', 12);
+  expect(screen.getByRole('heading', { level: 2, name: 'মুসলিম শরীফ - হাদীস নং ১২' })).toBeInTheDocument();
+  unmount();
+  render(
+    <SettingsProvider>
+      <ToastProvider>
+        <HadisCard bookId="muslim" number={12} level={3} />
+      </ToastProvider>
+    </SettingsProvider>
+  );
+  expect(screen.getByRole('heading', { level: 3, name: 'মুসলিম শরীফ - হাদীস নং ১২' })).toBeInTheDocument();
+  expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument();
+});
+
+test('the repeated actions are described by the card title, so a list of them can be told apart', async () => {
+  serve({ '/json/hadis/Bukhari/0005/text.txt': LONG });
+  show('bukhari', 5);
+  const title = 'বুখারী শরীফ - হাদীস নং ৫';
+  const actions = [
+    await screen.findByRole('button', { name: 'কপি' }),
+    screen.getByRole('button', { name: 'শেয়ার' }),
+    screen.getByRole('button', { name: 'তুলনায় যোগ করুন' }),
+    screen.getByRole('link', { name: 'সম্পূর্ণ হাদীস দেখুন...' }),
+  ];
+  for (const action of actions) expect(action).toHaveAccessibleDescription(title);
+});

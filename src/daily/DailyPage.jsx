@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import PageTitle from '../Helpers/PageTitle';
 import { dailyHref, tabOf } from '../lib/dailyRoute';
 import { useDigits } from '../lib/useDigits';
 import KhutbahSection from './KhutbahSection';
@@ -25,7 +26,9 @@ export default function DailyPage() {
   const current = TABS.find((entry) => entry.id === tab);
 
   return (
-    <main className="screen daily" data-tab={tab}>
+    <main id="main" tabIndex={-1} className="screen daily" data-tab={tab}>
+      {/* One title for the whole route, the same as the pre-built one in app/daily/page.jsx. */}
+      <PageTitle parts={['আজকের হাদীস']} />
       <header className="daily-head">
         <h1 className="h1">{current.label}</h1>
         <p className="muted">{current.lead}</p>

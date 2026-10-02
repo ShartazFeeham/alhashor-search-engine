@@ -13,7 +13,8 @@
 .topics-filter-live{margin:0;font-size:14px;color:var(--ink2)}
 .topics-filter-live:empty{display:none}
 
-.topics-chips{list-style:none;margin:0;padding:2px;display:flex;flex-wrap:wrap;gap:8px;max-height:176px;overflow-y:auto;scrollbar-width:thin}
+/* the list scrolls inside its box; the top and bottom edges fade and the padding keeps the first and last row clear of the fade, so a half-clipped chip reads as "more below" */
+.topics-chips{list-style:none;margin:0;padding:12px 2px 18px;display:flex;flex-wrap:wrap;gap:8px;max-height:176px;overflow-y:auto;scrollbar-width:thin;scroll-padding:12px 0 18px;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 18px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 12px,#000 calc(100% - 18px),transparent 100%)}
 .topics-chip{display:inline-flex;align-items:center;min-height:44px;padding:7px 16px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-weight:500;white-space:nowrap;color:var(--ink);text-decoration:none;transition:border-color .18s,background .18s}
 .topics-chip:hover{border-color:var(--accent)}
 .topics-chip[aria-current="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}

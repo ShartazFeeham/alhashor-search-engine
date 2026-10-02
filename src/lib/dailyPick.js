@@ -51,3 +51,18 @@ export function recentPicks(list, date, count = 7) {
   }
   return entries;
 }
+
+// The same pick, read from the small precomputed file ({ from: day number of the first date,
+// picks: ["BUK:1234", ...] }, built by scripts/build-daily-picks.mjs with pickDaily itself), so
+// the home page need not load the whole list. Null when the date is outside the file or the file
+// or entry is unusable: the caller then picks from the full list.
+export function pickPrecomputed(file, date) {
+  if (!file || !Number.isInteger(file.from) || !Array.isArray(file.picks)) return null;
+  const entry = file.picks[dayNumber(date) - file.from];
+  if (typeof entry !== 'string') return null;
+  const [code, digits] = entry.split(':');
+  const book = BOOKS.find((candidate) => candidate.code === code);
+  const number = Number(digits);
+  if (!book || !/^\d+$/.test(digits ?? '') || number < 1) return null;
+  return { book, number };
+}

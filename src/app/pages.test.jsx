@@ -1,15 +1,16 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { renderToStaticMarkup as toMarkup } from 'react-dom/server';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { setUrl } from '../test/nextNavigation';
-import RootLayout, { metadata } from './layout';
+import RootLayout, { metadata, viewport } from './layout';
 import HomePage from './page';
 import SearchPage from './search/page';
 import BooksPage from './books/page';
 import TopicsPage from './topics/page';
 import DailyRoute, { metadata as dailyMetadata } from './daily/page';
+import CompareRoute, { metadata as compareMetadata } from './compare/page';
 import NotFoundPage from './not-found';
 import SettingsRoute from './settings/page';
 
@@ -21,6 +22,8 @@ const pages = [
   ['/daily', DailyRoute],
   ['/daily?tab=plans', DailyRoute],
   ['/daily?tab=khutbah&ids=muslim-5', DailyRoute],
+  ['/compare', CompareRoute],
+  ['/compare?ids=bukhari-1,muslim-4774', CompareRoute],
   ['/settings', SettingsRoute],
 ];
 
@@ -49,8 +52,10 @@ test.each([
   ['/topics', 'বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
   ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha', TopicsPage],
   ['/daily', 'আজকের হাদীস - BoiKotha', DailyRoute],
-  ['/daily?tab=plans', 'পরিকল্পনা - BoiKotha', DailyRoute],
-  ['/daily?tab=khutbah', 'খুতবার তালিকা - BoiKotha', DailyRoute],
+  ['/daily?tab=plans', 'আজকের হাদীস - BoiKotha', DailyRoute],
+  ['/daily?tab=khutbah', 'আজকের হাদীস - BoiKotha', DailyRoute],
+  ['/compare', 'হাদীস তুলনা - BoiKotha', CompareRoute],
+  ['/compare?ids=bukhari-1,muslim-4774', 'হাদীস তুলনা - BoiKotha', CompareRoute],
   ['/settings', 'পড়ার সেটিংস - BoiKotha', SettingsRoute],
 ])('%s is titled %s', (route, title, Page) => {
   setUrl(route);
@@ -60,6 +65,10 @@ test.each([
 
 test('the daily route has a pre-built title for the first paint', () => {
   expect(dailyMetadata.title).toBe('আজকের হাদীস - BoiKotha');
+});
+
+test('the compare route has a pre-built title for the first paint', () => {
+  expect(compareMetadata.title).toBe('হাদীস তুলনা - BoiKotha');
 });
 
 test('the not-found page explains and links home', () => {
@@ -77,9 +86,16 @@ test('the layout sets the language and wraps each page with the navigation', () 
   expect(html).toContain('<html lang="bn"');
   expect(html).toContain('href="/search"');
   expect(html).toContain('PAGE BODY');
-  expect(html).toContain('Back to top');
+  expect(html).toContain('উপরে যান');
   expect(html).toContain('aria-label="নিচের মেনু"');
   expect(html).toContain('ছয়টি প্রধান গ্রন্থ');
+});
+
+test('the browser bar colour follows the light and dark pages instead of black', () => {
+  expect(viewport.themeColor).toEqual([
+    { media: '(prefers-color-scheme: light)', color: '#f2f8f6' },
+    { media: '(prefers-color-scheme: dark)', color: '#0c1714' },
+  ]);
 });
 
 test('site metadata names the site and describes it in Bengali', () => {
@@ -92,5 +108,61 @@ test('site metadata names the site and describes it in Bengali', () => {
 test('the layout loads every global stylesheet, in order', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css']);
+  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css', '../styles/related.css', '../styles/compare.css']);
+});
+
+test('the layout keeps the compare choice for every page and shows the compare bar', () => {
+  const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
+  // the provider wraps the pages and the shell (the nav and tab bar read the choice), inside the toast provider
+  expect(source.indexOf('<ToastProvider>')).toBeLessThan(source.indexOf('<CompareProvider>'));
+  expect(source.indexOf('<CompareProvider>')).toBeLessThan(source.indexOf('<TopNav />'));
+  expect(source.indexOf('<CompareBar />')).toBeLessThan(source.indexOf('</CompareProvider>'));
+});
+
+describe('skip link and main landmark', () => {
+  const html = () => toMarkup(<RootLayout><p>PAGE BODY</p></RootLayout>);
+
+  test('the first link in the body skips to the main content, ahead of the navigation', () => {
+    const markup = html();
+    const body = markup.slice(markup.indexOf('<body'));
+    const firstLink = /<a [^>]*>/.exec(body)[0];
+    expect(firstLink).toContain('href="#main"');
+    expect(firstLink).toContain('class="skip-link"');
+    expect(body.indexOf('মূল অংশে যান')).toBeLessThan(body.indexOf('href="/search"'));
+    expect(body.indexOf('মূল অংশে যান')).toBeLessThan(body.indexOf('PAGE BODY'));
+  });
+
+  test('the skip link is visible on focus and uses the theme colours', () => {
+    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/base.css'), 'utf8');
+    expect(css).toMatch(/\.skip-link:focus[^{]*\{[^}]*top:\s*\d/);
+    expect(css).toMatch(/\.skip-link\{[^}]*var\(--on-accent\)/);
+  });
+
+  test('every page component renders a main that the link can target', () => {
+    const files = readdirSync(path.resolve(process.cwd(), 'src'), { recursive: true })
+      .filter((file) => file.endsWith('.jsx') && !file.includes('.test.'));
+    const mains = files.flatMap((file) => {
+      const source = readFileSync(path.resolve(process.cwd(), 'src', file), 'utf8');
+      return [...source.matchAll(/<main\b[^>]*>/g)].map((match) => match[0]);
+    });
+    expect(mains.length).toBeGreaterThanOrEqual(12);
+    for (const tag of mains) {
+      expect(tag).toContain('id="main"');
+      expect(tag).toContain('tabIndex={-1}');
+    }
+  });
+
+  test.each(pages)('page %s has one main with that id', (route, Page) => {
+    setUrl(route);
+    render(<SettingsProvider><Page /></SettingsProvider>);
+    const mains = screen.getAllByRole('main');
+    expect(mains).toHaveLength(1);
+    expect(mains[0]).toHaveAttribute('id', 'main');
+    expect(mains[0]).toHaveAttribute('tabindex', '-1');
+  });
+
+  test('the not-found page has it too', () => {
+    render(<NotFoundPage />);
+    expect(screen.getByRole('main')).toHaveAttribute('id', 'main');
+  });
 });

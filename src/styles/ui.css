@@ -7,9 +7,9 @@
 .ui-btn:active{transform:scale(.96)}
 .ui-btn.primary{background:var(--accent);color:var(--on-accent)}
 .ui-btn.ghost{background:transparent;border-color:var(--line)}
-.ui-btn.sm{padding:6px 14px;min-height:36px;font-size:14px}
+.ui-btn.sm{padding:6px 14px;min-height:44px;font-size:14px}
 .ui-btn[disabled]{opacity:.5;cursor:not-allowed}
-.ui-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font:inherit;font-weight:500;white-space:nowrap;color:var(--ink);cursor:pointer;transition:all .18s}
+.ui-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;min-height:44px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font:inherit;font-weight:500;white-space:nowrap;color:var(--ink);cursor:pointer;transition:all .18s}
 .ui-chip:hover{border-color:var(--accent)}
 .ui-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .ui-chip-dot{width:9px;height:9px;border-radius:50%;flex:none}
@@ -17,10 +17,19 @@
 .ui-badge.sm{width:26px;height:26px;border-radius:9px;font-size:12px}
 .ui-icon{flex:none}
 
+/* ---------- page column: room kept at the bottom for the fixed bars ---------- */
+/* --tabbar-h is the phone tab bar (64px, the raised search button reaches 10px above it, plus 10px of air and the iOS home-indicator inset); --dock-extra is the compare bar
+   while it shows (CompareBar puts the class has-cmp-bar on the body). Content and the footer are never
+   hidden behind them. */
+:root{--tabbar-h:0px;--dock-extra:0px}
+body{padding-bottom:calc(var(--tabbar-h) + var(--dock-extra))}
+body.has-cmp-bar{--dock-extra:88px}
+body>main{flex:1 0 auto;width:100%}
+
 /* ---------- toast and back-to-top ---------- */
-.ui-toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);z-index:60;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.ui-toast{position:fixed;left:50%;width:max-content;max-width:calc(100vw - 32px);bottom:var(--tabbar-h);transform:translate(-50%,12px);z-index:60;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
 .ui-toast.show{opacity:1;transform:translate(-50%,0)}
-.ui-fab{position:fixed;right:16px;bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:45;width:44px;height:44px;border-radius:50%;background:var(--surface);box-shadow:var(--shadow),0 0 0 1px var(--line);display:grid;place-items:center;color:var(--accent2);cursor:pointer;transform:translateY(12px) scale(.8);opacity:0;pointer-events:none;transition:all .25s}
+.ui-fab{border:0;padding:0;font:inherit;position:fixed;right:16px;bottom:calc(var(--tabbar-h) + 8px);z-index:45;width:44px;height:44px;border-radius:50%;background:var(--surface);box-shadow:var(--shadow),0 0 0 1px var(--line);display:grid;place-items:center;color:var(--accent2);cursor:pointer;transform:translateY(12px) scale(.8);opacity:0;pointer-events:none;transition:all .25s}
 .ui-fab.show{transform:none;opacity:1;pointer-events:auto}
 
 /* ---------- top navigation ---------- */
@@ -35,20 +44,22 @@
 .shell-links a{padding:8px 12px;border-radius:99px;font-weight:600;color:var(--ink2);white-space:nowrap;text-decoration:none}
 .shell-links a:hover{background:var(--surface2)}
 .shell-links a[aria-current="page"]{background:var(--accent-soft);color:var(--accent2)}
-.shell-iconbtn{margin-left:auto;width:40px;height:40px;border-radius:14px;display:grid;place-items:center;background:var(--surface);box-shadow:var(--shadow);color:var(--ink2);text-decoration:none;flex:none}
+.shell-iconbtn{margin-left:auto;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface);box-shadow:var(--shadow);color:var(--ink2);text-decoration:none;flex:none}
 .shell-iconbtn b{font-size:16px}
 
 /* ---------- bottom tab bar (phones) ---------- */
-.shell-tabbar{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:45;margin:12px 12px 10px;display:none;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface);border-radius:26px;box-shadow:var(--shadow),0 0 0 1px var(--line)}
+.shell-tabbar{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:45;display:none;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface);border-radius:24px;box-shadow:var(--shadow),0 0 0 1px var(--line)}
 .shell-tabbar a,.shell-tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;border-radius:18px;font:inherit;font-size:11.5px;font-weight:600;color:var(--ink3);text-decoration:none;background:none;border:0;cursor:pointer;min-height:48px;transition:color .2s,background .2s}
 .shell-tabbar [aria-current="page"]{color:var(--accent2);background:var(--accent-soft)}
 .shell-tabbar .mid{flex:none;width:58px;height:58px;min-height:0;margin-top:-26px;border-radius:50%;background:var(--accent);color:var(--on-accent);box-shadow:0 8px 18px color-mix(in srgb,var(--accent) 45%,transparent);border:4px solid var(--bg);padding:0}
 .shell-tabbar .mid[aria-current="page"]{background:var(--accent2);color:var(--on-accent)}
-.shell-more{position:fixed;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--surface);border-radius:18px;box-shadow:var(--shadow),0 0 0 1px var(--line);padding:6px}
+.shell-more{position:fixed;right:16px;bottom:var(--tabbar-h);z-index:50;background:var(--surface);border-radius:18px;box-shadow:var(--shadow),0 0 0 1px var(--line);padding:6px}
 .shell-more a{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;color:var(--ink);font-weight:600;text-decoration:none}
 .shell-more a:hover{background:var(--surface2)}
 
 @media (max-width: 640px){
+  :root{--tabbar-h:calc(84px + env(safe-area-inset-bottom,0px))}
+  body.has-cmp-bar{--dock-extra:72px}
   .shell-tabbar{display:flex}
 }
 @media (min-width: 641px){
@@ -59,13 +70,15 @@
 }
 
 /* ---------- footer ---------- */
-.shell-footer{margin:26px 16px 10px;padding:18px 16px;border-radius:22px;background:var(--surface2);display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--ink2);max-width:1088px}
+.shell-footer{flex:none;width:calc(100% - 32px);margin:26px 16px 10px;padding:18px 16px;border-radius:22px;background:var(--surface2);display:flex;flex-direction:column;gap:10px;font-size:13.5px;color:var(--ink2);max-width:1088px}
 @media (min-width: 1152px){ .shell-footer{margin-inline:auto} }
 .shell-footer-brand{display:flex;align-items:center;gap:10px}
 .shell-footer .lat{font-family:var(--f-lat),system-ui,sans-serif}
 .shell-footer .tiny{font-size:12.5px;color:var(--ink3)}
 .shell-footer-links{display:flex;flex-wrap:wrap;gap:6px 14px;font-weight:600}
-.shell-footer-links a{color:var(--accent2);text-decoration:none}
+/* the back-to-top button sits over the footer's right end: the links stop short of it */
+@media (max-width: 1151px){ .shell-footer-links{padding-right:56px} }
+.shell-footer-links a{color:var(--accent2);text-decoration:none;padding:12px 0;margin:-12px 0}
 .shell-footer-links a:hover{text-decoration:underline}
 
 /* ---------- page basics used by the new pages ---------- */

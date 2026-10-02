@@ -11,6 +11,7 @@ import Breadcrumb from './Breadcrumb';
 import HadisArticle from './HadisArticle';
 import PrevNext from './PrevNext';
 import ReadingProgress from './ReadingProgress';
+import RelatedList from './RelatedList';
 
 const ARTICLE_ID = 'hadis-article';
 
@@ -20,12 +21,13 @@ export default function HadisPage({ bookId, number }) {
   const { status, text, retry } = useHadisText(tagOf(bookId, number));
 
   return (
-    <main className="screen hadis-page">
+    <main id="main" tabIndex={-1} className="screen hadis-page">
       <PageTitle parts={[`${book.full} - হাদীস নং ${digits(number)}`]} />
       <Breadcrumb book={book} number={number} />
 
       {status === 'loading' && (
         <div className="hadis-skeleton" aria-busy="true" aria-label="লোড হচ্ছে">
+          <h1 className="sr-only">{book.full} - হাদীস নং {digits(number)}</h1>
           <div className="hadis-skel" style={{ width: '40%' }} />
           <div className="hadis-skel" style={{ width: '96%' }} />
           <div className="hadis-skel" style={{ width: '90%' }} />
@@ -42,6 +44,7 @@ export default function HadisPage({ bookId, number }) {
 
       {status === 'error' && (
         <div className="hadis-message">
+          <h1>{book.full} - হাদীস নং {digits(number)}</h1>
           <p>হাদীসটি আনা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।</p>
           <Button variant="primary" onClick={retry}>আবার চেষ্টা করুন</Button>
         </div>
@@ -55,6 +58,7 @@ export default function HadisPage({ bookId, number }) {
       )}
 
       {status !== 'loading' && <PrevNext bookId={bookId} number={number} swipeTarget="page" />}
+      {status === 'ok' && <RelatedList bookId={bookId} number={number} />}
     </main>
   );
 }

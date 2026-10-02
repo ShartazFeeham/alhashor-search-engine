@@ -130,6 +130,13 @@ describe('the pager', () => {
     expect(pager.getByText('−১০')).toHaveAttribute('aria-disabled', 'true');
   });
 
+  test('a control that cannot be used is plain dimmed text, not a "button" that cannot be reached', () => {
+    show('bukhari');
+    const pager = within(pagers()[0]);
+    expect(pager.queryByRole('button')).not.toBeInTheDocument();
+    expect(pager.getByText(/আগের/)).not.toHaveAttribute('role');
+  });
+
   test('on the last page the forward controls are off', () => {
     show('tirmidhi', '/books/tirmidhi?page=181');
     const pager = within(pagers()[0]);
@@ -148,12 +155,6 @@ describe('the pager', () => {
     expect(pagers()).toHaveLength(2);
     expect(screen.getByRole('navigation', { name: 'পাতা (উপরে)' })).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'পাতা (নিচে)' })).toBeInTheDocument();
-  });
-
-  test('a step that cannot be taken is announced as unavailable', () => {
-    show('bukhari');
-    const back = within(pagers()[0]).getByRole('button', { name: /আগের/ });
-    expect(back).toHaveAttribute('aria-disabled', 'true');
   });
 });
 
@@ -330,6 +331,35 @@ describe('pointing at a hadis (?hadis=45)', () => {
     fireEvent.click(next);
     expect(document.documentElement.scrollTop).toBe(0);
     expect(getUrl().search).toBe('?page=4'); // and the pointer does not follow
+  });
+});
+
+describe('focus and announcements after paging', () => {
+  const nextLink = () => within(screen.getAllByRole('navigation', { name: /^পাতা/ })[1]).getByRole('link', { name: /পরের/ });
+
+  test('the list takes focus after a pager link is used, but not on first view', async () => {
+    show('muslim', '/books/muslim?page=3');
+    const list = screen.getByRole('list', { name: 'হাদীসের তালিকা' });
+    expect(list).toHaveAttribute('tabindex', '-1');
+    expect(list).not.toHaveFocus();
+    fireEvent.click(nextLink());
+    expect(list).toHaveFocus();
+    await screen.findByText(file('Muslim', 80));
+  });
+
+  test('the new page is announced in a status region', async () => {
+    show('muslim', '/books/muslim?page=3');
+    fireEvent.click(nextLink());
+    const note = screen.getByText('পাতা ৪', { selector: '.sr-only' });
+    expect(note).toHaveAttribute('role', 'status');
+    await screen.findByText(file('Muslim', 80));
+  });
+
+  test('choosing a range focuses the list too', async () => {
+    show('muslim', '/books/muslim');
+    fireEvent.click(within(screen.getByRole('navigation', { name: 'পরিসর' })).getAllByRole('link')[2]);
+    expect(screen.getByRole('list', { name: 'হাদীসের তালিকা' })).toHaveFocus();
+    await screen.findByText(file('Muslim', 201));
   });
 });
 

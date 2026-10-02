@@ -75,15 +75,13 @@ test('on the real data, most hadis have a recognisable chain and no text is ever
   for (const folder of readdirSync(root)) {
     const dirs = readdirSync(path.join(root, folder)).filter((d) => /^\d+$/.test(d)).sort();
     for (let i = 0; i < dirs.length; i += 10) {
-      // one data file holds a raw line break inside its string, so control characters become spaces
-      const raw = readFileSync(path.join(root, folder, dirs[i], 'text.txt'), 'utf8');
-      const text = JSON.parse([...raw].map((c) => (c.charCodeAt(0) < 32 ? ' ' : c)).join(''));
+      const text = JSON.parse(readFileSync(path.join(root, folder, dirs[i], 'text.txt'), 'utf8'));
       const parts = splitHadis(text);
       total++;
       if (parts.chain) withChain++;
       // nothing lost: the same characters in the same order, ignoring all whitespace
       const rejoined = `${parts.chain}${parts.body}`.replace(/\s+/g, '');
-      const original = text.replace(/^\s*(?:[০-৯]+\/)?[০-৯]+\s*[।.]\s*/, '').replace(/\s+/g, '');
+      const original = text.replace(/^\s*(?:[০-৯0-9]+\s*\/\s*)?[০-৯0-9]+(?:\s*[।.,]\s*|\s+(?=[^০-৯0-9\s]))/, '').replace(/\s+/g, '');
       expect(rejoined).toBe(original);
     }
   }

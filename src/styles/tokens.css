@@ -2,11 +2,11 @@
    A visitor with no saved choice follows the device (prefers-color-scheme). */
 :root {
   --page:#d9e8e3; --bg:#f2f8f6; --surface:#ffffff; --surface2:#e7f1ee; --line:#d3e3dd;
-  --ink:#0f2d28; --ink2:#46655e; --ink3:#7b948d;
-  --accent:#0b8a78; --accent2:#096658; --on-accent:#ffffff; --accent-soft:#d6f0ea;
+  --ink:#0f2d28; --ink2:#46655e; --ink3:#576964;
+  --accent:#0a796a; --accent2:#096658; --on-accent:#ffffff; --accent-soft:#d6f0ea;
   --hl:#ffe9a0; --hl-ink:#3a2a00;
   --ok:#1f9d55; --warn:#b86e05; --bad:#cf4337; --link:#1a55c8;
-  --bk-bukhari:#0f8a66; --bk-muslim:#3a63c8; --bk-tirmidhi:#c08108; --bk-abudawud:#8a4bb8; --bk-ibnmajah:#d3582a; --bk-nasai:#c3387f; --on-bk:#ffffff;
+  --bk-bukhari:#0f8663; --bk-muslim:#3a63c8; --bk-tirmidhi:#9e6a07; --bk-abudawud:#8a4bb8; --bk-ibnmajah:#c45227; --bk-nasai:#c3387f; --on-bk:#ffffff; --bk-wash:rgba(0,0,0,.22);
   --shadow:0 1px 2px rgba(10,50,44,.06),0 8px 22px rgba(10,50,44,.07);
   /* reading: font size, line height, text width (changed by the reading settings) */
   --rs:18px; --rlh:1.9; --rw:34em;
@@ -14,17 +14,17 @@
 
 :root[data-theme="dark"] {
   --page:#050c0a; --bg:#0c1714; --surface:#14231f; --surface2:#1b2f29; --line:#27423b;
-  --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#6f8c85;
+  --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b;
   --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
   --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
-  --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512;
+  --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
   color-scheme: dark;
 }
 
 :root[data-theme="sepia"] {
   --page:#e2d3b3; --bg:#f4ead3; --surface:#fbf4e2; --surface2:#eee0c3; --line:#dccba6;
-  --ink:#382c19; --ink2:#675638; --ink3:#957f56;
+  --ink:#382c19; --ink2:#675638; --ink3:#6a5a3d;
   --accent:#2a7a66; --accent2:#1d5a4b; --on-accent:#fffaf0; --accent-soft:#d8e5d2;
   --hl:#f2d684; --hl-ink:#3a2a00; --link:#2f5aa8;
   --shadow:0 1px 2px rgba(80,55,15,.08),0 8px 22px rgba(80,55,15,.09);
@@ -33,10 +33,10 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     --page:#050c0a; --bg:#0c1714; --surface:#14231f; --surface2:#1b2f29; --line:#27423b;
-    --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#6f8c85;
+    --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b;
     --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
     --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
-    --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512;
+    --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
     --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
     color-scheme: dark;
   }

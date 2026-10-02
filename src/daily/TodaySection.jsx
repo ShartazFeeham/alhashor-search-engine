@@ -1,6 +1,5 @@
 'use client';
 
-import PageTitle from '../Helpers/PageTitle';
 import { pickDaily, recentPicks } from '../lib/dailyPick';
 import Button from '../ui/Button';
 import DailyCard from './DailyCard';
@@ -10,12 +9,7 @@ import { useToday } from './useToday';
 
 // আজকের হাদীস: today's pick from the list of short hadis, and the seven days before.
 export default function TodaySection() {
-  return (
-    <>
-      <PageTitle parts={['আজকের হাদীস']} />
-      <TodayContent />
-    </>
-  );
+  return <TodayContent />;
 }
 
 function TodayContent() {

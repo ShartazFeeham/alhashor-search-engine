@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import PageTitle from '../Helpers/PageTitle';
 import { checkJump, parseJump } from '../lib/bookBrowse';
 import { formatDate } from '../lib/bnDate';
 import { dailyHref } from '../lib/dailyRoute';
@@ -91,7 +90,6 @@ export default function KhutbahSection() {
 
   return (
     <>
-      <PageTitle parts={['খুতবার তালিকা']} />
       <section className="khut-add no-print" aria-labelledby="khut-add-title">
         <h2 className="h3" id="khut-add-title">হাদীস যোগ করুন</h2>
         <form className="khut-add-form" onSubmit={submit} autoComplete="off">

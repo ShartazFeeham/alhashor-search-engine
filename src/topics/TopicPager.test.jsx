@@ -38,6 +38,7 @@ test('on the first page "আগের" is dimmed and cannot be followed', () => 
   show({ page: 0, lastPage: 5 });
   expect(within(pager()).queryByRole('link', { name: /আগের/ })).not.toBeInTheDocument();
   expect(within(pager()).getByText(/আগের/)).toHaveAttribute('aria-disabled', 'true');
+  expect(within(pager()).queryByRole('button')).not.toBeInTheDocument();
   expect(within(pager()).getByRole('link', { name: /পরের/ })).toBeInTheDocument();
 });
 

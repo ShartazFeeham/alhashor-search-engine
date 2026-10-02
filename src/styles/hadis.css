@@ -5,7 +5,7 @@
 .hadis-crumbs ol{display:flex;flex-wrap:wrap;gap:4px 6px;list-style:none;margin:0;padding:0;font-size:13.5px;color:var(--ink3);align-items:center}
 .hadis-crumbs li{display:flex;align-items:center;gap:6px}
 .hadis-crumbs li+li::before{content:"›";color:var(--ink3)}
-.hadis-crumbs a{color:var(--ink2);text-decoration:none}
+.hadis-crumbs a{color:var(--ink2);text-decoration:none;padding:12px 2px;margin:-12px -2px}
 .hadis-crumbs a:hover{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
 .hadis-crumbs [aria-current="page"]{color:var(--ink)}
 

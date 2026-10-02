@@ -96,12 +96,14 @@ describe('the tab links', () => {
   });
 });
 
+// One title for the whole route: the pre-built title (a static page cannot read ?tab=) is the one
+// the page keeps, so a fresh load and a client-side visit agree. The tab names are the h1.
 describe('page titles', () => {
   test.each([
     ['/daily', 'আজকের হাদীস - BoiKotha'],
-    ['/daily?tab=plans', 'পরিকল্পনা - BoiKotha'],
-    [`/daily?tab=plans&plan=${PLANS[0].id}`, `${PLANS[0].title} - পরিকল্পনা - BoiKotha`],
-    ['/daily?tab=khutbah', 'খুতবার তালিকা - BoiKotha'],
+    ['/daily?tab=plans', 'আজকের হাদীস - BoiKotha'],
+    [`/daily?tab=plans&plan=${PLANS[0].id}`, 'আজকের হাদীস - BoiKotha'],
+    ['/daily?tab=khutbah', 'আজকের হাদীস - BoiKotha'],
     ['/daily?tab=nonsense', 'আজকের হাদীস - BoiKotha'],
   ])('%s is titled %s', (address, title) => {
     setUrl(address);

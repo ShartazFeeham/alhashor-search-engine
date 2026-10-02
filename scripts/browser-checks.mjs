@@ -66,7 +66,8 @@ const report = (ok, what, detail = '') => {
       if (!focus.ring) allRings = false;
     }
     report(allRings, 'every control reached by Tab shows a focus ring', order.join(' | '));
-    report(order[0].includes('BoiKotha') && order.indexOf('হোম') < order.indexOf('হাদীস বই'), 'the tab order follows the page (brand, then navigation)');
+    // The skip link is the first stop; then the brand, then the navigation.
+    report(order[0].includes('মূল অংশে') && order[1].includes('BoiKotha') && order.indexOf('হোম') < order.indexOf('হাদীস বই'),'the tab order follows the page (brand, then navigation)');
 
     const toggle = await page.eval(`(() => { const b = [...document.querySelectorAll('button')].find((e) => e.textContent.includes('বর্ণনায়')); b.focus(); return true; })()`);
     await page.key('Enter');

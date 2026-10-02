@@ -9,6 +9,7 @@
 
 import { BASE_PATH } from "../Helpers/basePath";
 import { normalizeBengali } from "../Helpers/bengali";
+import { candidatesFor, hasBengali, rankSuggestions } from "../lib/didYouMean";
 
 export { normalizeBengali };
 
@@ -18,6 +19,12 @@ const PUNCTUATION = /[&/#^+()$~%.'":*?<>{}!@,;।]/g;
 // thousands of hadis and many data files.
 const SHORT_QUERY_WORDS = 8;
 const COMMON_WORD_HADIS = 500;
+// "Did you mean" (see suggest below): a search with fewer results than this, or a word with fewer
+// hadis than this, is worth a suggestion; the spellings it tries may open at most this many data
+// files the search has not already loaded.
+const FEW_RESULTS = 3;
+const MAX_EXTRA_FILES = 6;
+const MAX_WEAK_WORDS = 3;
 
 // [normalized form, other spelling used in the data]
 const SPELLINGS = [
@@ -92,12 +99,14 @@ export function createSearchIndex(load = fetchJson) {
     }
 
     // Map of tag -> true if the word itself is in that hadis, false if only a longer word containing it is.
-    async function tagsForWord(word, shortQuery) {
+    // `isCancelled` (optional) is asked between the steps; a stale search stops early with nothing.
+    async function tagsForWord(word, shortQuery, isCancelled = () => false) {
         const ownTags = lookup("tags", word);
         const longerWords = shortQuery
             ? lookup("substring", word)
             : ownTags.then((own) => (new Set(own).size > COMMON_WORD_HADIS ? [] : lookup("substring", word)));
         const [own, longer] = await Promise.all([ownTags, longerWords]);
+        if (isCancelled()) return new Map();
 
         const found = new Map();
         own.forEach((tag) => found.set(tag, true));
@@ -109,9 +118,10 @@ export function createSearchIndex(load = fetchJson) {
     }
 
     // Hadis tags, best matches first: the most of the searched words, then the most of them exactly.
-    async function searchTags(words, { requireAll = false } = {}) {
+    async function searchTags(words, { requireAll = false, isCancelled = () => false } = {}) {
         const shortQuery = words.length < SHORT_QUERY_WORDS;
-        const foundPerWord = await Promise.all(words.map((word) => tagsForWord(word, shortQuery)));
+        const foundPerWord = await Promise.all(words.map((word) => tagsForWord(word, shortQuery, isCancelled)));
+        if (isCancelled()) return [];
 
         const matches = new Map(); // tag -> { words matched, words matched exactly }
         for (const found of foundPerWord) {
@@ -130,7 +140,88 @@ export function createSearchIndex(load = fetchJson) {
             .map(([tag]) => tag);
     }
 
-    return { searchTags };
+    // How many hadis a word returns, counted exactly only when it could matter: a word with at
+    // least `enough` hadis of its own is reported by that count alone.
+    async function wordHits(word, enough) {
+        const own = new Set(await lookup("tags", word)).size;
+        if (own >= enough) return own;
+        if ((await lookup("substring", word)).length === 0) return own;
+        return (await tagsForWord(word, true)).size;
+    }
+
+    // The words of the data file(s) a word is filed in, with how many hadis each has.
+    async function vocabularyOf(word) {
+        const indexes = await Promise.all(rawPrefixes(normalizeBengali(word)).map((prefix) => loadFile("tags", prefix)));
+        const vocabulary = new Map();
+        for (const index of indexes) {
+            for (const [key, entries] of index) vocabulary.set(key, (vocabulary.get(key) || 0) + entries.length);
+        }
+        return vocabulary;
+    }
+
+    // Candidates with the number of hadis each really returns. A spelling whose data file is not
+    // loaded yet costs a download, so only a few such files are opened (best candidates first).
+    async function checkCandidates(candidates, vocabulary) {
+        let opened = 0;
+        const chosen = [];
+        for (const candidate of candidates) {
+            // a word already in a loaded file costs nothing; a missing file counts as a download
+            const fresh = vocabulary.has(candidate.word) ? 0 : rawPrefixes(normalizeBengali(candidate.word))
+                .filter((prefix) => !files.has(`${BASE_PATH}/json/tags/${prefix}.json`)).length;
+            if (opened + fresh > MAX_EXTRA_FILES) continue;
+            opened += fresh;
+            chosen.push(candidate);
+        }
+        return Promise.all(chosen.map(async (candidate) => ({
+            ...candidate,
+            hits: new Set(await lookup("tags", candidate.word)).size,
+        })));
+    }
+
+    // "Did you mean": corrected queries for a search that found little. A word is weak when it
+    // returns fewer hadis than FEW_RESULTS (or none at all when the search found plenty). Each weak
+    // word's spellings (hand-made synonyms, commonly confused letters, a close word in its own data
+    // file) are checked against the data, and only ones that return more hadis are kept.
+    // Returns up to three { query, changed: [{ from, to }], kind, hits }, the best first; every
+    // weak word that has a better spelling is corrected in each, the first weak word in the ways listed.
+    async function suggest(words, { resultCount = 0, isCancelled = () => false } = {}) {
+        const enough = resultCount < FEW_RESULTS ? FEW_RESULTS : 1;
+        const checkable = words.map((word, position) => ({ word, position })).filter(({ word }) => hasBengali(word));
+        const hits = await Promise.all(checkable.map(({ word }) => wordHits(word, enough)));
+        if (isCancelled()) return [];
+
+        const weak = checkable
+            .map((entry, i) => ({ ...entry, hits: hits[i] }))
+            .filter((entry) => entry.hits < enough)
+            .slice(0, MAX_WEAK_WORDS);
+        const options = [];
+        for (const entry of weak) {
+            const vocabulary = await vocabularyOf(entry.word);
+            const candidates = candidatesFor(entry.word, vocabulary);
+            if (isCancelled()) return [];
+            const ranked = rankSuggestions(entry.hits, await checkCandidates(candidates, vocabulary));
+            if (isCancelled()) return [];
+            if (ranked.length > 0) options.push({ ...entry, ranked });
+        }
+        if (options.length === 0) return [];
+
+        const [first, ...others] = options;
+        return first.ranked.map((choice) => {
+            const corrected = [...words];
+            const changed = [{ position: first.position, from: first.word, to: choice.word }];
+            others.forEach((other) => changed.push({ position: other.position, from: other.word, to: other.ranked[0].word }));
+            changed.sort((a, b) => a.position - b.position);
+            changed.forEach(({ position, to }) => { corrected[position] = to; });
+            return {
+                query: corrected.join(" "),
+                changed: changed.map(({ from, to }) => ({ from, to })),
+                kind: choice.kind,
+                hits: choice.hits,
+            };
+        });
+    }
+
+    return { searchTags, suggest };
 }
 
-export const { searchTags } = createSearchIndex();
+export const { searchTags, suggest } = createSearchIndex();

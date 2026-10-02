@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { normalizeBengali } from '../Helpers/bengali';
+import { wantPageFocus } from '../lib/pageFocus';
 import { TOPICS, filterTopics, topicHref } from '../lib/topics';
 import { useDigits } from '../lib/useDigits';
 import Icon from '../ui/Icon';
@@ -60,6 +61,7 @@ export default function TopicIndex({ topic, topics = TOPICS }) {
                 className="topics-chip"
                 aria-current={normalizeBengali(name) === normalizeBengali(topic) ? 'true' : undefined}
                 scroll={false}
+                onClick={wantPageFocus}
               >
                 {name}
               </Link>

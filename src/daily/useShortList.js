@@ -31,12 +31,14 @@ export function loadShortList() {
   return current;
 }
 
-// { status: 'loading' | 'ok' | 'error', list, retry }
-export function useShortList() {
+// { status: 'loading' | 'ok' | 'error', list, retry }. With `enabled` false nothing is requested
+// (the status stays 'loading') until it becomes true.
+export function useShortList(enabled = true) {
   const [state, setState] = useState({ status: 'loading', list: null });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    if (!enabled) return undefined;
     let cancelled = false;
     loadShortList().then((result) => {
       if (!cancelled) setState(result);
@@ -44,7 +46,7 @@ export function useShortList() {
     return () => {
       cancelled = true;
     };
-  }, [attempt]);
+  }, [attempt, enabled]);
 
   return {
     ...state,

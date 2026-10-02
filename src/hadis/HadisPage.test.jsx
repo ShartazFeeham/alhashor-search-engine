@@ -23,6 +23,9 @@ const show = (bookId, number) =>
     </SettingsProvider>
   );
 
+// The page has its h1 from the first paint, so a heading is no sign that the text has arrived.
+const loaded = () => waitFor(() => expect(screen.queryByLabelText('লোড হচ্ছে')).not.toBeInTheDocument());
+
 beforeEach(() => {
   localStorage.clear();
   Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue() } });
@@ -35,7 +38,8 @@ afterEach(() => {
 test('shows the book, the number, the saying first and the chain folded', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);
-  expect(await screen.findByRole('heading', { level: 1, name: /বুখারী শরীফ - হাদীস নং ৬,৬২৮/ })).toBeInTheDocument();
+  await loaded();
+  expect(screen.getByRole('heading', { level: 1, name: /বুখারী শরীফ - হাদীস নং ৬,৬২৮/ })).toBeInTheDocument();
   expect(screen.getByText(/তিনি বলেন, বর্তমান যুগের/)).toBeInTheDocument();
   const toggle = screen.getByRole('button', { name: /বর্ণনায়/ });
   expect(toggle).toHaveAttribute('aria-expanded', 'false');
@@ -55,7 +59,7 @@ test('a hadis with no recognisable chain shows its whole text and no fold (Revie
 test('has a breadcrumb with a link to the book and the home page', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);
-  await screen.findByRole('heading', { level: 1 });
+  await loaded();
   const crumbs = screen.getByRole('navigation', { name: 'পথ' });
   expect(crumbs).toHaveTextContent('হোম');
   expect(crumbs).toHaveTextContent('বুখারী শরীফ');
@@ -75,7 +79,7 @@ test('shows reading time and the word count', async () => {
 test('copy, copy citation and copy link put the right text on the clipboard', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);
-  await screen.findByRole('heading', { level: 1 });
+  await loaded();
 
   fireEvent.click(screen.getByRole('button', { name: 'কপি' }));
   expect(navigator.clipboard.writeText).toHaveBeenLastCalledWith(BUKHARI_6628);
@@ -105,7 +109,7 @@ test('a network failure offers a retry instead of a spinner', async () => {
 test('sets the page title', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);
-  await screen.findByRole('heading', { level: 1 });
+  await loaded();
   expect(document.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
 });
 
@@ -119,7 +123,7 @@ describe('share', () => {
     Object.defineProperty(navigator, 'share', { value: native, configurable: true, writable: true });
     serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
     show('bukhari', 6628);
-    await screen.findByRole('heading', { level: 1 });
+    await loaded();
     fireEvent.click(screen.getByRole('button', { name: 'শেয়ার' }));
     await waitFor(() => expect(native).toHaveBeenCalledTimes(1));
     const data = native.mock.calls[0][0];
@@ -132,7 +136,7 @@ describe('share', () => {
   test('without a share sheet the share text is copied and the toast says so', async () => {
     serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
     show('bukhari', 6628);
-    await screen.findByRole('heading', { level: 1 });
+    await loaded();
     fireEvent.click(screen.getByRole('button', { name: 'শেয়ার' }));
     await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalled());
     expect(navigator.clipboard.writeText.mock.calls.at(-1)[0]).toContain(`${window.location.origin}/hadis/bukhari/6628`);
@@ -142,7 +146,21 @@ describe('share', () => {
   test('a "ছবি বানান" link goes to the quote-card page', async () => {
     serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
     show('bukhari', 6628);
-    await screen.findByRole('heading', { level: 1 });
+    await loaded();
     expect(screen.getByRole('link', { name: 'ছবি বানান' })).toHaveAttribute('href', '/share/bukhari/6628');
   });
+});
+
+test('while the text loads the page already has its h1 (the address names the hadis)', () => {
+  global.fetch = vi.fn(() => new Promise(() => {}));
+  show('bukhari', 6628);
+  expect(screen.getByRole('heading', { level: 1, name: 'বুখারী শরীফ - হাদীস নং ৬,৬২৮' })).toBeInTheDocument();
+  expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+});
+
+test('when the text cannot be fetched the page keeps one h1 and the retry button', async () => {
+  global.fetch = vi.fn(() => Promise.reject(new Error('offline')));
+  show('bukhari', 6628);
+  expect(await screen.findByRole('button', { name: 'আবার চেষ্টা করুন' })).toBeInTheDocument();
+  expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
 });
