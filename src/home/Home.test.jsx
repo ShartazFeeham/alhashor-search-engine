@@ -38,6 +38,16 @@ test('has a clear title and a search entry that opens the search page', () => {
   expect(getUrl().pathname).toBe('/search');
 });
 
+test('the search link carries a purely visual "খুঁজুন" pill (aria-hidden, same link, no second link)', () => {
+  renderHome();
+  const link = screen.getByRole('link', { name: /হাদীস খুঁজুন/ });
+  const pill = within(link).getByText('খুঁজুন', { exact: true });
+  expect(pill).toHaveAttribute('aria-hidden', 'true');
+  expect(pill).toHaveClass('home-search-go');
+  expect(within(link).queryAllByRole('link')).toHaveLength(0);
+  expect(link).toHaveAttribute('href', '/search');
+});
+
 test('has no lead paragraph under the heading', () => {
   renderHome();
   expect(screen.queryByText(/বাংলায় হাদীস পড়ুন ও খুঁজুন/)).not.toBeInTheDocument();

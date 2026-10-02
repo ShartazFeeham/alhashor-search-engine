@@ -23,8 +23,9 @@ export default function Home() {
         <h1 className="h1" id="home-title">হাদীস সম্ভার</h1>
         <HomeDailyCard />
         <Link href="/search" className="home-search">
-          <Icon name="search" size={20} />
+          <Icon name="search" size={24} />
           <span>হাদীস খুঁজুন: শব্দ, বিষয় বা হাদীস নম্বর</span>
+          <span className="home-search-go" aria-hidden="true">খুঁজুন</span>
         </Link>
       </section>
 

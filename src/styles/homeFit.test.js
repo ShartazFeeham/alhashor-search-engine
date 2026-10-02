@@ -43,7 +43,7 @@ describe('Home first view: compact spacing', () => {
   test('the hero search bar is a little taller (44 to 56px, about 27%): min-height 56px, 10px padding, content centred', () => {
     const search = rule(home, '\n.home-search');
     expect(px(search, 'min-height')).toBe(56);
-    expect(search).toMatch(/padding:10px 14px/);
+    expect(search).toMatch(/padding:4px 4px 4px 14px/); // 44px pill + 4 + 4 + 2px borders = 56px
     expect(search).toMatch(/align-items:center/);
   });
 
