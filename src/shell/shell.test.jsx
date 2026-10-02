@@ -12,7 +12,8 @@ test.each([
   ['/books', 'হাদীস বই'],
   ['/topics', 'বিষয়ভিত্তিক হাদীস'],
   ['/daily', 'আজকের হাদীস'],
-  ['/daily?tab=plans', 'আজকের হাদীস'],
+  ['/top-picks', 'জনপ্রিয় হাদীস'],
+  ['/top-picks/ramadan-30', 'জনপ্রিয় হাদীস'],
   ['/narrators', 'বর্ণনাকারী'],
   ['/narrators?name=abu-hurayrah&page=2', 'বর্ণনাকারী'],
 ])('on %s the top navigation marks %s as the current page', (path, label) => {
@@ -54,9 +55,31 @@ test('the tab bar has four links and a more button, and navigates without reload
 });
 
 test('the tab bar marks the current page too', () => {
+  setUrl('/top-picks/ramadan-30');
+  show(<TabBar />);
+  expect(screen.getByRole('link', { name: 'জনপ্রিয় হাদীস' })).toHaveAttribute('aria-current', 'page');
+});
+
+test('the tab bar has Home, Books, Search, Top picks and More, in that order, with জনপ্রিয় as the short label', () => {
+  show(<TabBar />);
+  const links = screen.getAllByRole('link');
+  expect(links.map((link) => link.getAttribute('href'))).toEqual(['/', '/books', '/search', '/top-picks']);
+  const top = screen.getByRole('link', { name: 'জনপ্রিয় হাদীস' });
+  expect(top).toHaveTextContent('জনপ্রিয়');
+  expect(top).toHaveAttribute('href', '/top-picks');
+  expect(within(top).getByTestId('icon-list')).toHaveAttribute('aria-hidden', 'true');
+  expect(screen.queryByRole('link', { name: 'বিষয়' })).not.toBeInTheDocument();
+});
+
+test('on a topics page the "more" button is marked, and the topics link is in its menu (and not twice)', () => {
   setUrl('/topics');
   show(<TabBar />);
-  expect(screen.getByRole('link', { name: 'বিষয়' })).toHaveAttribute('aria-current', 'page');
+  const more = screen.getByRole('button', { name: 'আরও' });
+  expect(more).toHaveAttribute('aria-current', 'true');
+  fireEvent.click(more);
+  expect(screen.getAllByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' })).toHaveLength(1);
+  expect(screen.getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' })).toHaveAttribute('href', '/topics');
+  expect(screen.getAllByRole('link', { name: 'জনপ্রিয় হাদীস' })).toHaveLength(1);
 });
 
 test('the tab bar "more" button opens and closes a menu with the settings link', () => {
@@ -71,11 +94,11 @@ test('the tab bar "more" button opens and closes a menu with the settings link',
   expect(screen.queryByRole('link', { name: 'পড়ার সেটিংস' })).not.toBeInTheDocument();
 });
 
-test('the "more" menu links the daily hadis and the plans', () => {
+test('the "more" menu links the daily hadis and the topics (the top picks have their own tab)', () => {
   show(<TabBar />);
   fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
   expect(screen.getByRole('link', { name: 'আজকের হাদীস' })).toHaveAttribute('href', '/daily');
-  expect(screen.getByRole('link', { name: 'পরিকল্পনা' })).toHaveAttribute('href', '/daily?tab=plans');
+  expect(screen.getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' })).toHaveAttribute('href', '/topics');
   expect(screen.queryByRole('link', { name: 'খুতবার তালিকা' })).not.toBeInTheDocument();
   expect(screen.queryByRole('link', { name: 'তুলনা' })).not.toBeInTheDocument();
 });
@@ -83,9 +106,9 @@ test('the "more" menu links the daily hadis and the plans', () => {
 test('choosing a link in the "more" menu goes there and closes the menu', () => {
   show(<TabBar />);
   fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
-  fireEvent.click(screen.getByRole('link', { name: 'পরিকল্পনা' }));
-  expect(getUrl().pathname + getUrl().search).toBe('/daily?tab=plans');
-  expect(screen.queryByRole('link', { name: 'পরিকল্পনা' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' }));
+  expect(getUrl().pathname + getUrl().search).toBe('/topics');
+  expect(screen.queryByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' })).not.toBeInTheDocument();
 });
 
 test('the top navigation has the narrators link in the last place and no compare link', () => {
@@ -96,15 +119,23 @@ test('the top navigation has the narrators link in the last place and no compare
     ['হাদীস বই', '/books'],
     ['বিষয়ভিত্তিক হাদীস', '/topics'],
     ['আজকের হাদীস', '/daily'],
+    ['জনপ্রিয় হাদীস', '/top-picks'],
     ['বর্ণনাকারী', '/narrators'],
   ]);
   expect(screen.queryByRole('link', { name: 'তুলনা' })).not.toBeInTheDocument();
 });
 
-test('on the daily page the "more" button is marked as holding the current page', () => {
-  setUrl('/daily?tab=plans');
+test.each(['/daily', '/narrators'])('on %s the "more" button is marked as holding the current page', (path) => {
+  setUrl(path);
   show(<TabBar />);
   expect(screen.getByRole('button', { name: 'আরও' })).toHaveAttribute('aria-current', 'true');
+});
+
+test('the top bar and the phone "more" menu each have one entry for the daily hadis and one for the top picks', () => {
+  show(<TopNav />);
+  expect(screen.getAllByRole('link', { name: 'আজকের হাদীস' })).toHaveLength(1);
+  expect(screen.getAllByRole('link', { name: 'জনপ্রিয় হাদীস' })).toHaveLength(1);
+  expect(screen.queryByRole('link', { name: 'পরিকল্পনা' })).not.toBeInTheDocument();
 });
 
 test('elsewhere the "more" button is not marked', () => {
@@ -170,7 +201,7 @@ describe('the "more" menu is operable by keyboard', () => {
 
   test('Escape closes the menu and puts focus back on the button', () => {
     const more = open();
-    const link = screen.getByRole('link', { name: 'পরিকল্পনা' });
+    const link = screen.getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' });
     link.focus();
     fireEvent.keyDown(link, { key: 'Escape' });
     expect(more).toHaveAttribute('aria-expanded', 'false');
@@ -199,7 +230,7 @@ describe('the "more" menu is operable by keyboard', () => {
 
   test('touching inside the menu or on the button does not close it by itself', () => {
     const more = open();
-    fireEvent.pointerDown(screen.getByRole('link', { name: 'পরিকল্পনা' }));
+    fireEvent.pointerDown(screen.getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' }));
     fireEvent.pointerDown(more);
     expect(more).toHaveAttribute('aria-expanded', 'true');
   });

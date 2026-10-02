@@ -5,6 +5,7 @@ export function activeSection(pathname) {
   if (pathname.startsWith('/books') || pathname.startsWith('/hadis')) return 'books';
   if (pathname.startsWith('/topics')) return 'topics';
   if (pathname.startsWith('/daily')) return 'daily';
+  if (pathname.startsWith('/top-picks')) return 'top-picks';
   if (pathname.startsWith('/narrators')) return 'narrators';
   return null;
 }

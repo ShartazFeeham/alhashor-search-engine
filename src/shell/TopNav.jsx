@@ -13,6 +13,7 @@ const LINKS = [
   ['books', '/books', 'হাদীস বই'],
   ['topics', '/topics', 'বিষয়ভিত্তিক হাদীস'],
   ['daily', '/daily', 'আজকের হাদীস'],
+  ['top-picks', '/top-picks', 'জনপ্রিয় হাদীস'],
   ['narrators', '/narrators', 'বর্ণনাকারী'],
 ];
 

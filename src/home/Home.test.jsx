@@ -3,11 +3,16 @@ import { act, fireEvent, render, screen, waitFor, within } from '@testing-librar
 import { clearDailyPicksCache } from '../daily/useHomePick';
 import { clearShortListCache } from '../daily/useShortList';
 import { pickDaily } from '../lib/dailyPick';
+import { stripChain } from '../lib/hadisCore';
 import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
 import { getUrl } from '../test/nextNavigation';
 import Home from './Home';
+
+// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
+// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
+vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
 
 const renderHome = () => render(<SettingsProvider><Home /></SettingsProvider>);
 
@@ -80,10 +85,10 @@ describe('the hero', () => {
     expect(within(hero()).getAllByRole('region', { name: 'আজকের হাদীস' })).toHaveLength(1);
   });
 
-  test('keeps the shelf and the quick-link row below the hero', () => {
+  test('keeps the shelf and the quick-link row below the hero, in the order: hero, quick-link row, books', () => {
     renderHome();
     for (const below of [
-      screen.getByRole('heading', { name: 'হাদীসের তাক' }),
+      screen.getByRole('heading', { name: 'হাদীসের বই' }),
       screen.getByRole('navigation', { name: 'নতুন সুবিধা' }),
     ]) {
       expect(hero().contains(below)).toBe(false);
@@ -149,11 +154,12 @@ describe('the daily hadis card', () => {
   test('shows the citation above the start of today\'s hadis, without its number', async () => {
     renderHome();
     const pick = today();
-    const { chain, body } = splitHadis(realText(pick.book.id, pick.number));
-    const whole = flat(`${chain} ${body}`.trim());
+    const { chain } = splitHadis(realText(pick.book.id, pick.number));
+    const whole = flat(stripChain(realText(pick.book.id, pick.number)).core);
     const excerpt = await screen.findByTestId('home-daily-text');
     expect(flat(excerpt.textContent).slice(0, 40)).toBe(whole.slice(0, 40));
     expect(excerpt.textContent).not.toMatch(/^\s*[০-৯0-9]/);
+    if (chain) expect(flat(excerpt.textContent)).not.toContain(flat(chain).slice(0, 25)); // the chain of narrators is left out
     const cite = within(card()).getByText(new RegExp(pick.book.cite));
     expect(cite).toHaveTextContent(/হাদীস নং/);
     expect(cite.compareDocumentPosition(excerpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -163,8 +169,7 @@ describe('the daily hadis card', () => {
   test('cuts a long real hadis at a word with an ellipsis', async () => {
     renderHome();
     const pick = today();
-    const { chain, body } = splitHadis(realText(pick.book.id, pick.number));
-    const whole = flat(`${chain} ${body}`.trim());
+    const whole = flat(stripChain(realText(pick.book.id, pick.number)).core);
     const excerpt = flat((await screen.findByTestId('home-daily-text')).textContent);
     expect(whole.length).toBeGreaterThan(excerpt.length);
     expect(excerpt.endsWith('…')).toBe(true);
@@ -223,13 +228,13 @@ describe('the daily hadis card', () => {
 describe('the new-features row', () => {
   const row = () => screen.getByRole('navigation', { name: 'নতুন সুবিধা' });
 
-  test('has exactly four cards: topics, narrators, the daily hadis, then the plans', () => {
+  test('has exactly four cards: the top picks, narrators, topics, then the daily hadis', () => {
     renderHome();
     expect(within(row()).getAllByRole('link').map((link) => [link.getAttribute('aria-label') ?? link.querySelector('b').textContent, link.getAttribute('href')])).toEqual([
-      ['বিষয়ভিত্তিক হাদীস', '/topics'],
-      ['বর্ণনাকারী', '/narrators'],
+      ['জনপ্রিয় হাদীস', '/top-picks'],
+      ['বর্ণনাকারীভিত্তিক', '/narrators'],
+      ['বিষয়ভিত্তিক', '/topics'],
       ['আজকের হাদীস', '/daily'],
-      ['পরিকল্পনা', '/daily?tab=plans'],
     ]);
   });
 
@@ -243,30 +248,33 @@ describe('the new-features row', () => {
       return note.textContent;
     });
     expect(notes).toEqual([
-      'বিষয় ধরে হাদীস খুঁজুন',
+      'সবথেকে জনপ্রিয় হাদীসের সংগ্রহ',
       'বর্ণনাকারী ধরে তাঁর হাদীস দেখুন',
+      'বিষয় ধরে হাদীস খুঁজুন',
       'প্রতিদিন একটি নির্বাচিত হাদীস',
-      'দিনে একটি করে হাদীস, ধাপে ধাপে পড়ুন',
     ]);
   });
 
   test('the topics card opens /topics', () => {
     renderHome();
-    fireEvent.click(within(row()).getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' }));
+    fireEvent.click(within(row()).getByRole('link', { name: 'বিষয়ভিত্তিক' }));
     expect(getUrl().pathname).toBe('/topics');
-    expect(screen.getAllByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ })).toHaveLength(1);
+    expect(screen.getAllByRole('link', { name: /বিষয়ভিত্তিক/ })).toHaveLength(1);
   });
 
-  test('the cards sit between the shelf and the end of the page', () => {
+  test('the shelf is directly below the row of cards, which has no title of its own', () => {
     renderHome();
-    const shelf = screen.getByRole('heading', { name: 'হাদীসের তাক' });
-    expect(shelf.compareDocumentPosition(row()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const shelf = screen.getByRole('heading', { name: 'হাদীসের বই' });
+    expect(row().compareDocumentPosition(shelf) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(within(row()).queryByRole('heading')).not.toBeInTheDocument();
+    expect(screen.queryByText('নতুন সুবিধা')).not.toBeInTheDocument();
+    expect(screen.queryByText('হাদীসের তাক')).not.toBeInTheDocument();
   });
 
-  test('a link opens that tab', () => {
+  test('the জনপ্রিয় হাদীস card opens /top-picks', () => {
     renderHome();
-    fireEvent.click(within(row()).getByRole('link', { name: 'পরিকল্পনা' }));
-    expect(getUrl().pathname + getUrl().search).toBe('/daily?tab=plans');
+    fireEvent.click(within(row()).getByRole('link', { name: 'জনপ্রিয় হাদীস' }));
+    expect(getUrl().pathname + getUrl().search).toBe('/top-picks');
   });
 });
 

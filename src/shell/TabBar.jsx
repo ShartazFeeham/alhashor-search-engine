@@ -7,8 +7,8 @@ import Icon from '../ui/Icon';
 import { activeSection } from './activeTab';
 import { rememberReturn } from './settingsReturn';
 
-// The phone's bottom bar: Home, Books, a raised Search, Topics, and More (which holds the daily
-// hadis, plans, narrators and settings).
+// The phone's bottom bar: Home, Books, a raised Search, Top picks (named জনপ্রিয় হাদীস here), and More (which holds the daily
+// hadis, topics, narrators and settings).
 export default function TabBar() {
   const pathname = usePathname();
   const current = activeSection(pathname);
@@ -55,8 +55,8 @@ export default function TabBar() {
     };
   }, [moreOpen]);
 
-  const tab = (id, href, icon, label) => (
-    <Link href={href} aria-current={current === id ? 'page' : undefined} onClick={() => setMoreOpen(false)}>
+  const tab = (id, href, icon, label, name) => (
+    <Link href={href} aria-label={name} aria-current={current === id ? 'page' : undefined} onClick={() => setMoreOpen(false)}>
       <Icon name={icon} size={22} />
       <span>{label}</span>
     </Link>
@@ -75,13 +75,13 @@ export default function TabBar() {
         >
           <Icon name="search" size={26} />
         </Link>
-        {tab('topics', '/topics', 'tag', 'বিষয়')}
+        {tab('top-picks', '/top-picks', 'list', 'জনপ্রিয়', 'জনপ্রিয় হাদীস')}
         <button
           type="button"
           ref={moreRef}
           aria-expanded={moreOpen}
           aria-controls={menuId}
-          aria-current={current === 'daily' || current === 'narrators' ? 'true' : undefined}
+          aria-current={current === 'daily' || current === 'topics' || current === 'narrators' ? 'true' : undefined}
           onClick={() => setMoreOpen((open) => !open)}>
           <Icon name="grid" size={22} />
           <span>আরও</span>
@@ -93,9 +93,9 @@ export default function TabBar() {
             <Icon name="clock" size={20} />
             আজকের হাদীস
           </Link>
-          <Link href="/daily?tab=plans" onClick={() => setMoreOpen(false)}>
-            <Icon name="plan" size={20} />
-            পরিকল্পনা
+          <Link href="/topics" onClick={() => setMoreOpen(false)}>
+            <Icon name="tag" size={20} />
+            বিষয়ভিত্তিক হাদীস
           </Link>
           <Link href="/narrators" onClick={() => setMoreOpen(false)}>
             <Icon name="user" size={20} />

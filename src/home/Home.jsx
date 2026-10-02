@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import PageTitle from '../Helpers/PageTitle';
 import HomeDailyCard from '../daily/HomeDailyCard';
+import HomeTopPicks from './HomeTopPicks';
 import { BOOKS, hadisCount } from '../lib/books';
 import { bookHref } from '../lib/bookBrowse';
+import { TOP_PICKS_TAGLINE } from '../lib/topPicks';
 import { useDigits } from '../lib/useDigits';
 import Icon from '../ui/Icon';
 
@@ -15,10 +17,10 @@ const spineHeight = (book) => Math.round(140 + (hadisCount(book) / MOST) * 40);
 
 // The new-features cards: a title and one plain line saying what the page is.
 const QUICK = [
-  { id: 'topics', href: '/topics', icon: 'tag', title: 'বিষয়ভিত্তিক হাদীস', note: 'বিষয় ধরে হাদীস খুঁজুন' },
-  { id: 'narrators', href: '/narrators', icon: 'user', title: 'বর্ণনাকারী', note: 'বর্ণনাকারী ধরে তাঁর হাদীস দেখুন' },
+  { id: 'top-picks', href: '/top-picks', icon: 'plan', title: 'জনপ্রিয় হাদীস', note: TOP_PICKS_TAGLINE },
+  { id: 'narrators', href: '/narrators', icon: 'user', title: 'বর্ণনাকারীভিত্তিক', note: 'বর্ণনাকারী ধরে তাঁর হাদীস দেখুন' },
+  { id: 'topics', href: '/topics', icon: 'tag', title: 'বিষয়ভিত্তিক', note: 'বিষয় ধরে হাদীস খুঁজুন' },
   { id: 'daily', href: '/daily', icon: 'clock', title: 'আজকের হাদীস', note: 'প্রতিদিন একটি নির্বাচিত হাদীস' },
-  { id: 'plan', href: '/daily?tab=plans', icon: 'plan', title: 'পরিকল্পনা', note: 'দিনে একটি করে হাদীস, ধাপে ধাপে পড়ুন' },
 ];
 
 export default function Home() {
@@ -37,9 +39,25 @@ export default function Home() {
         </Link>
       </section>
 
+      <HomeTopPicks />
+
+      <nav className="home-quick" aria-label="নতুন সুবিধা">
+        <div className="home-quick-links">
+          {QUICK.map(({ id, href, icon, title, note }) => (
+            <Link key={id} href={href} aria-labelledby={`home-${id}-t`} aria-describedby={`home-${id}-n`}>
+              <Icon name={icon} size={22} />
+              <span className="home-quick-text">
+                <b id={`home-${id}-t`}>{title}</b>
+                <span className="home-quick-note" id={`home-${id}-n`}>{note}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      </nav>
+
       <section className="home-shelf-wrap" aria-labelledby="home-shelf-title">
         <div className="home-shelf-head">
-          <h2 className="h2" id="home-shelf-title">হাদীসের তাক</h2>
+          <h2 className="h2" id="home-shelf-title">হাদীসের বই</h2>
           <span className="tiny">গ্রন্থ বেছে নিন</span>
         </div>
         <div className="home-shelf">
@@ -58,21 +76,6 @@ export default function Home() {
         </div>
         <div className="home-plank" />
       </section>
-
-      <nav className="home-quick" aria-labelledby="home-quick-title">
-        <h2 className="h2" id="home-quick-title">নতুন সুবিধা</h2>
-        <div className="home-quick-links">
-          {QUICK.map(({ id, href, icon, title, note }) => (
-            <Link key={id} href={href} aria-labelledby={`home-${id}-t`} aria-describedby={`home-${id}-n`}>
-              <Icon name={icon} size={22} />
-              <span className="home-quick-text">
-                <b id={`home-${id}-t`}>{title}</b>
-                <span className="home-quick-note" id={`home-${id}-n`}>{note}</span>
-              </span>
-            </Link>
-          ))}
-        </div>
-      </nav>
     </main>
   );
 }
