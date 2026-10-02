@@ -1,8 +1,8 @@
-/* Daily hadis and reading plans (/daily), the home page's daily card and
+/* Daily hadis (/daily), the top picks sets (/top-picks), the home page's daily card and
    quick links. Ported from D2's daily screen. */
 .daily{max-width:var(--list-w)}
 .daily-head p{margin-top:6px}
-.daily .h2,.home-quick .h2{font-size:17px;line-height:1.3;font-weight:700;margin:0}
+.daily .h2,.home-picks .h2{font-size:17px;line-height:1.3;font-weight:700;margin:0}
 .daily .tiny{font-size:11.5px;color:var(--ink3);margin:0}
 .daily .tag{display:inline-flex;align-items:center;min-height:32px;padding:0 12px;border-radius:99px;background:var(--accent-soft);color:var(--accent2);font-weight:700;font-size:12px}
 .daily a.ui-btn{text-decoration:none}
@@ -10,15 +10,6 @@
 .daily-note{margin:0;color:var(--ink2);display:flex;flex-direction:column;align-items:flex-start;gap:10px;line-height:1.7}
 .daily-note p{margin:0}
 .daily-muted{color:var(--ink2)}
-
-/* the three sections: links, not buttons, so each has its own address */
-.daily-tabs{display:flex;gap:4px;padding:4px;border-radius:99px;background:var(--surface2);overflow-x:auto;scrollbar-width:none}
-.daily-tabs::-webkit-scrollbar{display:none}
-.daily-tabs a{flex:1 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:4px 8px;white-space:nowrap;border-radius:99px;font-weight:600;font-size:12.5px;line-height:1.3;text-align:center;color:var(--ink2);text-decoration:none;transition:background .18s,color .18s}
-.daily-tabs a:hover{background:var(--surface)}
-/* the group scrolls, which would clip an outside ring */
-.daily-tabs a:focus-visible{outline-offset:-3px}
-.daily-tabs a[aria-current="page"]{background:var(--surface);color:var(--accent2);box-shadow:var(--shadow)}
 
 /* today's hadis: the article itself is the hadis page's (hadis.css); only its date line is here */
 .daily-date{margin:0;font-size:12.5px;color:var(--ink2)}
@@ -34,13 +25,24 @@
 .daily-recent-text{margin:0;font-family:var(--f-read),serif;font-size:calc(var(--rs) - 1px);line-height:1.75;max-width:var(--rw);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 
 /* plans */
-.plan-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:12px}
-.plan-card{display:flex;flex-direction:column;gap:8px;height:100%;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);border:2px solid transparent;color:var(--ink);text-decoration:none;transition:transform .18s,border-color .18s}
-.plan-card:hover{transform:translateY(-3px);border-color:var(--accent)}
-.plan-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14.5px;line-height:1.4}
-.plan-card-head .ui-icon{color:var(--ink3)}
-.plan-card-text{font-size:12px;line-height:1.6;color:var(--ink2)}
+.plan-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.plan-list li{min-width:0}
+/* a set is a compact three-line card: the title (it wraps, never cut), the count and description, the reader's progress */
+.plan-card{display:flex;flex-direction:row;align-items:center;gap:12px;padding:9px 14px 10px 10px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);border:1px solid transparent;color:var(--ink);text-decoration:none;transition:border-color .18s}
+.plan-card:hover{border-color:var(--accent)}
+.plan-tile{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;background:var(--tile-bg);color:var(--tile-fg)}
+.plan-card-body{display:flex;flex-direction:column;gap:2px;flex:1 1 auto;min-width:0}
+.plan-card-title{font-size:14px;line-height:20px;overflow-wrap:anywhere}
+.plan-card-text{font-size:12px;line-height:16px;color:var(--ink2);overflow-wrap:anywhere}
 .plan-card-meta{font-size:11.5px;font-weight:600;color:var(--ink3)}
+.plan-card-progress{display:flex;align-items:center;gap:8px;min-height:20px;line-height:20px}
+.plan-card-progress .plan-card-meta{flex:none}
+.plan-card-read{color:var(--progress-label)}
+.plan-card-count{font-weight:700;color:var(--progress-red-text)}
+.plan-card-count[data-band="yellow"]{color:var(--progress-yellow-text)}
+.plan-card-count[data-band="green"]{color:var(--progress-green-text)}
+.plan-ring{flex:none}
+.prog{position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:0}
 .prog{height:8px;border-radius:9px;background:var(--surface2);overflow:hidden}
 .prog i{display:block;height:100%;background:var(--accent);border-radius:9px;transition:width .3s}
 
@@ -50,6 +52,9 @@
 .plan-detail-head{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
 .plan-detail-count{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
 .plan-detail-count p{margin:0;font-weight:700}
+.plan-pinned{position:sticky;bottom:calc(var(--tabbar-h) + 10px);z-index:20;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;background:var(--surface);box-shadow:var(--shadow),0 0 0 1px var(--line)}
+.plan-pinned .prog{flex:1 1 auto}
+.plan-pinned span{flex:none;font-size:12px;font-weight:700;color:var(--ink2)}
 .plan-confirm{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--bad) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--bad) 35%,var(--line))}
 .plan-confirm p{margin:0;font-weight:600;line-height:1.6}
 .plan-confirm-buttons{display:flex;flex-wrap:wrap;gap:8px}
@@ -69,6 +74,7 @@
 .plan-day-note{margin:0 0 0 38px;color:var(--ink2);display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .plan-day-note p{margin:0}
 .plan-day-links{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-left:38px}
+.plan-day-extra{margin:0 0 0 38px;font-size:12px;line-height:1.6;color:var(--ink3)}
 .plan-day-more{display:inline-flex;align-items:center;min-height:44px;color:var(--accent2);font-weight:600;text-decoration:none;text-underline-offset:3px}
 .plan-day-more:hover,.plan-day-more:focus-visible{text-decoration:underline}
 
@@ -79,16 +85,29 @@
 .home-daily-top h2{margin:0;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--accent2)}
 .home-daily-date{font-size:11.5px;color:var(--ink2)}
 .home-daily-cite{margin:0;font-weight:600;font-size:var(--home-daily-fs);color:var(--home-daily-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.home-daily-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.home-daily-body{display:grid;min-width:0}
+.home-daily-body>*{grid-area:1/1}
+/* two empty floats keep the right end of the text's second line free for the link (92px) */
+.home-daily-lead{float:right;width:0;height:1.7em}
+.home-daily-slot{float:right;clear:right;width:92px;height:1.7em}
 .home-daily-text{margin:0;min-width:0;font-family:var(--f-read),serif;font-size:var(--home-daily-fs);color:var(--home-daily-ink);line-height:1.7;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .home-daily-skeleton{display:flex;flex-direction:column;gap:12px;padding:8px 0}
-.home-daily-more{align-self:flex-end;color:var(--accent2);font-family:var(--f-ui),system-ui,sans-serif;font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap;text-decoration:none;text-underline-offset:3px}
+.home-daily-more{justify-self:end;align-self:end;width:92px;padding-bottom:1px;text-align:right;color:var(--accent2);font-family:var(--f-ui),system-ui,sans-serif;font-size:13px;font-weight:600;line-height:1.7;white-space:nowrap;text-decoration:none;text-underline-offset:3px}
 .home-daily-more:hover,.home-daily-more:focus-visible{text-decoration:underline}
 /* the whole card is the link: the link's ::after stretches over the card (.home-daily is the containing block) */
 .home-daily-more::after{content:"";position:absolute;inset:0;border-radius:inherit}
 .home-daily:hover{background:var(--accent-soft)}
 .home-daily:has(.home-daily-more:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
 .home-daily-more .ui-icon{vertical-align:-3px}
+.home-picks{display:flex;flex-direction:column;gap:6px}
+.home-picks .h2 a{display:inline-flex;align-items:center;gap:2px;color:var(--ink);text-decoration:none}
+.home-picks .h2 a:hover{color:var(--accent2)}
+.home-picks-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.home-picks-list li{min-width:0}
+.home-pick{display:flex;align-items:center;gap:10px;padding:6px 10px 6px 8px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);border:1px solid transparent;color:var(--ink);text-decoration:none;transition:border-color .18s}
+.home-pick:hover{border-color:var(--accent)}
+.home-pick-title{flex:1 1 auto;min-width:0;font-size:14px;line-height:20px;overflow-wrap:anywhere}
+.home-pick-go{flex:none;display:inline-flex;align-items:center;min-height:30px;padding:0 14px;border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:12.5px;font-weight:700}
 .home-quick{display:flex;flex-direction:column;gap:6px}
 .home-quick-links{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .home-quick-links a{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:8px;min-height:96px;padding:12px 12px;border-radius:14px;background:var(--surface);box-shadow:var(--shadow);text-align:left;color:var(--ink);text-decoration:none;transition:transform .18s}
@@ -103,15 +122,14 @@
 .shell-tabbar button[aria-current="true"]{color:var(--accent2);background:var(--accent-soft)}
 
 @media (max-width: 640px){
+  .plan-pinned{margin-right:56px}
   .home-daily{margin-top:6px}
   .home-quick{gap:4px}
-  .home-quick .h2{font-size:14px;line-height:1.2}
+  .home-picks .h2{font-size:15px}
 }
 
 @media (min-width: 641px){
   .home-quick-links{grid-template-columns:repeat(4,1fr)}
-  .plan-list{grid-template-columns:1fr 1fr}
-  .daily-tabs a{font-size:13.5px}
 }
 
 /* five links in the top bar need a little more room between phone and desktop widths */

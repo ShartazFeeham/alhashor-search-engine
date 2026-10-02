@@ -25,6 +25,26 @@ const nextConfig = {
   devIndicators: false,
   // Pin the project root: there is another package-lock.json higher up in the home folder.
   turbopack: { root: path.dirname(fileURLToPath(import.meta.url)) },
+  // The reading plans moved out of the daily page into /top-picks (permanent). `has` matches the
+  // old query: ?tab=plans&plan=<id> opens that set, ?tab=plans the list.
+  async redirects() {
+    return [
+      {
+        source: '/daily',
+        has: [{ type: 'query', key: 'plan', value: '(?<plan>[a-z0-9-]+)' }],
+        destination: '/top-picks/:plan',
+        permanent: true,
+      },
+      {
+        source: '/daily',
+        has: [{ type: 'query', key: 'tab', value: 'plans' }],
+        destination: '/top-picks',
+        permanent: true,
+      },
+      { source: '/plans', destination: '/top-picks', permanent: true },
+      { source: '/plans/:plan', destination: '/top-picks/:plan', permanent: true },
+    ];
+  },
   outputFileTracingIncludes: {
     '/hadis/*/*': withShards,
     '/daily/rss.xml': withShards,

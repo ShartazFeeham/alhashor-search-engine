@@ -10,6 +10,7 @@ import SearchPage from './search/page';
 import BooksPage from './books/page';
 import TopicsPage from './topics/page';
 import DailyRoute, { metadata as dailyMetadata } from './daily/page';
+import TopPicksRoute, { metadata as topPicksMetadata } from './top-picks/page';
 import NarratorsRoute from './narrators/page';
 import NotFoundPage from './not-found';
 import SettingsRoute from './settings/page';
@@ -20,7 +21,7 @@ const pages = [
   ['/books', BooksPage],
   ['/topics', TopicsPage],
   ['/daily', DailyRoute],
-  ['/daily?tab=plans', DailyRoute],
+  ['/top-picks', TopPicksRoute],
   ['/narrators', NarratorsRoute],
   ['/narrators?name=abu-hurayrah&page=2&book=muslim', NarratorsRoute],
   ['/settings', SettingsRoute],
@@ -51,7 +52,7 @@ test.each([
   ['/topics', 'বিষয়ভিত্তিক হাদীস - Alhashor', TopicsPage],
   ['/topics?topic=ঈমান', 'ঈমান - বিষয়ভিত্তিক হাদীস - Alhashor', TopicsPage],
   ['/daily', 'আজকের হাদীস - Alhashor', DailyRoute],
-  ['/daily?tab=plans', 'আজকের হাদীস - Alhashor', DailyRoute],
+  ['/top-picks', 'টপ লিস্ট/হাদীস - Alhashor', TopPicksRoute],
   ['/narrators', 'বর্ণনাকারী - Alhashor', NarratorsRoute],
   ['/narrators?name=abu-hurayrah', 'বর্ণনাকারী - Alhashor', NarratorsRoute], // the narrator's name joins the title once the index has loaded (NarratorsPage.test.jsx)
   ['/settings', 'পড়ার সেটিংস - Alhashor', SettingsRoute],
@@ -63,6 +64,11 @@ test.each([
 
 test('the daily route has a pre-built title for the first paint', () => {
   expect(dailyMetadata.title).toBe('আজকের হাদীস - Alhashor');
+});
+
+test('the top picks route has a pre-built title for the first paint', () => {
+  expect(topPicksMetadata.title).toBe('টপ লিস্ট/হাদীস - Alhashor');
+  expect(topPicksMetadata.description).toBe('সবথেকে জনপ্রিয় হাদীসের সংগ্রহ');
 });
 
 test('there is no compare route', () => {

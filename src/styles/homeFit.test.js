@@ -1,9 +1,13 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
-// Home must show everything down to the "নতুন সুবিধা" row in the first view (1470 x 780, and a
-// phone of 390 x 700 behind a 84px tab bar). These pin the compact spacing so a later edit does
-// not give the room back; the real heights were measured in a browser (docs/redesign-plan.md).
+// Home must show everything down to the row of four cards (which has no title) in the first view
+// (1470 x 780, and a phone of 390 x 700 behind a 84px tab bar). The order is: hero with the search
+// bar, the টপ লিস্ট/হাদীস section (three thin rows), the row of four cards, then হাদীসের বই.
+// These pin the compact spacing so a later edit does not give the room back; the real heights were
+// measured in a browser (docs/redesign-plan.md). Measured in headless Chrome with the three
+// picks rows: 1470x780 the row of cards ends at 622px, 390x844 at 681px (320 wide: 702px);
+// the picks section is 196px at 390 and 1470 (216px at 320 with a long title), each row 52px.
 const read = (name) => readFileSync(path.resolve(process.cwd(), 'src/styles', name), 'utf8');
 function rule(css, selector) {
   const start = css.indexOf(`${selector}{`);
@@ -76,6 +80,28 @@ describe('Home first view: compact spacing', () => {
     const [, base, extra] = /Math\.round\((\d+) \+ \(hadisCount\(book\) \/ MOST\) \* (\d+)\)/.exec(jsx);
     expect(Number(base)).toBe(140);
     expect(Number(base) + Number(extra)).toBe(180);
+  });
+
+  test('the টপ লিস্ট/হাদীস rows are thin: a 38px tile, 6px of padding, a 30px label, rows 6px apart', () => {
+    const row = rule(daily, '.home-pick');
+    expect(px(row, 'gap')).toBeLessThanOrEqual(10);
+    expect(Number(/padding:(\d+)px/.exec(row)[1])).toBeLessThanOrEqual(6);
+    expect(px(rule(daily, '.plan-tile'), 'height')).toBeLessThanOrEqual(40);
+    expect(px(rule(daily, '.home-pick-go'), 'min-height')).toBeLessThanOrEqual(32);
+    expect(px(rule(daily, '.home-picks-list'), 'gap')).toBeLessThanOrEqual(6);
+    expect(rule(daily, '.home-pick-title')).not.toMatch(/text-overflow|line-clamp|nowrap/);
+  });
+
+  test('the daily card is two text lines plus its header: the link shares the second line instead of having a line of its own', () => {
+    expect(rule(daily, '.home-daily-body')).toContain('display:grid');
+    expect(rule(daily, '.home-daily-body>*')).toContain('grid-area:1/1');
+    expect(rule(daily, '.home-daily-text')).toContain('-webkit-line-clamp:2');
+    expect(rule(daily, '.home-daily-more')).not.toMatch(/margin-top|min-height/);
+  });
+
+  test('the daily card has 5px more room below it than before: the search bar sits 13px below it (8px before), 11px on phones (6px before)', () => {
+    expect(px(rule(home, '.home-hero .home-search'), 'margin-top')).toBe(13);
+    expect(px(rule(phone(home), '  .home-hero .home-search'), 'margin-top')).toBe(11);
   });
 
   test('the daily card keeps no leftover height', () => {

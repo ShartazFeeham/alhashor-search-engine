@@ -7,10 +7,10 @@ import { splitHadis } from '../lib/hadisText';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import Button from '../ui/Button';
-import { citationOf } from './citation';
+import { citationOf } from '../daily/citation';
 
 // One day of a plan: a real checkbox named by the day and the citation, the first lines of the
-// hadis, and a link to the full hadis.
+// hadis, the owner's note when there is one, and a link to the full hadis.
 export default function PlanDay({ index, day, done, onToggle }) {
   const digits = useDigits();
   const book = bookById(day.book);
@@ -46,6 +46,7 @@ export default function PlanDay({ index, day, done, onToggle }) {
         <span className="plan-day-cite">{citationOf(book, day.number, digits)}</span>
       </label>
       {excerpt}
+      {day.note && <p className="plan-day-extra">{day.note}</p>}
       <div className="plan-day-links">
         <Link href={hadisHref(day.book, day.number)} className="plan-day-more">পুরো হাদীস</Link>
       </div>

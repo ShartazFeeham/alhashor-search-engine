@@ -1,28 +1,32 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { PLANS } from '../data/readingPlans';
+import { TOP_PICKS } from '../lib/topPicks';
 import { bookById } from '../lib/books';
 import { formatNumber } from '../lib/digits';
 import { splitHadis } from '../lib/hadisText';
 import { STORAGE_KEY } from '../lib/planProgress';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { diskFetch, realText } from '../test/hadisFixtures';
-import { setUrl } from '../test/nextNavigation';
+import { getUrl, setUrl } from '../test/nextNavigation';
 import { ToastProvider } from '../ui/Toast';
-import PlansSection from './PlansSection';
+import TopPicksPage from './TopPicksPage';
+import TopPicksSetPage from './TopPicksSetPage';
 
 const bn = (n) => formatNumber(n, 'bn');
 const PLAN = PLANS.find((plan) => plan.days.length <= 10) ?? PLANS[PLANS.length - 1];
 const cite = (day) => `${bookById(day.book).cite}, হাদীস নং ${bn(day.number)}`;
-const planAddress = (plan, more = '') => `/daily?tab=plans&plan=${plan.id}${more}`;
+const planAddress = (plan) => `/top-picks/${plan.id}`;
 
-const show = () =>
-  render(
-    <SettingsProvider>
-      <ToastProvider>
-        <PlansSection />
-      </ToastProvider>
-    </SettingsProvider>
-  );
+const wrap = (page) => (
+  <SettingsProvider>
+    <ToastProvider>{page}</ToastProvider>
+  </SettingsProvider>
+);
+// The list page, or the set page for the set the address names (/top-picks/<id>).
+const show = () => {
+  const id = getUrl().pathname.split('/')[2];
+  return render(wrap(id ? <TopPicksSetPage id={id} /> : <TopPicksPage />));
+};
 
 async function settle() {
   await act(async () => {
@@ -35,7 +39,7 @@ const checkboxes = () => screen.getAllByRole('checkbox');
 
 beforeEach(() => {
   global.fetch = vi.fn(diskFetch);
-  setUrl('/daily?tab=plans');
+  setUrl('/top-picks');
 });
 
 afterEach(async () => {
@@ -43,55 +47,93 @@ afterEach(async () => {
   delete global.fetch;
 });
 
-describe('the plan list', () => {
-  test('shows every plan as a link to its checklist, with its length', async () => {
+const card = (plan) => screen.getAllByRole('link').find((link) => link.getAttribute('href') === planAddress(plan));
+
+describe('the list of sets', () => {
+  test('is titled টপ লিস্ট/হাদীস and shows every set as a link to its page, with its count', () => {
     show();
-    for (const plan of PLANS) {
-      const link = screen.getByRole('link', { name: new RegExp(plan.title) });
-      expect(link).toHaveAttribute('href', planAddress(plan));
-      expect(link).toHaveTextContent(plan.description);
-      expect(link).toHaveTextContent(`${bn(plan.days.length)} দিন`);
+    expect(screen.getByRole('heading', { level: 1, name: 'টপ লিস্ট/হাদীস' })).toBeInTheDocument();
+    expect(document.title).toBe('টপ লিস্ট/হাদীস - Alhashor');
+    expect(screen.getByText('সবথেকে জনপ্রিয় হাদীসের সংগ্রহ')).toBeInTheDocument();
+    for (const set of TOP_PICKS) {
+      const link = card(set);
+      expect(link, set.id).toBeDefined();
+      expect(link).toHaveTextContent(set.title);
+      expect(link).toHaveTextContent(`${bn(set.days.length)}টি হাদীস`);
     }
-    expect(screen.getAllByRole('progressbar')).toHaveLength(PLANS.length);
   });
 
-  test('starts every plan at nothing done', () => {
+  test('the three older plans come after the new sets', () => {
     show();
-    const bar = screen.getByRole('progressbar', { name: `${PLAN.title}: অগ্রগতি` });
-    expect(bar).toHaveAttribute('aria-valuenow', '0');
-    expect(screen.getByRole('link', { name: new RegExp(PLAN.title) })).toHaveTextContent(`০/${bn(PLAN.days.length)} সম্পন্ন`);
+    const hrefs = screen.getAllByRole('link').map((link) => link.getAttribute('href')).filter((href) => href?.startsWith('/top-picks/'));
+    expect(hrefs).toEqual(TOP_PICKS.map((set) => `/top-picks/${set.id}`));
+    expect(hrefs.slice(-3)).toEqual(PLANS.map((plan) => `/top-picks/${plan.id}`));
   });
 
-  test('shows the progress saved on this device', () => {
+  test('a card has the title, then one description line with the count, then the progress', () => {
+    show();
+    const link = card(PLAN);
+    expect(within(link).getByText(PLAN.title)).toHaveClass('plan-card-title');
+    expect(within(link).getByText(`${bn(PLAN.days.length)}টি হাদীস`)).toHaveClass('plan-card-meta');
+    expect(within(link).getByRole('img', { name: /শতাংশ পড়া হয়েছে/ })).toBeInTheDocument();
+    expect(link).toHaveTextContent(PLAN.description);
+  });
+
+  test('every set says আপনি পড়েছেন ০/N at first and has a progress ring', () => {
+    show();
+    expect(screen.getAllByRole('img', { name: /শতাংশ পড়া হয়েছে/ })).toHaveLength(TOP_PICKS.length);
+    expect(card(PLAN)).toHaveTextContent(`আপনি পড়েছেন ০/${bn(PLAN.days.length)}`);
+    expect(within(card(PLAN)).getByRole('img', { name: '০ শতাংশ পড়া হয়েছে' })).toBeInTheDocument();
+    expect(screen.queryByText(/এখনও শুরু হয়নি/)).not.toBeInTheDocument();
+  });
+
+  test('shows the progress saved on this device (the same storage key as before)', () => {
+    expect(STORAGE_KEY).toBe('alhashor.plan-progress');
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ [PLAN.id]: [0, 1] }));
     show();
-    const link = screen.getByRole('link', { name: new RegExp(PLAN.title) });
-    expect(link).toHaveTextContent(`২/${bn(PLAN.days.length)} সম্পন্ন`);
-    expect(within(link).getByRole('progressbar')).toHaveAttribute('aria-valuenow', String(Math.round((2 / PLAN.days.length) * 100)));
+    const link = card(PLAN);
+    expect(link).toHaveTextContent(`আপনি পড়েছেন ২/${bn(PLAN.days.length)}`);
+    expect(within(link).getByRole('img', { name: `${bn(Math.round((2 / PLAN.days.length) * 100))} শতাংশ পড়া হয়েছে` })).toBeInTheDocument();
   });
 
-  test('the plan links carry no list in the address', () => {
-    setUrl('/daily?tab=plans&ids=muslim-5');
+  test('never says শীঘ্রই আসছে: a set with no hadis is simply not listed', () => {
     show();
-    expect(screen.getByRole('link', { name: new RegExp(PLAN.title) })).toHaveAttribute('href', planAddress(PLAN));
-  });
-
-  test('says when the plan in the address is not one of ours, and still shows the list', () => {
-    setUrl('/daily?tab=plans&plan=nope');
-    show();
-    expect(screen.getByText('এই পরিকল্পনাটি পাওয়া যায়নি। অন্য একটি বেছে নিন।')).toBeInTheDocument();
-    expect(screen.getAllByRole('progressbar')).toHaveLength(PLANS.length);
+    expect(screen.queryByText(/শীঘ্রই আসছে/)).not.toBeInTheDocument();
+    expect(TOP_PICKS.every((set) => set.days.length > 0)).toBe(true);
   });
 });
 
-describe('a plan as a checklist', () => {
+describe('the set page', () => {
+  test('says when the set in the address is not one of ours', () => {
+    setUrl('/top-picks/nope');
+    show();
+    expect(screen.getByText('এই সেটটি পাওয়া যায়নি। অন্য একটি বেছে নিন।')).toBeInTheDocument();
+  });
+
+  test('its title is the heading and the document title', () => {
+    setUrl(planAddress(PLAN));
+    show();
+    expect(document.title).toBe(`${PLAN.title} - টপ লিস্ট/হাদীস - Alhashor`);
+  });
+
+  test('a note is shown as a small muted line under its hadis', () => {
+    const noted = { id: 'n', title: 'টীকা', description: '', days: [{ ...PLAN.days[0], note: 'একটি ছোট টীকা' }, PLAN.days[1]] };
+    setUrl('/top-picks/n');
+    render(wrap(<TopPicksSetPage id="n" sets={[noted]} />));
+    const items = within(screen.getByRole('list', { name: 'দিনের তালিকা' })).getAllByRole('listitem');
+    expect(within(items[0]).getByText('একটি ছোট টীকা')).toHaveClass('plan-day-extra');
+    expect(within(items[1]).queryByText('একটি ছোট টীকা')).not.toBeInTheDocument();
+  });
+});
+
+describe('a set as a checklist', () => {
   beforeEach(() => setUrl(planAddress(PLAN)));
 
-  test('has the title, the description and a way back to all plans', () => {
+  test('has the title, the description and a way back to all sets', () => {
     show();
-    expect(screen.getByRole('heading', { level: 2, name: PLAN.title })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: PLAN.title })).toBeInTheDocument();
     expect(screen.getByText(PLAN.description)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /সব পরিকল্পনা/ })).toHaveAttribute('href', '/daily?tab=plans');
+    expect(screen.getByRole('link', { name: /সব সেট/ })).toHaveAttribute('href', '/top-picks');
   });
 
   test('has a real checkbox for every day, named by the day and its citation', () => {

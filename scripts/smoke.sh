@@ -47,7 +47,9 @@ expect_status /hadis/bukhari/99999 404
 expect_status /hadis/nobook/1 404
 expect_status /books/muslim 200
 expect_status /books/nobook 404
-expect_status "/daily?tab=plans&plan=ramadan-30" 200
+expect_status /top-picks 200
+expect_status /top-picks/ramadan-30 200
+expect_status /top-picks/no-such-set 404
 expect_status /share/bukhari/6628 200         # the quote-card page of a hadis
 expect_status /share/bukhari/0 404
 expect_status /narrators 200                  # narrator index: a static page, the address holds the narrator, page and book
@@ -71,8 +73,8 @@ expect_text "/books/bukhari?page=4" "হাদীস নং ৬১ - ৮১" "a 
 expect_html /books/muslim "<h1>মুসলিম শরীফ</h1>" "a book page is pre-built with its header (not blank before scripts run)"
 expect_text /share/bukhari/6628 "ছবি ডাউনলোড" "the share page renders its card and buttons"
 expect_text /daily "গত ৭ দিন" "the daily page renders today's hadis and the last seven days (the short-hadis list loads)"
-expect_text "/daily?tab=plans" "রমযানের ৩০ দিন" "the plans tab lists the reading plans"
-expect_text "/daily?tab=plans&plan=ramadan-30" "দিন ৩০" "a plan deep link renders its day-by-day checklist"
+expect_text /top-picks "রমযানের ৩০ দিন" "the top picks page lists the sets"
+expect_text /top-picks/ramadan-30 "দিন ৩০" "a set page renders its hadis-by-hadis checklist"
 expect_text /narrators "স্বয়ংক্রিয়ভাবে বাছাই করা" "the narrators page renders its list and the note about the names"
 expect_text /narrators "বর্ণনাকারীসূচি" "the narrators page renders its side menu"
 expect_text "/narrators?name=abu-hurayrah" "হাদীস নং" "a narrator deep link renders hadis cards"
@@ -89,7 +91,8 @@ expect_title "/topics?topic=%E0%A6%88%E0%A6%AE%E0%A6%BE%E0%A6%A8" "ঈমান 
 expect_title /hadis/bukhari/6628 "বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor" "hadis title on a fresh load"
 expect_title /share/bukhari/6628 "শেয়ার - বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor" "share page title on a fresh load"
 expect_title /daily "আজকের হাদীস - Alhashor" "daily title on a fresh load"
-expect_title "/daily?tab=plans" "আজকের হাদীস - Alhashor" "plans tab keeps the one daily title on a fresh load"
+expect_title /top-picks "টপ লিস্ট/হাদীস - Alhashor" "top picks title on a fresh load"
+expect_title /top-picks/ramadan-30 "রমযানের ৩০ দিন, ৩০ হাদীস - টপ লিস্ট/হাদীস - Alhashor" "a set page is titled with the set"
 expect_title /narrators "বর্ণনাকারী - Alhashor" "narrators title on a fresh load"
 expect_text "/narrators?name=abu-hurayrah&page=2" "<title>[^<][^<]* - বর্ণনাকারী - Alhashor</title>" "a narrator's title on a fresh load of page 2 names the narrator"
 expect_title /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি - Alhashor" "not-found title"

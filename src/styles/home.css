@@ -6,7 +6,7 @@
 .home-hero::after{width:60px;height:60px;right:30px;bottom:-30px}
 .home-hero>*{position:relative}
 .home-eyebrow{margin:0 0 2px;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--accent2)}
-.home-hero .home-search{margin-top:8px}
+.home-hero .home-search{margin-top:13px}
 .home-hero .h1{font-size:22px;line-height:1.2}
 .home-search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:16px;min-height:56px;padding:4px 4px 4px 14px;color:var(--ink3);box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 28%,transparent);border:2px solid var(--accent);text-decoration:none;transition:border-color .2s,box-shadow .2s}
 .home-search:hover,.home-search:focus-visible{border-color:var(--accent2);box-shadow:0 8px 26px color-mix(in srgb,var(--accent) 44%,transparent)}
@@ -45,7 +45,7 @@
   /* the greeting shares the heading's row (the floated line sits at the right) */
   .home-hero .home-eyebrow{float:right;margin:7px 0 0}
   .home-hero .h1{font-size:20px}
-  .home-hero .home-search{margin-top:6px}
+  .home-hero .home-search{margin-top:11px}
   .home-shelf-wrap{border-radius:18px;padding:6px 12px 0}
   .home-shelf-head .h2{font-size:15px}
   .home-shelf{padding-top:4px}

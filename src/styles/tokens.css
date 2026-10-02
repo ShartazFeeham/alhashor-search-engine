@@ -7,6 +7,16 @@
   --hl:#ffe9a0; --hl-ink:#3a2a00;
   --ok:#1f9d55; --warn:#b86e05; --bad:#cf4337; --link:#1a55c8;
   --bk-bukhari:#0f8663; --bk-muslim:#3a63c8; --bk-tirmidhi:#9e6a07; --bk-abudawud:#8a4bb8; --bk-ibnmajah:#c45227; --bk-nasai:#c3387f; --on-bk:#ffffff; --bk-wash:rgba(0,0,0,.22);
+  /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
+  --pick-rose-bg:#fbdde6; --pick-rose-fg:#b0214f; --pick-green-bg:#d9f2dc; --pick-green-fg:#1f7a3a; --pick-teal-bg:#cdeee6; --pick-teal-fg:#0b6b5b;
+  --pick-magenta-bg:#f5d8f0; --pick-magenta-fg:#9a1f8a; --pick-amber-bg:#fde9c0; --pick-amber-fg:#8a5a00; --pick-orange-bg:#fdddc7; --pick-orange-fg:#b04a0b;
+  --pick-grey-bg:#e4e6e8; --pick-grey-fg:#4f5961; --pick-slate-bg:#dbe4ee; --pick-slate-fg:#3a526e; --pick-sand-bg:#efe4cf; --pick-sand-fg:#7a5f2c;
+  --pick-brown-bg:#e9d9cf; --pick-brown-fg:#6e4331; --pick-yellow-bg:#fcf3b8; --pick-yellow-fg:#7a6500;
+  /* top picks progress ring: the arc (--progress-NAME) and its faint track (--progress-NAME-track) */
+  --progress-red:#c93b2e; --progress-yellow:#b87a00; --progress-green:#1f8a4c;
+  --progress-red-track:#f6d9d5; --progress-yellow-track:#f5e6bf; --progress-green-track:#cfeadb;
+  /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
+  --progress-label:#333333; --progress-red-text:#b8342a; --progress-yellow-text:#8a5a00; --progress-green-text:#17713c;
   --shadow:0 1px 2px rgba(10,50,44,.06),0 8px 22px rgba(10,50,44,.07);
   /* reading: font size and line height (changed by the reading settings); the column width --rw is fixed, nothing writes it */
   --rs:16px; --rlh:1.9; --rw:34em;
@@ -20,6 +30,16 @@
   --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
   --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
   --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
+  /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
+  --pick-rose-bg:#3d1a28; --pick-rose-fg:#f59ab9; --pick-green-bg:#17361f; --pick-green-fg:#7fd99a; --pick-teal-bg:#123a33; --pick-teal-fg:#6fdcc6;
+  --pick-magenta-bg:#3a1836; --pick-magenta-fg:#ec9be0; --pick-amber-bg:#3d2e0c; --pick-amber-fg:#f0c05a; --pick-orange-bg:#40220f; --pick-orange-fg:#f4a06a;
+  --pick-grey-bg:#2a2f33; --pick-grey-fg:#b4bcc3; --pick-slate-bg:#1f2c3b; --pick-slate-fg:#9bb8d8; --pick-sand-bg:#3a3220; --pick-sand-fg:#d8bf8a;
+  --pick-brown-bg:#35231b; --pick-brown-fg:#d3a58e; --pick-yellow-bg:#3a3510; --pick-yellow-fg:#e8d65a;
+  /* top picks progress ring: the arc (--progress-NAME) and its faint track (--progress-NAME-track) */
+  --progress-red:#f07468; --progress-yellow:#e8b43c; --progress-green:#4ec97f;
+  --progress-red-track:#4a2724; --progress-yellow-track:#4a3d17; --progress-green-track:#1e4a31;
+  /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
+  --progress-label:#dcebe6; --progress-red-text:#f07468; --progress-yellow-text:#e8b43c; --progress-green-text:#4ec97f;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
   color-scheme: dark;
 }
@@ -29,6 +49,16 @@
   --ink:#382c19; --ink2:#675638; --ink3:#6a5a3d; --match-text:#695839;
   --accent:#2a7a66; --accent2:#1d5a4b; --on-accent:#fffaf0; --accent-soft:#d8e5d2;
   --hl:#f2d684; --hl-ink:#3a2a00; --link:#2f5aa8;
+  /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
+  --pick-rose-bg:#f0d3d0; --pick-rose-fg:#9c2a4a; --pick-green-bg:#d6e6c4; --pick-green-fg:#2f6b2a; --pick-teal-bg:#cde3d2; --pick-teal-fg:#1d6350;
+  --pick-magenta-bg:#eccfdc; --pick-magenta-fg:#8a2a74; --pick-amber-bg:#f1deb0; --pick-amber-fg:#7d5200; --pick-orange-bg:#f0d2b4; --pick-orange-fg:#9c4408;
+  --pick-grey-bg:#e0d9c8; --pick-grey-fg:#575245; --pick-slate-bg:#d3d8d6; --pick-slate-fg:#3d5365; --pick-sand-bg:#e7d8b5; --pick-sand-fg:#6f5624;
+  --pick-brown-bg:#e3cfbd; --pick-brown-fg:#653c28; --pick-yellow-bg:#efe3a5; --pick-yellow-fg:#6e5a00;
+  /* top picks progress ring: the arc (--progress-NAME) and its faint track (--progress-NAME-track) */
+  --progress-red:#b8392b; --progress-yellow:#a56d00; --progress-green:#25783f;
+  --progress-red-track:#efd3c8; --progress-yellow-track:#ecdcae; --progress-green-track:#cfe0c3;
+  /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
+  --progress-label:#3a2e1a; --progress-red-text:#a8321f; --progress-yellow-text:#7d5200; --progress-green-text:#1f6a38;
   --shadow:0 1px 2px rgba(80,55,15,.08),0 8px 22px rgba(80,55,15,.09);
 }
 
@@ -39,6 +69,16 @@
     --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
     --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
     --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
+    /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
+    --pick-rose-bg:#3d1a28; --pick-rose-fg:#f59ab9; --pick-green-bg:#17361f; --pick-green-fg:#7fd99a; --pick-teal-bg:#123a33; --pick-teal-fg:#6fdcc6;
+    --pick-magenta-bg:#3a1836; --pick-magenta-fg:#ec9be0; --pick-amber-bg:#3d2e0c; --pick-amber-fg:#f0c05a; --pick-orange-bg:#40220f; --pick-orange-fg:#f4a06a;
+    --pick-grey-bg:#2a2f33; --pick-grey-fg:#b4bcc3; --pick-slate-bg:#1f2c3b; --pick-slate-fg:#9bb8d8; --pick-sand-bg:#3a3220; --pick-sand-fg:#d8bf8a;
+    --pick-brown-bg:#35231b; --pick-brown-fg:#d3a58e; --pick-yellow-bg:#3a3510; --pick-yellow-fg:#e8d65a;
+    /* top picks progress ring: the arc (--progress-NAME) and its faint track (--progress-NAME-track) */
+    --progress-red:#f07468; --progress-yellow:#e8b43c; --progress-green:#4ec97f;
+    --progress-red-track:#4a2724; --progress-yellow-track:#4a3d17; --progress-green-track:#1e4a31;
+    /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
+    --progress-label:#dcebe6; --progress-red-text:#f07468; --progress-yellow-text:#e8b43c; --progress-green-text:#4ec97f;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
     color-scheme: dark;
   }

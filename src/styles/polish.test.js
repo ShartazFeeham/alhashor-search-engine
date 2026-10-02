@@ -82,7 +82,6 @@ describe('the other stylesheets keep their controls at 44px', () => {
   test.each([
     ['share.css', '.share-icon-btn', 'height'],
     ['share.css', '.share-back', 'min-height'],
-    ['daily.css', '.daily-tabs a', 'min-height'],
     ['daily.css', '.daily-recent-head a', 'min-height'],
     ['daily.css', '.plan-back', 'min-height'],
     ['daily.css', '.plan-day-more', 'min-height'],
@@ -160,16 +159,6 @@ describe('links in the daily pages use the accent, not the default blue', () => 
     }
     expect(daily).toMatch(/\.plan-day-more:hover,\.plan-day-more:focus-visible\{[^}]*underline/);
     expect(rule(daily, '.plan-day-more')).toMatch(/min-height:44px/);
-  });
-});
-
-describe('daily tabs on a narrow phone', () => {
-  const daily = read('daily.css');
-
-  test('a label and its count badge stay on one line; the group scrolls rather than overflowing the page', () => {
-    expect(rule(daily, '.daily-tabs a')).toMatch(/white-space:nowrap/);
-    expect(rule(daily, '.daily-tabs')).toMatch(/overflow-x:auto/);
-    expect(rule(daily, '.daily-tabs a')).toMatch(/flex:1 1 auto/);
   });
 });
 

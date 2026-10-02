@@ -116,5 +116,5 @@ test('headings stay larger than the text under them', () => {
   const of = (selector) => all.find((s) => s.selector === selector).px;
   expect(of('.h1')).toBeGreaterThan(of('.hadis-read'));
   expect(of('.topics-name')).toBeGreaterThan(of('.hadis-read'));
-  expect(of('.daily .h2,.home-quick .h2')).toBeGreaterThan(of('.hadis-read'));
+  expect(of('.daily .h2,.home-picks .h2')).toBeGreaterThan(of('.hadis-read'));
 });

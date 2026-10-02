@@ -151,3 +151,46 @@ describe('the reading column width is a fixed constant', () => {
     expect(writers).toEqual([]);
   });
 });
+
+// ---------- top picks: the list tile colours ----------
+describe.each(names)('top picks tile colours in the %s theme', (name) => {
+  const t = themes[name];
+  const colours = ['rose', 'green', 'teal', 'magenta', 'amber', 'orange', 'grey', 'slate', 'sand', 'brown', 'yellow'];
+
+  test.each(colours)('%s has a tile and an icon colour, at least 3:1 apart', (colour) => {
+    expect(t[`--pick-${colour}-bg`]).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(t[`--pick-${colour}-fg`]).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(ratio(t[`--pick-${colour}-fg`], t[`--pick-${colour}-bg`])).toBeGreaterThanOrEqual(3);
+  });
+
+  test('the tiles are told apart from the card surface', () => {
+    for (const colour of colours) expect(t[`--pick-${colour}-bg`]).not.toBe(t['--surface']);
+  });
+});
+
+describe.each(names)('top picks progress ring colours in the %s theme', (name) => {
+  const t = themes[name];
+
+  test.each(['red', 'yellow', 'green'])('the %s arc is at least 3:1 on the card, and its track is a faint tint of its own', (band) => {
+    expect(ratio(t[`--progress-${band}`], t['--surface'])).toBeGreaterThanOrEqual(3);
+    expect(t[`--progress-${band}-track`]).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(ratio(t[`--progress-${band}-track`], t['--surface'])).toBeLessThan(ratio(t[`--progress-${band}`], t['--surface']));
+  });
+});
+
+describe.each(names)('top picks progress text colours in the %s theme', (name) => {
+  const t = themes[name];
+
+  test('the label "আপনি পড়েছেন" is at least 4.5:1 on the card', () => {
+    expect(ratio(t['--progress-label'], t['--surface'])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  test.each(['red', 'yellow', 'green'])('the %s N/M text is at least 4.5:1 on the card and the same hue family as its ring arc', (band) => {
+    expect(ratio(t[`--progress-${band}-text`], t['--surface'])).toBeGreaterThanOrEqual(4.5);
+    expect(t[`--progress-${band}-text`]).toMatch(/^#[0-9a-f]{6}$/i);
+  });
+});
+
+test('the label is #333 in the light theme', () => {
+  expect(themes.light['--progress-label'].toLowerCase()).toBe('#333333');
+});

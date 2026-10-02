@@ -74,7 +74,7 @@ test('every address is absolute, on the site, and appears once', async () => {
 test('only the first sitemap has the static pages, and utility pages are not among them', async () => {
   const first = await urlsOf(0);
   expect(first.slice(0, 3)).toEqual(['https://hadis.feeham.com/', 'https://hadis.feeham.com/books', 'https://hadis.feeham.com/books/bukhari']);
-  for (const path of ['/topics', '/daily', '/narrators']) expect(first).toContain(`https://hadis.feeham.com${path}`);
+  for (const path of ['/topics', '/daily', '/top-picks', '/top-picks/ramadan-30', '/narrators']) expect(first).toContain(`https://hadis.feeham.com${path}`);
   for (const path of ['/search', '/settings', '/share']) {
     expect(first.some((url) => url.startsWith(`https://hadis.feeham.com${path}`))).toBe(false);
   }

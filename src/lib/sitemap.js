@@ -1,9 +1,19 @@
 import { BOOKS, hasHadis } from './books';
 import { absoluteUrl } from './site';
+import { TOP_PICKS } from './topPicks';
 
 // The pages worth finding in a search engine that are not a single hadis. Utility pages
 // (search, settings, share) are left out and kept out by robots.js.
-export const STATIC_PATHS = ['/', '/books', ...BOOKS.map((book) => `/books/${book.slug}`), '/topics', '/daily', '/narrators'];
+export const STATIC_PATHS = [
+  '/',
+  '/books',
+  ...BOOKS.map((book) => `/books/${book.slug}`),
+  '/topics',
+  '/daily',
+  '/top-picks',
+  ...TOP_PICKS.map((set) => `/top-picks/${set.id}`),
+  '/narrators',
+];
 
 // One sitemap per book (the biggest has 7,281 addresses; a sitemap may hold 50,000).
 export const sitemapIds = () => BOOKS.map((_, id) => ({ id }));

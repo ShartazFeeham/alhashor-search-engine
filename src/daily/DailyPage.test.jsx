@@ -1,13 +1,16 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { PLANS } from '../data/readingPlans';
+import { act, render, screen } from '@testing-library/react';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { diskFetch } from '../test/hadisFixtures';
-import { getUrl, setUrl } from '../test/nextNavigation';
+import { setUrl } from '../test/nextNavigation';
 import { ToastProvider } from '../ui/Toast';
 import DailyPage from './DailyPage';
 import { clearShortListCache } from './useShortList';
+
+// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
+// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
+vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
 
 const show = () =>
   render(
@@ -24,8 +27,6 @@ async function settle() {
   });
 }
 
-const tabs = () => within(screen.getByRole('navigation', { name: 'বিভাগ' }));
-
 beforeEach(() => {
   clearShortListCache();
   global.fetch = vi.fn(diskFetch);
@@ -36,73 +37,27 @@ afterEach(async () => {
   delete global.fetch;
 });
 
-describe('the three sections', () => {
-  test('open on today by default', async () => {
+describe('the daily page', () => {
+  test('shows only the hadis of the day', async () => {
     show();
     expect(screen.getByRole('heading', { level: 1, name: 'আজকের হাদীস' })).toBeInTheDocument();
     expect(await screen.findByRole('article', { name: 'আজকের হাদীস' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'গত ৭ দিন' })).toBeInTheDocument();
   });
 
-  test('?tab=plans shows the plans', () => {
+  test('has no tab switcher and no plans, whatever the address says', async () => {
     setUrl('/daily?tab=plans');
     show();
-    expect(screen.getByRole('heading', { level: 1, name: 'পরিকল্পনা' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: new RegExp(PLANS[0].title) })).toBeInTheDocument();
-  });
-
-  test('there is no other tab: ?tab=khutbah falls back to today', () => {
-    setUrl('/daily?tab=khutbah&ids=muslim-5');
-    show();
+    expect(screen.queryByRole('navigation', { name: 'বিভাগ' })).not.toBeInTheDocument();
+    expect(screen.queryByText('পরিকল্পনা')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: 'আজকের হাদীস' })).toBeInTheDocument();
-    expect(screen.queryByRole('list', { name: 'খুতবার হাদীস' })).not.toBeInTheDocument();
-  });
-
-  test('an unknown tab falls back to today', () => {
-    setUrl('/daily?tab=nonsense');
-    show();
-    expect(screen.getByRole('heading', { level: 1, name: 'আজকের হাদীস' })).toBeInTheDocument();
-  });
-});
-
-describe('the tab links', () => {
-  test('are links to each section, with the open one marked current', () => {
-    setUrl('/daily?tab=plans');
-    show();
-    const links = tabs().getAllByRole('link');
-    expect(links.map((link) => link.getAttribute('href'))).toEqual(['/daily', '/daily?tab=plans']);
-    expect(tabs().getByRole('link', { name: 'পরিকল্পনা' })).toHaveAttribute('aria-current', 'page');
-    expect(tabs().getByRole('link', { name: 'আজকের হাদীস' })).not.toHaveAttribute('aria-current');
-    expect(links.filter((link) => link.hasAttribute('aria-current'))).toHaveLength(1);
-  });
-
-  test('today is current by default', () => {
-    show();
-    expect(tabs().getByRole('link', { name: 'আজকের হাদীস' })).toHaveAttribute('aria-current', 'page');
-  });
-
-  test('switch the section without reloading', async () => {
-    show();
-    fireEvent.click(tabs().getByRole('link', { name: 'পরিকল্পনা' }));
-    expect(getUrl().search).toBe('?tab=plans');
-    expect(screen.getByRole('heading', { level: 1, name: 'পরিকল্পনা' })).toBeInTheDocument();
+    expect(screen.queryAllByRole('progressbar')).toHaveLength(0);
     await settle();
   });
-});
 
-// One title for the whole route: the pre-built title (a static page cannot read ?tab=) is the one
-// the page keeps, so a fresh load and a client-side visit agree. The tab names are the h1.
-describe('page titles', () => {
-  test.each([
-    ['/daily', 'আজকের হাদীস - Alhashor'],
-    ['/daily?tab=plans', 'আজকের হাদীস - Alhashor'],
-    [`/daily?tab=plans&plan=${PLANS[0].id}`, 'আজকের হাদীস - Alhashor'],
-    ['/daily?tab=khutbah', 'আজকের হাদীস - Alhashor'],
-    ['/daily?tab=nonsense', 'আজকের হাদীস - Alhashor'],
-  ])('%s is titled %s', (address, title) => {
-    setUrl(address);
+  test('is titled আজকের হাদীস', () => {
     show();
-    expect(document.title).toBe(title);
+    expect(document.title).toBe('আজকের হাদীস - Alhashor');
   });
 });
 

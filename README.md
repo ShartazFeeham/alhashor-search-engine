@@ -12,8 +12,10 @@ Live site (when deployed): https://hadis.feeham.com. Work currently stays local:
 - **Narrators** (`/narrators?name=<id>&page=&book=&sort=`): the same layout as Topics, but the menu lists every narrator as one row with the number of hadis at its right (most hadis first by default; sticky sidebar from 900px, full-screen overlay on phones). The search row stays on top while the list scrolls, with a sort select of four options: hadis count high to low (default), low to high, name ক → হ and name হ → ক (the two name sorts bring back the letter blocks); the address holds `&sort=count-asc|name-asc|name-desc` (the old `&sort=desc` and `&sort=asc` still work). For the chosen narrator the listing of search and topics (count line, book chips with counts, plain cards, boxed pager, 20 to a page) from the static files in `public/json/narrators`.
 - **Hadis page** (`/hadis/<book>/<number>`): calm reading column, folded narrator chain, reading time and progress line, copy / cite / link buttons, previous and next (arrow keys and swipe), breadcrumb back to the book.
 - **Share** (`/share/<book>/<number>`): citation, share text, native share sheet and a quote-card image drawn on a canvas in the browser (download or share).
-- **Daily** (`/daily`, `?tab=plans[&plan=<id>]`): hadis of the day (chosen from the date, no randomness) and reading plans with per-day ticks kept on the device.
+- **Daily** (`/daily`): hadis of the day, chosen from the date with no randomness, always from the owner's featured top-picks sets (`FEATURED_SET_NUMBERS` in `src/lib/topPicks.js`: sets 1 to 6 and 12; pool built by `src/lib/dailyPool.js`, de-duplicated, in set order). Today and the previous seven days are all different, the whole pool is used once before any hadis repeats, and the RSS feed uses the same pool. Only while the pool has fewer than 8 hadis does it fall back to the old short-hadis list (and `public/json/daily-picks.json`, still built by `scripts/build-daily-picks.mjs` for that case).
+- **Top picks, টপ লিস্ট/হাদীস** (shown as জনপ্রিয় হাদীস in the top bar, the phone bottom tab (জনপ্রিয়) and the Home card) (`/top-picks`, `/top-picks/<set id>`): the owner's hand-picked hadis in themed sets (`src/data/topPicks/set-01.json` to `set-12.json`, read by `src/lib/topPicks.js`), then the three older plans (রমযান, ছোট হাদীস, উত্তম চরিত্র). One compact card per set (a colour tile with a list icon, the title which wraps and is never cut, the count and description, and "আপনি পড়েছেন N/M" with a small progress ring: red below 33%, yellow below 66%, green above, a tick at 100%); a set with no hadis is not listed; a set page is a hadis-by-hadis checklist with progress kept on the device only. The old addresses `/daily?tab=plans` and `/daily?tab=plans&plan=<id>` redirect permanently (`next.config.mjs`).
 - **Similar hadis**: under each hadis page, a live search with the meaningful words of the whole hadis (common words removed, at most 25 longest words), the best 20 kept, 5 shown and "আরও সদৃশ হাদীস" shows 5 more each time. The hadis page is a stack of cards as wide as the list pages.
+- **Home**: the hero with the search bar, a টপ লিস্ট/হাদীস section (three random sets out of the featured ones, chosen in the browser after mount, titles only with a "পড়ুন" label), a row of four cards (জনপ্রিয় হাদীস, বর্ণনাকারী, বিষয়ভিত্তিক হাদীস, আজকের হাদীস) and the books shelf, হাদীসের বই.
 - **Themes and reading settings** (`/settings`): light, dark, sepia or follow the device; text size (3 to 30 px), line gap (0.5 to 2.5) and Bengali or English digits. Saved on the device only.
 
 ## Run it
@@ -44,18 +46,18 @@ A hadis page (`/hadis/<book>/<number>`) is rendered on the server, so the saying
 ```
 src/
   app/        routes (Next.js App Router): page.jsx, search, books/[book], hadis/[book]/[number],
-              share/[book]/[number], topics, daily, settings, not-found; layout.jsx loads the stylesheets
+              share/[book]/[number], topics, daily, top-picks, settings, not-found; layout.jsx loads the stylesheets
   shell/      top bar, phone tab bar (with the More menu), no footer
   home/       home page            search/   search page, box, filters, results, searchIndex.js
   books/      book pages           topics/   shared name menu (topics, narrators), start-here block
   hadis/      hadis page, shared hadis card, similar-hadis list
-  daily/      daily card, plans            share/  quote card and share logic
+  daily/      daily card                   topPicks/ top picks list, set page    share/  quote card and share logic
   settings/   settings store, provider, page, inline theme script
   ui/         Button, Chip, Icon, BookBadge, Toast
   styles/     tokens.css (colours, three themes) plus one stylesheet per area; plain CSS, no framework
-  lib/        pure logic with tests: books list, number parsing, daily pick, plans, share text,
+  lib/        pure logic with tests: books list, number parsing, daily pick, top picks, share text,
               card layout, topics, Roman-letter converter, search box input rules, digits
-  data/       hand-written content: curated topic picks, reading plans
+  data/       hand-written content: curated topic picks, reading plans, the top picks sets (data/topPicks)
   Helpers/    page title, paging, URL params, Bengali normalising, back-to-top
   assets/fonts/  the three font families (SIL Open Font License), served by next/font/local
   test/       test helpers (real-data fetch stub, Next router mocks, canvas stub)
