@@ -135,12 +135,23 @@ test('elsewhere the "more" button is not marked', () => {
   expect(screen.getByRole('button', { name: 'আরও' })).not.toHaveAttribute('aria-current');
 });
 
-test('the footer names the site, counts the hadis and links the main pages', () => {
+test('the footer is a quiet landmark: one row of links and one muted line, no logo and no extra text', () => {
   show(<Footer />);
-  expect(screen.getByText(/৩২,৮৮৬/)).toBeInTheDocument();
-  expect(screen.getByText('Alhashor')).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' })).toHaveAttribute('href', '/topics');
-  expect(screen.getByRole('link', { name: 'আজকের হাদীস' })).toHaveAttribute('href', '/daily');
+  const footer = screen.getByRole('contentinfo');
+  const nav = within(footer).getByRole('navigation', { name: 'ফুটার মেনু' });
+  expect(within(nav).getAllByRole('link').map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
+    ['হোম', '/'],
+    ['সার্চ', '/search'],
+    ['হাদীস বই', '/books'],
+    ['বিষয়ভিত্তিক হাদীস', '/topics'],
+    ['আজকের হাদীস', '/daily'],
+    ['বর্ণনাকারী', '/narrators'],
+  ]);
+  expect(within(footer).getByText((_, el) => el.tagName === 'P' && el.textContent === 'Alhashor · ৩২,৮৮৬ হাদীস')).toBeInTheDocument();
+  expect(footer.textContent).toBe(
+    ['হোম', 'সার্চ', 'হাদীস বই', 'বিষয়ভিত্তিক হাদীস', 'আজকের হাদীস', 'বর্ণনাকারী'].join('') + 'Alhashor · ৩২,৮৮৬ হাদীস',
+  );
+  expect(within(footer).queryByTestId(/^icon-/)).not.toBeInTheDocument();
 });
 
 test('the "more" menu links the narrators page', () => {
@@ -163,21 +174,11 @@ test.each(['/narrators', '/narrators?name=abu-hurayrah&page=2'])('on %s the "mor
   expect(screen.getByRole('button', { name: 'আরও' })).toHaveAttribute('aria-current', 'true');
 });
 
-test('the footer links the narrators page', () => {
-  show(<Footer />);
-  expect(screen.getByRole('link', { name: 'বর্ণনাকারী' })).toHaveAttribute('href', '/narrators');
-});
-
 test('the top navigation has no narrators link (it would not fit beside the six it has at 641px); the footer and the more menu carry it', () => {
   setUrl('/narrators');
   show(<TopNav />);
   expect(screen.queryByRole('link', { name: 'বর্ণনাকারী' })).not.toBeInTheDocument();
   expect(screen.getAllByRole('link').filter((a) => a.getAttribute('aria-current') === 'page')).toHaveLength(0);
-});
-
-test('the footer links the compare page, carrying no ids (the page uses the visitor\'s own choice)', () => {
-  show(<Footer />);
-  expect(screen.getByRole('link', { name: 'তুলনা' })).toHaveAttribute('href', '/compare');
 });
 
 describe('the "more" menu is operable by keyboard', () => {

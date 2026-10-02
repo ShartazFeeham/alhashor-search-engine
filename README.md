@@ -45,7 +45,7 @@ A hadis page (`/hadis/<book>/<number>`) is rendered on the server, so the saying
 src/
   app/        routes (Next.js App Router): page.jsx, search, books/[book], hadis/[book]/[number],
               share/[book]/[number], topics, daily, settings, not-found; layout.jsx loads the stylesheets
-  shell/      top bar, phone tab bar (with the More menu), footer
+  shell/      top bar, phone tab bar (with the More menu), a minimal footer (links and one muted line)
   home/       home page            search/   search page, box, filters, results, searchIndex.js
   books/      book pages           topics/   topic index, start-here block, pager
   hadis/      hadis page, shared hadis card, related list

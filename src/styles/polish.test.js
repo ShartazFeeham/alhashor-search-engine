@@ -139,6 +139,19 @@ describe('page shell layout', () => {
     expect(rule(ui, '.shell-footer')).toMatch(/width:calc\(100% - 32px\)/);
   });
 
+  test('the footer is minimal: a hairline on top, no filled box, no logo tile', () => {
+    const footer = rule(ui, '.shell-footer');
+    expect(footer).toMatch(/border-top:1px solid var\(--line\)/);
+    expect(footer).not.toMatch(/background|border-radius/);
+    expect(ui).not.toMatch(/\.shell-footer-brand|\.shell-logo\.small/);
+  });
+
+  test('the footer links are 44px tall to tap and wrap on phones', () => {
+    expect(rule(ui, '.shell-footer-links')).toMatch(/flex-wrap:wrap/);
+    expect(rule(ui, '.shell-footer-links a')).toMatch(/padding:12px 0/);
+    expect(rule(ui, '.shell-footer-links a')).toMatch(/min-height:44px/);
+  });
+
   test('the phone tab bar is a fixed floating pill (as in D2), lifted by the safe-area inset', () => {
     const bar = rule(ui, '.shell-tabbar');
     expect(bar).toMatch(/position:fixed/);
