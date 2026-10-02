@@ -53,6 +53,12 @@ describe('Home first view: compact spacing', () => {
     expect(px(card, 'gap')).toBeLessThanOrEqual(8);
   });
 
+  test('the four cards are 50% taller than the old 44px: 66px, content centred', () => {
+    const card = rule(daily, '.home-quick-links a');
+    expect(px(card, 'min-height')).toBe(66);
+    expect(card).toMatch(/align-items:center/);
+  });
+
   test('the shelf is compact (padding, plank) but the spines keep their 140 to 180 px length (heights are set in Home.jsx)', () => {
     expect(Number(/padding:(\d+)px/.exec(rule(home, '.home-shelf-wrap'))[1])).toBeLessThanOrEqual(10);
     expect(px(rule(home, '.home-plank'), 'height')).toBeLessThanOrEqual(8);
