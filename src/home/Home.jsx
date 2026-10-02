@@ -10,8 +10,8 @@ import Icon from '../ui/Icon';
 
 const MOST = Math.max(...BOOKS.map(hadisCount));
 
-// Spine heights follow the real hadis counts, between 140 and 180 px.
-const spineHeight = (book) => Math.round(140 + (hadisCount(book) / MOST) * 40);
+// Spine heights follow the real hadis counts, between 80 and 100 px (the first view must reach the new-features row).
+const spineHeight = (book) => Math.round(80 + (hadisCount(book) / MOST) * 20);
 
 export default function Home() {
   const digits = useDigits();
@@ -23,23 +23,10 @@ export default function Home() {
         <h1 className="h1" id="home-title">হাদীস সম্ভার</h1>
         <HomeDailyCard />
         <Link href="/search" className="home-search">
-          <Icon name="search" size={22} />
+          <Icon name="search" size={20} />
           <span>হাদীস খুঁজুন: শব্দ, বিষয় বা হাদীস নম্বর</span>
         </Link>
       </section>
-
-      <div className="home-tiles">
-        <Link href="/topics" className="home-tile">
-          <span className="home-tile-icon"><Icon name="tag" size={22} /></span>
-          <b>বিষয়ভিত্তিক হাদীস</b>
-          <span className="home-tile-text">নামাজ, রোজা, ঈমান, আমলসহ শতাধিক বিষয়</span>
-        </Link>
-        <Link href="/books" className="home-tile">
-          <span className="home-tile-icon"><Icon name="book" size={22} /></span>
-          <b>হাদীসের বই</b>
-          <span className="home-tile-text">{digits(BOOKS.length)}টি প্রধান গ্রন্থ, শুরু থেকে শেষ</span>
-        </Link>
-      </div>
 
       <section className="home-shelf-wrap" aria-labelledby="home-shelf-title">
         <div className="home-shelf-head">
@@ -55,7 +42,6 @@ export default function Home() {
               style={{ '--bk': `var(${book.colorVar})`, height: spineHeight(book) }}
               aria-label={`${book.full}, ${digits(hadisCount(book))} হাদীস`}
             >
-              <span className="home-spine-badge">{book.badge}</span>
               <span className="home-spine-name">{book.name}</span>
               <span className="home-spine-count">{digits(hadisCount(book))}</span>
             </Link>
@@ -67,10 +53,12 @@ export default function Home() {
       <nav className="home-quick" aria-labelledby="home-quick-title">
         <h2 className="h2" id="home-quick-title">নতুন সুবিধা</h2>
         <div className="home-quick-links">
-          <Link href="/daily"><Icon name="clock" size={22} />আজকের হাদীস</Link>
-          <Link href="/daily?tab=plans"><Icon name="plan" size={22} />পরিকল্পনা</Link>
-          <Link href="/daily?tab=khutbah"><Icon name="print" size={22} />খুতবার তালিকা</Link>
+          <Link href="/topics" aria-describedby="home-topics-note"><Icon name="tag" size={20} />বিষয়ভিত্তিক হাদীস</Link>
+          <Link href="/daily"><Icon name="clock" size={20} />আজকের হাদীস</Link>
+          <Link href="/daily?tab=plans"><Icon name="plan" size={20} />পরিকল্পনা</Link>
+          <Link href="/daily?tab=khutbah"><Icon name="print" size={20} />খুতবার তালিকা</Link>
         </div>
+        <span id="home-topics-note" hidden>নামাজ, রোজা, ঈমান, আমলসহ শতাধিক বিষয়</span>
       </nav>
     </main>
   );

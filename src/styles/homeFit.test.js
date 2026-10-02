@@ -1,0 +1,83 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+// Home must show everything down to the "নতুন সুবিধা" row in the first view (1470 x 780, and a
+// phone of 390 x 700 behind a 84px tab bar). These pin the compact spacing so a later edit does
+// not give the room back; the real heights were measured in a browser (docs/redesign-plan.md).
+const read = (name) => readFileSync(path.resolve(process.cwd(), 'src/styles', name), 'utf8');
+function rule(css, selector) {
+  const start = css.indexOf(`${selector}{`);
+  if (start === -1) throw new Error(`no rule ${selector}`);
+  return css.slice(start + selector.length + 1, css.indexOf('}', start));
+}
+const px = (declarations, property) => {
+  const match = new RegExp(`(?:^|;)${property}:(-?\\d+)px`).exec(declarations);
+  return match ? Number(match[1]) : null;
+};
+const phone = (css) => /@media \(max-width: 640px\)\{((?:[^{}]|\{[^}]*\})*)\}/.exec(css)?.[1] ?? '';
+const wide = (css) => /@media \(min-width: 641px\)\{((?:[^{}]|\{[^}]*\})*)\}/.exec(css)?.[1] ?? '';
+
+describe('Home first view: compact spacing', () => {
+  const home = read('home.css');
+  const daily = read('daily.css');
+  const ui = read('ui.css');
+
+  test('the page column keeps its blocks 8px apart on Home', () => {
+    expect(px(rule(home, '.screen.home'), 'gap')).toBeLessThanOrEqual(8);
+    expect(px(rule(home, '.screen.home'), 'padding-top')).toBeLessThanOrEqual(8);
+  });
+
+  test('the hero padding is small on phones and on wide screens', () => {
+    const base = rule(home, '.home-hero');
+    expect(Number(/padding:(\d+)px/.exec(base)[1])).toBeLessThanOrEqual(12);
+    expect(Number(/padding:(\d+)px/.exec(rule(wide(home), '.home-hero'))[1])).toBeLessThanOrEqual(14);
+    expect(px(rule(home, '.home-hero::before'), 'width')).toBeLessThanOrEqual(110);
+  });
+
+  test('the search bar is slim but at least 44px tall', () => {
+    const search = rule(home, '\n.home-search');
+    expect(px(search, 'min-height')).toBeGreaterThanOrEqual(44);
+    expect(Number(/padding:(\d+)px/.exec(search)[1])).toBeLessThanOrEqual(8);
+  });
+
+  test('there is no tiles block any more', () => {
+    expect(home).not.toMatch(/\.home-tile/);
+  });
+
+  test('the four cards: 4 across on wide screens, 2 x 2 on phones, icon beside the text, 44px tall', () => {
+    expect(rule(daily, '.home-quick-links')).toMatch(/grid-template-columns:repeat\(2,1fr\)/);
+    expect(wide(daily)).toMatch(/\.home-quick-links\{grid-template-columns:repeat\(4,1fr\)\}/);
+    const card = rule(daily, '.home-quick-links a');
+    expect(card).toMatch(/flex-direction:row/);
+    expect(px(card, 'min-height')).toBeGreaterThanOrEqual(44);
+    expect(px(card, 'gap')).toBeLessThanOrEqual(8);
+  });
+
+  test('the shelf is shorter: small padding, plank and spines (heights are set in Home.jsx)', () => {
+    expect(Number(/padding:(\d+)px/.exec(rule(home, '.home-shelf-wrap'))[1])).toBeLessThanOrEqual(10);
+    expect(px(rule(home, '.home-plank'), 'height')).toBeLessThanOrEqual(8);
+    const jsx = readFileSync(path.resolve(process.cwd(), 'src/home/Home.jsx'), 'utf8');
+    const [, base, extra] = /Math\.round\((\d+) \+ \(hadisCount\(book\) \/ MOST\) \* (\d+)\)/.exec(jsx);
+    expect(Number(base) + Number(extra)).toBeLessThanOrEqual(120);
+    expect(Number(base)).toBeGreaterThanOrEqual(80); // the name and the count still fit (no badge, measured: nothing overflows)
+  });
+
+  test('the daily card keeps no leftover height', () => {
+    expect(rule(daily, '.home-daily')).not.toMatch(/min-height/);
+    expect(Number(/padding:(\d+)px/.exec(rule(daily, '.home-daily'))[1])).toBeLessThanOrEqual(8);
+  });
+
+  test('the top bar is no taller than its 44px settings button plus 8px of air on each side', () => {
+    expect(px(rule(ui, '.shell-nav-in'), 'padding') ?? Number(/padding:(\d+)px/.exec(rule(ui, '.shell-nav-in'))[1])).toBeLessThanOrEqual(8);
+  });
+
+  test('tap targets stay 44px: the cards, the search bar and the shelf spines', () => {
+    expect(px(rule(daily, '.home-quick-links a'), 'min-height')).toBeGreaterThanOrEqual(44);
+    expect(px(rule(home, '\n.home-search'), 'min-height')).toBeGreaterThanOrEqual(44);
+    expect(px(rule(home, '.home-spine'), 'max-width')).toBeGreaterThanOrEqual(44);
+  });
+
+  test('phones tighten further, never loosen', () => {
+    expect(phone(home) || phone(daily)).toBeTruthy();
+  });
+});

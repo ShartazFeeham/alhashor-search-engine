@@ -247,21 +247,21 @@ describe('the stylesheet for the corner link and the compact card', () => {
     expect(height).toBeLessThanOrEqual(110);
   });
 
-  test('the card and the hero around it are compact: 8 to 12px gaps, 10 to 12px card padding', () => {
+  test('the card and the hero around it are compact: 6 to 12px gaps, 6 to 12px card padding', () => {
     const px = (rule, property) => Number(new RegExp(`${property}:(\\d+)px`).exec(rule)[1]);
     const card = cssRule('.home-daily');
-    expect(/padding:(\d+)px (\d+)px/.exec(card).slice(1).map(Number).every((value) => value >= 10 && value <= 12)).toBe(true);
+    expect(/padding:(\d+)px (\d+)px/.exec(card).slice(1).map(Number).every((value) => value >= 6 && value <= 12)).toBe(true);
     expect(/margin:(\d+)px 0 0/.test(card)).toBe(true);
     const gap = Number(/margin:(\d+)px 0 0/.exec(card)[1]);
-    expect(gap).toBeGreaterThanOrEqual(8);
+    expect(gap).toBeGreaterThanOrEqual(6);
     expect(gap).toBeLessThanOrEqual(12);
     const home = readFileSync(path.resolve(process.cwd(), 'src/styles/home.css'), 'utf8');
     const search = Number(/\.home-hero \.home-search\{margin-top:(\d+)px\}/.exec(home)[1]);
-    expect(search).toBeGreaterThanOrEqual(8);
+    expect(search).toBeGreaterThanOrEqual(6);
     expect(search).toBeLessThanOrEqual(12);
-    const bottoms = [...home.matchAll(/\.home-hero\{[^}]*padding:(\d+)px (\d+)px (\d+)px/g)].map((match) => Number(match[3]));
+    const bottoms = [...home.matchAll(/\.home-hero\{[^}]*padding:(\d+)px (\d+)px/g)].map((match) => Number(match[1]));
     expect(bottoms.length).toBeGreaterThan(0);
-    expect(bottoms.every((value) => value >= 8 && value <= 12)).toBe(true);
+    expect(bottoms.every((value) => value >= 8 && value <= 14)).toBe(true);
     expect(px(cssRule('.home-daily'), 'gap')).toBeLessThanOrEqual(8);
   });
 });

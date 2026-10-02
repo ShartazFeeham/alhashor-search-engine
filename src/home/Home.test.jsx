@@ -69,10 +69,9 @@ describe('the hero', () => {
     expect(within(hero()).getAllByRole('region', { name: 'আজকের হাদীস' })).toHaveLength(1);
   });
 
-  test('keeps the tiles, the shelf and the quick-link row below the hero', () => {
+  test('keeps the shelf and the quick-link row below the hero', () => {
     renderHome();
     for (const below of [
-      screen.getByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ }),
       screen.getByRole('heading', { name: 'হাদীসের তাক' }),
       screen.getByRole('navigation', { name: 'নতুন সুবিধা' }),
     ]) {
@@ -93,12 +92,13 @@ describe('the hero', () => {
   });
 });
 
-test('offers the two tiles (topics and books), each a real link', () => {
+test('has no tiles block and no "হাদীসের বই" tile: the shelf is the way to the books', () => {
   renderHome();
-  expect(screen.getByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ })).toHaveAttribute('href', '/topics');
-  expect(screen.getByRole('link', { name: /হাদীসের বই/ })).toHaveAttribute('href', '/books');
-  fireEvent.click(screen.getByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ }));
-  expect(getUrl().pathname).toBe('/topics');
+  const main = screen.getByRole('main');
+  expect(within(main).queryByRole('link', { name: /হাদীসের বই/ })).not.toBeInTheDocument();
+  expect(within(main).queryByText(/শুরু থেকে শেষ/)).not.toBeInTheDocument();
+  expect(within(main).getAllByRole('link').filter((link) => link.getAttribute('href') === '/books')).toHaveLength(0);
+  expect(within(main).getAllByRole('link').filter((link) => link.getAttribute('href').startsWith('/books/'))).toHaveLength(6);
 });
 
 test('has no search tile: the search bar in the top block is the only way to /search', () => {
@@ -212,13 +212,27 @@ describe('the daily hadis card', () => {
 describe('the new-features row', () => {
   const row = () => screen.getByRole('navigation', { name: 'নতুন সুবিধা' });
 
-  test('links to the daily hadis, the plans and the khutbah sheet', () => {
+  test('has exactly four cards: topics first, then the daily hadis, the plans and the khutbah sheet', () => {
     renderHome();
     expect(within(row()).getAllByRole('link').map((link) => [link.textContent, link.getAttribute('href')])).toEqual([
+      ['বিষয়ভিত্তিক হাদীস', '/topics'],
       ['আজকের হাদীস', '/daily'],
       ['পরিকল্পনা', '/daily?tab=plans'],
       ['খুতবার তালিকা', '/daily?tab=khutbah'],
     ]);
+  });
+
+  test('the topics card opens /topics', () => {
+    renderHome();
+    fireEvent.click(within(row()).getByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' }));
+    expect(getUrl().pathname).toBe('/topics');
+    expect(screen.getAllByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ })).toHaveLength(1);
+  });
+
+  test('the cards sit between the shelf and the end of the page', () => {
+    renderHome();
+    const shelf = screen.getByRole('heading', { name: 'হাদীসের তাক' });
+    expect(shelf.compareDocumentPosition(row()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   test('a link opens that tab', () => {
