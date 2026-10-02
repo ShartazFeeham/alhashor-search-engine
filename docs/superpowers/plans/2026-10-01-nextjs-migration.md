@@ -551,7 +551,7 @@ test.each([
 
 test('sets the home page title', () => {
   render(<Home />);
-  expect(document.title).toBe('BoiKotha - হাদীস সম্ভার');
+  expect(document.title).toBe('Alhashor - হাদীস সম্ভার');
 });
 ```
 
@@ -569,7 +569,7 @@ test('says the page was not found and links home', () => {
 
 test('sets its own page title', () => {
   render(<NotFound />);
-  expect(document.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha');
+  expect(document.title).toBe('পৃষ্ঠাটি পাওয়া যায়নি - Alhashor');
 });
 ```
 
@@ -877,7 +877,7 @@ git commit -m "refactor: Search and Topics read and change the address through N
 
 **Interfaces:**
 - Consumes: `NavBar` (Task 4), `BackToTop` (Task 4), `Home`, `Search`, `Books`, `Topics`, `NotFound`.
-- Produces: the routes `/`, `/search`, `/books`, `/topics` and the not-found page, and `metadata` (title `BoiKotha - হাদীস সম্ভার`, description, manifest, icons) exported from `layout.jsx`.
+- Produces: the routes `/`, `/search`, `/books`, `/topics` and the not-found page, and `metadata` (title `Alhashor - হাদীস সম্ভার`, description, manifest, icons) exported from `layout.jsx`.
 
 - [ ] **Step 1: Write the page tests**
 
@@ -919,12 +919,12 @@ test.each(pages)('page %s renders without React warnings', (path, Page) => {
 });
 
 test.each([
-  ['/', HomePage, 'BoiKotha - হাদীস সম্ভার'],
-  ['/search', SearchPage, 'হাদীস সার্চ - BoiKotha'],
-  ['/search?q=রোজা', SearchPage, 'রোজা - হাদীস সার্চ - BoiKotha'],
-  ['/books', BooksPage, 'হাদীসের বই - BoiKotha'],
-  ['/topics', TopicsPage, 'বিষয়ভিত্তিক হাদীস - BoiKotha'],
-  ['/topics?topic=ঈমান', TopicsPage, 'ঈমান - বিষয়ভিত্তিক হাদীস - BoiKotha'],
+  ['/', HomePage, 'Alhashor - হাদীস সম্ভার'],
+  ['/search', SearchPage, 'হাদীস সার্চ - Alhashor'],
+  ['/search?q=রোজা', SearchPage, 'রোজা - হাদীস সার্চ - Alhashor'],
+  ['/books', BooksPage, 'হাদীসের বই - Alhashor'],
+  ['/topics', TopicsPage, 'বিষয়ভিত্তিক হাদীস - Alhashor'],
+  ['/topics?topic=ঈমান', TopicsPage, 'ঈমান - বিষয়ভিত্তিক হাদীস - Alhashor'],
 ])('%s is titled %s', (path, Page, title) => {
   setUrl(path);
   render(<Page />);
@@ -934,7 +934,7 @@ test.each([
 test('choosing a book puts its name in the title', () => {
   render(<BooksPage />);
   fireEvent.click(screen.getByText('মুসলিম শরীফ'));
-  expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - BoiKotha');
+  expect(document.title).toBe('মুসলিম শরীফ - হাদীসের বই - Alhashor');
 });
 
 test('the not-found page explains and links home', () => {
@@ -956,7 +956,7 @@ test('the layout sets the language and wraps each page with the navigation', () 
 });
 
 test('site metadata names the site and describes it in Bengali', () => {
-  expect(metadata.title).toBe('BoiKotha - হাদীস সম্ভার');
+  expect(metadata.title).toBe('Alhashor - হাদীস সম্ভার');
   expect(metadata.description).toContain('হাদীস');
   expect(metadata.manifest).toBe('/manifest.json');
 });
@@ -978,7 +978,7 @@ import NavBar from '../Navbar/Navbar';
 import BackToTop from '../Helpers/BackToTop';
 
 export const metadata = {
-  title: 'BoiKotha - হাদীস সম্ভার',
+  title: 'Alhashor - হাদীস সম্ভার',
   description:
     'হাদীস খুঁজুন: বুখারি, মুসলিম, তিরমিজি, আবু দাউদ, ইবনে মাজাহ ও নাসাঈ শরীফের হাদীস বাংলায় সার্চ, বিষয়ভিত্তিক ও বই অনুযায়ী পড়ুন।',
   manifest: '/manifest.json',

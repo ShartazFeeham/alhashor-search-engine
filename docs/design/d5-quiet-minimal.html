@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>BoiKotha D5 Quiet</title>
+<title>Alhashor D5 Quiet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Newsreader:wght@400;500&display=swap">
@@ -504,7 +504,7 @@ function snip(t,re){const m=new RegExp(re.source).exec(t);if(!m)return cut(t);co
  return [(s>0?'… ':'')+t.slice(s,e)+(e<t.length?' …':''),s>0||e<t.length]}
 const rtime=h=>{const s=Math.round(h.words/2.2);return s<60?'প্রায় '+bn(Math.max(10,Math.round(s/5)*5))+' সেকেন্ড':'প্রায় '+bn(Math.max(1,Math.round(s/60)))+' মিনিট'};
 const cite=h=>B(h.b).cite+', হাদীস নং '+bn(h.no);
-const url=h=>'https://boikotha.example/hadis/'+h.b+'/'+h.no;
+const url=h=>'https://alhashor.example/hadis/'+h.b+'/'+h.no;
 const roman=v=>{const k=v.trim().toLowerCase();return ROMAN[k]||null};
 function parseJump(s){const t=toEn(s).trim();const m=t.match(/(\d+)\s*$/);if(!m)return null;const name=t.slice(0,m.index).trim().toLowerCase();if(!name)return null;
  const b=BOOKS.find(b=>b.al.some(a=>a.toLowerCase()===name));return b?{b:b.id,no:+m[1]}:null}
@@ -527,12 +527,12 @@ const svg=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
 /* ---------- shared components ---------- */
 const tabOf=()=>({home:'home',search:'search',results:'search',books:'books',topics:'topics'}[S.screen]||(S.more?'more':''));
 const curA=(k)=>tabOf()===k?' aria-current="page"':'';
-const nav=()=>C('C01',`<div class="nav"><button class="brand" data-go="home"><span class="bm">BoiKotha</span><span class="bs">হাদীস সম্ভার</span></button>
+const nav=()=>C('C01',`<div class="nav"><button class="brand" data-go="home"><span class="bm">Alhashor</span><span class="bs">হাদীস সম্ভার</span></button>
 <nav class="links" aria-label="প্রধান মেনু"><button data-go="home"${curA('home')}>হোম</button><button data-go="search"${curA('search')}>সার্চ</button><button data-go="books"${curA('books')}>হাদীস বই</button><button data-go="topics"${curA('topics')}>বিষয়ভিত্তিক হাদীস</button><i></i><button data-go="narrators"${S.screen==='narrators'?' aria-current="page"':''}>বর্ণনাকারী</button><button data-go="compare"${S.screen==='compare'?' aria-current="page"':''}>তুলনা</button><button data-go="daily"${S.screen==='daily'?' aria-current="page"':''}>আজকের হাদীস</button></nav>
 <button class="ico" data-go="comfort" aria-label="পড়ার সেটিং">Aa</button></div>`);
 const tabbar=(spec)=>C('C02',`${(!spec&&S.more)?`<div class="moremenu">${[['narrators','বর্ণনাকারী'],['compare','তুলনা'],['daily','আজকের হাদীস'],['comfort','পড়ার সেটিং'],['share','শেয়ার'],['states','অবস্থা ও ত্রুটি'],['future','রিমাইন্ডার'],['map','Component map']].map(([s,l])=>`<button data-go="${s}">${l}</button>`).join('')}</div>`:''}
 <div class="tabs" role="tablist">${[['home','হোম','home'],['search','সার্চ','search'],['books','হাদীস বই','books'],['topics','বিষয়','topics']].map(([s,l,i])=>`<button data-go="${s}"${curA(s)}>${svg(i)}${l}</button>`).join('')}<button data-act="more"${S.more?' aria-current="page"':''}>${svg('more')}আরও</button></div>`,'tabbar');
-const footer=()=>C('C30',`<footer class="foot"><div class="row"><span class="bm" style="font-size:1.25rem;color:var(--fg)">BoiKotha</span><span>বইকথা · হাদীস সম্ভার</span></div>
+const footer=()=>C('C30',`<footer class="foot"><div class="row"><span class="bm" style="font-size:1.25rem;color:var(--fg)">Alhashor</span><span>হাদীস সম্ভার</span></div>
 <div>ছয়টি প্রধান গ্রন্থ · ${num(32886)} হাদীস · শুধু বাংলা পাঠ · বিনামূল্যে</div>
 <div class="fl"><button data-go="home">হোম</button><button data-go="search">সার্চ</button><button data-go="books">হাদীস বই</button><button data-go="topics">বিষয়ভিত্তিক হাদীস</button><button data-go="narrators">বর্ণনাকারী</button><button data-go="comfort">পড়ার সেটিং</button></div>
 <div class="note">প্রোটোটাইপ: হাদীসের পাঠ আসল নমুনা। সংখ্যা, পরিসর ও সম্পর্ক দেখানোর জন্য কল্পিত।</div></footer>`);
@@ -624,17 +624,17 @@ function share(){
  const h=HB(S.shareId),b=B(h.b);
  const body=h.body.length>190?h.body.slice(0,190).replace(/\s+\S*$/,'')+' …':h.body;
  const cit=cite(h);const stext=`“${body}”\n— ${h.narr} থেকে বর্ণিত\n${cit}\n${url(h)}`;
- const title=`${b.full} - হাদীস নং ${bn(h.no)} | বইকথা`;
+ const title=`${b.full} - হাদীস নং ${bn(h.no)} | Alhashor`;
  const desc=(h.narr+' থেকে বর্ণিত: '+h.body);const d150=desc.length>150?desc.slice(0,150).replace(/\s+\S*$/,'')+'…':desc;
  return `<div class="stack fade">${head('শেয়ার','হাদীস শেয়ার করুন','উদ্ধৃতি, শেয়ারের লেখা এবং ছবি একসঙ্গে প্রস্তুত।')}
 <div class="row">${['b6628','t987','m1069','n202','b307'].map(id=>`<button class="chip" data-act="shpick" data-v="${id}" aria-pressed="${S.shareId===id}">${B(HB(id).b).n} ${bn(HB(id).no)}</button>`).join('')}</div>
 ${C('C20',`<div class="sec" style="gap:28px"><div class="copyrow"><span class="eyebrow">উদ্ধৃতি</span><div class="v">${cit}</div><div><button class="btn" data-act="copycite" data-id="${h.id}">উদ্ধৃতি কপি করুন</button></div></div>
 <div class="copyrow"><span class="eyebrow">শেয়ারের লেখা (উদ্ধৃতি ও লিংকসহ)</span><div class="v">${esc(stext)}</div><div><button class="btn" data-act="copyshare" data-id="${h.id}">লেখা কপি করুন</button></div></div>
 <div class="sec"><span class="eyebrow">কোটেশন কার্ড</span><div class="row"><div class="seg" role="group" aria-label="ধরন">${[['white','সাদা'],['ink','রাত'],['sand','বালি']].map(([k,l])=>`<button data-act="qstyle" data-v="${k}" aria-pressed="${S.qstyle===k}">${l}</button>`).join('')}</div><div class="seg" role="group" aria-label="আকার">${[['sq','বর্গ'],['tall','স্টোরি']].map(([k,l])=>`<button data-act="qshape" data-v="${k}" aria-pressed="${S.qshape===k}">${l}</button>`).join('')}</div></div>
-<div class="qcard ${S.qstyle} ${S.qshape}" id="qc"><div><div class="qm">“</div><div class="qt">${esc(body)}</div></div><div class="qs"><b>${h.narr} থেকে বর্ণিত</b><span>${cit}</span><span style="opacity:.6">BoiKotha · বইকথা</span></div></div>
+<div class="qcard ${S.qstyle} ${S.qshape}" id="qc"><div><div class="qm">“</div><div class="qt">${esc(body)}</div></div><div class="qs"><b>${h.narr} থেকে বর্ণিত</b><span>${cit}</span><span style="opacity:.6">Alhashor</span></div></div>
 <div><button class="btn" data-act="saveimg">ছবি হিসেবে সংরক্ষণ</button> <span class="note">হোয়াটসঅ্যাপ ও ফেসবুকের জন্য</span></div></div></div>`)}
-${C('C32',`<div class="sec" style="gap:28px"><div class="sec"><span class="eyebrow">চ্যাট অ্যাপে লিংকের প্রিভিউ</span><div class="chat"><div class="bubble"><div class="im">${esc(body.length>100?body.slice(0,100).replace(/\s+\S*$/,'')+' …':body)}</div><div class="tx"><b>${title}</b><span>${esc(d150.slice(0,90))}…</span><small>boikotha.example</small></div></div></div></div>
-<div class="sec"><span class="eyebrow">সার্চ ইঞ্জিনে যেভাবে দেখাবে</span><div class="serp"><span class="u">boikotha.example › hadis › ${h.b} › ${bn(h.no)}</span><span class="t">${title}</span><span class="ds">${esc(d150)}</span></div><p class="note">শিরোনাম ${bn(title.length)} অক্ষর · বিবরণ ${bn(d150.length)} অক্ষর</p></div></div>`)}
+${C('C32',`<div class="sec" style="gap:28px"><div class="sec"><span class="eyebrow">চ্যাট অ্যাপে লিংকের প্রিভিউ</span><div class="chat"><div class="bubble"><div class="im">${esc(body.length>100?body.slice(0,100).replace(/\s+\S*$/,'')+' …':body)}</div><div class="tx"><b>${title}</b><span>${esc(d150.slice(0,90))}…</span><small>alhashor.example</small></div></div></div></div>
+<div class="sec"><span class="eyebrow">সার্চ ইঞ্জিনে যেভাবে দেখাবে</span><div class="serp"><span class="u">alhashor.example › hadis › ${h.b} › ${bn(h.no)}</span><span class="t">${title}</span><span class="ds">${esc(d150)}</span></div><p class="note">শিরোনাম ${bn(title.length)} অক্ষর · বিবরণ ${bn(d150.length)} অক্ষর</p></div></div>`)}
 </div>`}
 
 function books(){
@@ -694,7 +694,7 @@ ${C('C23',`<div class="sec" style="gap:40px"><div class="sec"><h2 class="h2">প
 <p class="sm" style="color:var(--fg2)">আজকের পাঠ: দিন ${bn(today)} · <button class="lnk" data-go="hadis" data-id="t987">তিরমিযী ${bn(987)}</button> <span class="note">(নমুনা)</span></p></div>
 <div class="sec"><h2 class="h2">খুতবার তালিকা</h2><p class="lede sm">হাদীস বেছে নিন, রেফারেন্সসহ তালিকা তৈরি হবে।</p>
 <div class="picks">${H.map(h=>`<label class="chk"><input type="checkbox" data-act="shtoggle" data-v="${h.id}" ${S.sheet.includes(h.id)?'checked':''}> ${B(h.b).full} - ${bn(h.no)}</label>`).join('')}</div>
-<div class="paper"><h3>জুমু'আর খুতবা · নির্বাচিত হাদীস</h3>${sel.length?`<ol>${sel.map(h=>`<li>${esc(h.body)}<small>${cite(h)}</small></li>`).join('')}</ol>`:'<p style="color:#8f897f">কোনো হাদীস বাছা হয়নি।</p>'}<div class="ft">BoiKotha · বইকথা · ছাপার জন্য সাদা-কালো দৃশ্য</div></div>
+<div class="paper"><h3>জুমু'আর খুতবা · নির্বাচিত হাদীস</h3>${sel.length?`<ol>${sel.map(h=>`<li>${esc(h.body)}<small>${cite(h)}</small></li>`).join('')}</ol>`:'<p style="color:#8f897f">কোনো হাদীস বাছা হয়নি।</p>'}<div class="ft">Alhashor · ছাপার জন্য সাদা-কালো দৃশ্য</div></div>
 <div><button class="btn" data-act="copysheet">তালিকা কপি করুন</button></div></div></div>`)}
 </div>`}
 
@@ -750,7 +750,7 @@ function render(keepScroll){
  const st=$('#stage');st.classList.toggle('phone',S.phone);
  const r=document.documentElement.style;r.setProperty('--fs',S.fs+'px');r.setProperty('--lh',S.lh);r.setProperty('--measure',S.meas+'rem');
  app.innerHTML=shell();applyDigits();
- document.title='BoiKotha D5 Quiet';
+ document.title='Alhashor D5 Quiet';
  $('#scrsel').value=S.screen;
  if(keepScroll){window.scrollTo(0,y);restoreFocus(fk)}
  bind();updateProg();

@@ -16,7 +16,7 @@
 - **The designs are a blueprint.** Port them faithfully, but fix anything that is not up to the mark, and add each departure to section 12 of `docs/redesign-plan.md`.
 - **Production parts only:** no label pills, control bar, screen switcher, "নমুনা" notes or sample chips from the prototypes.
 - **Real data only:** counts, numbers and neighbours come from the data. Sample texts in tests are real texts from `public/json/hadis`.
-- **All visible text is Bengali** (brand `BoiKotha` excepted). Bengali digits by default, with a setting for English digits.
+- **All visible text is Bengali** (brand `Alhashor` excepted). Bengali digits by default, with a setting for English digits.
 - **Existing features keep working:** search by URL state (`q`, `page`), keyboard access, page titles, not-found page, copy, back-to-top. Books and Topics pages keep working with their legacy styles in the new shell.
 - **Legacy stays until Phase 3:** Bootstrap and the legacy component stylesheets remain in `src/app/layout.jsx` for Books and Topics. New styles load after them.
 - **Node >=20.9, React 19, Next 16.** Client Components only, except the hadis route's page file (a small Server Component that validates the address).
@@ -277,7 +277,7 @@ git commit -m "feat: design tokens with light, dark and sepia themes"
 - Produces in `settings.js`:
   - `DEFAULT_SETTINGS = { theme: 'auto', size: 18, lineHeight: 1.9, width: 34, digits: 'bn' }`
   - `clampSettings(partial): Settings` (keeps values inside `size 14..28`, `lineHeight 1.5..2.4`, `width 26..46`, `theme` in `auto|light|dark|sepia`, `digits` in `bn|en`)
-  - `loadSettings(storage = localStorage): Settings` and `saveSettings(settings, storage = localStorage): void` (both safe if storage throws or holds garbage; key `boikotha.settings`)
+  - `loadSettings(storage = localStorage): Settings` and `saveSettings(settings, storage = localStorage): void` (both safe if storage throws or holds garbage; key `alhashor.settings`)
   - `applySettings(settings, root = document.documentElement): void` (sets `data-theme` unless `auto`, removes it for `auto`, and sets `--rs`, `--rlh`, `--rw`)
 - Produces in `SettingsProvider.jsx`: `SettingsProvider({ children })` and `useSettings(): { settings, update(partial), reset() }`.
 - Produces in `themeScript.js`: `themeScript: string`, a tiny inline script that applies the saved theme before first paint.
@@ -318,7 +318,7 @@ test('saved settings come back', () => {
 
 test('nothing saved, garbage saved or a broken storage all give the defaults', () => {
   expect(loadSettings(memoryStorage())).toEqual(DEFAULT_SETTINGS);
-  expect(loadSettings(memoryStorage({ 'boikotha.settings': '{not json' }))).toEqual(DEFAULT_SETTINGS);
+  expect(loadSettings(memoryStorage({ 'alhashor.settings': '{not json' }))).toEqual(DEFAULT_SETTINGS);
   const broken = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
   expect(loadSettings(broken)).toEqual(DEFAULT_SETTINGS);
   expect(() => saveSettings(DEFAULT_SETTINGS, broken)).not.toThrow();
@@ -359,7 +359,7 @@ beforeEach(() => {
 });
 
 test('starts from the saved settings and applies them to the page', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'sepia' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia' }));
   render(<SettingsProvider><Probe /></SettingsProvider>);
   expect(screen.getByTestId('theme')).toHaveTextContent('sepia');
   expect(document.documentElement.getAttribute('data-theme')).toBe('sepia');
@@ -370,7 +370,7 @@ test('an update is applied, saved and shared with every reader', () => {
   act(() => screen.getByText('dark').click());
   expect(screen.getByTestId('theme')).toHaveTextContent('dark');
   expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-  expect(JSON.parse(localStorage.getItem('boikotha.settings')).theme).toBe('dark');
+  expect(JSON.parse(localStorage.getItem('alhashor.settings')).theme).toBe('dark');
 });
 
 test('reset goes back to the defaults', () => {
@@ -383,7 +383,7 @@ test('reset goes back to the defaults', () => {
 
 test('the inline theme script applies a saved theme before first paint (Review Focus 5)', async () => {
   const { themeScript } = await import('./themeScript');
-  localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'dark' }));
   new Function(themeScript)();
   expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 });
@@ -399,7 +399,7 @@ Expected: FAIL (modules missing).
 `src/settings/settings.js`:
 
 ```js
-export const STORAGE_KEY = 'boikotha.settings';
+export const STORAGE_KEY = 'alhashor.settings';
 
 export const DEFAULT_SETTINGS = { theme: 'auto', size: 18, lineHeight: 1.9, width: 34, digits: 'bn' };
 
@@ -452,7 +452,7 @@ export function applySettings(settings, root = document.documentElement) {
 `src/settings/themeScript.js` (runs inline in `<head>` before first paint; it is part of the app, not an outside script):
 
 ```js
-export const themeScript = `try{var s=JSON.parse(localStorage.getItem('boikotha.settings')||'{}');if(s.theme&&s.theme!=='auto'){document.documentElement.setAttribute('data-theme',s.theme)}}catch(e){}`;
+export const themeScript = `try{var s=JSON.parse(localStorage.getItem('alhashor.settings')||'{}');if(s.theme&&s.theme!=='auto'){document.documentElement.setAttribute('data-theme',s.theme)}}catch(e){}`;
 ```
 
 `src/settings/SettingsProvider.jsx`:
@@ -741,7 +741,7 @@ test('uses Bengali digits by default', () => {
 });
 
 test('uses English digits when the visitor chose them', () => {
-  localStorage.setItem('boikotha.settings', JSON.stringify({ digits: 'en' }));
+  localStorage.setItem('alhashor.settings', JSON.stringify({ digits: 'en' }));
   render(<SettingsProvider><Probe /></SettingsProvider>);
   expect(screen.getByTestId('out')).toHaveTextContent('6,628');
 });
@@ -1197,7 +1197,7 @@ test('a hadis page belongs to no top-level tab but keeps the books tab current',
 
 test('the brand links home and a settings link exists', () => {
   render(<TopNav />);
-  expect(screen.getByRole('link', { name: /BoiKotha/ })).toHaveAttribute('href', '/');
+  expect(screen.getByRole('link', { name: /Alhashor/ })).toHaveAttribute('href', '/');
   expect(screen.getByRole('link', { name: 'পড়ার সেটিং' })).toHaveAttribute('href', '/settings');
 });
 
@@ -1217,7 +1217,7 @@ test('the tab bar "more" button opens a menu with the settings link', () => {
 test('the footer names the site and counts the hadis', () => {
   render(<Footer />);
   expect(screen.getByText(/৩২,৮৮৬/)).toBeInTheDocument();
-  expect(screen.getByText(/BoiKotha/)).toBeInTheDocument();
+  expect(screen.getByText(/Alhashor/)).toBeInTheDocument();
 });
 ```
 
@@ -1233,7 +1233,7 @@ Port from D2: the icon paths (D2 script, the `IC` object around lines 524 to 560
 Structure contracts the tests above pin:
 - `BookBadge`: a `<span className="ui-badge" style={{ '--bk': 'var(--bk-<id>)' }}>` with the book's `badge` letter.
 - `Toast`: `ToastProvider` renders `children` plus `<div role="status" aria-live="polite" className="ui-toast">{message}</div>`; `useToast()` returns a function that sets the message and clears it after 1900 ms.
-- `TopNav`: `<header className="shell-nav">`, a brand `<Link href="/">` whose text includes `BoiKotha`, a `<nav aria-label="প্রধান মেনু">` with four `Link`s, and a `Link` to `/settings` with `aria-label="পড়ার সেটিং"`. The active link is computed by `usePathname()`: `/` only matches exactly; `/hadis/...` and `/books...` both mark Books; `/search...` marks Search; `/topics...` marks Topics.
+- `TopNav`: `<header className="shell-nav">`, a brand `<Link href="/">` whose text includes `Alhashor`, a `<nav aria-label="প্রধান মেনু">` with four `Link`s, and a `Link` to `/settings` with `aria-label="পড়ার সেটিং"`. The active link is computed by `usePathname()`: `/` only matches exactly; `/hadis/...` and `/books...` both mark Books; `/search...` marks Search; `/topics...` marks Topics.
 - `TabBar`: `<nav className="shell-tabbar" aria-label="নিচের মেনু">` with four `Link`s (Home, Search, Books, Topics) and a fifth `<button>` named `আরও` that toggles a menu holding a `Link` to `/settings` named `পড়ার সেটিং`.
 - `Footer`: brand, the line `ছয়টি প্রধান গ্রন্থ · ৩২,৮৮৬ হাদীস · শুধু বাংলা পাঠ · বিনামূল্যে` using `formatNumber` and the `BOOKS` total, and links Home / Search / Books / Topics.
 
@@ -1306,7 +1306,7 @@ test('says more is coming', () => {
 
 test('sets the home page title', () => {
   renderHome();
-  expect(document.title).toBe('BoiKotha - হাদীস সম্ভার');
+  expect(document.title).toBe('Alhashor - হাদীস সম্ভার');
 });
 ```
 
@@ -1343,7 +1343,7 @@ git commit -m "feat: redesigned Home (hero, entry tiles, bookshelf)"
 
 **Interfaces:**
 - Consumes: `parseHadisParams`, `neighbours`, `hadisHref`, `tagOf` (Task 4), `splitHadis`, `wordCount`, `readingTime` (Task 6), `useHadisText` (Task 7), `useDigits` (Task 5), `useToast` and `BookBadge` (Task 8).
-- Produces: the route `/hadis/<book-slug>/<number>`. `page.jsx` is an async Server Component that reads `params`, calls `parseHadisParams`, calls `notFound()` for an invalid address, and renders `<HadisPage bookId number />`. It also exports `generateMetadata` returning the title `<full book name> - হাদীস নং <bengali number> - BoiKotha`.
+- Produces: the route `/hadis/<book-slug>/<number>`. `page.jsx` is an async Server Component that reads `params`, calls `parseHadisParams`, calls `notFound()` for an invalid address, and renders `<HadisPage bookId number />`. It also exports `generateMetadata` returning the title `<full book name> - হাদীস নং <bengali number> - Alhashor`.
 
 **Design (D2 with D5's calm, section 3 of the plan):** a breadcrumb as quiet text (`হোম › <book full name> › হাদীস নং ৬৬২৮` with the book link); a thin sticky reading-progress line with `পড়তে প্রায় ১ মিনিট · ১০২ শব্দ` beside it; then the article with no heavy card: the book badge and the title, the saying in the reading font at `--rs`, `--rlh`, `--rw`, then the folded narrator chain (`বর্ণনায়:` and the summary with an expand button); quiet actions (`কপি`, `উদ্ধৃতি কপি`, `লিংক কপি`); the permanent link as small text; previous and next as two plain text links under a hairline. No related list yet (Phase 4).
 
@@ -1356,7 +1356,7 @@ import { generateMetadata } from './[book]/[number]/page';
 
 test('the title names the book and the number in Bengali', async () => {
   const metadata = await generateMetadata({ params: Promise.resolve({ book: 'bukhari', number: '6628' }) });
-  expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+  expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
 });
 
 test('an invalid address asks Next.js for a 404', async () => {
@@ -1482,7 +1482,7 @@ test('sets the page title', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);
   await screen.findByRole('heading', { level: 1 });
-  expect(document.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - BoiKotha');
+  expect(document.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
 });
 ```
 
@@ -1562,8 +1562,8 @@ import { parseHadisParams } from '../../../../lib/hadisRoute';
 export async function generateMetadata({ params }) {
   const { book: slug, number: text } = await params;
   const parsed = parseHadisParams(slug, text);
-  if (!parsed) return { title: 'পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha' };
-  return { title: `${parsed.book.full} - হাদীস নং ${formatNumber(parsed.number)} - BoiKotha` };
+  if (!parsed) return { title: 'পৃষ্ঠাটি পাওয়া যায়নি - Alhashor' };
+  return { title: `${parsed.book.full} - হাদীস নং ${formatNumber(parsed.number)} - Alhashor` };
 }
 
 export default async function Page({ params }) {
@@ -1575,7 +1575,7 @@ export default async function Page({ params }) {
 ```
 
 Components (all `'use client'`, in `src/hadis/`):
-- `HadisPage({ bookId, number })`: loads the text with `useHadisText(tagOf(bookId, number))`, sets `usePageTitle`-style title `<full> - হাদীস নং <n> - BoiKotha` (the `useDigits`-formatted number), and renders `Breadcrumb`, then by status: `loading` a skeleton (three `.hadis-skel` lines), `missing` a message `এই হাদীসটি পাওয়া যায়নি` plus `PrevNext`, `error` a message with a `আবার চেষ্টা করুন` button that calls `loadHadisText` again (re-run by bumping a retry counter), `ok` the `ReadingProgress`, the `HadisArticle` and `PrevNext`.
+- `HadisPage({ bookId, number })`: loads the text with `useHadisText(tagOf(bookId, number))`, sets `usePageTitle`-style title `<full> - হাদীস নং <n> - Alhashor` (the `useDigits`-formatted number), and renders `Breadcrumb`, then by status: `loading` a skeleton (three `.hadis-skel` lines), `missing` a message `এই হাদীসটি পাওয়া যায়নি` plus `PrevNext`, `error` a message with a `আবার চেষ্টা করুন` button that calls `loadHadisText` again (re-run by bumping a retry counter), `ok` the `ReadingProgress`, the `HadisArticle` and `PrevNext`.
 - `Breadcrumb({ book, number })`: `<nav aria-label="পথ">` with an ordered list: `হোম` (link `/`), the book `full` name (link `/books`), and the current `হাদীস নং <n>` (plain text, `aria-current="page"`).
 - `HadisArticle({ book, number, text })`: uses `splitHadis`; the heading `<h1>` `<full> - হাদীস নং <n>` with `BookBadge`; the saying `<p className="hadis-read">` (body); when `chain` is non-empty, a button `বর্ণনায়: <summary>` (`aria-expanded`) that reveals the full chain in a `<p>`; three quiet buttons `কপি` (whole original text), `উদ্ধৃতি কপি` (`<cite>, হাদীস নং <n>` with the formatted number), `লিংক কপি` (`${window.location.origin}${hadisHref(...)}`); each copy calls `useToast()('কপি করা হয়েছে')`; the permanent link shown as small text.
 - `ReadingProgress({ words, targetId })`: shows `readingTime(words) · <words> শব্দ` and a `role="progressbar"` `aria-label="পড়ার অগ্রগতি"` thin line whose width follows the scroll position through the article (listen to `scroll`, clamp 0 to 100, `aria-valuenow`).
@@ -1933,7 +1933,7 @@ git commit -m "feat: spelling-tolerant matching, snippets, per-book counts and R
 - Consumes: `searchTags`, `normalizeQuery` (`src/Search/searchIndex.js`), `useUrlParams` (`src/Helpers/useUrlParams.js`), `buildMatcher`, `highlightParts`, `makeSnippet`, `countByBook`, `filterByBook`, `romanSuggestions`, `isRoman`, `useHadisText`, `hadisHref`, `parseTag`, `splitHadis`, `BOOKS`, `BookBadge`, `Chip`, `Button`, `useDigits`, `useToast`, `pageFromParam`, `pageSlice`, `usePageTitle`.
 - Produces: `SearchPage` (client component used by `src/app/search/page.jsx` inside `Suspense`).
 
-**Behavior to carry over from the old page (each has a test below):** the address is the source of truth (`/search?q=<words>&book=<id>&page=<n>`); an empty submit does nothing; a new search goes back to page 1 and clears the book filter; a slow earlier search cannot overwrite a newer one; `মোট <n> টি হাদিস পাওয়া গেছে` and `<a> - <b> পর্যন্ত দেখানো হচ্ছে`; 20 per page; a page past the end shows the last page; the loading indicator while searching; the not-found note when nothing matches; example chips before the first search; titles `হাদীস সার্চ - BoiKotha` and `<words> - হাদীস সার্চ - BoiKotha`; each result links to its hadis page; copy on each result.
+**Behavior to carry over from the old page (each has a test below):** the address is the source of truth (`/search?q=<words>&book=<id>&page=<n>`); an empty submit does nothing; a new search goes back to page 1 and clears the book filter; a slow earlier search cannot overwrite a newer one; `মোট <n> টি হাদিস পাওয়া গেছে` and `<a> - <b> পর্যন্ত দেখানো হচ্ছে`; 20 per page; a page past the end shows the last page; the loading indicator while searching; the not-found note when nothing matches; example chips before the first search; titles `হাদীস সার্চ - Alhashor` and `<words> - হাদীস সার্চ - Alhashor`; each result links to its hadis page; copy on each result.
 
 **New behavior:** the Bengali-only note; Roman-letter suggestions under the box while typing Roman letters (chips that replace the box text); a filter chip row `সব <total>` plus one chip per book with its count (a book with zero hits is shown disabled); `book=<id>` in the address narrows the list and the counts stay for the whole search; results as an unboxed hairline list (D5) whose items show the book badge and title (a link), a snippet of the text around the match with matched words highlighted, `সম্পূর্ণ হাদীস দেখুন...` linking to the hadis page when the snippet is cut, and quiet `কপি` and `হাদীস পাতা` links.
 
@@ -2042,7 +2042,7 @@ git commit -m "feat: redesigned search (Roman-letter typing, book filters, snipp
 
 - [ ] **Step 1: Every theme at both widths**
 
-For each of `light`, `dark`, `sepia` set the theme through the saved settings (`localStorage` key `boikotha.settings`, e.g. `{"theme":"dark"}`) and take screenshots of `/`, `/search`, `/search?q=...`, `/hadis/bukhari/307` at 390x844 and 1200x900. Add to `scripts/screenshots.sh` an optional fourth argument `<theme>` that passes `--user-data-dir` preseeded with that settings value (or load the page with a tiny query flag `?theme=` read by the settings provider in development only is NOT allowed; preseed storage instead). Read each image: check contrast (text readable on the background), the focus ring, the highlight colour (`mark`) and the book colours in dark and sepia. Fix any token that fails in `tokens.css`, each fix with a test in `tokens.test.js` only when it is a missing variable.
+For each of `light`, `dark`, `sepia` set the theme through the saved settings (`localStorage` key `alhashor.settings`, e.g. `{"theme":"dark"}`) and take screenshots of `/`, `/search`, `/search?q=...`, `/hadis/bukhari/307` at 390x844 and 1200x900. Add to `scripts/screenshots.sh` an optional fourth argument `<theme>` that passes `--user-data-dir` preseeded with that settings value (or load the page with a tiny query flag `?theme=` read by the settings provider in development only is NOT allowed; preseed storage instead). Read each image: check contrast (text readable on the background), the focus ring, the highlight colour (`mark`) and the book colours in dark and sepia. Fix any token that fails in `tokens.css`, each fix with a test in `tokens.test.js` only when it is a missing variable.
 
 - [ ] **Step 2: Accessibility pass**
 

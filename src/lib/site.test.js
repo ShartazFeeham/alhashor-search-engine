@@ -12,7 +12,7 @@ test('absoluteUrl joins a path to the site address', () => {
 });
 
 test('the site name is the one shown in the shell', () => {
-  expect(SITE_NAME).toBe('Alhashor · বইকথা');
+  expect(SITE_NAME).toBe('Alhashor');
 });
 
 test('the layout sets metadataBase once, from the site address', async () => {

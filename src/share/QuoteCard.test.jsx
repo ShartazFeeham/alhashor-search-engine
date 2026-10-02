@@ -35,7 +35,7 @@ test('draws the card on a 1080 x 1080 canvas', async () => {
   const drawn = stub.texts.map((t) => t.text);
   expect(drawn).toContain(CITE);
   expect(drawn).toContain('বুখারী শরীফ');
-  expect(drawn).toContain('Alhashor · বইকথা');
+  expect(drawn).toContain('Alhashor');
   expect(stub.texts.some((t) => t.text.includes('বর্তমান যুগের মুনাফিকরা'))).toBe(true);
 });
 

@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, LIMITS, LEGACY_KEY, STORAGE_KEY, applySettings, clampSettings, loadSettings, saveSettings } from './settings';
+import { DEFAULT_SETTINGS, LIMITS, STORAGE_KEY, applySettings, clampSettings, loadSettings, saveSettings } from './settings';
 
 function memoryStorage(initial = {}) {
   const data = { ...initial };
@@ -84,32 +84,9 @@ test('storage that throws the moment it is read (site data blocked) does not bre
   }
 });
 
-describe('settings saved under the old site name (boikotha.settings)', () => {
-  test('the keys are the new and the old name', () => {
+describe('storage keys', () => {
+  test('the key is alhashor.settings', () => {
     expect(STORAGE_KEY).toBe('alhashor.settings');
-    expect(LEGACY_KEY).toBe('boikotha.settings');
-  });
-
-  test('only the old key present: the settings are read and copied to the new key', () => {
-    const storage = memoryStorage({ 'boikotha.settings': JSON.stringify({ theme: 'dark', size: 22 }) });
-    expect(loadSettings(storage)).toMatchObject({ theme: 'dark', size: 22 });
-    expect(JSON.parse(storage.data['alhashor.settings'])).toMatchObject({ theme: 'dark', size: 22 });
-    expect(storage.data['boikotha.settings']).toBeDefined();
-  });
-
-  test('only the new key present', () => {
-    const storage = memoryStorage({ 'alhashor.settings': JSON.stringify({ theme: 'sepia' }) });
-    expect(loadSettings(storage).theme).toBe('sepia');
-    expect(storage.data['boikotha.settings']).toBeUndefined();
-  });
-
-  test('both present: the new key wins', () => {
-    const storage = memoryStorage({
-      'alhashor.settings': JSON.stringify({ theme: 'sepia' }),
-      'boikotha.settings': JSON.stringify({ theme: 'dark' }),
-    });
-    expect(loadSettings(storage).theme).toBe('sepia');
-    expect(JSON.parse(storage.data['alhashor.settings']).theme).toBe('sepia');
   });
 
   test('blocked storage still gives the defaults', () => {
@@ -122,7 +99,7 @@ describe('settings saved under the old site name (boikotha.settings)', () => {
     }
   });
 
-  test('saving writes only the new key', () => {
+  test('saving writes only the one key', () => {
     const storage = memoryStorage();
     saveSettings({ ...DEFAULT_SETTINGS, theme: 'dark' }, storage);
     expect(Object.keys(storage.data)).toEqual(['alhashor.settings']);

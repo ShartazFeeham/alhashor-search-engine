@@ -23,7 +23,7 @@ export default function TopNav() {
           <span className="shell-logo"><Icon name="book" size={20} /></span>
           <span>
             <b>Alhashor</b>
-            <small>বইকথা · হাদীস সম্ভার</small>
+            <small>হাদীস সম্ভার</small>
           </span>
         </Link>
         <nav className="shell-links" aria-label="প্রধান মেনু">

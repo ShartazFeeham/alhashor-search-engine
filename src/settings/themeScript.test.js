@@ -82,35 +82,8 @@ test('the theme is applied even when the reading numbers are unusable', () => {
   expect(root.getAttribute('data-theme')).toBe('dark');
 });
 
-describe('settings saved under the old site name (boikotha.settings)', () => {
-  test('only the old key present: the theme and sizes are applied and copied to the new key', () => {
-    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark', size: 22 }));
-    run();
-    expect(root.getAttribute('data-theme')).toBe('dark');
-    expect(root.style.getPropertyValue('--rs')).toBe('22px');
-    expect(JSON.parse(localStorage.getItem('alhashor.settings'))).toEqual({ theme: 'dark', size: 22 });
-    expect(localStorage.getItem('boikotha.settings')).not.toBeNull();
-  });
-
-  test('only the new key present: it is used and the old key is not created', () => {
-    localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia', size: 20 }));
-    run();
-    expect(root.getAttribute('data-theme')).toBe('sepia');
-    expect(root.style.getPropertyValue('--rs')).toBe('20px');
-    expect(localStorage.getItem('boikotha.settings')).toBeNull();
-  });
-
-  test('both present: the new key wins and is left as it was', () => {
-    localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia', size: 20 }));
-    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark', size: 26 }));
-    run();
-    expect(root.getAttribute('data-theme')).toBe('sepia');
-    expect(root.style.getPropertyValue('--rs')).toBe('20px');
-    expect(JSON.parse(localStorage.getItem('alhashor.settings')).theme).toBe('sepia');
-  });
-
+describe('storage', () => {
   test('blocked storage (reading localStorage throws) changes nothing and does not throw', () => {
-    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
     const original = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError'); } });
     try {
@@ -118,18 +91,6 @@ describe('settings saved under the old site name (boikotha.settings)', () => {
       expect(root.hasAttribute('data-theme')).toBe(false);
     } finally {
       Object.defineProperty(globalThis, 'localStorage', original);
-    }
-  });
-
-  test('a write that fails (full storage) still applies the old settings', () => {
-    localStorage.setItem('boikotha.settings', JSON.stringify({ theme: 'dark' }));
-    const original = localStorage.setItem;
-    localStorage.setItem = () => { throw new DOMException('full', 'QuotaExceededError'); };
-    try {
-      run();
-      expect(root.getAttribute('data-theme')).toBe('dark');
-    } finally {
-      localStorage.setItem = original;
     }
   });
 });

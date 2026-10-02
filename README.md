@@ -106,7 +106,7 @@ With the cap off, the 2-letter and the 3-letter files return the same hadis in t
 
 ## Self-contained rule
 
-Everything ships with the app: no database, no CDN fonts, analytics, third-party scripts or APIs, no hosted storage or accounts. Fonts are files in `src/assets/fonts`. The only storage is the visitor's own device (`localStorage`: `alhashor.settings`, `alhashor.plan-progress`; values saved under the old site name, `boikotha.*`, are still read once and copied across, see `LEGACY_KEY` in `src/settings/settings.js` and `src/lib/planProgress.js`). Details are in section 11 of `docs/redesign-plan.md`.
+Everything ships with the app: no database, no CDN fonts, analytics, third-party scripts or APIs, no hosted storage or accounts. Fonts are files in `src/assets/fonts`. The only storage is the visitor's own device (`localStorage`: `alhashor.settings`, `alhashor.plan-progress`). Details are in section 11 of `docs/redesign-plan.md`.
 
 Checks (they use headless Google Chrome; the default path is the macOS one, override it with `CHROME=/path/to/chrome`). Build first, then run each against a server. `scripts/with-server.sh <port> "<start command>" <command...>` starts the server, waits for it, runs the command and stops the server:
 

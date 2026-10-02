@@ -1,7 +1,5 @@
-import { readWithLegacy } from '../lib/legacyStorage';
 
 export const STORAGE_KEY = 'alhashor.settings';
-export const LEGACY_KEY = 'boikotha.settings'; // the key before the site was renamed; read once, then copied
 
 export const DEFAULT_SETTINGS = { theme: 'auto', size: 16, lineHeight: 1.9, digits: 'bn' };
 
@@ -43,7 +41,7 @@ function defaultStorage() {
 
 export function loadSettings(storage = defaultStorage()) {
   try {
-    const raw = readWithLegacy(storage, STORAGE_KEY, LEGACY_KEY);
+    const raw = storage.getItem(STORAGE_KEY);
     return raw ? clampSettings(JSON.parse(raw)) : { ...DEFAULT_SETTINGS };
   } catch {
     return { ...DEFAULT_SETTINGS };

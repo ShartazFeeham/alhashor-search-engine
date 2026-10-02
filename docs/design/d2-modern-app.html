@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>BoiKotha App Prototype</title>
+<title>Alhashor App Prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
@@ -615,7 +615,7 @@ const SHORT=['b6628','m1069','t987','a203','n202'];
 const full=h=>h.chain+' '+h.body;
 const tail=h=>h.chain.split(/\s*\.{2,}\s*/).pop()+' '+h.body;
 const cite=h=>`${BOOKS[h.bk].cite}, হাদীস নং ${h.n}`;
-const hurl=h=>`boikotha.example/${h.bk}/${en(h.n)}`;
+const hurl=h=>`alhashor.example/${h.bk}/${en(h.n)}`;
 const wcount=h=>h.words||full(h).split(/\s+/).length;
 const NAR=[
  {id:'hurayra',name:'আবূ হুরায়রা (রাঃ)',total:5374,w:[.27,.31,.13,.13,.08,.08]},
@@ -727,17 +727,17 @@ const ghostCard=(bk,n)=>`<article class="hcard ghost-card" ${bkStyle(bk)}><div c
 
 function segBtns(arr,cur,act,key){return arr.map(([v,t])=>`<button type="button" data-act="${act}" data-${key}="${v}" aria-pressed="${cur===v}">${t}</button>`).join('')}
 function tg(on,act,extra=''){return `<button type="button" class="tg" role="switch" aria-checked="${on}" data-act="${act}" ${extra}></button>`}
-function footer(){return `<footer class="foot cmp" data-cmp="C30">${pillHTML('C30')}<div class="row"><div class="logo" style="width:32px;height:32px;border-radius:10px">${ic('book',18)}</div><div><b class="lat">BoiKotha</b> <b>বইকথা</b><div class="tiny">হাদীস সম্ভার</div></div></div>
+function footer(){return `<footer class="foot cmp" data-cmp="C30">${pillHTML('C30')}<div class="row"><div class="logo" style="width:32px;height:32px;border-radius:10px">${ic('book',18)}</div><div><b class="lat">Alhashor</b><div class="tiny">হাদীস সম্ভার</div></div></div>
  <div>ছয়টি প্রধান গ্রন্থ, ${fmt(32886)} হাদীস। সম্পূর্ণ বাংলায়, বিনামূল্যে।</div>
  <div class="links"><button data-act="go" data-s="home">হোম</button><button data-act="go" data-s="search">সার্চ</button><button data-act="go" data-s="books">হাদীস বই</button><button data-act="go" data-s="topics">বিষয়ভিত্তিক হাদীস</button></div></footer>`}
 
 /* ---------------- nav + tabs ---------------- */
-const TITLES={home:'হাদীস সম্ভার | বইকথা',search:'সার্চ | বইকথা',results:()=>`“${S.q}” খোঁজার ফলাফল | বইকথা`,hadis:()=>`${BOOKS[H[S.hid].bk].full} - হাদীস নং ${H[S.hid].n} | বইকথা`,share:'শেয়ার করুন | বইকথা',books:'হাদীস বই | বইকথা',topics:'বিষয়ভিত্তিক হাদীস | বইকথা',narrators:'বর্ণনাকারী | বইকথা',compare:'হাদীস তুলনা | বইকথা',daily:'আজকের হাদীস | বইকথা',comfort:'পড়ার সেটিংস | বইকথা',states:'অবস্থা ও ত্রুটি | বইকথা',future:'সতর্কবার্তা (শীঘ্রই) | বইকথা',map:'Component map'};
+const TITLES={home:'হাদীস সম্ভার | Alhashor',search:'সার্চ | Alhashor',results:()=>`“${S.q}” খোঁজার ফলাফল | Alhashor`,hadis:()=>`${BOOKS[H[S.hid].bk].full} - হাদীস নং ${H[S.hid].n} | Alhashor`,share:'শেয়ার করুন | Alhashor',books:'হাদীস বই | Alhashor',topics:'বিষয়ভিত্তিক হাদীস | Alhashor',narrators:'বর্ণনাকারী | Alhashor',compare:'হাদীস তুলনা | Alhashor',daily:'আজকের হাদীস | Alhashor',comfort:'পড়ার সেটিংস | Alhashor',states:'অবস্থা ও ত্রুটি | Alhashor',future:'সতর্কবার্তা (শীঘ্রই) | Alhashor',map:'Component map'};
 const NAVMAP={home:'home',search:'search',results:'search',books:'books',topics:'topics',hadis:'books',narrators:'narrators',compare:'compare',daily:'daily'};
 function navHTML(){
  const cur=NAVMAP[S.screen];const L=(s,t,n)=>`<button data-act="go" data-s="${s}" ${cur===s?'aria-current="page"':''} class="${n?'new':''}">${t}</button>`;
  return `<header class="nav cmp" data-cmp="C01">${pillHTML('C01')}<div class="nav-in">
-  <button class="brand" data-act="go" data-s="home" aria-label="বইকথা হোম"><span class="logo">${ic('book',20)}</span><span><b>BoiKotha</b><small>বইকথা · হাদীস সম্ভার</small></span></button>
+  <button class="brand" data-act="go" data-s="home" aria-label="Alhashor হোম"><span class="logo">${ic('book',20)}</span><span><b>Alhashor</b><small>হাদীস সম্ভার</small></span></button>
   <nav class="nav-links" aria-label="প্রধান মেনু">${L('home','হোম')}${L('search','সার্চ')}${L('books','হাদীস বই')}${L('topics','বিষয়ভিত্তিক হাদীস')}${L('narrators','বর্ণনাকারী',1)}${L('compare','তুলনা',1)}${L('daily','আজকের হাদীস',1)}</nav>
   <button class="iconbtn" data-act="openSettings" aria-label="পড়ার সেটিংস" title="পড়ার সেটিংস"><b style="font-size:16px">Aa</b></button>
  </div><div class="rp"><i id="rpi"></i></div></header>`;
@@ -878,7 +878,7 @@ SC.share=()=>{
  const h=H[S.qhid],b=BOOKS[h.bk];
  const txt=tail(h);
  const stxt=txt+(S.shareCite?`\n\n— ${cite(h)}`:'')+(S.shareLink?`\nhttps://${hurl(h)}`:'');
- const title=`${b.full} - হাদীস নং ${h.n} | বইকথা`;
+ const title=`${b.full} - হাদীস নং ${h.n} | Alhashor`;
  const desc=(txt.length>120?txt.slice(0,118).replace(/\s\S*$/,'')+'…':txt)+` ${cite(h)}।`;
  const qtxt=txt.length>190?txt.slice(0,188).replace(/\s\S*$/,'')+' …':txt;
  const st=S.qstyle;
@@ -894,15 +894,15 @@ ${cmp('C20',`<div class="sheet-demo"><div class="grab"></div><div class="row"><h
  <div class="chan"><button data-act="chan" data-n="হোয়াটসঅ্যাপ"><span class="ci" style="background:#25d366">${ic('share',22)}</span>হোয়াটসঅ্যাপ</button><button data-act="chan" data-n="ফেসবুক"><span class="ci" style="background:#1877f2">${ic('share',22)}</span>ফেসবুক</button><button data-act="chan" data-n="টেলিগ্রাম"><span class="ci" style="background:#2a8fbd">${ic('tg',22)}</span>টেলিগ্রাম</button><button data-act="copy" data-c="share:${h.id}"><span class="ci" style="background:var(--accent);color:var(--on-accent)">${ic('copy',22)}</span><span class="lbl2">সব কপি</span></button></div>
  <div class="divider"></div>
  <div class="row"><h3 class="h3">কোট-কার্ড ছবি</h3><span class="sp"></span><div class="seg" role="group" aria-label="মাপ">${segBtns([['sq','বর্গ'],['story','স্টোরি']],S.qratio,'qratio','v')}</div></div>
- <div class="qwrap"><div class="qcard qs${st} ${S.qratio==='story'?'story':''}"><div class="qm">“</div><div class="qt">${esc(qtxt)}</div><div class="qf"><span>${cite(h)}</span><span class="qb"><span>বইকথা</span></span></div></div></div>
+ <div class="qwrap"><div class="qcard qs${st} ${S.qratio==='story'?'story':''}"><div class="qm">“</div><div class="qt">${esc(qtxt)}</div><div class="qf"><span>${cite(h)}</span><span class="qb"><span>Alhashor</span></span></div></div></div>
  <div class="styles" role="group" aria-label="কার্ডের ধরন">${['linear-gradient(150deg,#0e8f7d,#0a5d6b)','linear-gradient(160deg,#0f1f2e,#1c3a4a)','#f6ecd6','linear-gradient(160deg,#fff3dc,#f7b7b0)'].map((c,i)=>`<button class="sty" style="background:${c}" data-act="qstyle" data-v="${i}" aria-pressed="${st===i}" aria-label="ধরন ${bn(i+1)}"></button>`).join('')}</div>
  <button class="btn primary" data-act="toast" data-m="প্রোটোটাইপ: এখানে ছবি তৈরি হয়ে সংরক্ষণ হবে">${ic('img',18)} ছবি হিসেবে সংরক্ষণ করুন</button></div>`)}
 ${cmp('C32',`<div class="card stack"><div class="row"><h3 class="h3">লিঙ্ক প্রিভিউ</h3><span class="sp"></span><div class="seg" role="group" aria-label="অ্যাপ">${segBtns([['wa','WhatsApp'],['fb','Messenger'],['tg','Telegram']],S.chat,'chat','v')}</div></div>
  <p class="hint">চ্যাটে লিঙ্ক পেস্ট করলে যেভাবে দেখা যাবে</p>
- <div class="chat ${S.chat}"><div class="bubble"><div class="og"><div class="img">${esc(qtxt.length>110?qtxt.slice(0,108).replace(/\s\S*$/,'')+' …':qtxt)}</div><div class="meta"><span class="dm">boikotha.example</span><b>${esc(title)}</b><span class="ds">${esc(desc)}</span></div></div><div style="padding:4px 6px 2px;font:12.5px var(--f-lat);opacity:.8;overflow-wrap:anywhere">https://${hurl(h)}</div></div></div>
+ <div class="chat ${S.chat}"><div class="bubble"><div class="og"><div class="img">${esc(qtxt.length>110?qtxt.slice(0,108).replace(/\s\S*$/,'')+' …':qtxt)}</div><div class="meta"><span class="dm">alhashor.example</span><b>${esc(title)}</b><span class="ds">${esc(desc)}</span></div></div><div style="padding:4px 6px 2px;font:12.5px var(--f-lat);opacity:.8;overflow-wrap:anywhere">https://${hurl(h)}</div></div></div>
  <div class="divider"></div>
  <h3 class="h3">সার্চ ইঞ্জিনে যেমন দেখাবে</h3>
- <div class="serp"><div class="u"><i>B</i><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">BoiKotha · https://${hurl(h).replace(/\//g,' › ')}</span></div><div class="ttl">${esc(title)}</div><div class="dsc">${esc(desc)}</div></div>
+ <div class="serp"><div class="u"><i>B</i><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Alhashor · https://${hurl(h).replace(/\//g,' › ')}</span></div><div class="ttl">${esc(title)}</div><div class="dsc">${esc(desc)}</div></div>
  <div class="code">&lt;title&gt;${esc(title)}&lt;/title&gt;
 &lt;meta name="description"
   content="${esc(desc)}"&gt;</div>
@@ -999,7 +999,7 @@ SC.daily=()=>{
  const P=[{id:'ram',t:'রমযানের ৩০ হাদীস',d:'৩০ দিনে প্রতিদিন একটি',days:30},{id:'jum',t:'জুমু’আর ১০ হাদীস',d:'১০ সপ্তাহে প্রতি জুমু’আয় একটি',days:10},{id:'sabr',t:'ধৈর্য ও সহনশীলতা',d:'৭ দিনে ৭টি হাদীস',days:7}];
  const p=P.find(x=>x.id===S.plan);const done=S.planDone[p.id];
  const show=S.planOpen?Math.min(p.days,14):5;
- const paperInner=`<h3>জুমু’আর খুতবা</h3><div class="sub">হাদীস তালিকা · ${bn('৩০')}.${bn('০৯')}.${bn(2026)}</div><ol>${S.khut.map(x=>H[x]).map(h=>`<li>${esc(tail(h))}<cite>— ${cite(h)}</cite></li>`).join('')||'<li>কোনো হাদীস বাছা হয়নি</li>'}</ol><div class="pf">boikotha.example · বইকথা</div>`;
+ const paperInner=`<h3>জুমু’আর খুতবা</h3><div class="sub">হাদীস তালিকা · ${bn('৩০')}.${bn('০৯')}.${bn(2026)}</div><ol>${S.khut.map(x=>H[x]).map(h=>`<li>${esc(tail(h))}<cite>— ${cite(h)}</cite></li>`).join('')||'<li>কোনো হাদীস বাছা হয়নি</li>'}</ol><div class="pf">alhashor.example · Alhashor</div>`;
  return `
 <div class="stack" style="margin-top:10px"><h2 class="h2">আজকের হাদীস</h2></div>
 ${cmp('C22',`<div class="stack"><div class="seg" role="group" aria-label="মৌসুম" style="align-self:flex-start">${segBtns([['today','আজকের'],['ram','রমযান'],['jum','জুমু’আ']],S.dtab,'dtab','v')}</div>
@@ -1055,7 +1055,7 @@ ${cmp('C29',`<div class="card stack fut"><div class="row"><span class="tag f">�
  <p class="hint">প্রতিদিনের হাদীস বা জুমু’আর স্মরণিকা পেতে নিচের যেকোনো মাধ্যম বেছে নেওয়া যাবে। অ্যাকাউন্ট লাগবে না।</p>
  ${[['rss','RSS ফিড','যেকোনো ফিড রিডারে নতুন হাদীস'],['tg','টেলিগ্রাম চ্যানেল','প্রতিদিন সকালে একটি হাদীস'],['mail','ইমেইল','সাপ্তাহিক জুমু’আর হাদীস'],['bell','পুশ নোটিফিকেশন','ব্রাউজার বা ফোনে স্মরণ করিয়ে দেবে']].map(([i,t,d])=>`<div class="chan-c"><span class="ci">${ic(i,22)}</span><div><b>${t}</b><div class="hint">${d}</div></div>${tg(false,'noop','disabled aria-label="'+t+'"')}</div>`).join('')}
  <div class="lbl">কত ঘন ঘন</div><div class="chips">${['প্রতিদিন','প্রতি জুমু’আয়','রমযান মৌসুমে'].map(x=>`<span class="chip" style="opacity:.6">${x}</span>`).join('')}</div>
- <div class="lbl">বার্তার নমুনা</div><div style="background:var(--surface2);border-radius:18px;padding:14px;display:flex"><div class="tgmsg"><b style="font-size:12.5px;color:var(--accent2)">বইকথা · আজকের হাদীস</b><br>${esc(H.t987.body)}<br><span class="tiny">— ${cite(H.t987)}</span></div></div>
+ <div class="lbl">বার্তার নমুনা</div><div style="background:var(--surface2);border-radius:18px;padding:14px;display:flex"><div class="tgmsg"><b style="font-size:12.5px;color:var(--accent2)">Alhashor · আজকের হাদীস</b><br>${esc(H.t987.body)}<br><span class="tiny">— ${cite(H.t987)}</span></div></div>
  <button class="btn" disabled>আগ্রহ জানান (শীঘ্রই)</button></div>`)}`;
 
 SC.map=()=>{

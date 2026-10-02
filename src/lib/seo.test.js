@@ -63,7 +63,7 @@ describe('hadisMetadata', () => {
   test('has the link-preview tags: an article on the site, in Bengali, with the logo', () => {
     expect(metadata.openGraph).toMatchObject({
       type: 'article',
-      siteName: 'Alhashor · বইকথা',
+      siteName: 'Alhashor',
       locale: 'bn_BD',
       url: 'https://hadis.feeham.com/hadis/bukhari/6628',
       title: metadata.title,

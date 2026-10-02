@@ -61,7 +61,7 @@ test('draws the book badge and name, the citation and the site name', () => {
   expect(drawn).toContain('বু');
   expect(drawn).toContain('বুখারী শরীফ');
   expect(drawn).toContain('সহীহ বুখারী, হাদীস নং ৬,৬২৮');
-  expect(drawn).toContain('Alhashor · বইকথা');
+  expect(drawn).toContain('Alhashor');
 });
 
 test('the citation and site name are at the bottom, below the saying', () => {
