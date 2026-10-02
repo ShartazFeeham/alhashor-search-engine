@@ -47,10 +47,21 @@ test('the lead names what you can search by, with the total in Bengali digits', 
   expect(lead).not.toHaveTextContent('বিনামূল্যে');
 });
 
-test('offers the three ways in, each a real link', () => {
+test('offers the two tiles (topics and books), each a real link', () => {
   renderHome();
+  expect(screen.getByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ })).toHaveAttribute('href', '/topics');
+  expect(screen.getByRole('link', { name: /হাদীসের বই/ })).toHaveAttribute('href', '/books');
   fireEvent.click(screen.getByRole('link', { name: /বিষয়ভিত্তিক হাদীস/ }));
   expect(getUrl().pathname).toBe('/topics');
+});
+
+test('has no search tile: the search bar in the top block is the only way to /search', () => {
+  renderHome();
+  expect(screen.queryByRole('link', { name: /^সার্চ/ })).not.toBeInTheDocument();
+  expect(screen.queryByText('শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন', { exact: true })).not.toBeInTheDocument();
+  const toSearch = screen.getAllByRole('link').filter((link) => link.getAttribute('href') === '/search');
+  expect(toSearch).toHaveLength(1);
+  expect(toSearch[0]).toHaveTextContent(/হাদীস খুঁজুন/);
 });
 
 test('shows all six books on a bookshelf with their real hadis counts', () => {

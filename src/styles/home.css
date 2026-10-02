@@ -12,7 +12,6 @@
 .home-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .home-tile{display:flex;flex-direction:column;gap:6px;background:var(--surface);border-radius:20px;padding:14px;box-shadow:var(--shadow);color:var(--ink);text-decoration:none;transition:transform .18s;min-width:0}
 .home-tile:hover{transform:translateY(-3px)}
-.home-tile.wide{grid-column:span 2}
 .home-tile b{font-size:16px}
 .home-tile-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent2);margin-bottom:4px}
 .home-tile-text{font-size:13.5px;color:var(--ink2);line-height:1.4}
@@ -33,8 +32,7 @@
 
 @media (min-width: 641px){
   .home-hero{padding:34px 32px 28px}
-  .home-tiles{grid-template-columns:repeat(3,1fr)}
-  .home-tile.wide{grid-column:auto}
+  .home-tiles{grid-template-columns:repeat(2,1fr)}
   .home-tile.soon{grid-column:1 / -1}
   .home-spine{max-width:72px}
   .home-shelf{gap:12px}

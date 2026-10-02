@@ -32,11 +32,6 @@ export default function Home() {
       </section>
 
       <div className="home-tiles">
-        <Link href="/search" className="home-tile wide">
-          <span className="home-tile-icon"><Icon name="search" size={22} /></span>
-          <b>সার্চ</b>
-          <span className="home-tile-text">শব্দ, বাক্য, নম্বর বা বর্ণনাকারীর নাম দিয়ে খুঁজুন</span>
-        </Link>
         <Link href="/topics" className="home-tile">
           <span className="home-tile-icon"><Icon name="tag" size={22} /></span>
           <b>বিষয়ভিত্তিক হাদীস</b>
