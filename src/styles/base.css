@@ -55,7 +55,7 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--ink);
-  font-family: var(--f-ui), system-ui, sans-serif;
+  font-family: var(--f-digits), var(--f-ui), system-ui, sans-serif; /* digits first: the file holds only the ten Bengali digits */
   font-size: 0.9375rem; /* 15px: body text never goes below 15px (two steps would be 14px) */
   font-weight: 400;
   line-height: 1.5;

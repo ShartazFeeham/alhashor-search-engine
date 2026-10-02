@@ -17,6 +17,15 @@ export const uiFont = localFont({
   display: 'swap',
 });
 
+// Only the ten Bengali digits (a 7 KB subset of Noto Serif Bengali): the interface font draws them
+// at uneven heights, so they come from here, first in the body font stack (base.css).
+export const digitFont = localFont({
+  src: './assets/fonts/BengaliDigits.woff2',
+  variable: '--f-digits',
+  display: 'swap',
+  adjustFontFallback: false, // no Arial stand-in: commas and letters must fall through to the interface font
+});
+
 export const readFont = localFont({
   src: './assets/fonts/NotoSerifBengali.ttf',
   variable: '--f-read',
