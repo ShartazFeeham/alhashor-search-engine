@@ -1,0 +1,86 @@
+{
+  "id": "tawba-khoma",
+  "number": 8,
+  "title": "তাওবা ও ক্ষমা",
+  "description": "তাওবা ও ইস্তিগফারের ফযীলত এবং আল্লাহর ক্ষমার প্রশস্ততা",
+  "items": [
+    {
+      "line": "মরুভূমিতে হারানো উট ফিরে পাওয়ার চেয়ে বান্দার তাওবায় আল্লাহ বেশি খুশি",
+      "book": "bukhari",
+      "number": 5870,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "সূর্য পশ্চিমে উঠার আগ পর্যন্ত তাওবা",
+      "book": "muslim",
+      "number": 6615,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "প্রাণ কণ্ঠে আসার আগ পর্যন্ত তাওবা",
+      "book": "ibnmajah",
+      "number": 4253,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "১০০ জনের হত্যাকারীর তাওবা",
+      "book": "muslim",
+      "number": 6752,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "সাইয়্যিদুল ইস্তিগফার",
+      "book": "bukhari",
+      "number": 5867,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির দিনে ৭০/১০০ বার ইস্তিগফার",
+      "book": "muslim",
+      "number": 6613,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"প্রত্যেক আদমসন্তান ভুলকারী, উত্তম ভুলকারী তাওবাকারী\"",
+      "book": "ibnmajah",
+      "number": 4251,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "পৃথিবী ভরা গুনাহ মাফ",
+      "book": "muslim",
+      "number": 6589,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "গুনাহের পর নেক কাজ",
+      "book": "tirmidhi",
+      "number": 1993,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "গুনাহ গোপন রাখা",
+      "book": "muslim",
+      "number": 7215,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "গুনাহ করে ক্ষমা চাইলে আল্লাহ ক্ষমা করেন",
+      "book": "muslim",
+      "number": 6732,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": []
+}

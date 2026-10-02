@@ -1,0 +1,107 @@
+{
+  "id": "ma-baba",
+  "number": 7,
+  "title": "মা-বাবার মর্যাদা",
+  "description": "মা-বাবার সেবা, সদাচার ও দু'আর মর্যাদা এবং তাঁদের অবাধ্যতার ভয়াবহতা",
+  "items": [
+    {
+      "line": "\"তোমার মা, তোমার মা, তোমার মা\"",
+      "book": "bukhari",
+      "number": 5546,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মায়ের হক তিনগুণ",
+      "book": "abudawud",
+      "number": 5049,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "জান্নাত মায়ের পায়ের নিচে",
+      "book": "ibnmajah",
+      "number": 2781,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "\"সন্তান ও তার সম্পদ বাবারই\"",
+      "book": "ibnmajah",
+      "number": 2291,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "বাবা জান্নাতের মধ্যম দরজা",
+      "book": "ibnmajah",
+      "number": 2089,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "বৃদ্ধ মা-বাবাকে পেয়েও যে জান্নাতে যেতে পারল না, \"তার নাক ধুলায় মলিন হোক\"",
+      "book": "muslim",
+      "number": 6279,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মা-বাবার অবাধ্যতা কবীরা গুনাহ",
+      "book": "bukhari",
+      "number": 2477,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মা-বাবার দু'আ কবুল হয়",
+      "book": "ibnmajah",
+      "number": 3862,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "সন্তানের জন্য মা-বাবার বদ-দু'আ",
+      "book": "bukhari",
+      "number": 2320,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "জিহাদের চেয়ে মা-বাবার সেবা",
+      "book": "bukhari",
+      "number": 5547,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "উওয়াইস কারনী (রহঃ)-এর মায়ের সেবা",
+      "book": "muslim",
+      "number": 6259,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মুশরিক মায়ের সাথেও সদ্ব্যবহার",
+      "book": "bukhari",
+      "number": 2444,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মৃত মা-বাবার জন্য দু'আ ও সদকা",
+      "book": "bukhari",
+      "number": 2572,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মা-বাবার বন্ধুদের সম্মান",
+      "book": "muslim",
+      "number": 6283,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": []
+}

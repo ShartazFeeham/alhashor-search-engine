@@ -1,0 +1,89 @@
+{
+  "id": "sabr-shukr",
+  "number": 9,
+  "title": "ধৈর্য ও শোকর",
+  "description": "বিপদে সবর, নেয়ামতে শোকর এবং ধৈর্যশীলদের জন্য আল্লাহর প্রতিদান",
+  "items": [
+    {
+      "line": "\"মুমিনের সব কাজ কল্যাণ\"",
+      "book": "muslim",
+      "number": 7229,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "বিপদে \"ইন্না লিল্লাহি ওয়া ইন্না ইলাইহি রাজিউন\"",
+      "book": "muslim",
+      "number": 1999,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "প্রথম আঘাতেই সবর",
+      "book": "muslim",
+      "number": 2012,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "রোগে গুনাহ মাফ",
+      "book": "bukhari",
+      "number": 5259,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "বিপদগ্রস্তদের বেশি প্রতিদান",
+      "book": "ibnmajah",
+      "number": 4031,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "সন্তান হারানোর ধৈর্য ও জান্নাতে \"বাইতুল হামদ\"",
+      "book": "tirmidhi",
+      "number": 1021,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "অন্ধত্বে ধৈর্যের প্রতিদান",
+      "book": "bukhari",
+      "number": 5251,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নবীজির পা ফুলে যাওয়া পর্যন্ত নামায",
+      "book": "bukhari",
+      "number": 4474,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"আফালা আকূনু আবদান শাকূরা\"",
+      "book": "muslim",
+      "number": 6863,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আলহামদুলিল্লাহ মীযান ভরে দেয়",
+      "book": "muslim",
+      "number": 427,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"সবরের চেয়ে প্রশস্ত দান কাউকে দেওয়া হয়নি\"",
+      "book": "bukhari",
+      "number": 6026,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": [
+    "সুখে শোকর ও দুঃখে সবর",
+    "\"নিচের দিকে তাকাও\""
+  ]
+}
