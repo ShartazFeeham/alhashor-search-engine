@@ -22,3 +22,17 @@ test('a valid address renders the share page', async () => {
   const element = await Page({ params: Promise.resolve({ book: 'bukhari', number: '6628' }) });
   expect(element.props).toMatchObject({ bookId: 'bukhari', number: 6628 });
 });
+
+test('the share page is a utility page: kept out of search results', async () => {
+  const valid = await generateMetadata({ params: Promise.resolve({ book: 'bukhari', number: '6628' }) });
+  expect(valid.robots).toEqual({ index: false, follow: false });
+  const invalid = await generateMetadata({ params: Promise.resolve({ book: 'bukhari', number: '0' }) });
+  expect(invalid.robots).toEqual({ index: false, follow: false });
+});
+
+test('the share page is built on demand and cached for a year, not rendered on every request', async () => {
+  const route = await import('./[book]/[number]/page');
+  expect(route.generateStaticParams()).toEqual([]);
+  expect(route.dynamicParams).toBe(true);
+  expect(route.revalidate).toBe(31536000);
+});

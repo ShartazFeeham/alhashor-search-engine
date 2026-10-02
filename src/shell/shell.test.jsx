@@ -143,6 +143,38 @@ test('the footer names the site, counts the hadis and links the main pages', () 
   expect(screen.getByRole('link', { name: 'আজকের হাদীস' })).toHaveAttribute('href', '/daily');
 });
 
+test('the "more" menu links the narrators page', () => {
+  show(<TabBar />);
+  fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
+  expect(screen.getByRole('link', { name: 'বর্ণনাকারী' })).toHaveAttribute('href', '/narrators');
+});
+
+test('choosing the narrators link in the "more" menu goes there and closes the menu', () => {
+  show(<TabBar />);
+  fireEvent.click(screen.getByRole('button', { name: 'আরও' }));
+  fireEvent.click(screen.getByRole('link', { name: 'বর্ণনাকারী' }));
+  expect(getUrl().pathname).toBe('/narrators');
+  expect(screen.queryByRole('link', { name: 'বর্ণনাকারী' })).not.toBeInTheDocument();
+});
+
+test.each(['/narrators', '/narrators?name=abu-hurayrah&page=2'])('on %s the "more" button is marked as holding the current page', (path) => {
+  setUrl(path);
+  show(<TabBar />);
+  expect(screen.getByRole('button', { name: 'আরও' })).toHaveAttribute('aria-current', 'true');
+});
+
+test('the footer links the narrators page', () => {
+  show(<Footer />);
+  expect(screen.getByRole('link', { name: 'বর্ণনাকারী' })).toHaveAttribute('href', '/narrators');
+});
+
+test('the top navigation has no narrators link (it would not fit beside the six it has at 641px); the footer and the more menu carry it', () => {
+  setUrl('/narrators');
+  show(<TopNav />);
+  expect(screen.queryByRole('link', { name: 'বর্ণনাকারী' })).not.toBeInTheDocument();
+  expect(screen.getAllByRole('link').filter((a) => a.getAttribute('aria-current') === 'page')).toHaveLength(0);
+});
+
 test('the footer links the compare page, carrying no ids (the page uses the visitor\'s own choice)', () => {
   show(<Footer />);
   expect(screen.getByRole('link', { name: 'তুলনা' })).toHaveAttribute('href', '/compare');
@@ -229,19 +261,19 @@ describe('the "more" menu is operable by keyboard', () => {
   test('the arrow keys, Home and End move between the links', () => {
     open();
     const links = within(screen.getByRole('group', { name: 'আরও মেনু' })).getAllByRole('link');
-    expect(links).toHaveLength(5);
+    expect(links).toHaveLength(6);
     links[0].focus();
     fireEvent.keyDown(links[0], { key: 'ArrowDown' });
     expect(links[1]).toHaveFocus();
     fireEvent.keyDown(links[1], { key: 'ArrowUp' });
     expect(links[0]).toHaveFocus();
     fireEvent.keyDown(links[0], { key: 'ArrowUp' });
-    expect(links[4]).toHaveFocus();
-    fireEvent.keyDown(links[4], { key: 'ArrowDown' });
+    expect(links[5]).toHaveFocus();
+    fireEvent.keyDown(links[5], { key: 'ArrowDown' });
     expect(links[0]).toHaveFocus();
     fireEvent.keyDown(links[0], { key: 'End' });
-    expect(links[4]).toHaveFocus();
-    fireEvent.keyDown(links[4], { key: 'Home' });
+    expect(links[5]).toHaveFocus();
+    fireEvent.keyDown(links[5], { key: 'Home' });
     expect(links[0]).toHaveFocus();
   });
 });

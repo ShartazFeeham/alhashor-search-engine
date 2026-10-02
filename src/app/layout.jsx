@@ -11,6 +11,7 @@ import '../styles/share.css';
 import '../styles/daily.css';
 import '../styles/related.css';
 import '../styles/compare.css';
+import '../styles/narrators.css';
 import { uiFont, readFont, latinFont } from '../fonts';
 import TopNav from '../shell/TopNav';
 import TabBar from '../shell/TabBar';
@@ -21,8 +22,11 @@ import { CompareProvider } from '../compare/CompareProvider';
 import BackToTop from '../Helpers/BackToTop';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { themeScript } from '../settings/themeScript';
+import { SITE_URL } from '../lib/site';
 
 export const metadata = {
+  // Relative addresses in any page's metadata (images, canonical, feeds) resolve against this.
+  metadataBase: new URL(SITE_URL),
   description:
     'হাদীস খুঁজুন: বুখারি, মুসলিম, তিরমিজি, আবু দাউদ, ইবনে মাজাহ ও নাসাঈ শরীফের হাদীস বাংলায় সার্চ, বিষয়ভিত্তিক ও বই অনুযায়ী পড়ুন।',
   manifest: '/manifest.json',

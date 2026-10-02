@@ -4,6 +4,33 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# Next.js on Netlify runs through the OpenNext adapter. Named here so a build run from the
+# command line (`netlify deploy --build`) uses it too. NOT YET CONFIRMED: whether the CLI installs
+# it by itself; check this on the first real deploy.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# How this site spends Netlify's free credits (300 a month; when they run out every site pauses):
+#   - A hadis page (/hadis/<book>/<number>) is built on its first visit and then served from the
+#     CDN / the host's cache for a year (incremental static regeneration, `revalidate` in the
+#     route). Only that first visit runs a function; later visits cost a web request only. There is
+#     no middleware or proxy and nothing reads cookies, headers or the query string on these pages,
+#     because that would make them uncacheable and run a function on every visit.
+#   - The hadis texts are packed into a few hundred shard files (.data/hadis, made by the `prebuild`
+#     script) and shipped inside the function (outputFileTracingIncludes in next.config.mjs). Nothing
+#     fetches the site's own CDN, which would cost a web request each time.
+#   - The sitemaps and robots.txt are built once at build time. The RSS feed is rebuilt once an hour.
+#   - Deploys cost 15 credits each: deploy on purpose, not on every push.
+# To verify on the first real deploy:
+#   1. The build ran `prebuild` and the function bundle holds .data/hadis (a shard file is found by
+#      the hadis route: open a hadis page that was never visited and check it has its text in the HTML).
+#   2. `@netlify/plugin-nextjs` was picked up by the CLI build (see the plugin note above).
+#   3. A second request for the same hadis is a cache hit (response header `cache-status` shows a
+#      hit) and no new function invocation is logged.
+#   4. Whether the cached pages survive the next deploy or are cleared by it (not known). If a
+#      deploy clears them, every page costs one function run again after each deploy.
+#   5. The first full crawl by search engines: about 33,000 pages, estimated at about 35 credits.
+
 # Data files: readable from other origins, cached for a day to cut repeat requests.
 [[headers]]
   for = "/json/*"

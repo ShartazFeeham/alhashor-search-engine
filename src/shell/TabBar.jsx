@@ -9,7 +9,7 @@ import Icon from '../ui/Icon';
 import { activeSection } from './activeTab';
 
 // The phone's bottom bar: Home, Books, a raised Search, Topics, and More (which holds the daily
-// hadis, plans, khutbah list, compare and settings).
+// hadis, plans, khutbah list, compare, narrators and settings).
 export default function TabBar() {
   const pathname = usePathname();
   const current = activeSection(pathname);
@@ -83,7 +83,7 @@ export default function TabBar() {
           ref={moreRef}
           aria-expanded={moreOpen}
           aria-controls={menuId}
-          aria-current={current === 'daily' || current === 'compare' ? 'true' : undefined}
+          aria-current={current === 'daily' || current === 'compare' || current === 'narrators' ? 'true' : undefined}
           onClick={() => setMoreOpen((open) => !open)}>
           <Icon name="grid" size={22} />
           <span>আরও</span>
@@ -106,6 +106,10 @@ export default function TabBar() {
           <Link href={compareHref(ids)} onClick={() => setMoreOpen(false)}>
             <Icon name="cols" size={20} />
             তুলনা
+          </Link>
+          <Link href="/narrators" onClick={() => setMoreOpen(false)}>
+            <Icon name="user" size={20} />
+            বর্ণনাকারী
           </Link>
           <Link href="/settings" onClick={() => setMoreOpen(false)}>
             <Icon name="sliders" size={20} />

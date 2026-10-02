@@ -31,11 +31,16 @@ export function loadHadisText(tag) {
 }
 
 // { status: 'loading' | 'ok' | 'missing' | 'error', text }. `retry` loads again after an error.
-export function useHadisText(tag) {
+// `initialText` is what a server-rendered page already knows: a string is the text (status 'ok',
+// nothing is fetched), null says the hadis has no file (status 'missing', nothing is fetched),
+// and undefined means the text must be fetched.
+export function useHadisText(tag, initialText) {
+  const handedIn = initialText !== undefined;
   const [state, setState] = useState({ tag, status: 'loading', text: '' });
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    if (handedIn) return undefined;
     let cancelled = false;
     loadHadisText(tag).then((result) => {
       if (!cancelled) setState({ tag, status: result.status, text: result.text || '' });
@@ -43,8 +48,12 @@ export function useHadisText(tag) {
     return () => {
       cancelled = true;
     };
-  }, [tag, attempt]);
+  }, [tag, attempt, handedIn]);
 
+  const retry = () => setAttempt((n) => n + 1);
+  if (handedIn) {
+    return initialText === null ? { status: 'missing', text: '', retry } : { status: 'ok', text: initialText, retry };
+  }
   const current = state.tag === tag ? state : { tag, status: 'loading', text: '' };
-  return { status: current.status, text: current.text, retry: () => setAttempt((n) => n + 1) };
+  return { status: current.status, text: current.text, retry };
 }

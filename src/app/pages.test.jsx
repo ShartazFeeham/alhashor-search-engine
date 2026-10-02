@@ -11,6 +11,7 @@ import BooksPage from './books/page';
 import TopicsPage from './topics/page';
 import DailyRoute, { metadata as dailyMetadata } from './daily/page';
 import CompareRoute, { metadata as compareMetadata } from './compare/page';
+import NarratorsRoute from './narrators/page';
 import NotFoundPage from './not-found';
 import SettingsRoute from './settings/page';
 
@@ -24,6 +25,8 @@ const pages = [
   ['/daily?tab=khutbah&ids=muslim-5', DailyRoute],
   ['/compare', CompareRoute],
   ['/compare?ids=bukhari-1,muslim-4774', CompareRoute],
+  ['/narrators', NarratorsRoute],
+  ['/narrators?name=abu-hurayrah&page=2&book=muslim', NarratorsRoute],
   ['/settings', SettingsRoute],
 ];
 
@@ -56,6 +59,8 @@ test.each([
   ['/daily?tab=khutbah', 'আজকের হাদীস - BoiKotha', DailyRoute],
   ['/compare', 'হাদীস তুলনা - BoiKotha', CompareRoute],
   ['/compare?ids=bukhari-1,muslim-4774', 'হাদীস তুলনা - BoiKotha', CompareRoute],
+  ['/narrators', 'বর্ণনাকারী - BoiKotha', NarratorsRoute],
+  ['/narrators?name=abu-hurayrah', 'বর্ণনাকারী - BoiKotha', NarratorsRoute], // the narrator's name joins the title once the index has loaded (NarratorsPage.test.jsx)
   ['/settings', 'পড়ার সেটিংস - BoiKotha', SettingsRoute],
 ])('%s is titled %s', (route, title, Page) => {
   setUrl(route);
@@ -69,6 +74,12 @@ test('the daily route has a pre-built title for the first paint', () => {
 
 test('the compare route has a pre-built title for the first paint', () => {
   expect(compareMetadata.title).toBe('হাদীস তুলনা - BoiKotha');
+});
+
+test('the narrators route is static and sets no pre-built title (the page sets one that includes the narrator\'s name)', () => {
+  const source = readFileSync(path.resolve(process.cwd(), 'src/app/narrators/page.jsx'), 'utf8');
+  expect(source).not.toMatch(/export const metadata|generateMetadata|searchParams|dynamic\s*=/);
+  expect(source).toContain('<Suspense');
 });
 
 test('the not-found page explains and links home', () => {
@@ -108,7 +119,7 @@ test('site metadata names the site and describes it in Bengali', () => {
 test('the layout loads every global stylesheet, in order', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css', '../styles/related.css', '../styles/compare.css']);
+  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css', '../styles/related.css', '../styles/compare.css', '../styles/narrators.css']);
 });
 
 test('the layout keeps the compare choice for every page and shows the compare bar', () => {

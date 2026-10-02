@@ -15,14 +15,17 @@ import RelatedList from './RelatedList';
 
 const ARTICLE_ID = 'hadis-article';
 
-export default function HadisPage({ bookId, number }) {
+// `initialText` comes from the server-rendered route: the text (so it is in the HTML), or null
+// for a number with no file. Leave it out and the page fetches the text itself.
+export default function HadisPage({ bookId, number, initialText }) {
   const book = bookById(bookId);
   const digits = useDigits();
-  const { status, text, retry } = useHadisText(tagOf(bookId, number));
+  const { status, text, retry } = useHadisText(tagOf(bookId, number), initialText);
 
   return (
     <main id="main" tabIndex={-1} className="screen hadis-page">
-      <PageTitle parts={[`${book.full} - হাদীস নং ${digits(number)}`]} />
+      {/* The route's metadata already sets this title; a second <title> would repeat it in the head. */}
+      {initialText === undefined && <PageTitle parts={[`${book.full} - হাদীস নং ${digits(number)}`]} />}
       <Breadcrumb book={book} number={number} />
 
       {status === 'loading' && (

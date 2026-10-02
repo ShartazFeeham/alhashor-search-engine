@@ -5,6 +5,9 @@ import { parseRelated, shardKey } from './related';
 
 // Checks the shards the one-time script wrote (public/json/related) against the real data.
 const dir = path.resolve(process.cwd(), 'public/json/related');
+// These read all 334 shard files; on a busy machine that can pass the default 5 seconds.
+vi.setConfig({ testTimeout: 30000 });
+
 const files = readdirSync(dir).filter((name) => name.endsWith('.json'));
 
 test('the script wrote shards for every book', () => {

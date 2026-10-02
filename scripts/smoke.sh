@@ -52,6 +52,11 @@ expect_status /share/bukhari/6628 200         # the quote-card page of a hadis
 expect_status /share/bukhari/0 404
 expect_status /compare 200                    # compare: the address holds the hadis, so a link is a saved comparison
 expect_status "/compare?ids=bukhari-1,muslim-4774" 200
+expect_status /narrators 200                  # narrator index: a static page, the address holds the narrator, page and book
+expect_status "/narrators?name=abu-hurayrah&page=2&book=muslim" 200
+expect_status /json/narrators/index.json 200  # built once by scripts/build-narrators.mjs
+expect_status /json/narrators/abu-hurayrah.json 200
+expect_status /json/narrators/no-such-narrator.json 404
 expect_status /hadis/bukhari/63 200           # a gap number is a valid address; the page says so
 
 expect_text "/search?q=%E0%A6%B0%E0%A7%8B%E0%A6%9C%E0%A6%BE&page=2" "মোট ৪০৩" "deep link to page 2 of a Bengali search renders (Review Focus 1)"
@@ -73,6 +78,11 @@ expect_text "/daily?tab=plans&plan=ramadan-30" "দিন ৩০" "a plan deep l
 expect_text "/daily?tab=khutbah&ids=bukhari-1234,muslim-5" "হাদীস নং ১,২৩৪" "a khutbah list in the address renders its hadis"
 expect_text "/compare?ids=bukhari-1,muslim-4774" "অন্যদের সাথে মিলেছে" "a compare link renders both hadis and the count of shared words"
 expect_text /compare "তুলনা করতে দুটি হাদীস যোগ করুন" "the compare page with nothing chosen asks for two hadis"
+expect_text /narrators "স্বয়ংক্রিয়ভাবে বাছাই করা" "the narrators page renders its list and the note about the names"
+expect_text /narrators "টি হাদীস" "the narrators list shows each narrator's count of hadis (the index loads)"
+expect_text "/narrators?name=abu-hurayrah" "হাদীস নং" "a narrator deep link renders hadis cards"
+expect_text "/narrators?name=abu-hurayrah" "১ - ২০ পর্যন্ত দেখানো হচ্ছে" "a narrator deep link shows the first twenty of the narrator's hadis"
+expect_text "/narrators?name=abu-hurayrah&page=2&book=muslim" "২১ - ৪০ পর্যন্ত দেখানো হচ্ছে" "page 2 of one narrator and one book renders (20 to a page)"
 expect_text /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি" "the not-found page renders"
 # Page titles on a fresh load (Next.js used to overwrite the page title with the layout's title)
 expect_title / "BoiKotha - হাদীস সম্ভার" "home title"
@@ -87,5 +97,7 @@ expect_title /daily "আজকের হাদীস - BoiKotha" "daily title on
 expect_title "/daily?tab=khutbah" "আজকের হাদীস - BoiKotha" "khutbah tab keeps the one daily title on a fresh load"
 expect_title "/daily?tab=plans" "আজকের হাদীস - BoiKotha" "plans tab keeps the one daily title on a fresh load"
 expect_title /compare "হাদীস তুলনা - BoiKotha" "compare title on a fresh load"
+expect_title /narrators "বর্ণনাকারী - BoiKotha" "narrators title on a fresh load"
+expect_text "/narrators?name=abu-hurayrah&page=2" "<title>[^<][^<]* - বর্ণনাকারী - BoiKotha</title>" "a narrator's title on a fresh load of page 2 names the narrator"
 expect_title /no-such-page "পৃষ্ঠাটি পাওয়া যায়নি - BoiKotha" "not-found title"
 exit $fail

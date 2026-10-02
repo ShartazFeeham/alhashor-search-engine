@@ -25,3 +25,6 @@ yarn-error.log*
 # Next.js
 /.next/
 next-env.d.ts
+
+# Packed hadis texts for the server, made by scripts/build-text-shards.mjs on every build
+/.data/

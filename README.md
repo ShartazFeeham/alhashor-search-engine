@@ -23,11 +23,21 @@ Needs Node 20.9 or newer (`.nvmrc` says 20). The browser scripts under `scripts/
 ```sh
 npm ci            # install
 npm run dev       # dev server at http://localhost:3000
-npm run build     # production build
+npm run build     # production build (first runs `prebuild`: packs the hadis texts into .data/hadis)
 npm start         # serve the production build at http://localhost:3000
 npm test          # Vitest in watch mode; npm test -- --run runs once
 npm run lint      # ESLint, zero warnings allowed (includes jsx-a11y)
 ```
+
+## Server rendering, link previews and SEO
+
+A hadis page (`/hadis/<book>/<number>`) is rendered on the server, so the saying, the title and the link-preview tags (description, canonical address, Open Graph, Twitter card) are in the first HTML that search engines and chat apps read. Pages are not built ahead of time (33,000 of them): each is built on its first visit and then cached for a year (`revalidate`; a hadis text never changes). `/share/<book>/<number>` is cached the same way and marked `noindex`.
+
+- **Text for the server.** `npm run build` runs the `prebuild` script, `scripts/build-text-shards.mjs`, which packs every text into `.data/hadis/<CODE>-<n>.json` (100 hadis per shard, 334 files, about 40 MB, git-ignored). `next.config.mjs` ships them with the hadis route and the RSS route; `src/lib/hadisServer.js` reads them (and falls back to the files in `public/json/hadis` when the shards are absent, as in tests).
+- **`SITE_URL`.** Absolute addresses come from `src/lib/site.js`: `NEXT_PUBLIC_SITE_URL` or `https://hadis.feeham.com`. Set the variable for another domain.
+- **Sitemaps and robots.** `/sitemap.xml` is an index of six sitemaps, `/sitemap/0.xml` to `/sitemap/5.xml`, one per book (every hadis that exists, plus the main pages in the first). `robots.txt` (`src/app/robots.js`) allows everything except `/search`, `/compare`, `/share/` and `/settings`. All of them are built at build time.
+- **RSS.** `/daily/rss.xml` is the hadis of the day for the last 14 days (dates in Bangladesh time), rebuilt at most hourly, announced from `/daily` with a `<link rel="alternate">`.
+- **Not done:** per-hadis preview images (Bengali text in generated images is unreliable); every link preview uses the site logo.
 
 ## Repo layout
 
@@ -90,7 +100,7 @@ Run once from the repo root when the data changes. Both read `public/json/hadis`
 
 ## Deploy notes
 
-`netlify.toml` builds with `npm run build` on Node 20 and sets cache and CORS headers for `/json/*` and `/photos/*`. `.github/workflows/ci.yml` installs, lints, tests and builds on every push and pull request; its Netlify deploy step is switched off (`if: false`) because it was written for a static folder and must be reworked for Next.js (Netlify's Next.js support) before deploys resume. Nothing here is pushed or deployed for now.
+Netlify runs the Next.js app through its adapter (`@netlify/plugin-nextjs`, named in `netlify.toml`). `netlify.toml` builds with `npm run build` on Node 20, sets cache and CORS headers for `/json/*` and `/photos/*`, and explains in comments how the site saves the free plan's credits (cached pages, no middleware, texts inside the function) and what to check on the first real deploy. `.github/workflows/ci.yml` installs, lints, tests and builds on every push and pull request; its deploy step (`netlify deploy --build --prod`, which builds and deploys in one go) is switched off with `if: false`. Nothing here is pushed or deployed for now. Section 10 of `docs/redesign-plan.md` has the platform decision and what is unverified until a real deploy.
 
 ## Notes
 

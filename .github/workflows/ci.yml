@@ -35,11 +35,15 @@ jobs:
       - run: npm test -- --run
       - run: npm run build
 
-      # Deploys are paused. This step deployed a static build/ folder, which a Next.js site no
-      # longer produces; rework it (Netlify's Next.js support) before turning it back on.
+      # Deploys are paused (`if: false`). Turn this step back on only with the owner's say-so.
+      # Next.js on Netlify must be built and deployed in one command (`--build`): the Next.js
+      # plugin writes the function and routing config during the build, so building here and
+      # deploying a folder afterwards would lose it. `npm run build` also runs the `prebuild`
+      # script that packs the hadis texts into .data/hadis for the server. Each production deploy
+      # costs 15 of Netlify's 300 free monthly credits. See the notes in netlify.toml.
       - name: Deploy to Netlify
         if: ${{ false }}
-        run: npx --yes netlify-cli@latest deploy --prod --dir=.next --no-build
+        run: npx --yes netlify-cli@latest deploy --build --prod
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

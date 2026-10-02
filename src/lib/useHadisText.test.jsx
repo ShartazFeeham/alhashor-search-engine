@@ -86,3 +86,39 @@ test('retry loads the text again after an error', async () => {
   fireEvent.click(screen.getByText('retry'));
   expect(await screen.findByText('ok:back online')).toBeInTheDocument();
 });
+
+// A server-rendered page hands the text in, so there is nothing to fetch.
+
+function Seeded({ tag, initialText }) {
+  const { status, text } = useHadisText(tag, initialText);
+  return <div data-testid="out">{status}:{text}</div>;
+}
+
+test('a text handed in is shown from the first render and is never fetched', async () => {
+  global.fetch = vi.fn();
+  render(<Seeded tag="BUK-71" initialText="সরাসরি পাওয়া" />);
+  expect(screen.getByTestId('out')).toHaveTextContent('ok:সরাসরি পাওয়া');
+  await Promise.resolve();
+  expect(global.fetch).not.toHaveBeenCalled();
+});
+
+test('null handed in means the hadis does not exist: "missing", and nothing is fetched', async () => {
+  global.fetch = vi.fn();
+  render(<Seeded tag="BUK-63" initialText={null} />);
+  expect(screen.getByTestId('out')).toHaveTextContent('missing:');
+  await Promise.resolve();
+  expect(global.fetch).not.toHaveBeenCalled();
+});
+
+test('a new text handed in for a new tag replaces the old one', () => {
+  global.fetch = vi.fn();
+  const { rerender } = render(<Seeded tag="BUK-72" initialText="প্রথমটি" />);
+  rerender(<Seeded tag="BUK-73" initialText="দ্বিতীয়টি" />);
+  expect(screen.getByTestId('out')).toHaveTextContent('ok:দ্বিতীয়টি');
+});
+
+test('with no text handed in the text is fetched as before', async () => {
+  serve({ '/json/hadis/Bukhari/0074/text.txt': 'ফেচ করা' });
+  render(<Seeded tag="BUK-74" />);
+  expect(await screen.findByText('ok:ফেচ করা')).toBeInTheDocument();
+});

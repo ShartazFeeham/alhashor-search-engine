@@ -6,5 +6,6 @@ export function activeSection(pathname) {
   if (pathname.startsWith('/topics')) return 'topics';
   if (pathname.startsWith('/daily')) return 'daily';
   if (pathname.startsWith('/compare')) return 'compare';
+  if (pathname.startsWith('/narrators')) return 'narrators';
   return null;
 }
