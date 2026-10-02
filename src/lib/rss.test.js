@@ -4,6 +4,10 @@ import { realShortList, realText } from '../test/hadisFixtures';
 import { pickDaily } from './dailyPick';
 import { dailyFeedXml, dhakaToday, escapeXml, feedEntries, pubDateOf } from './rss';
 
+// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
+// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
+vi.mock('./dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
+
 const list = realShortList();
 const NOW = new Date(Date.UTC(2026, 9, 2, 10, 0)); // 2 October 2026, 16:00 in Bangladesh
 const parse = (xml) => new DOMParser().parseFromString(xml, 'application/xml');

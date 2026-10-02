@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { bookById } from '../lib/books';
 import { formatNumber } from '../lib/digits';
 import { pickDaily, recentPicks } from '../lib/dailyPick';
+import { stripChain } from '../lib/hadisCore';
 import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
@@ -10,17 +11,18 @@ import { ToastProvider } from '../ui/Toast';
 import TodaySection from './TodaySection';
 import { clearShortListCache } from './useShortList';
 
+// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
+// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
+vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
+
 const TODAY = new Date(2026, 9, 2, 10, 30);
 const SHORT = realShortList();
 
 const cite = ({ book, number }) => `${book.cite}, হাদীস নং ${formatNumber(number, 'bn')}`;
-// The shared article shows the reading text (the body) in its own block, with the chain above it.
-// The seven-day list shows the chain and the body together.
-const listText = ({ book, number }) => {
-  const { chain, body } = splitHadis(realText(book.id, number));
-  return `${chain} ${body}`.trim().replace(/\s+/g, ' ');
-};
-const wholeText = ({ book, number }) => splitHadis(realText(book.id, number)).body.replace(/\s+/g, ' ');
+// The day's article and the seven-day list show the core of the hadis only: no number, no chain of
+// narrators (the full hadis page has them).
+const listText = ({ book, number }) => stripChain(realText(book.id, number)).core.replace(/\s+/g, ' ');
+const wholeText = listText;
 
 const show = () =>
   render(
@@ -145,7 +147,7 @@ describe('the hadis of the day', () => {
 
 // The page reuses the hadis page's article instead of a look of its own.
 describe('the shared hadis article', () => {
-  test('has the hadis page structure: header card, chain card, reading card with progress, actions card', async () => {
+  test('has the hadis page structure: header card, reading card with progress, actions card (and no chain card)', async () => {
     const { container } = show();
     await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
     const article = container.querySelector('article.hadis-article');
@@ -154,7 +156,6 @@ describe('the shared hadis article', () => {
     expect(article.querySelector('.hadis-reading.hadis-card p.hadis-read')).toBeInTheDocument();
     expect(article.querySelector('.hadis-reading .hadis-progress')).toBeInTheDocument();
     expect(article.querySelector('.hadis-actions.hadis-card')).toBeInTheDocument();
-    expect(article.querySelector('.hadis-chain.hadis-card')).toBeInTheDocument();
     expect(container.querySelector('.daily-card, .daily-text, .daily-actions')).toBeNull();
   });
 
@@ -173,6 +174,29 @@ describe('the shared hadis article', () => {
     const actions = screen.getByRole('article', { name: 'আজকের হাদীস' }).querySelector('.hadis-actions');
     expect(within(actions).getAllByRole('link').map((l) => l.textContent)).toEqual(['পুরো হাদীস', 'ছবি বানান']);
     expect(within(actions).getAllByRole('button').map((b) => b.textContent)).toEqual(expect.arrayContaining(['কপি', 'উদ্ধৃতি কপি', 'লিংক কপি']));
+  });
+});
+
+describe('the core of the hadis only', () => {
+  test('the article shows the saying without the chain of narrators, and has no chain block', async () => {
+    const { container } = show();
+    const today = pickDaily(SHORT, TODAY);
+    await screen.findByText(wholeText(today));
+    const { chain } = splitHadis(realText(today.book.id, today.number));
+    const article = screen.getByRole('article', { name: 'আজকের হাদীস' });
+    expect(container.querySelector('.hadis-chain')).toBeNull();
+    expect(within(article).queryByText('বর্ণনায়:')).not.toBeInTheDocument();
+    expect(within(article).getByText(wholeText(today))).toHaveClass('hadis-read');
+    if (chain) expect(article).not.toHaveTextContent(chain.replace(/\s+/g, ' ').slice(0, 25));
+  });
+
+  test('the full text with its chain is still what copy takes', async () => {
+    show();
+    const today = pickDaily(SHORT, TODAY);
+    await screen.findByText(wholeText(today));
+    fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
+    await settle();
+    expect(navigator.clipboard.writeText.mock.calls[0][0].replace(/\s+/g, ' ')).toBe(realText(today.book.id, today.number).replace(/\s+/g, ' '));
   });
 });
 
@@ -197,7 +221,7 @@ describe('the last seven days', () => {
   test('shows the start of each hadis', async () => {
     show();
     const recent = recentPicks(SHORT, TODAY);
-    const body = splitHadis(realText(recent[0].pick.book.id, recent[0].pick.number)).body;
+    const body = stripChain(realText(recent[0].pick.book.id, recent[0].pick.number)).core;
     await screen.findByText(listText(recent[0].pick));
     expect(within(section()).getAllByRole('listitem')[0]).toHaveTextContent(body.slice(0, 20));
   });

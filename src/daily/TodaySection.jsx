@@ -1,22 +1,25 @@
 'use client';
 
-import { pickDaily, recentPicks } from '../lib/dailyPick';
+import { getDailyPool, pickDay, poolIsEnough, recentDays } from '../lib/dailyPool';
 import Button from '../ui/Button';
 import DailyCard from './DailyCard';
 import RecentList from './RecentList';
 import { useShortList } from './useShortList';
 import { useToday } from './useToday';
 
-// আজকের হাদীস: today's pick from the list of short hadis, and the seven days before.
+// আজকের হাদীস: today's pick from the featured top-picks sets, and the seven days before.
 export default function TodaySection() {
   return <TodayContent />;
 }
 
 function TodayContent() {
   const today = useToday();
-  const short = useShortList();
+  // The old short list is only the fallback while the featured sets hold too few hadis.
+  const pool = getDailyPool();
+  const fromPool = poolIsEnough(pool);
+  const short = useShortList(!fromPool);
 
-  if (short.status === 'error') {
+  if (!fromPool && short.status === 'error') {
     return (
       <div className="daily-note" role="alert">
         <p>আজকের হাদীসের তালিকা আনা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।</p>
@@ -24,7 +27,7 @@ function TodayContent() {
       </div>
     );
   }
-  if (!today || short.status === 'loading') {
+  if (!today || (!fromPool && short.status === 'loading')) {
     return (
       <div className="hadis-skeleton hadis-card" aria-busy="true" aria-label="লোড হচ্ছে">
         <div className="hadis-skel" style={{ width: '40%' }} />
@@ -34,13 +37,14 @@ function TodayContent() {
       </div>
     );
   }
-  const pick = pickDaily(short.list, today);
+  const context = { pool, list: short.list };
+  const pick = pickDay(today, context);
   if (!pick) return <p className="daily-note">আজকের জন্য কোনো হাদীস পাওয়া যায়নি।</p>;
 
   return (
     <>
       <DailyCard book={pick.book} number={pick.number} date={today} />
-      <RecentList entries={recentPicks(short.list, today)} />
+      <RecentList entries={recentDays(today, context)} />
     </>
   );
 }

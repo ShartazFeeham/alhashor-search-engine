@@ -4,11 +4,15 @@ import path from 'node:path';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { pickDaily } from '../lib/dailyPick';
 import { SettingsProvider } from '../settings/SettingsProvider';
-import { splitHadis } from '../lib/hadisText';
+import { stripChain } from '../lib/hadisCore';
 import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
 import HomeDailyCard from './HomeDailyCard';
 import { clearDailyPicksCache } from './useHomePick';
 import { clearShortListCache } from './useShortList';
+
+// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
+// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
+vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
 
 const NOW = new Date(2026, 9, 2, 10, 0);
 const pick = () => pickDaily(realShortList(), NOW);
@@ -52,6 +56,25 @@ test('cuts a long real hadis with an ellipsis and still shows the link', async (
   expect(excerpt.textContent).not.toMatch(/\.\.\./);
   expect(within(card()).getByRole('link', { name: 'আরও দেখুন' })).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
   expect(realText(book.id, number).length).toBeGreaterThan(excerpt.textContent.length);
+});
+
+test('shows the saying only: no number, no chain of narrators, no bare "তিনি বলেন," lead-in', async () => {
+  withText('১২। উবায়দুল্লাহ (রহঃ) ... আনাস (রাঃ) থেকে বর্ণিত। তিনি বলেন, সৎকাজ করো এবং অসৎকাজ থেকে বিরত থাকো।');
+  renderCard();
+  const excerpt = await screen.findByTestId('home-daily-text');
+  expect(excerpt.textContent).toBe('সৎকাজ করো এবং অসৎকাজ থেকে বিরত থাকো।');
+  expect(card()).not.toHaveTextContent('উবায়দুল্লাহ');
+  expect(card()).not.toHaveTextContent('থেকে বর্ণিত');
+});
+
+test('the 2-line clamp applies to the core text, which is cut at a word with an ellipsis', async () => {
+  const words = Array.from({ length: 60 }, (_, index) => `কথা${'ক'.repeat(index % 5)}`);
+  withText(`৩। আবূ হুরায়রা (রাঃ) থেকে বর্ণিত। ${words.join(' ')}`);
+  renderCard();
+  const excerpt = (await screen.findByTestId('home-daily-text')).textContent;
+  expect(excerpt.endsWith('…')).toBe(true);
+  expect(excerpt).not.toMatch(/আবূ হুরায়রা/);
+  expect(excerpt.length).toBeLessThanOrEqual(112);
 });
 
 test('never cuts inside a word', async () => {
@@ -176,8 +199,7 @@ const cssRule = (selector) => {
 function realHadis(fits) {
   for (const number of realShortList().BUK) {
     const raw = realText('bukhari', number);
-    const { chain, body } = splitHadis(raw);
-    const shown = `${chain} ${body}`.replace(/\s+/g, ' ').trim();
+    const shown = stripChain(raw).core.replace(/\s+/g, ' ').trim();
     if (fits(shown, shown.split(' ').length)) return { raw, shown };
   }
   throw new Error('no such real hadis');
@@ -187,7 +209,7 @@ describe('where the link goes', () => {
   const body = () => screen.getByTestId('home-daily-body');
   const link = () => within(card()).getByRole('link', { name: 'আরও দেখুন' });
 
-  test('the text takes the whole width of the card and the link is on its own line below it, for a short and a long hadis', async () => {
+  test('the text takes the whole width of the card; the link is in the same grid cell, after the text, at the right end of its second line, for a short and a long hadis', async () => {
     for (const fits of [(_, words) => words < 12, (shown) => shown.length > 300]) {
       const real = realHadis(fits);
       withText(real.raw);
@@ -232,14 +254,21 @@ describe('where the link goes', () => {
 });
 
 describe('the stylesheet for the link row and the compact card', () => {
-  test('the body is a plain column: the text, then the link on the right edge below it (no grid, no side-by-side)', () => {
-    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
-    expect(css).not.toMatch(/data-link|home-daily-flow/);
+  test('the link shares the second line of the text: one grid cell, the link at its bottom right edge, two floats keep the slot free', () => {
     const bodyRule = cssRule('.home-daily-body');
-    expect(bodyRule).toContain('display:flex');
-    expect(bodyRule).toContain('flex-direction:column');
-    expect(bodyRule).not.toContain('display:grid');
-    expect(cssRule('.home-daily-more')).toContain('align-self:flex-end');
+    expect(bodyRule).toContain('display:grid');
+    expect(cssRule('.home-daily-body>*')).toContain('grid-area:1/1');
+    const more = cssRule('.home-daily-more');
+    expect(more).toContain('justify-self:end');
+    expect(more).toContain('align-self:end');
+    expect(more).toContain('text-align:right');
+    // the slot kept free in the text is exactly as wide as the link, and one text line tall
+    const slotWidth = /width:(\d+)px/.exec(cssRule('.home-daily-slot'))[1];
+    expect(/width:(\d+)px/.exec(more)[1]).toBe(slotWidth);
+    expect(cssRule('.home-daily-slot')).toMatch(/float:right;clear:right/);
+    expect(cssRule('.home-daily-lead')).toMatch(/float:right/);
+    expect(cssRule('.home-daily-text')).toContain('line-height:1.7');
+    expect(more).toContain('line-height:1.7');
   });
 
   test('the link is accent coloured, underlined on hover and focus; the tap area is the whole card', () => {
@@ -258,7 +287,7 @@ describe('the stylesheet for the link row and the compact card', () => {
     expect(height).toBeLessThanOrEqual(110);
   });
 
-  test('the card and the hero around it are compact: 6 to 12px gaps, 6 to 12px card padding', () => {
+  test('the card and the hero around it are compact: 6 to 13px gaps, 6 to 12px card padding', () => {
     const px = (rule, property) => Number(new RegExp(`${property}:(\\d+)px`).exec(rule)[1]);
     const card = cssRule('.home-daily');
     expect(/padding:(\d+)px (\d+)px/.exec(card).slice(1).map(Number).every((value) => value >= 6 && value <= 12)).toBe(true);
@@ -269,7 +298,7 @@ describe('the stylesheet for the link row and the compact card', () => {
     const home = readFileSync(path.resolve(process.cwd(), 'src/styles/home.css'), 'utf8');
     const search = Number(/\.home-hero \.home-search\{margin-top:(\d+)px\}/.exec(home)[1]);
     expect(search).toBeGreaterThanOrEqual(6);
-    expect(search).toBeLessThanOrEqual(12);
+    expect(search).toBeLessThanOrEqual(13); // 8 + 5: the daily card has 5px more room below it
     const bottoms = [...home.matchAll(/\.home-hero\{[^}]*padding:(\d+)px (\d+)px/g)].map((match) => Number(match[1]));
     expect(bottoms.length).toBeGreaterThan(0);
     expect(bottoms.every((value) => value >= 8 && value <= 14)).toBe(true);

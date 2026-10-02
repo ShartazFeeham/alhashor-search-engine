@@ -10,8 +10,8 @@ import Button from '../ui/Button';
 
 const ARTICLE_ID = 'daily-article';
 
-// The hadis of the day, shown by the same article as the hadis page (header, narrator chain,
-// reading text, actions). Only the date line on top and the "full page" link are the day's own.
+// The hadis of the day, shown by the same article as the hadis page (header, reading text, actions);
+// the narrator chain is left out (`coreOnly`), the full hadis page has it. Only the date line on top and the "full page" link are the day's own.
 export default function DailyCard({ book, number, date }) {
   const { settings } = useSettings();
   const { status, text, retry } = useHadisText(tagOf(book.id, number));
@@ -49,6 +49,7 @@ export default function DailyCard({ book, number, date }) {
       book={book}
       number={number}
       text={text}
+      coreOnly
       crumbs={dateLine}
       lead={<Link href={hadisHref(book.id, number)} className="ui-btn primary sm">পুরো হাদীস</Link>}
     />

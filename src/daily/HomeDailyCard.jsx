@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { formatDate } from '../lib/bnDate';
 import { hadisHref, tagOf } from '../lib/hadisRoute';
-import { splitHadis } from '../lib/hadisText';
+import { stripChain } from '../lib/hadisCore';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import { useSettings } from '../settings/SettingsProvider';
@@ -49,13 +49,19 @@ function Shell({ today, loading = false, children }) {
   );
 }
 
-// The excerpt (at most two lines, the whole card width) and, on its own line below it, the
-// "আরও দেখুন" link. The link's ::after stretches over the card, so the whole card is that one link.
+// The excerpt (two lines: the first uses the whole card width) with the "আরও দেখুন" link inline at
+// the right end of the second line. Two empty floats inside the text (aria-hidden) keep the right end
+// of line 2 free for the link, which sits over that slot in the same grid cell. The link's ::after
+// stretches over the card, so the whole card is that one link.
 function Body({ excerpt, href }) {
   return (
     <div className="home-daily-body" data-testid="home-daily-body">
       <p className="home-daily-text">
-        <span data-testid="home-daily-text">{excerpt}</span>
+        <span className="home-daily-flow">
+          <span className="home-daily-lead" aria-hidden="true" />
+          <span className="home-daily-slot" aria-hidden="true" />
+          <span data-testid="home-daily-text">{excerpt}</span>
+        </span>
       </p>
       <Link href={href} className="home-daily-more">{MORE}</Link>
     </div>
@@ -75,8 +81,8 @@ function Picked({ today, pick }) {
       </Shell>
     );
   }
-  const { chain, body } = splitHadis(text);
-  const { text: excerpt } = excerptOf(`${chain} ${body}`.replace(/\s+/g, ' ').trim());
+  // the saying only, without the number and the chain of narrators (the hadis page has them)
+  const { text: excerpt } = excerptOf(stripChain(text).core.replace(/\s+/g, ' ').trim());
   return (
     <Shell today={today}>
       <p className="home-daily-cite">{citationOf(pick.book, pick.number, digits)}</p>

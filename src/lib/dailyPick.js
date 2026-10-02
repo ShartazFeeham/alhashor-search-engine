@@ -18,7 +18,7 @@ function gcd(a, b) {
 // A step through a list of `size` that visits every place before repeating (it shares no factor
 // with the size) and lands far from the last one, so neighbouring days are never neighbours in
 // the list.
-function strideFor(size) {
+export function strideFor(size) {
   if (size <= 2) return 1;
   let stride = Math.max(1, Math.round(size * GOLDEN));
   while (gcd(stride, size) !== 1) stride++;

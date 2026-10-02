@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { BASE_PATH } from '../Helpers/basePath';
 import { pickDaily, pickPrecomputed } from '../lib/dailyPick';
+import { getDailyPool, pickFromPool, poolIsEnough } from '../lib/dailyPool';
 import { useShortList } from './useShortList';
 
 const PICKS_URL = `${BASE_PATH}/json/daily-picks.json`;
@@ -40,8 +41,13 @@ export function loadDailyPicks() {
 // its range, or the file is missing).
 export function useHomePick(today) {
   const [picks, setPicks] = useState({ status: 'loading', file: null });
+  // The featured sets hold the hadis of the day: nothing is fetched. The files below are the
+  // fallback for while those sets hold too few hadis.
+  const pool = getDailyPool();
+  const fromPool = poolIsEnough(pool);
 
   useEffect(() => {
+    if (fromPool) return undefined;
     let cancelled = false;
     loadDailyPicks().then((result) => {
       if (!cancelled) setPicks(result);
@@ -49,12 +55,13 @@ export function useHomePick(today) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [fromPool]);
 
-  const fast = today && picks.status !== 'loading' ? pickPrecomputed(picks.file, today) : null;
-  const needsList = Boolean(today) && picks.status !== 'loading' && !fast;
+  const fast = !fromPool && today && picks.status !== 'loading' ? pickPrecomputed(picks.file, today) : null;
+  const needsList = !fromPool && Boolean(today) && picks.status !== 'loading' && !fast;
   const short = useShortList(needsList);
 
+  if (fromPool) return today ? { status: 'ok', pick: pickFromPool(pool, today) } : { status: 'loading', pick: null };
   if (fast) return { status: 'ok', pick: fast };
   if (!needsList) return { status: 'loading', pick: null };
   if (short.status === 'loading') return { status: 'loading', pick: null };

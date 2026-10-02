@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { formatDate, weekdayName } from '../lib/bnDate';
 import { hadisHref, tagOf } from '../lib/hadisRoute';
-import { splitHadis } from '../lib/hadisText';
+import { stripChain } from '../lib/hadisCore';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import { useSettings } from '../settings/SettingsProvider';
@@ -14,8 +14,7 @@ function Excerpt({ bookId, number }) {
   const { status, text } = useHadisText(tagOf(bookId, number));
   if (status === 'loading') return <div className="hadis-skel" style={{ width: '80%' }} aria-busy="true" aria-label="লোড হচ্ছে" />;
   if (status !== 'ok') return <p className="daily-recent-text daily-muted">হাদীসটি আনা যায়নি।</p>;
-  const { chain, body } = splitHadis(text);
-  return <p className="daily-recent-text">{`${chain} ${body}`.trim()}</p>;
+  return <p className="daily-recent-text">{stripChain(text).core}</p>;
 }
 
 // The pick of each of the last seven days, newest first, each a link to its page.
