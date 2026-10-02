@@ -53,13 +53,13 @@ describe('Home first view: compact spacing', () => {
     expect(px(card, 'gap')).toBeLessThanOrEqual(8);
   });
 
-  test('the shelf is shorter: small padding, plank and spines (heights are set in Home.jsx)', () => {
+  test('the shelf is compact (padding, plank) but the spines keep their 140 to 180 px length (heights are set in Home.jsx)', () => {
     expect(Number(/padding:(\d+)px/.exec(rule(home, '.home-shelf-wrap'))[1])).toBeLessThanOrEqual(10);
     expect(px(rule(home, '.home-plank'), 'height')).toBeLessThanOrEqual(8);
     const jsx = readFileSync(path.resolve(process.cwd(), 'src/home/Home.jsx'), 'utf8');
     const [, base, extra] = /Math\.round\((\d+) \+ \(hadisCount\(book\) \/ MOST\) \* (\d+)\)/.exec(jsx);
-    expect(Number(base) + Number(extra)).toBeLessThanOrEqual(120);
-    expect(Number(base)).toBeGreaterThanOrEqual(80); // the name and the count still fit (no badge, measured: nothing overflows)
+    expect(Number(base)).toBe(140);
+    expect(Number(base) + Number(extra)).toBe(180);
   });
 
   test('the daily card keeps no leftover height', () => {

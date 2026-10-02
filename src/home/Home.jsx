@@ -10,8 +10,8 @@ import Icon from '../ui/Icon';
 
 const MOST = Math.max(...BOOKS.map(hadisCount));
 
-// Spine heights follow the real hadis counts, between 80 and 100 px (the first view must reach the new-features row).
-const spineHeight = (book) => Math.round(80 + (hadisCount(book) / MOST) * 20);
+// Spine heights follow the real hadis counts, between 140 and 180 px.
+const spineHeight = (book) => Math.round(140 + (hadisCount(book) / MOST) * 40);
 
 export default function Home() {
   const digits = useDigits();
