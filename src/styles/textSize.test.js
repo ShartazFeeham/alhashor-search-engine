@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
-import { DEFAULT_SETTINGS, clampSettings } from '../settings/settings';
+import { DEFAULT_SETTINGS } from '../settings/settings';
 
 // "Text size: two steps smaller" (docs/redesign-plan.md, last section). One step is 1px for sizes
 // of 14px and up and 0.5px below that; no text goes under 11px; the reading size is 16px by default.
@@ -8,7 +8,6 @@ const dir = path.resolve(process.cwd(), 'src/styles');
 const files = readdirSync(dir).filter((f) => f.endsWith('.css'));
 const css = Object.fromEntries(files.map((f) => [f, readFileSync(path.join(dir, f), 'utf8')]));
 
-const MIN_SETTING = clampSettings({ size: 0 }).size; // the smallest reading size a visitor can choose
 
 // Removes comments and every @media print block (print sizes are in pt and left alone).
 function screenCss(source) {
@@ -72,9 +71,10 @@ test('every font-size can be measured (nothing slipped past the parser)', () => 
   expect(all.filter((s) => s.px === null || Number.isNaN(s.px))).toEqual([]);
 });
 
+// The visitor may now choose any size from 3 to 30px, so only the default size carries the floor;
+// at a size the visitor picked on purpose, the text that follows --rs follows it too.
 test.each([
   ['the default reading size', DEFAULT_SETTINGS.size],
-  ['the smallest reading size a visitor can choose', MIN_SETTING],
 ])('no font-size is below 11px at %s', (_, rs) => {
   const tooSmall = sizes(rs).filter((s) => s.px < 11);
   expect(tooSmall).toEqual([]);

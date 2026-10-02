@@ -14,7 +14,7 @@ Live site (when deployed): https://hadis.feeham.com. Work currently stays local:
 - **Daily** (`/daily`, `?tab=plans[&plan=<id>]`, `?tab=khutbah&ids=bukhari-1234,muslim-5`): hadis of the day (chosen from the date, no randomness), reading plans with per-day ticks kept on the device, and a khutbah sheet (the list lives in the address; copy, link and a print layout).
 - **Related hadis**: a short list under each hadis page, read from pre-built shards (see Data scripts).
 - **Compare**: in progress; the route does not exist yet (`src/compare/` holds its state so far).
-- **Themes and reading settings** (`/settings`): light, dark, sepia or follow the device; text size, line gap, text width and Bengali or English digits. Saved on the device only.
+- **Themes and reading settings** (`/settings`): light, dark, sepia or follow the device; text size (3 to 30 px), line gap (0.5 to 2.5) and Bengali or English digits. Saved on the device only.
 
 ## Run it
 

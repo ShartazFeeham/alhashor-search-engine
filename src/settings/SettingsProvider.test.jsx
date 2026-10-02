@@ -99,7 +99,16 @@ test('reading values set before first paint are still there while the saved sett
   render(<SettingsProvider><Probe /></SettingsProvider>);
   expect(removed).not.toHaveBeenCalled();
   expect(document.documentElement.style.getPropertyValue('--rs')).toBe('22px');
-  expect(document.documentElement.style.getPropertyValue('--rw')).toBe('40em');
+  expect(document.documentElement.style.getPropertyValue('--rw')).toBe(''); // the stale width is ignored
   removed.mockRestore();
   document.documentElement.removeAttribute('style');
+});
+
+test('a visitor with an old saved width loads fine, and the width is not written back by an update', () => {
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'sepia', size: 20, width: 40 }));
+  render(<SettingsProvider><Probe /></SettingsProvider>);
+  expect(screen.getByTestId('theme')).toHaveTextContent('sepia');
+  expect(document.documentElement.style.getPropertyValue('--rw')).toBe('');
+  act(() => screen.getByText('dark').click());
+  expect(JSON.parse(localStorage.getItem('alhashor.settings'))).toEqual({ theme: 'dark', size: 20, lineHeight: 1.9, digits: 'bn' });
 });

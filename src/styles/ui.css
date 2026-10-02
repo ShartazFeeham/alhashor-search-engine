@@ -92,8 +92,10 @@ body>main{flex:1 0 auto;width:100%}
 .settings{max-width:640px}
 .settings-section{display:flex;flex-direction:column;gap:12px;background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:18px 16px}
 .settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.settings-stepper{display:flex;align-items:center;gap:10px}
-.settings-stepper output{min-width:3ch;text-align:center;font-weight:700}
+.settings-slider{display:flex;flex-direction:column;gap:6px}
+.settings-value{min-width:3ch;text-align:end;font-weight:700}
+.settings-slider-controls{display:flex;align-items:center;gap:10px}
+.settings-range{flex:1 1 auto;min-width:0;height:44px;margin:0;accent-color:var(--accent);cursor:pointer}
 .settings-preview{margin:0;padding:14px;border-radius:14px;background:var(--surface2);font-family:var(--f-read),serif;font-size:var(--rs);line-height:var(--rlh);max-width:var(--rw)}
 
 /* ---------- not-found page ---------- */

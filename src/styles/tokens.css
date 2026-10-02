@@ -8,7 +8,7 @@
   --ok:#1f9d55; --warn:#b86e05; --bad:#cf4337; --link:#1a55c8;
   --bk-bukhari:#0f8663; --bk-muslim:#3a63c8; --bk-tirmidhi:#9e6a07; --bk-abudawud:#8a4bb8; --bk-ibnmajah:#c45227; --bk-nasai:#c3387f; --on-bk:#ffffff; --bk-wash:rgba(0,0,0,.22);
   --shadow:0 1px 2px rgba(10,50,44,.06),0 8px 22px rgba(10,50,44,.07);
-  /* reading: font size, line height, text width (changed by the reading settings) */
+  /* reading: font size and line height (changed by the reading settings); the column width --rw is fixed, nothing writes it */
   --rs:16px; --rlh:1.9; --rw:34em;
 }
 

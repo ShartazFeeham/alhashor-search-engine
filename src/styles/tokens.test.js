@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 
 const css = readFileSync(path.resolve(process.cwd(), 'src/styles/tokens.css'), 'utf8');
@@ -118,4 +118,21 @@ test('the focus ring is a solid accent2 outline, not a translucent one', () => {
   const rule = base.slice(base.indexOf(':focus-visible'), base.indexOf('}', base.indexOf(':focus-visible')));
   expect(rule).toContain('var(--accent2)');
   expect(rule).not.toContain('transparent');
+});
+
+describe('the reading column width is a fixed constant', () => {
+  test('--rw is a plain 34em custom property, set once in the light theme block', () => {
+    expect(css).toMatch(/--rw\s*:\s*34em/);
+    expect(css.match(/--rw\s*:/g)).toHaveLength(1);
+  });
+
+  test('nothing in src writes --rw at runtime (no setProperty, no inline style, no saved setting)', () => {
+    const walk = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) return walk(full);
+      return /\.(jsx?|mjs)$/.test(e.name) && !/\.test\./.test(e.name) ? [full] : [];
+    });
+    const writers = walk(path.resolve(process.cwd(), 'src')).filter((file) => readFileSync(file, 'utf8').includes('--rw'));
+    expect(writers).toEqual([]);
+  });
 });

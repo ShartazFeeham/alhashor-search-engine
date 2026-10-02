@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, LEGACY_KEY, STORAGE_KEY, applySettings, clampSettings, loadSettings, saveSettings } from './settings';
+import { DEFAULT_SETTINGS, LIMITS, LEGACY_KEY, STORAGE_KEY, applySettings, clampSettings, loadSettings, saveSettings } from './settings';
 
 function memoryStorage(initial = {}) {
   const data = { ...initial };
@@ -10,15 +10,42 @@ function memoryStorage(initial = {}) {
 }
 
 test('defaults are the comfortable reading values', () => {
-  expect(DEFAULT_SETTINGS).toEqual({ theme: 'auto', size: 16, lineHeight: 1.9, width: 34, digits: 'bn' });
+  expect(DEFAULT_SETTINGS).toEqual({ theme: 'auto', size: 16, lineHeight: 1.9, digits: 'bn' });
+});
+
+test('the ranges are 3 to 30 px in steps of 1, and 0.5 to 2.5 in steps of 0.1', () => {
+  expect(LIMITS.size).toEqual({ min: 3, max: 30, step: 1 });
+  expect(LIMITS.lineHeight).toEqual({ min: 0.5, max: 2.5, step: 0.1 });
+});
+
+test('there is no text width setting any more', () => {
+  expect(DEFAULT_SETTINGS).not.toHaveProperty('width');
+  expect(clampSettings({ width: 40 })).not.toHaveProperty('width');
 });
 
 test('clampSettings keeps every value in range and falls back for bad input', () => {
-  expect(clampSettings({ size: 99, lineHeight: 0, width: 5, theme: 'neon', digits: 'xx' })).toEqual({
-    theme: 'auto', size: 28, lineHeight: 1.5, width: 26, digits: 'bn',
+  expect(clampSettings({ size: 99, lineHeight: 0, theme: 'neon', digits: 'xx' })).toEqual({
+    theme: 'auto', size: 30, lineHeight: 0.5, digits: 'bn',
   });
+  expect(clampSettings({ size: 0, lineHeight: 9 })).toMatchObject({ size: 3, lineHeight: 2.5 });
+  for (const size of [3, 4, 11, 16, 29, 30]) expect(clampSettings({ size }).size).toBe(size);
+  for (const lineHeight of [0.5, 0.6, 1.5, 1.9, 2.4, 2.5]) expect(clampSettings({ lineHeight }).lineHeight).toBe(lineHeight);
   expect(clampSettings({ size: 'abc' }).size).toBe(16);
   expect(clampSettings({ theme: 'dark', digits: 'en', size: 22 })).toMatchObject({ theme: 'dark', digits: 'en', size: 22 });
+});
+
+test('values valid in the old ranges (14 to 28, 1.5 to 2.4) stay exactly as they are', () => {
+  for (const size of [14, 16, 18, 20, 22, 24, 26, 28]) expect(clampSettings({ size }).size).toBe(size);
+  for (const lineHeight of [1.5, 1.6, 1.9, 2, 2.4]) expect(clampSettings({ lineHeight }).lineHeight).toBe(lineHeight);
+});
+
+test('a stale saved width is ignored: no crash, and it is not written back', () => {
+  const storage = memoryStorage({ 'alhashor.settings': JSON.stringify({ theme: 'dark', size: 20, width: 40 }) });
+  const loaded = loadSettings(storage);
+  expect(loaded).toEqual({ theme: 'dark', size: 20, lineHeight: 1.9, digits: 'bn' });
+  expect(JSON.parse(storage.data['alhashor.settings'])).toHaveProperty('width', 40); // loading never writes
+  saveSettings(loaded, storage);
+  expect(JSON.parse(storage.data['alhashor.settings'])).not.toHaveProperty('width');
 });
 
 test('saved settings come back', () => {
@@ -37,11 +64,11 @@ test('nothing saved, garbage saved or a broken storage all give the defaults', (
 
 test('applySettings sets the theme and the reading variables', () => {
   const root = document.createElement('html');
-  applySettings({ ...DEFAULT_SETTINGS, theme: 'dark', size: 22, lineHeight: 2, width: 40 }, root);
+  applySettings({ ...DEFAULT_SETTINGS, theme: 'dark', size: 22, lineHeight: 2 }, root);
   expect(root.getAttribute('data-theme')).toBe('dark');
   expect(root.style.getPropertyValue('--rs')).toBe('22px');
   expect(root.style.getPropertyValue('--rlh')).toBe('2');
-  expect(root.style.getPropertyValue('--rw')).toBe('40em');
+  expect(root.style.getPropertyValue('--rw')).toBe(''); // the reading width is fixed in the stylesheet
   applySettings({ ...DEFAULT_SETTINGS, theme: 'auto' }, root);
   expect(root.hasAttribute('data-theme')).toBe(false);
 });

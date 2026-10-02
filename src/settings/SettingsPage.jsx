@@ -5,6 +5,7 @@ import { toBengaliDigits } from '../lib/digits';
 import { useDigits } from '../lib/useDigits';
 import Button from '../ui/Button';
 import Chip from '../ui/Chip';
+import { LIMITS } from './settings';
 import { useSettings } from './SettingsProvider';
 
 const THEMES = [
@@ -17,26 +18,37 @@ const THEMES = [
 const SAMPLE =
   'ইয়াহুদী ও নাসারাদের প্রতি আল্লাহর অভিশাপ, তারা তাদের নবীদের কবরকে মসজিদে পরিণত করেছে।';
 
-// A stepper: a label, the current value and minus / plus buttons that stop at the limits.
-function Stepper({ label, value, display, min, max, step, onChange, lessLabel, moreLabel }) {
+const round = (n) => Math.round(n * 100) / 100;
+
+// A range slider (the whole range is reachable by dragging on a phone) with a minus and a plus
+// button of 44px for one fine step; the current value is shown in text beside the label.
+function Slider({ label, value, display, min, max, step, onChange, lessLabel, moreLabel }) {
   return (
-    <div className="settings-row">
-      <span className="settings-label">{label}</span>
-      <div className="settings-stepper">
+    <div className="settings-slider">
+      <div className="settings-row">
+        <span className="settings-label">{label}</span>
+        <output className="settings-value">{display}</output>
+      </div>
+      <div className="settings-slider-controls">
         <Button size="sm" aria-label={lessLabel} disabled={value <= min} onClick={() => onChange(Math.max(min, round(value - step)))}>−</Button>
-        <output>{display}</output>
+        <input
+          type="range"
+          className="settings-range"
+          aria-label={label}
+          aria-valuetext={display}
+          min={min} max={max} step={step} value={value}
+          onChange={(event) => onChange(round(Number(event.target.value)))}
+        />
         <Button size="sm" aria-label={moreLabel} disabled={value >= max} onClick={() => onChange(Math.min(max, round(value + step)))}>+</Button>
       </div>
     </div>
   );
 }
 
-const round = (n) => Math.round(n * 100) / 100;
-
 export default function SettingsPage() {
   const { settings, update, reset } = useSettings();
   const digits = useDigits();
-  const fraction = (n) => (settings.digits === 'en' ? String(n) : toBengaliDigits(String(n)));
+  const gap = (n) => (settings.digits === 'en' ? n.toFixed(1) : toBengaliDigits(n.toFixed(1)));
 
   return (
     <main id="main" tabIndex={-1} className="screen settings">
@@ -55,23 +67,17 @@ export default function SettingsPage() {
 
       <section className="settings-section" aria-labelledby="set-read">
         <h2 className="h3" id="set-read">পড়ার আকার</h2>
-        <Stepper
+        <Slider
           label="লেখার আকার (পিক্সেল)"
-          value={settings.size} display={digits(settings.size)} min={14} max={28} step={2}
+          value={settings.size} display={digits(settings.size)} {...LIMITS.size}
           lessLabel="লেখা ছোট করুন" moreLabel="লেখা বড় করুন"
           onChange={(size) => update({ size })}
         />
-        <Stepper
+        <Slider
           label="লাইনের ফাঁক"
-          value={settings.lineHeight} display={fraction(settings.lineHeight)} min={1.5} max={2.4} step={0.1}
+          value={settings.lineHeight} display={gap(settings.lineHeight)} {...LIMITS.lineHeight}
           lessLabel="লাইনের ফাঁক কমান" moreLabel="লাইনের ফাঁক বাড়ান"
           onChange={(lineHeight) => update({ lineHeight })}
-        />
-        <Stepper
-          label="লেখার প্রস্থ"
-          value={settings.width} display={digits(settings.width)} min={26} max={46} step={2}
-          lessLabel="লেখার প্রস্থ কমান" moreLabel="লেখার প্রস্থ বাড়ান"
-          onChange={(width) => update({ width })}
         />
         <p className="settings-preview" aria-label="নমুনা">{SAMPLE}</p>
       </section>
