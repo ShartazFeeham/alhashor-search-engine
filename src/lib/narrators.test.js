@@ -40,6 +40,8 @@ describe('narratorHref', () => {
     expect(narratorHref('aisha', 1, 'nasai')).toBe('/narrators?name=aisha&page=2&book=nasai');
     expect(narratorHref('aisha', 0, 'all')).toBe('/narrators?name=aisha');
     expect(narratorHref('aisha', 0, 'nobook')).toBe('/narrators?name=aisha');
+    expect(narratorHref('aisha', 1, 'muslim', 'desc')).toBe('/narrators?name=aisha&page=2&book=muslim&sort=desc');
+    expect(narratorHref('', 0, 'all', 'desc')).toBe('/narrators?sort=desc');
   });
 
   test('the data addresses', () => {

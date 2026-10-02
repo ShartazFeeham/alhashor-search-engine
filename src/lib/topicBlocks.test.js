@@ -51,3 +51,13 @@ describe('groupTopics with the real topic names', () => {
     expect(letters(mixed)).toEqual(['অ', 'ক', 'z']);
   });
 });
+
+describe('groupTopics with objects (the narrators menu)', () => {
+  test('groups and orders items by their name', () => {
+    const items = [{ id: 'b', name: 'কবর' }, { id: 'a', name: 'অহংকার' }, { id: 'c', name: 'আয়িশা' }];
+    const blocks = groupTopics(items, 'asc', (item) => item.name);
+    expect(blocks.map((block) => block.letter)).toEqual(['অ', 'আ', 'ক']);
+    expect(blocks[0].names).toEqual([items[1]]);
+    expect(groupTopics(items, 'desc', (item) => item.name).map((block) => block.letter)).toEqual(['ক', 'আ', 'অ']);
+  });
+});

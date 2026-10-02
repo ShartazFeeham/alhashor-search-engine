@@ -1,24 +1,16 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import PageTitle from '../Helpers/PageTitle';
 import { BOOKS } from '../lib/books';
 import { usePageFocus } from '../lib/pageFocus';
 import { topicHref } from '../lib/topics';
 import SearchResults from '../search/SearchResults';
 import Icon from '../ui/Icon';
+import { MenuButton } from './NameMenu';
 import TopicIndex from './TopicIndex';
-import { useWide } from './useWide';
-
-// The slim button that opens the topics menu on a phone (it is only rendered there).
-function MenuButton({ onClick, buttonRef }) {
-  return (
-    <button type="button" className="topics-open" aria-haspopup="dialog" onClick={onClick} ref={buttonRef}>
-      <Icon name="menu" size={18} />বিষয়সূচি
-    </button>
-  );
-}
+import { useMenuOverlay } from './useMenuOverlay';
 
 /*
     /topics?topic=<name>&page=<n>&book=<id>&sort=desc: the address is the whole state. A topic is
@@ -45,31 +37,8 @@ export default function TopicsPage() {
   const nameRef = useRef(null);
   usePageFocus(topic, nameRef);
 
-  const wide = useWide();
-  const [open, setOpen] = useState(topic === '');
-  const overlay = !wide && open;
-  const openerRef = useRef(null);
-  const restoreFocus = useRef(false);
-  const close = () => {
-    restoreFocus.current = true;
-    setOpen(false);
-  };
-  // Behind the overlay the page does not scroll.
-  useEffect(() => {
-    if (!overlay) return undefined;
-    const before = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = before;
-    };
-  }, [overlay]);
-  // Closing with × or Escape puts focus back on the button that opened it.
-  useEffect(() => {
-    if (open || !restoreFocus.current) return;
-    restoreFocus.current = false;
-    openerRef.current?.focus();
-  }, [open]);
-  const opener = <MenuButton onClick={() => setOpen(true)} buttonRef={openerRef} />;
+  const { wide, overlay, openerRef, close, pick, show } = useMenuOverlay(topic === '');
+  const opener = <MenuButton label="বিষয়সূচি" onClick={show} buttonRef={openerRef} />;
 
   // The listing asks for another book or page ({ book, page }: page 0 is the first, else 1-based).
   const change = ({ book: nextBook = book, page = 0 }) =>
@@ -82,7 +51,7 @@ export default function TopicsPage() {
       <h1 className="h1">বিষয়ভিত্তিক হাদীস</h1>
       <div className="topics-layout">
         {(wide || overlay) && (
-          <TopicIndex topic={topic} page={pageNumber - 1} sort={sort} book={book} overlay={overlay} onClose={close} onPick={() => setOpen(false)} />
+          <TopicIndex topic={topic} page={pageNumber - 1} sort={sort} book={book} overlay={overlay} onClose={close} onPick={pick} />
         )}
         <div className="topics-main">
           {!wide && topic !== '' && opener}

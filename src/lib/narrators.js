@@ -16,12 +16,14 @@ export const indexUrl = () => `${BASE_PATH}/json/narrators/index.json`;
 export const narratorUrl = (id) => `${BASE_PATH}/json/narrators/${encodeURIComponent(id)}.json`;
 
 // The address of a narrator's page (0-based `page`; the first page has no "?page="), optionally
-// narrowed to one book ('all' or a book id). No id is the list of narrators.
-export function narratorHref(id, page = 0, book = 'all') {
+// narrowed to one book ('all' or a book id); `sort` 'desc' only orders the menu. No id is the
+// list of narrators.
+export function narratorHref(id, page = 0, book = 'all', sort = 'asc') {
   const params = new URLSearchParams();
   if (id) params.set('name', id);
   if (id && page > 0) params.set('page', String(page + 1));
-  if (id && bookById(book)) params.set('book', book);
+  if (id && bookById(book) && book !== 'all') params.set('book', book);
+  if (sort === 'desc') params.set('sort', 'desc');
   const query = params.toString();
   return query ? `${NARRATORS_PATH}?${query}` : NARRATORS_PATH;
 }

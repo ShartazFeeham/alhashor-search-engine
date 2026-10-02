@@ -1,6 +1,6 @@
 import { normalizeBengali } from '../Helpers/bengali';
 
-// The letters of the topic menu's blocks: the vowels first, then the consonants, in the order of
+// The letters of the blocks of the topics and narrators menus: the vowels first, then the consonants, in the order of
 // the Bangla alphabet. A name starting with anything else goes in a block after these.
 export const LETTER_ORDER = Array.from('অআইঈউঊঋএঐওঔ' + 'কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ');
 
@@ -20,15 +20,16 @@ const rank = (letter) => {
 
 // [{ letter, names }]: the names grouped by first letter, the blocks in alphabet order and the
 // names in each block collated. 'desc' reverses both. Letters with no name are not listed.
-export function groupTopics(names, sort = 'asc') {
+// The items are names (strings) or, with `nameOf`, anything that has one (a narrator: { id, name }).
+export function groupTopics(items, sort = 'asc', nameOf = (item) => item) {
   const byLetter = new Map();
-  for (const name of names) {
-    const letter = firstLetter(name);
-    byLetter.set(letter, [...(byLetter.get(letter) ?? []), name]);
+  for (const item of items) {
+    const letter = firstLetter(nameOf(item));
+    byLetter.set(letter, [...(byLetter.get(letter) ?? []), item]);
   }
   const blocks = [...byLetter.entries()]
     .sort(([a], [b]) => rank(a) - rank(b) || (a < b ? -1 : a > b ? 1 : 0))
-    .map(([letter, list]) => ({ letter, names: list.sort(compareNames) }));
+    .map(([letter, list]) => ({ letter, names: list.sort((a, b) => compareNames(nameOf(a), nameOf(b))) }));
   if (sort !== 'desc') return blocks;
   return blocks.reverse().map((block) => ({ ...block, names: [...block.names].reverse() }));
 }

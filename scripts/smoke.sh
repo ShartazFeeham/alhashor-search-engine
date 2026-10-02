@@ -74,7 +74,7 @@ expect_text /daily "গত ৭ দিন" "the daily page renders today's hadis 
 expect_text "/daily?tab=plans" "রমযানের ৩০ দিন" "the plans tab lists the reading plans"
 expect_text "/daily?tab=plans&plan=ramadan-30" "দিন ৩০" "a plan deep link renders its day-by-day checklist"
 expect_text /narrators "স্বয়ংক্রিয়ভাবে বাছাই করা" "the narrators page renders its list and the note about the names"
-expect_text /narrators "টি হাদীস" "the narrators list shows each narrator's count of hadis (the index loads)"
+expect_text /narrators "বর্ণনাকারীসূচি" "the narrators page renders its side menu"
 expect_text "/narrators?name=abu-hurayrah" "হাদীস নং" "a narrator deep link renders hadis cards"
 expect_text "/narrators?name=abu-hurayrah" "১ - ২০ পর্যন্ত দেখানো হচ্ছে" "a narrator deep link shows the first twenty of the narrator's hadis"
 expect_text "/narrators?name=abu-hurayrah&page=2&book=muslim" "২১ - ৪০ পর্যন্ত দেখানো হচ্ছে" "page 2 of one narrator and one book renders (20 to a page)"

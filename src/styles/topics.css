@@ -1,4 +1,4 @@
-/* Topics: the letter-block menu (a sticky sidebar from 900px, a full-screen overlay on phones), the
+/* Topics and narrators (the narrators page wears these same classes): the letter-block menu (a sticky sidebar from 900px, a full-screen overlay on phones), the
    "start here" block and the paged list of shared hadis cards. The cards themselves are styled in
    books.css (.hcard). */
 .topics-layout{display:flex;flex-direction:column;gap:12px}
@@ -38,6 +38,7 @@ nav.topics-menu{display:none}
 .topics-empty-icon{width:56px;height:56px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;color:var(--ink3)}
 
 .topics-name{margin:6px 0 0;font-size:20px;line-height:1.3;font-weight:700}
+.topics-name-n{margin-left:6px;font-size:13px;font-weight:400;color:var(--ink2);white-space:nowrap}
 .topics-live:empty{display:none}
 .topics-indicator{display:flex;align-items:center;gap:12px;color:var(--accent2);font-weight:600}
 .topics-indicator i{display:block;width:90px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);background-size:200% 100%;animation:topics-slide 1.1s linear infinite}

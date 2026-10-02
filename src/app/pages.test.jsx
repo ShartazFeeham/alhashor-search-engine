@@ -117,7 +117,7 @@ test('site metadata names the site and describes it in Bengali', () => {
 test('the layout loads every global stylesheet, in order', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
-  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css', '../styles/related.css', '../styles/narrators.css']);
+  expect(stylesheets).toEqual(['../styles/tokens.css', '../styles/base.css', '../styles/ui.css', '../styles/home.css', '../styles/hadis.css', '../styles/search.css', '../styles/books.css', '../styles/topics.css', '../styles/share.css', '../styles/daily.css', '../styles/related.css']);
 });
 
 test('the layout renders no compare provider or bar', () => {
