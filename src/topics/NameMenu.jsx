@@ -31,7 +31,7 @@ export function MenuButton({ label, onClick, buttonRef }) {
 // `items` are names or objects with a name (`nameOf`, `keyOf`); `filter(items, text)` narrows them,
 // `hrefOf(item)` and `sortHref(sort)` give the addresses, `isCurrent(item)` marks the chosen one
 // (`current` changes when it does, to scroll it into view). `empty` shows while there is no item.
-// `batch` (the narrators menu) draws only that many names at first and more as the end of the list scrolls into view. `labels` holds the texts: title, search, none, found(count). Optional, used by the narrators menu:
+// `initialText` is the search text to start with and `onText(text)` hears each change (the narrators menu keeps it in the address). `batch` (the narrators menu) draws only that many names at first and more as the end of the list scrolls into view. `labels` holds the texts: title, search, none, found(count). Optional, used by the narrators menu:
 // `countOf(item)` turns each name into a row with its count at the right (formatted with the
 // visitor's digits; `suffixOf(item)` shows a text after the name (display only; the part before it shrinks first), `decorOf(item)` adds a decoration along the row's bottom edge), `flat` lists the rows with no letter blocks (the items come in the order to
 // show), `sortOptions` [{ value, label }] replaces the two topics sorts, and `blockSort` ('asc' or
@@ -48,6 +48,8 @@ export default function NameMenu({
   current,
   sort = 'asc',
   batch = 0,
+  initialText = '',
+  onText,
   countOf,
   decorOf,
   suffixOf,
@@ -62,7 +64,7 @@ export default function NameMenu({
 }) {
   const digits = useDigits();
   const router = useRouter();
-  const [text, setText] = useState('');
+  const [text, setText] = useState(initialText);
   const shown = filter(items, text);
   const everything = flat ? [{ letter: '', names: shown }] : groupTopics(shown, blockSort === 'desc' ? 'desc' : 'asc', nameOf);
   const count = shown.length;
@@ -117,7 +119,7 @@ export default function NameMenu({
     const at = chip.getBoundingClientRect();
     const bar = list.querySelector('.topics-menu-row')?.offsetHeight ?? 0; // the sticky search row covers the top
     if (at.top < box.top + bar || at.bottom > box.bottom) list.scrollTop += at.top - box.top - (box.height - at.height) / 2;
-  }, [current, overlay]);
+  }, [current, overlay, items.length]);
 
   // The overlay takes focus when it opens.
   useEffect(() => {
@@ -170,7 +172,10 @@ export default function NameMenu({
               placeholder={labels.search}
               aria-label={labels.search}
               autoComplete="off"
-              onChange={(event) => setText(event.target.value)}
+              onChange={(event) => {
+                setText(event.target.value);
+                onText?.(event.target.value);
+              }}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') event.preventDefault();
               }}

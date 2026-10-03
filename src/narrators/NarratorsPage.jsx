@@ -29,7 +29,7 @@ const Loading = () => (
 );
 
 /*
-    /narrators?name=<id>&page=<n>&book=<bookId>&sort=<count-asc|name-asc|name-desc>: the address is the whole state. The
+    /narrators?name=<id>&page=<n>&book=<bookId>&sort=<count-asc|name-asc|name-desc>&q=<menu search>: the address is the whole state. The
     page is laid out like /topics: a menu of the narrators (each with its hadis count) (a sticky sidebar from
     900px wide, on a phone a full-screen overlay open at first when no narrator is chosen), and
     for the chosen one the listing of /search and /topics (ResultsListing) over the narrator's
@@ -43,6 +43,7 @@ export default function NarratorsPage() {
   const id = (params.get('name') || '').trim();
   const sort = narratorSortFrom(params.get('sort'));
   const book = bookFromParam(params.get('book'));
+  const text = params.get('q') || '';
   const pageParam = params.get('page');
   const pageNumber = Math.max(1, parseInt(pageParam ?? '', 10) || 1);
   const index = useNarratorIndex();
@@ -58,7 +59,10 @@ export default function NarratorsPage() {
 
   // The listing asks for another book or page ({ book, page }: page 0 is the first, else 1-based).
   const change = ({ book: nextBook = book, page = 0 }) =>
-    router.push(narratorHref(id, page > 0 ? page - 1 : 0, nextBook, sort), { scroll: false });
+    router.push(narratorHref(id, page > 0 ? page - 1 : 0, nextBook, sort, text), { scroll: false });
+
+  // The search text of the menu lives in the address too (replacing the entry, so Back is not filled with keystrokes).
+  const typed = (next) => router.replace(narratorHref(id, pageNumber - 1, book, sort, next), { scroll: false });
 
   const menuEmpty =
     index.status === LOADING ? (
@@ -83,6 +87,8 @@ export default function NarratorsPage() {
             page={pageNumber - 1}
             book={book}
             sort={sort}
+            text={text}
+            onText={typed}
             narrators={index.narrators}
             empty={menuEmpty}
             overlay={overlay}

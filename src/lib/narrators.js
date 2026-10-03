@@ -32,14 +32,16 @@ export const honorific = (name) => (name.trim() === '' || /[(（[][^)）\]]*[)�
 
 // The address of a narrator's page (0-based `page`; the first page has no "?page="), optionally
 // narrowed to one book ('all' or a book id); `sort` only orders the menu (see narratorSortFrom;
-// the default, most hadis first, is left out). No id is the list of narrators.
-export function narratorHref(id, page = 0, book = 'all', sort = DEFAULT_SORT) {
+// the default, most hadis first, is left out); `q` is the text typed in the menu's search box (kept in the
+// address, so Back and reload show the same list). No id is the list of narrators.
+export function narratorHref(id, page = 0, book = 'all', sort = DEFAULT_SORT, q = '') {
   const params = new URLSearchParams();
   if (id) params.set('name', id);
   if (id && page > 0) params.set('page', String(page + 1));
   if (id && bookById(book) && book !== 'all') params.set('book', book);
   const order = narratorSortFrom(sort);
   if (order !== DEFAULT_SORT) params.set('sort', order);
+  if (q.trim() !== '') params.set('q', q); // the menu's search text, so Back shows the same filtered list
   const query = params.toString();
   return query ? `${NARRATORS_PATH}?${query}` : NARRATORS_PATH;
 }
