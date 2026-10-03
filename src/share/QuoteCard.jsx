@@ -11,9 +11,13 @@ import { permanentUrl } from './useShare';
 function fontFamilies() {
   const style = getComputedStyle(document.documentElement);
   const pick = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
+  // The digit font (the ten Bengali digits only) comes first in every list that can draw a digit, as in
+  // the page's body font stack: the interface font draws the digits at uneven heights.
+  const digits = pick('--f-digits', '"Noto Serif Bengali"');
   return {
-    read: `${pick('--f-read', '"Noto Serif Bengali"')}, serif`,
-    ui: `${pick('--f-ui', '"Hind Siliguri"')}, sans-serif`,
+    digits,
+    read: `${digits}, ${pick('--f-read', '"Noto Serif Bengali"')}, serif`,
+    ui: `${digits}, ${pick('--f-ui', '"Hind Siliguri"')}, sans-serif`,
     lat: `${pick('--f-lat', '"Plus Jakarta Sans"')}, sans-serif`,
   };
 }
@@ -25,6 +29,8 @@ async function loadFonts(fonts, text) {
   if (!document.fonts?.load) return;
   await Promise.allSettled([
     document.fonts.load(`500 40px ${fonts.read}`, text.slice(0, 60) || 'আ'),
+    // the digit font at each weight the picture draws (saying 500, citation 600, book name 700)
+    ...[500, 600, 700].map((weight) => document.fonts.load(`${weight} 40px ${fonts.digits}`, '০১২৩৪৫৬৭৮৯')),
     document.fonts.load(`600 40px ${fonts.ui}`, 'বুখারী'),
     document.fonts.load(`700 40px ${fonts.ui}`, 'বুখারী'),
     document.fonts.load(`700 40px ${fonts.lat}`, 'Alhashor'),

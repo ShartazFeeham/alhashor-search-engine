@@ -136,3 +136,37 @@ test('a browser with no canvas context does not break the page', async () => {
   expect(onDrawn).not.toHaveBeenCalled();
   expect(screen.getByRole('img')).toBeInTheDocument();
 });
+
+describe('Bengali digits on the picture use the digit font', () => {
+  beforeEach(() => {
+    document.documentElement.style.setProperty('--f-digits', 'digitFont');
+    document.documentElement.style.setProperty('--f-ui', 'uiFont');
+  });
+  afterEach(() => {
+    document.documentElement.style.removeProperty('--f-digits');
+    document.documentElement.style.removeProperty('--f-ui');
+  });
+
+  test('every canvas font that draws the book name, citation or link lists the digit font first', async () => {
+    const onDrawn = vi.fn();
+    render(card({ onDrawn }));
+    await waitFor(() => expect(onDrawn).toHaveBeenCalled());
+    const cite = stub.texts.find((t) => t.text === CITE);
+    expect(cite.font).toMatch(/^600 40px digitFont, uiFont, sans-serif$/);
+    const name = stub.texts.find((t) => t.text === 'বুখারী শরীফ');
+    expect(name.font).toMatch(/^700 46px digitFont, uiFont, sans-serif$/);
+    // the saying is in the reading font, which has its own even digits; the digit font still comes first
+    const body = stub.texts.find((t) => t.text.includes('বর্তমান যুগের মুনাফিকরা'));
+    expect(body.font).toMatch(/^500 \d+px digitFont, /);
+  });
+
+  test('loads the digit font at the weights the picture draws before drawing', async () => {
+    document.fonts = { load: vi.fn(() => Promise.resolve([])) };
+    const onDrawn = vi.fn();
+    render(card({ onDrawn }));
+    await waitFor(() => expect(onDrawn).toHaveBeenCalled());
+    const loads = document.fonts.load.mock.calls.filter(([font]) => /^\d+ 40px digitFont$/.test(font));
+    expect(loads.map(([font]) => font.split(' ')[0]).sort()).toEqual(['500', '600', '700']);
+    for (const [, sample] of loads) expect(sample).toBe('০১২৩৪৫৬৭৮৯');
+  });
+});

@@ -52,3 +52,33 @@ test('number classes do not pick their own font family (the digits come from the
     for (const rule of text.match(numberRules) || []) expect(rule, file).not.toMatch(/font-family|font:/);
   }
 });
+
+test('the digit font covers every weight in use (400, 600, 700) and only the ten digits', async () => {
+  vi.resetModules();
+  vi.doMock('next/font/local', () => ({
+    default: (options) => ({ variable: options.variable, className: 'c', options }),
+  }));
+  const { digitFont } = await import('../fonts.js');
+  // one variable file (wght axis 100 to 900): a range weight makes the browser draw the real 600 and
+  // 700 outlines instead of thickening the regular face
+  expect(digitFont.options.weight).toBe('100 900');
+  const range = digitFont.options.declarations.find((d) => d.prop === 'unicode-range');
+  expect(range.value).toBe('U+09E6-09EF');
+});
+
+test('form controls inherit the font family and no rule names the interface font without the digit font', () => {
+  expect(css('base.css')).toMatch(/button, input, select, textarea \{[^}]*font-family: inherit/);
+  for (const [file, text] of allCss) {
+    for (const rule of text.match(/[^{}]*\{[^}]*font-(?:family:|:[^;}]*)[^}]*var\(--f-ui\)[^}]*\}/g) || []) {
+      // an element that names the interface font itself must list the digits first
+      expect(rule, file).toMatch(/var\(--f-digits\)\s*,\s*var\(--f-ui\)/);
+    }
+  }
+});
+
+test('the picture canvas builds its font lists with the digit font first and loads it before drawing', () => {
+  const card = readFileSync(path.resolve(root, 'src/share/QuoteCard.jsx'), 'utf8');
+  expect(card).toMatch(/--f-digits/);
+  expect(card).toMatch(/ui: `\$\{digits\}, \$\{pick\('--f-ui'/);
+  expect(card).toMatch(/\[500, 600, 700\]\.map\(\(weight\) => document\.fonts\.load\(`\$\{weight\} 40px \$\{fonts\.digits\}`/);
+});

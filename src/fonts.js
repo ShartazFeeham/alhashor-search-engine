@@ -18,10 +18,15 @@ export const uiFont = localFont({
 });
 
 // Only the ten Bengali digits (a 7 KB subset of Noto Serif Bengali): the interface font draws them
-// at uneven heights, so they come from here, first in the body font stack (base.css).
+// at uneven heights, so they come from here, first in the body font stack (base.css) and first in
+// the font lists of the share picture (QuoteCard.jsx). The file is variable (weight axis 100 to
+// 900), declared as a weight range so semibold and bold headings get the real 600 and 700 digits,
+// not the regular ones thickened; unicode-range keeps the face to the digits.
 export const digitFont = localFont({
   src: './assets/fonts/BengaliDigits.woff2',
   variable: '--f-digits',
+  weight: '100 900',
+  declarations: [{ prop: 'unicode-range', value: 'U+09E6-09EF' }],
   display: 'swap',
   adjustFontFallback: false, // no Arial stand-in: commas and letters must fall through to the interface font
 });
