@@ -3,7 +3,7 @@ import { dayNumber, pickDaily, strideFor } from './dailyPick';
 import { featuredSets } from './topPicks';
 
 // আজকের হাদীস always comes from the owner's featured top-picks sets (FEATURED_SET_NUMBERS in
-// topPicks.js): the pool is the de-duplicated union of their hadis, in set order, then item order.
+// featuredSets.js): the pool is the de-duplicated union of their hadis, in set order, then item order.
 // It is read from the loader, so the picks follow the owner's sets as they grow.
 //
 // FALLBACK: only while the pool has fewer than MIN_POOL hadis (the sets are still being filled in)

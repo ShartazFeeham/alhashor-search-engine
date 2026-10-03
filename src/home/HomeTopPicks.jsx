@@ -10,7 +10,7 @@ const SHOWN = 3;
 const FEATURED = featuredSets();
 
 // টপ লিস্ট/হাদীস on the home page: three of the featured sets (FEATURED_SET_NUMBERS in
-// lib/topPicks.js), titles only, each row a link to its set with a small "পড়ুন" label. The
+// lib/featuredSets.js), titles only, each row a link to its set with a small "পড়ুন" label. The
 // pre-built page and the first client render show the first three, so server and browser agree;
 // right after mounting three random ones replace them (a different choice on every visit).
 export default function HomeTopPicks({ sets = FEATURED }) {

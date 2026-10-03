@@ -12,6 +12,7 @@ import set10 from '../data/topPicks/set-10.json';
 import set11 from '../data/topPicks/set-11.json';
 import set12 from '../data/topPicks/set-12.json';
 import { bookById, hasHadis } from './books';
+import { FEATURED_SET_NUMBERS } from './featuredSets';
 
 // টপ লিস্ট/হাদীস: the owner's hand-picked hadis in themed sets.
 //
@@ -50,13 +51,12 @@ export function setFromFile(file) {
 export const ALL_SETS = SETS.map(setFromFile);
 
 // What the pages show: a set with no valid hadis is not listed, has no page, and is never offered.
-// The numbers of the sets the owner chose for the home page and the daily hadis (one constant, easy
-// to change). Sets 7 to 11 and the three older plans are never offered there.
-export const FEATURED_SET_NUMBERS = [1, 2, 3, 4, 5, 6, 12];
+// The sets chosen for the home page and the daily hadis are FEATURED_SET_NUMBERS (featuredSets.js).
+export { FEATURED_SET_NUMBERS };
 
-// The featured sets that have hadis, in set order.
+// The featured sets that have hadis, in the order of FEATURED_SET_NUMBERS.
 export const featuredSets = (sets = ALL_SETS) =>
-  sets.filter((set) => FEATURED_SET_NUMBERS.includes(set.number) && set.days.length > 0);
+  FEATURED_SET_NUMBERS.map((number) => sets.find((set) => set.number === number)).filter((set) => set && set.days.length > 0);
 
 // `count` different sets chosen at random from `sets` (a partial shuffle; `random` is Math.random).
 export function randomSets(sets, count, random = Math.random) {

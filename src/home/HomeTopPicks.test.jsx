@@ -23,9 +23,9 @@ const hrefs = () => within(screen.getByRole('list')).getAllByRole('link').map((l
 
 afterEach(() => vi.restoreAllMocks());
 
-test('the featured sets are numbers 1 to 6 and 12, and the real ones never include 7 to 11 or an empty set', () => {
-  expect(FEATURED_SET_NUMBERS).toEqual([1, 2, 3, 4, 5, 6, 12]);
-  expect(FEATURED.map((set) => set.number)).toEqual([1, 2, 3, 4, 5, 6, 12]);
+test('the featured sets are numbers 5, 1, 4, 6, 2, and the real ones never include another set or an empty set', () => {
+  expect(FEATURED_SET_NUMBERS).toEqual([5, 1, 4, 6, 2]);
+  expect(FEATURED.map((set) => set.number)).toEqual([5, 1, 4, 6, 2]);
   for (const set of featuredSets()) {
     expect(FEATURED_SET_NUMBERS).toContain(set.number);
     expect(set.days.length).toBeGreaterThan(0);
@@ -41,7 +41,7 @@ test('shows exactly three different sets, only from the featured ones, whatever 
     expect(ids).toHaveLength(3);
     expect(new Set(ids).size).toBe(3);
     for (const id of ids) expect(FEATURED.map((set) => set.id)).toContain(id);
-    expect(ids.some((id) => ['set-7', 'set-8', 'set-9', 'set-10', 'set-11'].includes(id))).toBe(false);
+    expect(ids.some((id) => ['set-3', 'set-7', 'set-8', 'set-9', 'set-10', 'set-11', 'set-12'].includes(id))).toBe(false);
     unmount();
   }
 });
