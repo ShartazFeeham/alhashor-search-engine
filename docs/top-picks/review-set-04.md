@@ -30,6 +30,7 @@
 | আব্বাস (রাঃ): "আমার চাচা পিতৃতুল্য" | আবু দাউদ 1623 | ১৬২৩. আল-হাসান ইব্‌নুস-সাব্বাহ (রহঃ) .... আবু হুরায়রা (রাঃ) | sahih | Abbas is the uncle of the Prophet, like a father; the same report is in Bukhari and Muslim |
 | যাইদ ও উসামা (রাঃ) | বুখারী 4117 | রাসূল সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম একটি সেনাদল প্রেরণ করেন | sahih | Usama ibn Zayd and his father: dearest to me |
 | নবীজির কন্যাগণ ও পুত্র ইবরাহীম | মুসলিম 5818 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, রাত্রে আমার একটি | sahih | his son Ibrahim: birth, nursing, death and his tears; daughters are in Bukhari 1180 (Zaynab) |
+| হাসান (রাঃ): "নবীজির সাদৃশ্য, আলীর নয়" | বুখারী 3290 | ৩২৯০। আবূ ’আসিম (রহঃ) ... ’উক্‌বা ইবনু হারিস (রাঃ) | sahih | Abu Bakr carries Hasan on his shoulders: he looks like the Prophet, not like Ali (added by the owner) |
 
 ## Not found
 

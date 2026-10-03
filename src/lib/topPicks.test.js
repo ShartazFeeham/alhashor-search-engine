@@ -32,6 +32,15 @@ describe('the set files', () => {
   });
 });
 
+describe('the Ahl al-Bayt set (set-04)', () => {
+  test('ends with Bukhari 3290 (Abu Bakr carries Hasan: he looks like the Prophet), graded sahih', () => {
+    const items = read('set-04.json').items;
+    const last = items[items.length - 1];
+    expect(last).toMatchObject({ book: 'bukhari', number: 3290, note: null, grade: 'sahih' });
+    expect(items.filter((item) => item.book === 'bukhari' && item.number === 3290)).toHaveLength(1);
+  });
+});
+
 describe('the loader', () => {
   test('reads the twelve files in order; the pages list the ones that have hadis, then the three older plans', () => {
     expect(ALL_SETS.map((set) => set.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
