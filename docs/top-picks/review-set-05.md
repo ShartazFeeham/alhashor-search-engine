@@ -2,28 +2,33 @@
 
 হাদীস থেকে আল্লাহর পরিচয়: তিনি অনাদি, অমুখাপেক্ষী, সর্বশক্তিমান ও সব ক্রটি থেকে পবিত্র
 
-| Line | Book + number | Opening words | Grade | Reason |
-|---|---|---|---|---|
-| "আল্লাহ ছিলেন, তাঁর আগে কিছু ছিল না" | বুখারী 6913 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর কাছে ছিলাম। | sahih | Imran: Allah was and nothing was before Him (then the throne on the water, creation) |
-| "তুমিই আওয়াল, তোমার আগে কিছু নেই; তুমিই আখির, তোমার পরে কিছু নেই" | মুসলিম 6641 | আবূ সালিহ (রহঃ) আমাদিগকে নির্দেশ দিতেন, যখন আমাদের | sahih | bedtime dua: You are the First, nothing before You; the Last, nothing after You |
-| "তুমিই যাহির, তোমার ঊর্ধ্বে কিছু নেই; তুমিই বাতিন, তোমার নিচে কিছু নেই" | তিরমিযী 3400 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম আমাদেরকে শয্যাগ্রহণের সময় (নিম্নের) | hasan | same bedtime dua in another book with different wording for the Zahir and Batin names; lines 2 and 3 share one dua |
-| শয়তান জিজ্ঞেস করে "এই সৃষ্টিকে কে সৃষ্টি করেছে, তাহলে আল্লাহকে কে?", তখন আল্লাহর আশ্রয় নিয়ে থেমে যাও | মুসলিম 245 | আছে যে, রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম ইরশাদ করেনঃ | sahih | who created your Lord: seek refuge in Allah and stop |
-| "নূরুন আন্না আরাহু": তিনি নূর, আমি কীভাবে তাঁকে দেখব | মুসলিম 340 | ৩৪০। আবূ বকর ইবনু আবূ শায়বা (রহঃ) ... | sahih | Abu Dharr: He is light, how could I see Him |
-| "আল্লাহ ঘুমান না, ঘুমানো তাঁর জন্য শোভা পায় না" | মুসলিম 342 | ৩৪২। আবূ বকর ইবনু আবূ শায়বা ও আবূ | sahih | Abu Musa: Allah does not sleep, nor is it fitting for Him |
-| "আল্লাহ তোমাদের চেহারা-আকৃতির দিকে তাকান না, অন্তরের দিকে তাকান" | ইবনে মাজাহ 4143 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেনঃ নিশ্চয় আল্লাহ তোমাদের | sahih | Allah does not look at your outward appearance and wealth but at your hearts and deeds; same report is in Muslim (not in the data) |
-| "আমি তোমার প্রশংসা গুনে শেষ করতে পারি না" | মুসলিম 974 | আমি এক রাতে রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে | sahih | Aisha: in sajda he says I cannot count Your praise |
-| "সুবহানাল্লাহি ওয়া বিহামদিহী, তাঁর সৃষ্টির সংখ্যা ও তাঁর সন্তুষ্টির পরিমাণ" | মুসলিম 6666 | ফজরের সালাতের সময় রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম তার | sahih | subhan Allah to the number of His creation, His pleasure, the weight of His throne, the ink of His words |
-| "সবচেয়ে সত্য কবিতা লাবীদের: জেনে রাখো, আল্লাহ ছাড়া সবকিছু বাতিল" | বুখারী 3563 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, সর্বাধিক সঠিক বাক্য | sahih | the truest word a poet said is Labid's: everything except Allah is void |
-| হাদীসে কুদসী "হে আমার বান্দারা": তোমরা সবাই আমার ওপর নির্ভরশীল | মুসলিম 6338 | যা তিনি আল্লাহ তা’আলা থেকে বর্ণনা করেন (অর্থাৎ | sahih | hadis qudsi: O My servants, you are all in need of Me (also contains lines 12 and 13) |
-| "তোমরা কেউ আমার উপকার বা ক্ষতি করতে পারো না" | - | - | - | the text of line 12 is part of the hadis qudsi Muslim 6338, already used for line 11 |
-| "সব মানুষ ও জিন একত্র হলেও আমার রাজত্ব বাড়ে না, কমেও না" | ইবনে মাজাহ 4257 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ প্রাচুর্যময় মহান আল্লাহ | hasan | the same hadis qudsi (Abu Dharr) in Ibn Majah: all jinn and men together cannot add to or reduce My kingdom a mosquito wing; sound |
-| "সমগ্র উম্মত একত্র হয়ে উপকার করতে চাইলেও আল্লাহ যা লিখেছেন তার বেশি পারবে না" | তিরমিযী 2518 | একদিন আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর পিছনে | hasan | Ibn Abbas: if the whole Ummah gathers to benefit you, only what Allah has written; hasan sahih |
-| "হে আল্লাহ, আপনি যা দেন তা বাধা দেওয়ার কেউ নেই, আপনি যা বাধা দেন তা দেওয়ার কেউ নেই" | বুখারী 804 | মুগীরা ইবনু শু’বা (রাঃ) আমাকে দিয়ে মু’আবিয়া (রাঃ) | sahih | Mughira: after each prayer: O Allah, none can withhold what You give and none can give what You withhold |
+| x | line | book + number | opening words | grade | reason |
+|---|---|---|---|---|---|
+| 1 | সৃষ্টির আগে কী ছিল? নবীজি (সাঃ): আল্লাহ ছিলেন, তাঁর আগে আর কিছুই ছিল না | বুখারী 6913 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর কাছে ছিলাম। | sahih | Allah before everything |
+| 2 | শয্যার দু’আয় নবীজি (সাঃ): আপনি আওয়াল, আপনার আগে কিছু নেই; আপনি আখির, আপনার পরে কিছু নেই; আপনি যাহির ও বাতিন | মুসলিম 6641 | আবূ সালিহ (রহঃ) আমাদিগকে নির্দেশ দিতেন, যখন আমাদের | sahih | the First, the Last, the Manifest, the Hidden |
+| 3 | আসমান-যমীন সৃষ্টির পঞ্চাশ হাজার বছর আগে আল্লাহ সবকিছুর তাকদীর নির্ধারণ করেছেন | তিরমিযী 2159 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম-কে আমি বলতে শুনেছি যে, | sahih | SWAP from tirmidhi 3400 (same dua as x2): decree before creation (hasan sahih gharib; same report as Muslim 6507) |
+| 4 | শয়তান প্রশ্ন তোলে 'এটা কে সৃষ্টি করল? তোমার রবকে কে সৃষ্টি করল?' নবীজি (সাঃ): আল্লাহর আশ্রয় নাও, ভাবনা থামাও | মুসলিম 245 | আছে যে, রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম ইরশাদ করেনঃ | sahih | Allah is not like the created: stop the thought |
+| 5 | 'আপনি কি আপনার রবকে দেখেছেন?' নবীজি (সাঃ): তিনি নূর, আমি কীভাবে দেখব? | মুসলিম 340 | করেছেন। তিনি বলেন, আমি রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম | sahih | Abu Dharr's question; 'He is light, how could I see' |
+| 6 | আল্লাহ কখনো ঘুমান না, ঘুমানো তাঁর শোভাও পায় না: নবীজি (সাঃ)-এর পাঁচ কথার প্রথম কথা | মুসলিম 342 | করেছেন। তিনি বলেন, একবার রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম | sahih | Allah does not sleep (the report also has other lines on the veil of light) |
+| 7 | নবীজি (সাঃ): আল্লাহ তোমাদের চেহারা ও সম্পদ দেখেন না, দেখেন তোমাদের অন্তর ও কাজ | ইবনে মাজাহ 4143 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেনঃ নিশ্চয় আল্লাহ তোমাদের | sahih | Allah looks at hearts, not forms (same report as Muslim) |
+| 8 | সিজদায় নবীজি (সাঃ): আপনার প্রশংসা গুনে শেষ করতে পারি না, আপনি তেমনই যেমন নিজে নিজের প্রশংসা করেছেন | মুসলিম 974 | আমি এক রাতে রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে | sahih | praise cannot be counted |
+| 9 | আল্লাহর পবিত্রতা ঘোষণা তাঁর সৃষ্টির সংখ্যা, সন্তুষ্টির পরিমাণ, আরশের ওজন ও কালেমার কালির সমান | মুসলিম 6666 | ফজরের সালাতের সময় রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম তার | sahih | praise measured by the count of creation |
+| 10 | নবীজি (সাঃ): কবিদের সবচেয়ে সত্য কথা লাবীদের পংক্তি: জেনে রাখো, আল্লাহ ছাড়া সবকিছু অসার | বুখারী 3563 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, সর্বাধিক সঠিক বাক্য | sahih | everything besides Allah is perishable |
+| 11 | হাদীসে কুদসী: তোমরা আমার ক্ষতিও করতে পারো না, উপকারও না; সবাই সবচেয়ে মুত্তাকী হলেও আমার রাজত্ব বাড়ে না | মুসলিম 6338 | যা তিনি আল্লাহ তা’আলা থেকে বর্ণনা করেন (অর্থাৎ | sahih | 'O My servants': independence; also holds the missing 'cannot harm or benefit Me' |
+| 12 | নবীজি (সাঃ)-এর দু’আ: আপনি চিরঞ্জীব, আপনার মৃত্যু নেই; জিন ও মানুষ সবাই মরে যায় | মুসলিম 6651 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলতেনঃ اللَّهُمَّ لَكَ أَسْلَمْتُ | sahih | SWAP from ibnmajah 4257 (shorter narration of x11): the Ever-Living, creatures perish |
+| 13 | নবীজি (সাঃ)-এর উপদেশ: সমগ্র উম্মত একজোট হলেও আল্লাহর লেখা তাকদীরের বাইরে উপকার বা ক্ষতি করতে পারবে না | তিরমিযী 2518 | একদিন আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর পিছনে | hasan | Ibn Abbas's advice: no benefit or harm except by Allah |
+| 14 | নামাযের পর নবীজি (সাঃ): আপনি যা দেন তা ঠেকানোর কেউ নেই, আপনি যা ঠেকান তা দেওয়ার কেউ নেই | বুখারী 804 | মুগীরা ইবনু শু’বা (রাঃ) আমাকে দিয়ে মু’আবিয়া (রাঃ) | sahih | none can withhold what He gives |
+| 15 | আদম সন্তান বলে 'আমার সন্তান আছে', আল্লাহ বলেন: আমি স্ত্রী ও সন্তান গ্রহণ থেকে সম্পূর্ণ পবিত্র | বুখারী 4130 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেন, আল্লাহ তা’আলা বলেন, | sahih | hadis qudsi: Allah is free of wife and child (the same report also says man denies resurrection) |
+| 16 | দাজ্জাল কানা হবে, আল্লাহ তাআলা অবশ্যই কানা নন: জনসমাবেশে নবীজি (সাঃ)-এর সতর্কবাণী | বুখারী 6642 | আবদুল আযীয ইবনু আবদুল্লাহ (রহঃ) ... আবদুল্লাহ ইবনু | sahih | Allah is free of any defect |
+| 17 | আল্লাহ যার কল্যাণ চান তাকে দ্বীনের জ্ঞান দেন; নবীজি (সাঃ): আমি তো বণ্টনকারী মাত্র, দান করেন আল্লাহ | বুখারী 6814 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে বলতে শুনেছি | sahih | Allah's will and giving (borderline topic) |
 
-## Not found
+## Not found / still missing
 
-- "তোমরা কেউ আমার উপকার বা ক্ষতি করতে পারো না"
+- (none)
 
 ## Notes
 
-Line 3 shares its dua with line 2 (different books and wording). Line 13 uses the Ibn Majah version of the same hadis qudsi as line 11; line 12 has no separate hadis. Line 14 (Tirmidhi 2518) contains the figurative phrase "you will find Him before you"; the owner may drop it if that reads as a place. Muslim 179 and Ibn Majah 195/196 (Allah does not sleep) were not used: Ibn Majah has the word "face"; Muslim 342 was chosen because its wording is clean.
+- Only three new items were added (14 -> 17): the data has few further hadis that state who Allah is without drifting into the rejected topics or into body/direction wording. Short of the 28 target on purpose.
+- Swaps: x3 tirmidhi 3400 -> tirmidhi 2159 (3400 is the same bedtime dua as x2 and both carry the 'nothing above You / nothing below You' wording; the line of x2 quotes only Awwal/Akhir/Zahir/Batin; consider whether x2 itself should stay, the Arabic fawqaka/dunaka is negated, but the Bengali plain wording says 'ঊর্ধ্বে'). x12 ibnmajah 4257 -> muslim 6651 (4257 is a shorter narration of the hadis qudsi already at x11, Muslim 6338).
+- The missing entry 'you cannot harm or benefit Me' is found: it is inside Muslim 6338 (x11), whose line now says it.
+- Not used on purpose: Bukhari 4464 ('I am time, in My hand is the power') has a hand wording; the istikhara dua (Bukhari 5940) is a practice hadis, not a statement about who Allah is; Bukhari 6814 (x17) is borderline (Allah gives, the Prophet only distributes) and can be pruned.
