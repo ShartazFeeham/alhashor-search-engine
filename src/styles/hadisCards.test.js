@@ -26,6 +26,11 @@ describe('cards, the same look as the search result cards', () => {
     expect(px(card, 'padding')).toBeLessThanOrEqual(12);
   });
 
+  test('the card that holds the hadis text has double the padding: 24px (the other cards keep 12px)', () => {
+    expect(px(rule(hadis, '.hadis-reading'), 'padding')).toBe(24);
+    expect(px(rule(hadis, '.hadis-reading'), 'padding')).toBe(2 * px(card, 'padding'));
+  });
+
   test('8 to 10px between the cards, on the page and inside the article', () => {
     expect(px(rule(hadis, '.hadis-page'), 'gap')).toBeGreaterThanOrEqual(8);
     expect(px(rule(hadis, '.hadis-page'), 'gap')).toBeLessThanOrEqual(10);
