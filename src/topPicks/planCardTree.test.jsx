@@ -19,12 +19,13 @@ const sets = [
 ];
 const cards = () => screen.getAllByRole('link').filter((link) => link.classList.contains('plan-card'));
 
-beforeEach(() => {
+const show = () => {
   localStorage.setItem('alhashor.plan-progress', JSON.stringify({ all: [0, 1, 2, 3], half: [0, 1] }));
   render(<SettingsProvider><TopPicksPage sets={sets} /></SettingsProvider>);
-});
+};
 
 test('every card holds a tree for its own set: ground only at 0, golden when all is read, half-way', () => {
+  show();
   const stages = cards().map((card) => card.querySelector('[data-testid="progress-tree"]').getAttribute('data-stage'));
   expect(stages).toEqual(['0', '100', '50']);
   expect(cards()[1].querySelector('[data-testid="progress-tree"]')).toHaveAttribute('data-golden', 'true');
@@ -33,6 +34,7 @@ test('every card holds a tree for its own set: ground only at 0, golden when all
 });
 
 test('the tree is decoration: hidden from screen readers, the progress text and ring still read', () => {
+  show();
   cards().forEach((card) => {
     expect(card.querySelector('[data-testid="progress-tree"]').closest('[aria-hidden="true"]')).toHaveClass('plan-card-tree');
     expect(within(card).queryByRole('img', { name: /অগ্রগতির গাছ/ })).toBeNull();
@@ -42,6 +44,7 @@ test('the tree is decoration: hidden from screen readers, the progress text and 
 });
 
 test('a card is still one link with the full title, and the tree sits last (at the right)', () => {
+  show();
   expect(cards()).toHaveLength(3);
   expect(cards()[0].querySelectorAll('a')).toHaveLength(0);
   expect(within(cards()[0]).getByText(LONG).textContent).toBe(LONG);
