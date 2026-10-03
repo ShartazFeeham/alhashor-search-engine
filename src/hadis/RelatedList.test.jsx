@@ -75,6 +75,7 @@ test('searches with the meaningful words of the whole text, and shows the first 
   stubSearch(buk(30));
   show();
   await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  await screen.findAllByRole('listitem');
   const [words] = searchClient.search.mock.calls[0];
   expect(words.length).toBeGreaterThan(0);
   expect(words.length).toBeLessThanOrEqual(25);
@@ -134,6 +135,7 @@ test('with 5 results or fewer there is no loader and nothing is watched', async 
   stubSearch(buk(5));
   show();
   await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  await screen.findAllByRole('listitem');
   expect(items()).toHaveLength(5);
   expect(loader()).not.toBeInTheDocument();
   expect(observers.every((o) => o.targets.size === 0)).toBe(true);
@@ -144,6 +146,7 @@ test('without IntersectionObserver every kept result is shown at once, and there
   stubSearch(buk(30));
   show();
   await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  await screen.findAllByRole('listitem');
   expect(items()).toHaveLength(20);
   expect(loader()).not.toBeInTheDocument();
 });
@@ -206,6 +209,7 @@ test('the items are list items with the separator class, inside one card', async
   stubSearch(buk(8));
   show();
   const region = await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  await screen.findAllByRole('listitem');
   expect(region).toHaveClass('hadis-card');
   for (const item of items()) expect(item).toHaveClass('related-item');
 });
@@ -318,6 +322,7 @@ test('hadis with the same number of shared words are listed shortest first; more
   stubSearch(buk(12, false));
   show();
   await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  await screen.findAllByRole('listitem');
   const [words] = searchClient.search.mock.calls[0];
   const names = items().map((row) => within(row).getAllByRole('link')[0].textContent);
   const digit = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
