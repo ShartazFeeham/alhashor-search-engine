@@ -66,7 +66,14 @@ export function randomSets(sets, count, random = Math.random) {
   return chosen;
 }
 
-export const TOP_PICKS = [...ALL_SETS, ...PLANS].filter((set) => set.days.length > 0);
+// The order the sets are listed in on the জনপ্রিয় হাদীস page, by set number (the owner's choice; the sets
+// keep their numbers, ids and titles, which the home page, the daily hadis, the colours and the saved
+// progress rely on). The three older plans follow.
+export const ORDER = [5, 1, 3, 4, 6, 9, 2, 7, 8, 10, 11, 12];
+
+const ordered = ORDER.map((number) => ALL_SETS.find((set) => set.number === number)).filter(Boolean);
+
+export const TOP_PICKS = [...ordered, ...PLANS].filter((set) => set.days.length > 0);
 
 // The one line under the page heading, on the home card and in the page's meta description.
 export const TOP_PICKS_TAGLINE = 'সবথেকে জনপ্রিয় হাদীসের সংগ্রহ';

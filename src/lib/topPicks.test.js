@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { PLANS } from '../data/readingPlans';
 import { bookById, hasHadis } from './books';
-import { ALL_SETS, TOP_PICKS, randomSets, setFromFile, topPicksHref } from './topPicks';
+import { ALL_SETS, ORDER, TOP_PICKS, randomSets, setFromFile, topPicksHref } from './topPicks';
 
 const dir = path.resolve(process.cwd(), 'src/data/topPicks');
 const files = readdirSync(dir).filter((name) => /^set-\d\d\.json$/.test(name)).sort();
@@ -36,7 +36,22 @@ describe('the loader', () => {
   test('reads the twelve files in order; the pages list the ones that have hadis, then the three older plans', () => {
     expect(ALL_SETS.map((set) => set.number)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     expect(TOP_PICKS.slice(-3)).toEqual(PLANS);
-    expect(TOP_PICKS.slice(0, -3)).toEqual(ALL_SETS.filter((set) => set.days.length > 0));
+    expect(TOP_PICKS.slice(0, -3).map((set) => set.number)).toEqual(ORDER.filter((number) => ALL_SETS.find((set) => set.number === number).days.length > 0));
+  });
+
+  test('the sets are listed in the display order 5, 1, 3, 4, 6, 9, 2, 7, 8, 10, 11, 12, then the three older plans', () => {
+    expect(ORDER).toEqual([5, 1, 3, 4, 6, 9, 2, 7, 8, 10, 11, 12]);
+    expect(TOP_PICKS.map((set) => set.number ?? set.id)).toEqual([...ORDER, ...PLANS.map((plan) => plan.id)]);
+  });
+
+  test('only the order changes: the titles equal the json titles, the ids and numbers are those of the files', () => {
+    for (const name of files) {
+      const file = read(name);
+      const set = TOP_PICKS.find((entry) => entry.id === file.id);
+      expect(set.title, name).toBe(file.title);
+      expect(set.number, name).toBe(file.number);
+      expect(ALL_SETS.find((entry) => entry.id === file.id)).toBe(ALL_SETS[file.number - 1]);
+    }
   });
 
   test('a set with no valid hadis is not listed (no placeholder, no page, never offered)', () => {
