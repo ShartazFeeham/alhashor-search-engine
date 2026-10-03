@@ -20,7 +20,7 @@
 /* ---------- page column: room kept at the bottom for the fixed bars ---------- */
 /* --tabbar-h is the phone tab bar (64px, the raised search button reaches 10px above it, plus 10px of air and the iOS home-indicator inset). Content is never
    hidden behind it. */
-:root{--tabbar-h:0px}
+:root{--tabbar-h:0px;--nav-h:57px}
 body{padding-bottom:var(--tabbar-h)}
 body>main{flex:1 0 auto;width:100%}
 

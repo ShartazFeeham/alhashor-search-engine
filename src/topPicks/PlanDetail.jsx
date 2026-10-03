@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { doneCount, isDone, percentDone } from '../lib/planProgress';
 import { topPicksHref } from '../lib/topPicks';
 import { useDigits } from '../lib/useDigits';
@@ -32,6 +32,10 @@ function TickBadge() {
   );
 }
 
+// The top bar is 57px tall (--nav-h, ui.css): a 1px sentinel just above the hero leaves the
+// viewport exactly when the hero sticks below the bar.
+const NAV_H = 57;
+
 // One set (or plan): the count, the day-by-day checklist, a progress bar pinned to the bottom of
 // the screen and "start again" (with a confirm step).
 export default function PlanDetail({ plan, progress, onToggle, onReset }) {
@@ -41,16 +45,42 @@ export default function PlanDetail({ plan, progress, onToggle, onReset }) {
   const done = doneCount(progress, plan.id, total);
   const percent = percentDone(progress, plan.id, total);
   const band = bandOf(percent);
+  const sentinel = useRef(null);
+  const head = useRef(null);
+  const fullHeight = useRef(0);
+  const [stuck, setStuck] = useState(false);
+
+  // The hero is pinned below the top bar; once it sticks it turns compact (no description or
+  // privacy note, a small tree).
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined' || !sentinel.current) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting === stuck) {
+        fullHeight.current = head.current?.offsetHeight ?? 0;
+        setStuck(!entry.isIntersecting);
+      }
+    }, { rootMargin: `-${NAV_H}px 0px 0px 0px` });
+    observer.observe(sentinel.current);
+    return () => observer.disconnect();
+  }, [stuck]);
+
+  // The shrunk hero takes less room in the flow: pull the list back up by the difference, so
+  // nothing under it jumps when it turns compact (and back).
+  useLayoutEffect(() => {
+    if (!head.current) return;
+    head.current.style.marginBottom = stuck ? `${head.current.offsetHeight - fullHeight.current}px` : '';
+  }, [stuck]);
 
   return (
     <section className="plan-detail" aria-labelledby="plan-detail-title">
       <Link href={topPicksHref()} className="plan-back">
         <Icon name="cl" size={18} />সব সেট
       </Link>
-      <header className="plan-detail-head">
+      <div ref={sentinel} className="plan-sentinel" aria-hidden="true" />
+      <header ref={head} className={stuck ? 'plan-detail-head is-stuck' : 'plan-detail-head'} data-stuck={stuck ? 'true' : 'false'}>
         <div className="plan-detail-main">
           <h1 className="h2" id="plan-detail-title">{plan.title}</h1>
-          {plan.description && <p className="muted plan-detail-desc">{plan.description}</p>}
+          {!stuck && plan.description && <p className="muted plan-detail-desc">{plan.description}</p>}
           <div className="plan-detail-count">
             <p role="status" aria-label="অগ্রগতি" aria-live="polite">
               আপনি পড়েছেন <b className="plan-detail-n" data-band={band}>{digits(done)}/{digits(total)}</b>
@@ -83,7 +113,7 @@ export default function PlanDetail({ plan, progress, onToggle, onReset }) {
               </div>
             </div>
           )}
-          <p className="tiny">অগ্রগতি শুধু এই ডিভাইসেই থাকে, কোনো অ্যাকাউন্ট লাগে না।</p>
+          {!stuck && <p className="tiny">অগ্রগতি শুধু এই ডিভাইসেই থাকে, কোনো অ্যাকাউন্ট লাগে না।</p>}
         </div>
         <div className="plan-detail-tree">
           <ProgressTree percent={percent} />
