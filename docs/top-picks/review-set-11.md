@@ -2,23 +2,32 @@
 
 দানের ফযীলত, গোপন দান, সাদাকায়ে জারিয়া এবং কাদের দান করা উত্তম
 
-| Line | Book + number | Opening words | Grade | Reason |
-|---|---|---|---|---|
-| "দানে সম্পদ কমে না" | মুসলিম 6356 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সাদাকা করলে সম্পদ | sahih | Abu Hurayra: charity never decreases wealth; forgiveness raises honour, humility raises rank |
-| সদকা বিপদ ঠেকায় | - | - | - | the only text (Tirmidhi 661, Anas: charity calms the Lord's anger and averts a bad death) has a weak chain; nothing sound in the data |
-| দাতা ও কৃপণের জন্য ফেরেশতার দু'আ | বুখারী 1358 | তিনি বলেন, নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ প্রতিদিন সকালে | sahih | Abu Hurayra: every morning two angels: O Allah give the spender a replacement, give the miser destruction |
-| ডান হাতের দান বাম হাত জানে না | বুখারী 6350 | ৬৩৫০। মুহাম্মাদ ইবনু সালাম (রহঃ) ... আবূ হুরায়রা (রাঃ) থেকে বর্নিত। | sahih | Abu Hurayra: the seven in the shade; the one who gives so secretly his left hand does not know what the right gave (the shade is also line 5) |
-| হাশরের দিনে দানকারীর ছায়া | বুখারী 627 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যে দিন আল্লাহর রহমতের ছায় | sahih | Abu Hurayra: the seven whom Allah shades on the day of no shade, among them the secret giver (another narration of the report used for line 4) |
-| সাদাকায়ে জারিয়া | মুসলিম 4077 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যখন মানুষ মারা যা | sahih | Abu Hurayra: when a person dies his deeds end except ongoing charity, useful knowledge, a righteous child |
-| পানি পান করানো ও কূপ খনন | নাসাঈ 3667 | তাঁর মাতা ইনতিকাল করলে, তিনি বললেন, ইয়া রাসূলাল্লাহ! আমার মা ইনতিকা | hasan | Sad ibn Ubada: which charity is best for my mother? giving water to drink; the well of Sad; no sound version in the two Sahihs is in the data |
-| "খেজুরের একটি টুকরো দিয়ে হলেও জাহান্নাম থেকে বাঁচো" | বুখারী 6117 | ৬১১৭। সুলায়মান ইবনু হারব (রহঃ) ... আদী ইবনু হাতিম (রাঃ) থেকে বর্নিত | sahih | Adi ibn Hatim: save yourselves from the Fire even with half a date, and if you cannot, with a good word |
-| ভালো কথাও সদকা | বুখারী 2781 | তিনি বলেন, রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন যে, প্র | sahih | Abu Hurayra: every joint owes charity each day; justice between two, helping with a mount, a good word, each step to prayer |
-| ইয়াতীমের লালন-পালন | বুখারী 4921 | ৪৯২১। আমর ইবনু যুবারা (রহঃ) ... সাহল (রাঃ) থেকে বর্নিত। রাসুলুল্লাহ | sahih | Sahl: I and the guardian of the orphan will be in Paradise like this (two fingers) |
-| বিধবা ও মিসকীনের জন্য চেষ্টাকারী | বুখারী 5580 | তিনি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম থেকে মারফু রূপে বর্ণনা করেছে | sahih | Safwan ibn Sulaym: the one who strives for the widow and the poor is like the fighter in the way of Allah |
-| নিকটাত্মীয় ও প্রতিবেশীকে দান | নাসাঈ 2584 | তিনি বলেন, মিসকীনকে দান করার মধ্যে শুধু সাদাকার সওয়াব রয়েছে আর আত্ | sahih | Salman ibn Amir: charity to the poor is one reward, to a relative two: charity and keeping the tie (the neighbour is not named in the text) |
-| উপরের হাত নিচের হাতের চেয়ে ভালো | বুখারী 1345 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম একবার মিম্বরের উপর থাকা অ | sahih | Ibn Umar: on the pulpit he spoke of charity and begging: the upper hand is better than the lower, the upper is the giver |
-| মৃত মা-বাবার পক্ষ থেকে সদকা | বুখারী 1305 | তিনি বলেন, এক ব্যাক্তি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লামকে বললেন, আ | sahih | Aisha: my mother died suddenly, would she have the reward if I give charity for her? yes |
+| x | line | book + number | opening words | grade | reason |
+|---|---|---|---|---|---|
+| 1 | সাদকায় সম্পদ কমে না; ক্ষমায় আল্লাহ মর্যাদা বাড়ান, বিনয়ে তাকে উঁচু করেন | মুসলিম 6356 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সাদাকা করলে সম্পদের | sahih | charity does not decrease wealth; forgiveness and humility raise one |
+| 2 | প্রতি সকালে দুই ফেরেশতার দু’আ: দাতাকে উত্তম প্রতিদান দিন, কৃপণকে ধ্বংস করুন | বুখারী 1358 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ প্রতিদিন সকালে দু’জন | sahih | the two angels' dua for the giver and against the miser |
+| 3 | আরশের ছায়ায় সাত জন, তাদের একজন এমন গোপনে দান করে যে ডান হাতের দান বাম হাত জানে না | বুখারী 6350 | মুহাম্মাদ ইবনু সালাম (রহঃ) ... আবূ হুরায়রা (রাঃ) | sahih | the seven in the shade of Allah on the Day, among them the secret giver (this item now covers the shade as well) |
+| 4 | হালাল সম্পদের একটি খেজুরও আল্লাহ ডান হাতে নেন, তা বাড়িয়ে দেন পাহাড়ের চেয়েও বড় করে | নাসাঈ 2527 | কুূতায়বা (রহঃ) ... আবু হুরায়রা (রাঃ) বলেন যে, | sahih | a charity from lawful earnings, even a date, is received by Allah and grown like a foal; sahih |
+| 5 | মৃত্যুর পরও চলতে থাকে তিন আমল: সাদাকায়ে জারিয়া, উপকারী ইলম আর দু’আকারী নেককার সন্তান | মুসলিম 4077 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যখন মানুষ মারা | sahih | sadaqah jariyah and the other two deeds that continue |
+| 6 | মায়ের পক্ষ থেকে সদকা করতে চাইলেন সাহাবী: কোন সদকা উত্তম? নবীজি (সাঃ): পানি পান করানো | নাসাঈ 3667 | তাঁর মাতা ইনতিকাল করলে, তিনি বললেন, ইয়া রাসূলাল্লাহ! | hasan | giving water as the best charity on behalf of the deceased mother (the text ends with the water arrangement of Sad that is still kept); hasan |
+| 7 | খেজুরের একটি টুকরো দিয়ে হলেও জাহান্নাম থেকে বাঁচো; তা-ও না পারলে একটি ভালো কথা দিয়ে | বুখারী 6117 | সুলায়মান ইবনু হারব (রহঃ) ... আদী ইবনু হাতিম | sahih | even half a date; otherwise a good word |
+| 8 | প্রতিদিন প্রতিটি জোড়ার সদকা: ন্যায়বিচার, সাহায্য করা, ভালো কথা, নামাযের পথে প্রতিটি কদম | বুখারী 2781 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন যে, প্রত্যেক দিন | sahih | a good word and every good act is a charity |
+| 9 | আমি ও ইয়াতীমের লালনকারী জান্নাতে এত কাছে, দুই আঙুল ফাঁক করে দেখালেন নবীজি (সাঃ) | বুখারী 4921 | আমর ইবনু যুবারা (রহঃ) ... সাহল (রাঃ) থেকে | sahih | the guardian of an orphan with the Prophet in Paradise |
+| 10 | বিধবা ও মিসকীনের জন্য চেষ্টাকারী আল্লাহর পথের মুজাহিদের মতো, রাত জাগা ও সিয়াম পালনকারীর মতো | বুখারী 5580 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম থেকে মারফু রূপে বর্ণনা | sahih | the one who strives for widows and the poor |
+| 11 | মিসকীনকে দানে এক সওয়াব, আত্মীয়কে দানে দুই: দান করার ও আত্মীয়তা রক্ষার | নাসাঈ 2584 | মিসকীনকে দান করার মধ্যে শুধু সাদাকার সওয়াব রয়েছে | sahih | charity to a relative has two rewards (also Tirmidhi 658) |
+| 12 | উপরের হাত নিচের হাতের চেয়ে ভালো: উপরের হাত দাতার, নিচের হাত ভিক্ষুকের | বুখারী 1345 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম একবার মিম্বরের উপর থাকা | sahih | the upper hand is better than the lower hand |
+| 13 | মা হঠাৎ মারা গেছেন, তাঁর পক্ষ থেকে সদকা করলে কি তিনি সওয়াব পাবেন? নবীজি (সাঃ): হ্যাঁ | বুখারী 1305 | এক ব্যাক্তি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লামকে বললেন, আমার | sahih | charity on behalf of the deceased mother reaches her |
+| 14 | সর্বোত্তম সদকা: সুস্থ থাকতে, সম্পদের লোভ ও দারিদ্র্যের ভয় থাকা অবস্থায় করা | নাসাঈ 2544 | যে, এক ব্যক্তি রাসূলুল্লাহ্ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম-কে জিজ্ঞাসা | sahih | the best charity is when healthy and fearing poverty (Bukhari 1419 has the same words) |
+| 15 | খরচ করো, গুনে রেখো না, নইলে আল্লাহও তোমাকে গুনে গুনে দেবেন: আসমা (রাঃ)-কে নবীজি (সাঃ) | মুসলিম 2247 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম আমাকে বলেছেনঃ তুমি খরচ | sahih | spend and do not count, Allah will not count for you |
+| 16 | সা‘দ (রাঃ)-কে নবীজি (সাঃ): আল্লাহর জন্য যা খরচ করবে সবই সদকা, এমনকি স্ত্রীর মুখে তুলে দেওয়া লোকমাও | বুখারী 4963 | আমি মক্কায় রোগগ্রস্ত হলে রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম | sahih | what you spend for Allah is charity, even the morsel to your wife |
+| 17 | কুষ্ঠরোগী, টাকমাথা ও অন্ধ: যে দান করল সে পুরস্কৃত হলো, যে কৃপণতা করল সে ফিরে গেল সব হারিয়ে | মুসলিম 7162 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে বলতে শুনেছেন যে, | sahih | the leper, the bald man and the blind man; generosity and gratitude vs stinginess (long, 3500 chars) |
+| 18 | নারীদের প্রতি নবীজি (সাঃ): অলংকার দিয়ে হলেও সদকা করো; আত্মীয়কে দিলে দুই সওয়াব | মুসলিম 2190 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, হে নারী সমাজ! | sahih | women should give charity even from jewellery; Zaynab asks about giving to her husband and orphans (long-ish, 1500 chars) |
+| 19 | সব সম্পদ নিয়ে এলেন আবূ বকর (রাঃ): পরিবারের জন্য কী রেখেছ? উত্তর: আল্লাহ ও তাঁর রাসুল (সাঃ)-কে | আবু দাউদ 1678 | আমি উমার ইব্‌নুল খাত্তাব (রাঃ)-কে বলতে শুনেছিঃ একদা | hasan | Abu Bakr brings all his wealth, Umar half; hasan (also Tirmidhi 3675) |
+| 20 | আল্লাহর পথে জোড়া জোড়া দানকারীকে জান্নাতের দরজাসমূহ থেকে ডাকা হবে: এ তোমার জন্য উত্তম | নাসাঈ 2441 | আমর ইবন উসমান (রহঃ) ... আবু হুরায়রা (রাঃ) | sahih | the one who gives in pairs is called from the gates of Paradise (the gate of charity) |
 
-## Not found
+## Not found / still missing
 
-- সদকা বিপদ ঠেকায়
+- "সদকা বিপদ ঠেকায়" (সদকা বালা-মুসীবত দূর করে): সহীহ সনদের হাদীস এখনও পাওয়া যায়নি, দুর্বল সনদেরটি বাদ রাখা হয়েছে
+- কিয়ামতের দিন দাতা নিজের সদকার ছায়ায় থাকবে: আলাদা হাদীস পাওয়া যায়নি (সাত ছায়ার হাদীসে গোপন দাতা আছে: ৩ নম্বর)
+- সদকা গুনাহ নিভিয়ে দেয় পানি যেমন আগুন নিভায়: এই শব্দে হাদীস পাওয়া যায়নি
+- কূপ খনন ও পানির ব্যবস্থার আলাদা হাদীস: নাসাঈ 3667-এ পানি পান করানোর কথা আছে, কূপের নাম নেই
