@@ -2,7 +2,101 @@
   "id": "dan-sadaqa",
   "number": 11,
   "title": "দান-সদকা",
-  "description": "",
-  "items": [],
-  "missing": []
+  "description": "দানের ফযীলত, গোপন দান, সাদাকায়ে জারিয়া এবং কাদের দান করা উত্তম",
+  "items": [
+    {
+      "line": "\"দানে সম্পদ কমে না\"",
+      "book": "muslim",
+      "number": 6356,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "দাতা ও কৃপণের জন্য ফেরেশতার দু'আ",
+      "book": "bukhari",
+      "number": 1358,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ডান হাতের দান বাম হাত জানে না",
+      "book": "bukhari",
+      "number": 6350,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "হাশরের দিনে দানকারীর ছায়া",
+      "book": "bukhari",
+      "number": 627,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "সাদাকায়ে জারিয়া",
+      "book": "muslim",
+      "number": 4077,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "পানি পান করানো ও কূপ খনন",
+      "book": "nasai",
+      "number": 3667,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "\"খেজুরের একটি টুকরো দিয়ে হলেও জাহান্নাম থেকে বাঁচো\"",
+      "book": "bukhari",
+      "number": 6117,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ভালো কথাও সদকা",
+      "book": "bukhari",
+      "number": 2781,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ইয়াতীমের লালন-পালন",
+      "book": "bukhari",
+      "number": 4921,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "বিধবা ও মিসকীনের জন্য চেষ্টাকারী",
+      "book": "bukhari",
+      "number": 5580,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "নিকটাত্মীয় ও প্রতিবেশীকে দান",
+      "book": "nasai",
+      "number": 2584,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "উপরের হাত নিচের হাতের চেয়ে ভালো",
+      "book": "bukhari",
+      "number": 1345,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মৃত মা-বাবার পক্ষ থেকে সদকা",
+      "book": "bukhari",
+      "number": 1305,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
+  "missing": [
+    "সদকা বিপদ ঠেকায়"
+  ]
 }

@@ -2,7 +2,148 @@
   "id": "qiyamater-alamat",
   "number": 12,
   "title": "কিয়ামতের আলামত",
-  "description": "",
-  "items": [],
+  "description": "কিয়ামতের ছোট ও বড় আলামত সম্পর্কে সহীহ হাদীস",
+  "items": [
+    {
+      "line": "ইলম উঠে যাওয়া",
+      "book": "bukhari",
+      "number": 85,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মূর্খতার প্রসার",
+      "book": "bukhari",
+      "number": 80,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ব্যভিচার ও হত্যার আধিক্য",
+      "book": "muslim",
+      "number": 6542,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "উঁচু ভবন বানানোর প্রতিযোগিতা",
+      "book": "muslim",
+      "number": 5,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ভূমিকম্প",
+      "book": "bukhari",
+      "number": 979,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "সময় ছোট হয়ে আসা",
+      "book": "bukhari",
+      "number": 6636,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "আমানত নষ্ট হওয়া",
+      "book": "bukhari",
+      "number": 6052,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"দাসী তার মনিবকে জন্ম দেবে\"",
+      "book": "bukhari",
+      "number": 4415,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "খালি পায়ের রাখালরা উঁচু ভবন বানাবে",
+      "book": "bukhari",
+      "number": 48,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "দাজ্জাল",
+      "book": "muslim",
+      "number": 7105,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ঈসা (আঃ)-এর অবতরণ",
+      "book": "bukhari",
+      "number": 2314,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ইয়াজুজ-মাজুজ",
+      "book": "bukhari",
+      "number": 3110,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "মাহদী",
+      "book": "tirmidhi",
+      "number": 2235,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "ধোঁয়া",
+      "book": "muslim",
+      "number": 7131,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "সূর্য পশ্চিমে উদিত হওয়া",
+      "book": "bukhari",
+      "number": 6062,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "দাব্বাতুল আরদ",
+      "book": "muslim",
+      "number": 7116,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "তিনটি ভূমিধস",
+      "book": "muslim",
+      "number": 7022,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ইয়েমেন থেকে আগুন",
+      "book": "tirmidhi",
+      "number": 2186,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "কিয়ামতের আগে মুমিনদের মৃত্যু",
+      "book": "muslim",
+      "number": 7106,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"কিয়ামত কবে, সে বিষয়ে জিজ্ঞাসিত ব্যক্তি জিজ্ঞাসাকারীর চেয়ে বেশি জানে না\"",
+      "book": "ibnmajah",
+      "number": 4044,
+      "note": null,
+      "grade": "sahih"
+    }
+  ],
   "missing": []
 }
