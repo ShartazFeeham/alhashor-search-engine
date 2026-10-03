@@ -102,9 +102,8 @@ describe.each(names)('contrast in the %s theme', (name) => {
     expect(ratio(t['--related-text'], t[bg])).toBeGreaterThanOrEqual(4.5);
   });
 
-  test('--match-text is softer than --related-text but still readable', () => {
-    expect(ratio(t['--match-text'], t['--surface'])).toBeLessThan(ratio(t['--related-text'], t['--surface']));
-    expect(t['--match-text']).not.toBe(t['--related-text']);
+  test('--match-text is the same colour as --related-text (the bold matching words differ only in weight)', () => {
+    expect(t['--match-text'].toLowerCase()).toBe(t['--related-text'].toLowerCase());
   });
 
   test('--ink3 stays quieter than --ink2 (the hierarchy is kept)', () => {
@@ -249,9 +248,20 @@ test('the automatic dark theme carries the tree colours too', () => {
   }
 });
 
-test('the similar hadis text is #333 and the bold matching words #555 in the light theme', () => {
+test('the similar hadis text and the bold matching words are both #333 in the light theme', () => {
   expect(themes.light['--related-text']).toBe('#333333');
-  expect(themes.light['--match-text']).toBe('#555555');
+  expect(themes.light['--match-text']).toBe('#333333');
+});
+
+test('the automatic dark block gives the matching words the same colour as the text too', () => {
+  const auto = css.slice(css.indexOf('@media (prefers-color-scheme: dark)'));
+  const pick = (name) => auto.match(new RegExp(`${name}\\s*:\\s*(#[0-9a-fA-F]{6})`))[1].toLowerCase();
+  expect(pick('--match-text')).toBe(pick('--related-text'));
+});
+
+test('.related-match is bold and keeps the text colour', () => {
+  const related = readFileSync(path.resolve(process.cwd(), 'src/styles/related.css'), 'utf8');
+  expect(related).toMatch(/\.related-match\{[^}]*font-weight:700/);
 });
 
 test('every theme block (including the device-dark one) defines both similar hadis tokens', () => {
