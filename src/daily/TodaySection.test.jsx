@@ -1,7 +1,7 @@
 /* eslint-disable testing-library/no-node-access, testing-library/no-container */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { bookById } from '../lib/books';
 import { formatNumber } from '../lib/digits';
 import { pickDay, recentDays } from '../lib/dailyPool';
@@ -9,12 +9,12 @@ import { stripChain } from '../lib/hadisCore';
 import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { diskFetch, realText } from '../test/hadisFixtures';
+import { getUrl } from '../test/nextNavigation';
 import { ToastProvider } from '../ui/Toast';
 import TodaySection from './TodaySection';
 
 const TODAY = new Date(2026, 9, 2, 10, 30);
 
-const cite = ({ book, number }) => `${book.cite}, হাদীস নং ${formatNumber(number, 'bn')}`;
 // The day's article and the seven-day list show the core of the hadis only: no number, no chain of
 // narrators (the full hadis page has them).
 const listText = ({ book, number }) => stripChain(realText(book.id, number)).core.replace(/\s+/g, ' ');
@@ -184,49 +184,92 @@ describe('the core of the hadis only', () => {
 });
 
 describe('the last seven days', () => {
+  const loaded = () => waitFor(() => expect(screen.getByRole('region', { name: 'গত ৭ দিন' }).querySelectorAll('.search-text')).toHaveLength(7));
   const section = () => screen.getByRole('region', { name: 'গত ৭ দিন' });
+  const title = ({ book, number }) => `${book.full} - হাদীস নং ${formatNumber(number, 'bn')}`;
 
   test('lists the pick of each of the seven days before, newest first, each linking to its page', async () => {
     show();
     const recent = recentDays(TODAY);
-    await screen.findByText(listText(recent[6].pick));
+    await loaded();
     const items = within(section()).getAllByRole('listitem');
     expect(items).toHaveLength(7);
     items.forEach((item, index) => {
       const { pick } = recent[index];
-      const link = within(item).getByRole('link', { name: cite(pick) });
+      const link = within(item).getByRole('link', { name: title(pick) });
       expect(link).toHaveAttribute('href', `/hadis/${pick.book.id}/${pick.number}`);
     });
     expect(within(items[0]).getByText(/১ অক্টোবর/)).toBeInTheDocument();
     expect(within(items[6]).getByText(/২৫ সেপ্টেম্বর/)).toBeInTheDocument();
   });
 
-  test('shows the start of each hadis', async () => {
+  test('shows the start of each hadis, the saying only (no chain of narrators)', async () => {
     show();
     const recent = recentDays(TODAY);
-    const body = stripChain(realText(recent[0].pick.book.id, recent[0].pick.number)).core;
-    await screen.findByText(listText(recent[0].pick));
+    const body = stripChain(realText(recent[0].pick.book.id, recent[0].pick.number)).core.replace(/\s+/g, ' ');
+    await loaded();
     expect(within(section()).getAllByRole('listitem')[0]).toHaveTextContent(body.slice(0, 20));
   });
 });
 
-describe('the last seven days list is justified and as wide as the article', () => {
-  const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
-  const rule = (selector) => new RegExp(`(?:^|\\})\\s*${selector.replace(/\./g, '\\.')}\\s*\\{([^}]*)\\}`).exec(css)[1];
+// Each earlier day is the same card as in the search, book and narrator listings (ResultItem).
+describe('the last seven days use the shared listing card', () => {
+  const loaded = () => waitFor(() => expect(screen.getByRole('region', { name: 'গত ৭ দিন' }).querySelectorAll('.search-text')).toHaveLength(7));
+  const list = () => screen.getByRole('region', { name: 'গত ৭ দিন' }).querySelector('ol');
 
-  test('each hadis text carries the shared justified class', async () => {
+  test('is the same list container and the same item, heading, text and action classes as the other listings', async () => {
     show();
-    const recent = recentDays(TODAY);
-    await screen.findByText(listText(recent[0].pick));
-    const texts = within(screen.getByRole('region', { name: 'গত ৭ দিন' })).getAllByText(/\S/, { selector: 'p.daily-recent-text' });
-    expect(texts.length).toBeGreaterThan(0);
-    for (const text of texts) expect(text).toHaveClass('hadis-justify');
+    await loaded();
+    expect(list()).toHaveClass('search-list');
+    const items = [...list().children];
+    expect(items).toHaveLength(7);
+    for (const item of items) {
+      expect(item.tagName).toBe('LI');
+      expect(item).toHaveClass('search-item');
+      expect(item.querySelector('.search-item-main .search-item-head a')).toBeInTheDocument();
+      expect(item.querySelector('.search-item-main p.search-text')).toBeInTheDocument();
+      expect(item.querySelector('.search-item-actions')).toBeInTheDocument();
+      expect(within(item).getByRole('button', { name: 'কপি' })).toBeInTheDocument();
+      expect(item.querySelector('[class*="daily-recent"]')).toBeNull();
+    }
   });
 
-  test.each(['.daily-recent', '.daily-recent-list', '.daily-recent-item', '.daily-recent-text'])('%s has no width-limiting style and spans the container', (selector) => {
-    const body = rule(selector);
-    expect(body).not.toMatch(/max-width|fit-content|inline-flex|inline-block|margin(?:-left|-right|-inline)?:\s*(?:0\s+)?auto/);
-    expect(body).toMatch(/width:100%/);
+  test('each card has a quiet date line above its heading: the date (a time element) and the weekday', async () => {
+    show();
+    const recent = recentDays(TODAY);
+    await loaded();
+    [...list().children].forEach((item, index) => {
+      const { date } = recent[index];
+      const line = item.querySelector('.search-item-date');
+      expect(line).toBeInTheDocument();
+      expect(item.firstElementChild).toBe(line);
+      expect(item.querySelector('.search-item-main').compareDocumentPosition(line) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+      const time = line.querySelector('time');
+      expect(time).toHaveAttribute('datetime', `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`);
+      expect(line.querySelectorAll('span')).toHaveLength(1);
+    });
+    expect(list().children[0].querySelector('.search-item-date')).toHaveTextContent('১ অক্টোবর ২০২৬');
+    expect(list().children[0].querySelector('.search-item-date')).toHaveTextContent('বৃহস্পতিবার');
+  });
+
+  test('a click on the card text opens the hadis, as in the other listings', async () => {
+    show();
+    const recent = recentDays(TODAY);
+    await loaded();
+    fireEvent.click(list().children[0].querySelector('.search-text'));
+    expect(getUrl().pathname).toBe(`/hadis/${recent[0].pick.book.id}/${recent[0].pick.number}`);
+  });
+
+  test('the old custom list styles are gone from daily.css', () => {
+    const daily = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
+    expect(daily).not.toMatch(/daily-recent-(list|item|date|head|text)/);
+  });
+
+  test('the date line cannot make the card wider than the page: it wraps and has no fixed width or nowrap', () => {
+    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/search.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+    const body = /\.search-item-date\s*\{([^}]*)\}/.exec(css)[1];
+    expect(body).toMatch(/flex-wrap:wrap/);
+    expect(body).not.toMatch(/white-space:\s*nowrap|(?:^|;)\s*(?:min-|max-)?width:|overflow|position:\s*absolute|margin[^;]*-\d/);
   });
 });
 

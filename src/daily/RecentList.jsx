@@ -1,44 +1,34 @@
 'use client';
 
-import Link from 'next/link';
 import { formatDate, weekdayName } from '../lib/bnDate';
-import { hadisHref, tagOf } from '../lib/hadisRoute';
-import { stripChain } from '../lib/hadisCore';
-import { useDigits } from '../lib/useDigits';
-import { useHadisText } from '../lib/useHadisText';
+import { tagOf } from '../lib/hadisRoute';
 import { useSettings } from '../settings/SettingsProvider';
-import BookBadge from '../ui/BookBadge';
-import { citationOf } from './citation';
+import ResultItem from '../search/ResultItem';
 
-function Excerpt({ bookId, number }) {
-  const { status, text } = useHadisText(tagOf(bookId, number));
-  if (status === 'loading') return <div className="hadis-skel" style={{ width: '80%' }} aria-busy="true" aria-label="লোড হচ্ছে" />;
-  if (status !== 'ok') return <p className="daily-recent-text hadis-justify daily-muted">হাদীসটি আনা যায়নি।</p>;
-  return <p className="daily-recent-text hadis-justify">{stripChain(text).core}</p>;
-}
+const isoDate = (date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
-// The pick of each of the last seven days, newest first, each a link to its page.
+// The pick of each of the last seven days, newest first. Each is the same card as the hadis in the
+// search, book and narrator listings (ResultItem), with its date on top and the saying only.
 export default function RecentList({ entries }) {
-  const digits = useDigits();
   const { settings } = useSettings();
   return (
     <section className="daily-recent" aria-labelledby="daily-recent-title">
       <h2 className="h2" id="daily-recent-title">গত ৭ দিন</h2>
-      <ol className="daily-recent-list">
+      <ol className="search-list" aria-label="গত ৭ দিনের হাদীস">
         {entries.map(({ date, pick }) => (
-          <li key={date.getTime()} className="daily-recent-item" style={{ '--bk': `var(${pick.book.colorVar})` }}>
-            <p className="daily-recent-date">
-              <time dateTime={`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`}>
-                {formatDate(date, settings.digits)}
-              </time>
-              <span>{weekdayName(date)}</span>
-            </p>
-            <div className="daily-recent-head">
-              <BookBadge bookId={pick.book.id} size="sm" />
-              <Link href={hadisHref(pick.book.id, pick.number)}>{citationOf(pick.book, pick.number, digits)}</Link>
-            </div>
-            <Excerpt bookId={pick.book.id} number={pick.number} />
-          </li>
+          <ResultItem
+            key={date.getTime()}
+            tag={tagOf(pick.book.id, pick.number)}
+            plain
+            core
+            dateLabel={
+              <>
+                <time dateTime={isoDate(date)}>{formatDate(date, settings.digits)}</time>
+                <span>{weekdayName(date)}</span>
+              </>
+            }
+          />
         ))}
       </ol>
     </section>

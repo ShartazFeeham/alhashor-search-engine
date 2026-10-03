@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useId } from 'react';
+import { stripChain } from '../lib/hadisCore';
 import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
 import { textWithCitation } from '../lib/share';
@@ -19,8 +20,9 @@ import BookBadge from '../ui/BookBadge';
 //
 // The book page reuses it for its list: `anchor` gives the item its id (h<number>), `marked` flags
 // the hadis a jump points at, and `plain` shows the beginning of the text (number removed) with
-// nothing highlighted.
-export default function ResultItem({ tag, matcher = null, anchor, marked = false, plain = false }) {
+// nothing highlighted. The daily page's earlier-days list adds `dateLabel` (a small line above the
+// card's heading) and `core` (the saying only, without the number and the chain of narrators).
+export default function ResultItem({ tag, matcher = null, anchor, marked = false, plain = false, dateLabel = null, core = false }) {
   const digits = useDigits();
   const copyText = useCopy();
   const router = useRouter();
@@ -50,7 +52,7 @@ export default function ResultItem({ tag, matcher = null, anchor, marked = false
     // The snippet is about the saying; when the words matched only the chain or the number
     // (a search for a narrator), it is taken from the whole text so the match is shown.
     const { chain, body } = splitHadis(text);
-    const source = plain ? [chain, body].filter(Boolean).join(' ') : hasMatch(body, matcher) ? body : text;
+    const source = core ? stripChain(text).core.replace(/\s+/g, ' ').trim() : plain ? [chain, body].filter(Boolean).join(' ') : hasMatch(body, matcher) ? body : text;
     const snippet = makeSnippet(source, matcher);
     cut = snippet.cutStart || snippet.cutEnd;
     content = (
@@ -73,6 +75,7 @@ export default function ResultItem({ tag, matcher = null, anchor, marked = false
       data-target={marked ? 'true' : undefined}
       onClick={openFromCard}
     >
+      {dateLabel && <p className="search-item-date">{dateLabel}</p>}
       <div className="search-item-main">
         <div className="search-item-head">
           <BookBadge bookId={book.id} size="sm" />

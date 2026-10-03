@@ -82,7 +82,6 @@ describe('the other stylesheets keep their controls at 44px', () => {
   test.each([
     ['share.css', '.share-icon-btn', 'height'],
     ['share.css', '.share-back', 'min-height'],
-    ['daily.css', '.daily-recent-head a', 'min-height'],
     ['daily.css', '.plan-back', 'min-height'],
     ['daily.css', '.plan-day-more-solo', 'min-height'],
     ['related.css', '.related-link', 'min-height'],
