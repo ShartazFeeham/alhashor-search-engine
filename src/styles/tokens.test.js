@@ -210,3 +210,13 @@ test('the automatic dark theme carries the same icon colours as the dark theme',
     expect(css.split(`--qi-${colour}:`).length - 1, colour).toBe(4);
   }
 });
+
+// ---------- top picks set page: the day number box (card colour on a solid box) ----------
+describe.each(names)('day number boxes in the %s theme', (name) => {
+  const t = themes[name];
+
+  test('the number (card colour) is at least 4.5:1 on the box, done or not', () => {
+    expect(ratio(t['--surface'], t['--accent2'])).toBeGreaterThanOrEqual(4.5);
+    expect(ratio(t['--surface'], t['--ink3'])).toBeGreaterThanOrEqual(4.5);
+  });
+});

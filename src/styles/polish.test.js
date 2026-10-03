@@ -84,7 +84,7 @@ describe('the other stylesheets keep their controls at 44px', () => {
     ['share.css', '.share-back', 'min-height'],
     ['daily.css', '.daily-recent-head a', 'min-height'],
     ['daily.css', '.plan-back', 'min-height'],
-    ['daily.css', '.plan-day-more', 'min-height'],
+    ['daily.css', '.plan-day-more-solo', 'min-height'],
     ['related.css', '.related-link', 'min-height'],
   ])('%s %s has a %s of at least 44px', (file, selector, property) => {
     const match = new RegExp(`(?:^|;)${property}:(\\d+)px`).exec(rule(read(file), selector));
@@ -151,14 +151,16 @@ describe('links in the daily pages use the accent, not the default blue', () => 
   const daily = read('daily.css');
 
   test('the plan-day full-hadis link', () => {
-    for (const selector of ['.plan-day-more']) {
+    for (const selector of ['.plan-day-more', '.plan-day-more-solo']) {
       const declarations = rule(daily, selector);
       expect(declarations).toMatch(/color:var\(--accent2\)/);
       expect(declarations).not.toMatch(/--link/);
       expect(declarations).not.toMatch(/text-decoration:underline/);
     }
     expect(daily).toMatch(/\.plan-day-more:hover,\.plan-day-more:focus-visible\{[^}]*underline/);
-    expect(rule(daily, '.plan-day-more')).toMatch(/min-height:44px/);
+    expect(rule(daily, '.plan-day-more-solo')).toMatch(/min-height:44px/);
+    // the inline link is a line of text; its tap area is a pseudo-element around it
+    expect(rule(daily, '.plan-day-more::after')).toMatch(/inset:-10px/);
   });
 });
 

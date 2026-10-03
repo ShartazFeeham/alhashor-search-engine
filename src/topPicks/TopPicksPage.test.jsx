@@ -140,7 +140,7 @@ describe('a set as a checklist', () => {
     show();
     expect(checkboxes()).toHaveLength(PLAN.days.length);
     PLAN.days.forEach((day, index) => {
-      expect(checkboxes()[index]).toHaveAccessibleName(`দিন ${bn(index + 1)} ${cite(day)}`);
+      expect(checkboxes()[index]).toHaveAccessibleName(`${bn(index + 1)} ${cite(day)}`);
       expect(checkboxes()[index]).not.toBeChecked();
     });
   });
@@ -158,10 +158,10 @@ describe('a set as a checklist', () => {
   test('checking a day ticks it, counts it in a live message, and saves it on the device', async () => {
     show();
     const live = screen.getByRole('status', { name: 'অগ্রগতি' });
-    expect(live).toHaveTextContent(`০/${bn(PLAN.days.length)} দিন সম্পন্ন`);
+    expect(live).toHaveTextContent(`আপনি পড়েছেন ০/${bn(PLAN.days.length)}`);
     fireEvent.click(checkboxes()[1]);
     expect(checkboxes()[1]).toBeChecked();
-    expect(live).toHaveTextContent(`১/${bn(PLAN.days.length)} দিন সম্পন্ন`);
+    expect(live).toHaveTextContent(`আপনি পড়েছেন ১/${bn(PLAN.days.length)}`);
     expect(saved()).toEqual({ [PLAN.id]: [1] });
     expect(screen.getByRole('progressbar', { name: `${PLAN.title}: অগ্রগতি` })).toHaveAttribute('aria-valuenow', String(Math.round(100 / PLAN.days.length)));
     fireEvent.click(checkboxes()[1]);
@@ -238,7 +238,7 @@ describe('when the device blocks storage', () => {
     show();
     fireEvent.click(checkboxes()[0]);
     expect(checkboxes()[0]).toBeChecked();
-    expect(screen.getByRole('status', { name: 'অগ্রগতি' })).toHaveTextContent(`১/${bn(PLAN.days.length)} দিন সম্পন্ন`);
+    expect(screen.getByRole('status', { name: 'অগ্রগতি' })).toHaveTextContent(`আপনি পড়েছেন ১/${bn(PLAN.days.length)}`);
     fireEvent.click(screen.getByRole('button', { name: 'মুছে ফেলুন' }));
     fireEvent.click(screen.getByRole('button', { name: 'হ্যাঁ, মুছে ফেলুন' }));
     expect(checkboxes()[0]).not.toBeChecked();

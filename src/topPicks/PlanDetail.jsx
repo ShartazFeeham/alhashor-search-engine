@@ -9,6 +9,27 @@ import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import PlanDay from './PlanDay';
 import ProgressBar from './ProgressBar';
+import { bandOf } from './ProgressRing';
+
+// A counter-clockwise arrow: start again.
+function ResetIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 12a8 8 0 1 0 2.4-5.7" />
+      <path d="M4 4v5h5" />
+    </svg>
+  );
+}
+
+// The small green circle with a tick that marks a finished set.
+function TickBadge() {
+  return (
+    <svg className="plan-detail-tick" data-testid="hero-tick" width="18" height="18" viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="10" r="10" fill="var(--progress-green)" />
+      <path d="M5.6 10.4 8.7 13.5 14.4 7.3" fill="none" stroke="var(--surface)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 // One set (or plan): the count, the day-by-day checklist, a progress bar pinned to the bottom of
 // the screen and "start again" (with a confirm step).
@@ -17,6 +38,8 @@ export default function PlanDetail({ plan, progress, onToggle, onReset }) {
   const [confirming, setConfirming] = useState(false);
   const total = plan.days.length;
   const done = doneCount(progress, plan.id, total);
+  const percent = percentDone(progress, plan.id, total);
+  const band = bandOf(percent);
 
   return (
     <section className="plan-detail" aria-labelledby="plan-detail-title">
@@ -24,33 +47,43 @@ export default function PlanDetail({ plan, progress, onToggle, onReset }) {
         <Icon name="cl" size={18} />সব সেট
       </Link>
       <header className="plan-detail-head">
-        <h1 className="h2" id="plan-detail-title">{plan.title}</h1>
-        {plan.description && <p className="muted">{plan.description}</p>}
-        <div className="plan-detail-count">
-          <p role="status" aria-label="অগ্রগতি" aria-live="polite">{digits(done)}/{digits(total)} দিন সম্পন্ন</p>
-          {done > 0 && !confirming && (
-            <Button size="sm" variant="ghost" onClick={() => setConfirming(true)}>মুছে ফেলুন</Button>
-          )}
-        </div>
-        {confirming && (
-          <div className="plan-confirm" role="alert">
-            <p>এই পরিকল্পনার অগ্রগতি মুছে ফেলবেন? এটি ফেরানো যাবে না।</p>
-            <div className="plan-confirm-buttons">
-              <Button
-                size="sm"
-                variant="primary"
-                onClick={() => {
-                  onReset(plan.id);
-                  setConfirming(false);
-                }}
-              >
-                হ্যাঁ, মুছে ফেলুন
-              </Button>
-              <Button size="sm" onClick={() => setConfirming(false)}>না, থাক</Button>
-            </div>
+        <div className="plan-detail-main">
+          <h1 className="h2" id="plan-detail-title">{plan.title}</h1>
+          {plan.description && <p className="muted plan-detail-desc">{plan.description}</p>}
+          <div className="plan-detail-count">
+            <p role="status" aria-label="অগ্রগতি" aria-live="polite">
+              আপনি পড়েছেন <b className="plan-detail-n" data-band={band}>{digits(done)}/{digits(total)}</b>
+              {percent >= 100 && <TickBadge />}
+            </p>
+            {done > 0 && !confirming && (
+              <button type="button" className="plan-reset" aria-label="মুছে ফেলুন" title="মুছে ফেলুন" onClick={() => setConfirming(true)}>
+                <ResetIcon />
+              </button>
+            )}
           </div>
-        )}
-        <p className="tiny">অগ্রগতি শুধু এই ডিভাইসেই থাকে, কোনো অ্যাকাউন্ট লাগে না।</p>
+          <div className="hero-prog" data-testid="hero-progress" data-band={band} aria-hidden="true">
+            <i style={{ width: `${percent}%` }} />
+          </div>
+          {confirming && (
+            <div className="plan-confirm" role="alert">
+              <p>এই পরিকল্পনার অগ্রগতি মুছে ফেলবেন? এটি ফেরানো যাবে না।</p>
+              <div className="plan-confirm-buttons">
+                <Button
+                  size="sm"
+                  variant="primary"
+                  onClick={() => {
+                    onReset(plan.id);
+                    setConfirming(false);
+                  }}
+                >
+                  হ্যাঁ, মুছে ফেলুন
+                </Button>
+                <Button size="sm" onClick={() => setConfirming(false)}>না, থাক</Button>
+              </div>
+            </div>
+          )}
+          <p className="tiny">অগ্রগতি শুধু এই ডিভাইসেই থাকে, কোনো অ্যাকাউন্ট লাগে না।</p>
+        </div>
       </header>
       <ol className="plan-days" aria-label="দিনের তালিকা">
         {plan.days.map((day, index) => (
@@ -66,7 +99,7 @@ export default function PlanDetail({ plan, progress, onToggle, onReset }) {
       {/* The last child of the section: sticky at the bottom of the screen while the list scrolls
           (above the phone tab bar), and in its own place under the list at the end. */}
       <div className="plan-pinned">
-        <ProgressBar label={`${plan.title}: অগ্রগতি`} value={percentDone(progress, plan.id, total)} />
+        <ProgressBar label={`${plan.title}: অগ্রগতি`} value={percent} />
         <span aria-hidden="true">{digits(done)}/{digits(total)}</span>
       </div>
     </section>
