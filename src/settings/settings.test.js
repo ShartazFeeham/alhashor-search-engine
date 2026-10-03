@@ -10,7 +10,7 @@ function memoryStorage(initial = {}) {
 }
 
 test('defaults are the comfortable reading values', () => {
-  expect(DEFAULT_SETTINGS).toEqual({ theme: 'auto', size: 16, lineHeight: 1.9, digits: 'bn' });
+  expect(DEFAULT_SETTINGS).toEqual({ theme: 'light', size: 16, lineHeight: 1.9, digits: 'bn' });
 });
 
 test('the ranges are 3 to 30 px in steps of 1, and 0.5 to 2.5 in steps of 0.1', () => {
@@ -25,7 +25,7 @@ test('there is no text width setting any more', () => {
 
 test('clampSettings keeps every value in range and falls back for bad input', () => {
   expect(clampSettings({ size: 99, lineHeight: 0, theme: 'neon', digits: 'xx' })).toEqual({
-    theme: 'auto', size: 30, lineHeight: 0.5, digits: 'bn',
+    theme: 'light', size: 30, lineHeight: 0.5, digits: 'bn',
   });
   expect(clampSettings({ size: 0, lineHeight: 9 })).toMatchObject({ size: 3, lineHeight: 2.5 });
   for (const size of [3, 4, 11, 16, 29, 30]) expect(clampSettings({ size }).size).toBe(size);
@@ -70,7 +70,28 @@ test('applySettings sets the theme and the reading variables', () => {
   expect(root.style.getPropertyValue('--rlh')).toBe('2');
   expect(root.style.getPropertyValue('--rw')).toBe(''); // the reading width is fixed in the stylesheet
   applySettings({ ...DEFAULT_SETTINGS, theme: 'auto' }, root);
-  expect(root.hasAttribute('data-theme')).toBe(false);
+  expect(root.hasAttribute('data-theme')).toBe(false); // an explicit "follow the device" choice
+  applySettings(DEFAULT_SETTINGS, root);
+  expect(root.getAttribute('data-theme')).toBe('light');
+});
+
+test('light is the default theme, even when the device prefers dark', () => {
+  const original = window.matchMedia;
+  window.matchMedia = (query) => ({ matches: query.includes('dark'), media: query, addEventListener() {}, removeEventListener() {} });
+  try {
+    expect(DEFAULT_SETTINGS.theme).toBe('light');
+    expect(loadSettings(memoryStorage()).theme).toBe('light');
+    expect(clampSettings({}).theme).toBe('light');
+    expect(clampSettings({ theme: 'nonsense' }).theme).toBe('light');
+  } finally {
+    window.matchMedia = original;
+  }
+});
+
+test('a saved choice (dark, sepia, light) or the explicit device choice (auto) is kept', () => {
+  for (const theme of ['dark', 'sepia', 'light', 'auto']) {
+    expect(loadSettings(memoryStorage({ 'alhashor.settings': JSON.stringify({ theme }) })).theme).toBe(theme);
+  }
 });
 
 test('storage that throws the moment it is read (site data blocked) does not break loading or saving', () => {
@@ -103,5 +124,31 @@ describe('storage keys', () => {
     const storage = memoryStorage();
     saveSettings({ ...DEFAULT_SETTINGS, theme: 'dark' }, storage);
     expect(Object.keys(storage.data)).toEqual(['alhashor.settings']);
+  });
+});
+
+describe('the browser bar colour (theme-color meta) follows the theme', () => {
+  const meta = () => document.head.querySelector('meta[name="theme-color"]');
+  beforeEach(() => {
+    document.head.innerHTML = '<meta name="theme-color" content="#f2f8f6">';
+  });
+  afterEach(() => { document.head.innerHTML = ''; });
+
+  test.each([['light', '#f2f8f6'], ['dark', '#0c1714'], ['sepia', '#f4ead3']])('%s gives %s', (theme, color) => {
+    applySettings({ ...DEFAULT_SETTINGS, theme });
+    expect(meta().getAttribute('content')).toBe(color);
+  });
+
+  test('the default is light even on a dark device, the explicit device choice follows the device', () => {
+    const original = window.matchMedia;
+    window.matchMedia = (query) => ({ matches: query.includes('dark'), media: query });
+    try {
+      applySettings(DEFAULT_SETTINGS);
+      expect(meta().getAttribute('content')).toBe('#f2f8f6');
+      applySettings({ ...DEFAULT_SETTINGS, theme: 'auto' });
+      expect(meta().getAttribute('content')).toBe('#0c1714');
+    } finally {
+      window.matchMedia = original;
+    }
   });
 });

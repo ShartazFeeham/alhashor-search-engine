@@ -11,13 +11,33 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-test('is titled and lists the four themes, with auto pressed at first', () => {
+test('is titled and lists the four themes, with light pressed at first', () => {
   show();
   expect(document.title).toBe('পড়ার সেটিংস - Alhashor');
-  expect(screen.getByRole('button', { name: 'স্বয়ংক্রিয়' })).toHaveAttribute('aria-pressed', 'true');
-  for (const name of ['হালকা', 'গাঢ়', 'সেপিয়া']) {
+  expect(screen.getByRole('button', { name: 'হালকা' })).toHaveAttribute('aria-pressed', 'true');
+  for (const name of ['স্বয়ংক্রিয়', 'গাঢ়', 'সেপিয়া']) {
     expect(screen.getByRole('button', { name })).toHaveAttribute('aria-pressed', 'false');
   }
+});
+
+test('light is pressed at first even when the device prefers dark; the device option stays available', () => {
+  const original = window.matchMedia;
+  window.matchMedia = (query) => ({ matches: query.includes('dark'), media: query, addEventListener() {}, removeEventListener() {} });
+  try {
+    show();
+    expect(screen.getByRole('button', { name: 'হালকা' })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('button', { name: 'স্বয়ংক্রিয়' }));
+    expect(screen.getByRole('button', { name: 'স্বয়ংক্রিয়' })).toHaveAttribute('aria-pressed', 'true');
+    expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
+  } finally {
+    window.matchMedia = original;
+  }
+});
+
+test('a saved device choice shows the device option pressed', () => {
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'auto' }));
+  show();
+  expect(screen.getByRole('button', { name: 'স্বয়ংক্রিয়' })).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('choosing a theme applies and saves it', () => {
@@ -146,7 +166,7 @@ test('reset goes back to the defaults', () => {
   fireEvent.click(screen.getByRole('button', { name: 'লেখা বড় করুন' }));
   fireEvent.click(screen.getByRole('button', { name: 'লাইনের ফাঁক বাড়ান' }));
   fireEvent.click(screen.getByRole('button', { name: 'আগের মতো করুন' }));
-  expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
+  expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   expect(rs()).toBe('16px');
   expect(rlh()).toBe('1.9');
   expect(sizeSlider()).toHaveValue('16');

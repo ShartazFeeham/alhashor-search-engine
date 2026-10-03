@@ -1,6 +1,8 @@
 /* Design tokens from the D2 design. Light is the default; dark and sepia override it.
-   A visitor with no saved choice follows the device (prefers-color-scheme). */
+   A visitor with no saved choice gets light, whatever the device prefers. Only a saved choice of
+   "follow the device" has no data-theme attribute and so uses the prefers-color-scheme copy below. */
 :root {
+  color-scheme: light;
   --page:#d9e8e3; --bg:#f2f8f6; --surface:#ffffff; --surface2:#e7f1ee; --line:#d3e3dd;
   --ink:#0f2d28; --ink2:#46655e; --ink3:#576964; --related-text:#333333; --match-text:#555555;
   --accent:#0a796a; --accent2:#096658; --on-accent:#ffffff; --accent-soft:#d6f0ea;

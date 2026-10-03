@@ -1,7 +1,9 @@
 
 export const STORAGE_KEY = 'alhashor.settings';
 
-export const DEFAULT_SETTINGS = { theme: 'auto', size: 16, lineHeight: 1.9, digits: 'bn' };
+// Light is the default for every visitor. 'auto' (follow the device) is an explicit choice, and a
+// value saved with it before still follows the device.
+export const DEFAULT_SETTINGS = { theme: 'light', size: 16, lineHeight: 1.9, digits: 'bn' };
 
 // What the settings page offers: the text size in px (whole steps), the line gap as a multiple of
 // the text size. The reading column width is not a setting; it is a fixed value in tokens.css.
@@ -11,6 +13,17 @@ export const LIMITS = {
 };
 
 const THEMES = ['auto', 'light', 'dark', 'sepia'];
+
+// The page colour (--bg) of each theme, for the browser bar (theme-color meta). themeScript.js repeats these.
+export const THEME_COLORS = { light: '#f2f8f6', dark: '#0c1714', sepia: '#f4ead3' };
+
+function barColor(theme) {
+  if (theme === 'auto') {
+    const dark = typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    return dark ? THEME_COLORS.dark : THEME_COLORS.light;
+  }
+  return THEME_COLORS[theme] ?? THEME_COLORS.light;
+}
 const DIGITS = ['bn', 'en'];
 
 function number(value, fallback, min, max) {
@@ -59,6 +72,10 @@ export function saveSettings(settings, storage = defaultStorage()) {
 export function applySettings(settings, root = document.documentElement) {
   if (settings.theme === 'auto') root.removeAttribute('data-theme');
   else root.setAttribute('data-theme', settings.theme);
+  for (const meta of root.ownerDocument.querySelectorAll('meta[name="theme-color"]')) {
+    meta.removeAttribute('media');
+    meta.setAttribute('content', barColor(settings.theme));
+  }
   root.style.setProperty('--rs', `${settings.size}px`);
   root.style.setProperty('--rlh', String(settings.lineHeight));
 }

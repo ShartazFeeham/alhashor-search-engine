@@ -28,17 +28,16 @@ export const metadata = {
   icons: { icon: '/favicon.ico', apple: '/logo192.png' },
 };
 
-// The phone's browser bar follows the page colour (light page, dark page), not black.
+// The phone's browser bar follows the page colour, not black. Light is the default for everyone;
+// the theme script and the settings code change the colour when a visitor picks another theme.
 export const viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f2f8f6' },
-    { media: '(prefers-color-scheme: dark)', color: '#0c1714' },
-  ],
+  themeColor: '#f2f8f6',
+  colorScheme: 'light',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="bn" className={`${uiFont.variable} ${readFont.variable} ${latinFont.variable} ${digitFont.variable}`} suppressHydrationWarning>
+    <html lang="bn" data-theme="light" className={`${uiFont.variable} ${readFont.variable} ${latinFont.variable} ${digitFont.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

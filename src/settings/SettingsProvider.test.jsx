@@ -39,6 +39,32 @@ test('reset goes back to the defaults', () => {
   render(<SettingsProvider><Probe /></SettingsProvider>);
   act(() => screen.getByText('dark').click());
   act(() => screen.getByText('reset').click());
+  expect(screen.getByTestId('theme')).toHaveTextContent('light');
+  expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+});
+
+test('with nothing saved the theme is light even when the device prefers dark', () => {
+  const original = window.matchMedia;
+  window.matchMedia = (query) => ({ matches: query.includes('dark'), media: query, addEventListener() {}, removeEventListener() {} });
+  try {
+    render(<SettingsProvider><Probe /></SettingsProvider>);
+    expect(screen.getByTestId('theme')).toHaveTextContent('light');
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    expect(localStorage.getItem('alhashor.settings')).toBeNull();
+  } finally {
+    window.matchMedia = original;
+  }
+});
+
+test('a saved dark stays dark, a saved auto follows the device (no attribute)', () => {
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'dark' }));
+  const view = render(<SettingsProvider><Probe /></SettingsProvider>);
+  expect(screen.getByTestId('theme')).toHaveTextContent('dark');
+  expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+  view.unmount();
+  document.documentElement.setAttribute('data-theme', 'light');
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'auto' }));
+  render(<SettingsProvider><Probe /></SettingsProvider>);
   expect(screen.getByTestId('theme')).toHaveTextContent('auto');
   expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
 });

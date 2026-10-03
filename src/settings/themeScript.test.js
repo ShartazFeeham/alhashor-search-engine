@@ -30,9 +30,61 @@ test('sizes and gaps from the new ranges are applied as they are', () => {
   expect(root.style.getPropertyValue('--rlh')).toBe('2.5');
 });
 
-test('with nothing saved the script sets nothing, so the stylesheet defaults stay', () => {
+const deviceIsDark = (dark) => {
+  window.matchMedia = (query) => ({ matches: dark && query.includes('dark'), media: query, addEventListener() {}, removeEventListener() {} });
+};
+const originalMatchMedia = window.matchMedia;
+afterEach(() => { window.matchMedia = originalMatchMedia; document.head.innerHTML = ''; });
+
+test('with nothing saved the page is light, even when the device prefers dark', () => {
+  deviceIsDark(true);
+  run();
+  expect(root.getAttribute('data-theme')).toBe('light');
+});
+
+test('unreadable or odd saved text also gives light', () => {
+  deviceIsDark(true);
+  for (const saved of ['{not json', 'null', JSON.stringify({ theme: 'neon' }), JSON.stringify({ size: 20 })]) {
+    root.removeAttribute('data-theme');
+    localStorage.setItem('alhashor.settings', saved);
+    run();
+    expect(root.getAttribute('data-theme')).toBe('light');
+  }
+});
+
+test.each(['dark', 'sepia', 'light'])('a saved %s stays, even when the device disagrees', (theme) => {
+  deviceIsDark(theme === 'light');
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme }));
+  run();
+  expect(root.getAttribute('data-theme')).toBe(theme);
+});
+
+test('a saved "auto" (follow the device, chosen before) still follows the device: no attribute, the stylesheet decides', () => {
+  root.setAttribute('data-theme', 'light'); // what the server renders
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'auto' }));
   run();
   expect(root.hasAttribute('data-theme')).toBe(false);
+});
+
+test('the browser bar colour (theme-color meta) is set before paint to match', () => {
+  document.head.innerHTML = '<meta name="theme-color" content="#f2f8f6">';
+  const content = () => document.head.querySelector('meta[name="theme-color"]').getAttribute('content');
+  deviceIsDark(true);
+  run();
+  expect(content()).toBe('#f2f8f6');
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'dark' }));
+  run();
+  expect(content()).toBe('#0c1714');
+  localStorage.setItem('alhashor.settings', JSON.stringify({ theme: 'auto' }));
+  run();
+  expect(content()).toBe('#0c1714');
+  deviceIsDark(false);
+  run();
+  expect(content()).toBe('#f2f8f6');
+});
+
+test('with nothing saved the script sets no reading numbers, so the stylesheet defaults stay', () => {
+  run();
   expect(root.style.getPropertyValue('--rs')).toBe('');
   expect(root.style.getPropertyValue('--rlh')).toBe('');
   expect(root.style.getPropertyValue('--rw')).toBe('');
@@ -69,7 +121,7 @@ test('blocked storage does not throw (reading localStorage itself throws)', () =
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError'); } });
   try {
     expect(run).not.toThrow();
-    expect(root.hasAttribute('data-theme')).toBe(false);
+    expect(root.getAttribute('data-theme')).toBe('light');
     expect(root.style.getPropertyValue('--rs')).toBe('');
   } finally {
     Object.defineProperty(globalThis, 'localStorage', original);
@@ -88,7 +140,7 @@ describe('storage', () => {
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, get() { throw new DOMException('blocked', 'SecurityError'); } });
     try {
       expect(run).not.toThrow();
-      expect(root.hasAttribute('data-theme')).toBe(false);
+      expect(root.getAttribute('data-theme')).toBe('light');
     } finally {
       Object.defineProperty(globalThis, 'localStorage', original);
     }

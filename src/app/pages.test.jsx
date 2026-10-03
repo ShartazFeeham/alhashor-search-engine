@@ -106,11 +106,14 @@ test('the layout sets the language and wraps each page with the navigation', () 
   expect(html).not.toContain('৩২,৮৮৬ হাদীস');
 });
 
-test('the browser bar colour follows the light and dark pages instead of black', () => {
-  expect(viewport.themeColor).toEqual([
-    { media: '(prefers-color-scheme: light)', color: '#f2f8f6' },
-    { media: '(prefers-color-scheme: dark)', color: '#0c1714' },
-  ]);
+test('the browser bar colour is the light page colour by default (not black, not the device)', () => {
+  expect(viewport.themeColor).toBe('#f2f8f6');
+  expect(viewport.colorScheme).toBe('light');
+});
+
+test('the server renders the light theme, so the first paint and hydration are light on every device', () => {
+  const html = toMarkup(<RootLayout><p>PAGE BODY</p></RootLayout>);
+  expect(html).toMatch(/<html[^>]*data-theme="light"/);
 });
 
 test('site metadata names the site and describes it in Bengali', () => {

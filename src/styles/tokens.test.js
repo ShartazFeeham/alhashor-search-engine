@@ -25,9 +25,12 @@ test('dark and sepia redefine the colour variables', () => {
   }
 });
 
-test('a visitor whose device prefers dark gets dark unless a theme is chosen', () => {
+test('light is the default: the base block is light, and the device-dark copy only applies to an explicit device choice (no data-theme)', () => {
+  const light = css.slice(0, css.indexOf(':root[data-theme="dark"]'));
+  expect(light).toMatch(/color-scheme:\s*light/);
   expect(css).toContain('@media (prefers-color-scheme: dark)');
   expect(css).toContain(':root:not([data-theme])');
+  expect(css.slice(0, 400)).not.toMatch(/no saved choice follows the device/);
 });
 
 test('the six book colours match the design', () => {
