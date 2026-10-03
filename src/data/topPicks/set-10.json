@@ -1,0 +1,89 @@
+{
+  "id": "sokal-sondhya-zikr",
+  "number": 10,
+  "title": "সকাল-সন্ধ্যার যিকর",
+  "description": "সকাল-সন্ধ্যা, ঘুমানো ও জাগার সময়ের সহীহ যিকর ও দু'আ",
+  "items": [
+    {
+      "line": "সাইয়্যিদুল ইস্তিগফার, আয়াতুল কুরসী, তিন কুল",
+      "book": "bukhari",
+      "number": 5867,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"আসবাহনা ওয়া আসবাহাল মুলকু লিল্লাহ\"",
+      "book": "muslim",
+      "number": 6661,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"বিসমিল্লাহিল্লাযী লা ইয়াদুররু মাআস্মিহী শাইউন\"",
+      "book": "abudawud",
+      "number": 5000,
+      "note": null,
+      "grade": "hasan"
+    },
+    {
+      "line": "\"রাযীতু বিল্লাহি রাব্বান\"",
+      "book": "abudawud",
+      "number": 525,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"সুবহানাল্লাহি ওয়া বিহামদিহী\" ১০০ বার",
+      "book": "tirmidhi",
+      "number": 3469,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "\"লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু\" ১০ বার ও ১০০ বার",
+      "book": "muslim",
+      "number": 6598,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ঘুমের দু'আ",
+      "book": "bukhari",
+      "number": 245,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ঘুম থেকে ওঠার দু'আ",
+      "book": "bukhari",
+      "number": 5875,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ঘুমের আগে আয়াতুল কুরসী ও তিন কুল",
+      "book": "bukhari",
+      "number": 4648,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ফাতিমা (রাঃ)-এর তাসবীহ: ৩৩, ৩৩, ৩৪",
+      "book": "bukhari",
+      "number": 3440,
+      "note": null,
+      "grade": "sahih"
+    },
+    {
+      "line": "ফজর ও মাগরিবের পরের যিকর",
+      "book": "tirmidhi",
+      "number": 3474,
+      "note": null,
+      "grade": "hasan"
+    }
+  ],
+  "missing": [
+    "\"হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুওয়া\"",
+    "\"আল্লাহুম্মা আফিনী ফী বাদানী\""
+  ]
+}
