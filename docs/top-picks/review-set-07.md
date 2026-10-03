@@ -2,23 +2,39 @@
 
 মা-বাবার সেবা, সদাচার ও দু'আর মর্যাদা এবং তাঁদের অবাধ্যতার ভয়াবহতা
 
-| Line | Book + number | Opening words | Grade | Reason |
-|---|---|---|---|---|
-| "তোমার মা, তোমার মা, তোমার মা" | বুখারী 5546 | এক লোক রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর নিকট | sahih | your mother, your mother, your mother, then your father |
-| মায়ের হক তিনগুণ | আবু দাউদ 5049 | ৫০৪৯. মুহাম্মদ ইবন কাছীর (রহঃ) ..... বাহয ইবন | hasan | Bahz: to whom shall I do good? your mother three times, then your father; sound |
-| জান্নাত মায়ের পায়ের নিচে | ইবনে মাজাহ 2781 | আমি রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর নিকট উপস্থিত | hasan | Muawiya ibn Jahima: stay at her feet, there is Paradise; sound |
-| "সন্তান ও তার সম্পদ বাবারই" | ইবনে মাজাহ 2291 | এক ব্যক্তি বললো, ইয়া রাসূলুল্লাহ! আমার সম্পদও আছে, | hasan | you and your wealth belong to your father; sound |
-| বাবা জান্নাতের মধ্যম দরজা | ইবনে মাজাহ 2089 | এক ব্যক্তিকে তার পিতা অথবা তার মা তার | hasan | Abu Darda: the father is the best/middle gate of Paradise; sound (Tirmidhi 1900 has the same words) |
-| বৃদ্ধ মা-বাবাকে পেয়েও যে জান্নাতে যেতে পারল না, "তার নাক ধুলায় মলিন হোক" | মুসলিম 6279 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সে ব্যক্তির নাক | sahih | may his nose be in the dust who finds his parents in old age and does not enter Paradise |
-| মা-বাবার অবাধ্যতা কবীরা গুনাহ | বুখারী 2477 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে কবীরা গুনাহ সম্পর্কে | sahih | among the greatest sins: shirk and disobeying parents |
-| মা-বাবার দু'আ কবুল হয় | ইবনে মাজাহ 3862 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ তিন ব্যক্তির দোয়া | hasan | three duas are surely answered: the oppressed, the traveller, the father for his child; sound |
-| সন্তানের জন্য মা-বাবার বদ-দু'আ | বুখারী 2320 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন বনী ইসরাঈলের মধ্যে | sahih | Juraij and his mother who did not get his answer and cursed him |
-| জিহাদের চেয়ে মা-বাবার সেবা | বুখারী 5547 | এক ব্যাক্তি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে জিজ্ঞাসা | sahih | should I go to jihad? do you have parents? then strive in serving them |
-| উওয়াইস কারনী (রহঃ)-এর মায়ের সেবা | মুসলিম 6259 | যে, কুফার একটি প্রতিনিধি দল উমর (রাঃ) এর | sahih | Uways: no one in Yemen but his mother; ask him for forgiveness |
-| মুশরিক মায়ের সাথেও সদ্ব্যবহার | বুখারী 2444 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর যামানায় আমার আম্মা | sahih | Asma: my mother came while a mushrik; the Prophet tells her to keep ties |
-| মৃত মা-বাবার জন্য দু'আ ও সদকা | বুখারী 2572 | যে, একজন সাহাবী নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে | sahih | my mother died suddenly, may I give sadaqa for her? yes. The dua part: Muslim 4005 (set 11) |
-| মা-বাবার বন্ধুদের সম্মান | মুসলিম 6283 | যে, নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সর্বোত্তম সদাচারন | sahih | the best righteousness is to keep ties with the friends of your father |
+| x | line | book + number | opening words | grade | reason |
+|---|---|---|---|---|---|
+| 1 | কে আমার সদ্ব্যবহারের বেশি হকদার? নবীজি (সাঃ): তোমার মা, তোমার মা, তোমার মা, তারপর তোমার বাবা | বুখারী 5546 | এক লোক রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর নিকট | sahih | mother three times, then father; sahih |
+| 2 | মা, মা, মা, তারপর বাবা, তারপর নিকটাত্মীয়: সদ্ব্যবহারের ক্রম বলে দিলেন নবীজি (সাঃ) | আবু দাউদ 5049 | মুহাম্মদ ইবন কাছীর (রহঃ) ..... বাহয ইবন হাকীম | hasan | Bahz: mother x3, father, then nearest kin; hasan (the second half is about a freed slave, not used in the line) |
+| 3 | জিহাদে যেতে চাইলেন এক সাহাবী, নবীজি (সাঃ) ফেরালেন: মায়ের সেবা করো, তাঁর পায়ের কাছেই জান্নাত | ইবনে মাজাহ 2781 | আমি রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর নিকট উপস্থিত | hasan | Muawiya ibn Jahima: stay at her feet, there is Paradise; the text does not say the exact phrase "under the mother's feet"; sound |
+| 4 | সাহাবীর অভিযোগ, বাবা তাঁর সম্পদের মুখাপেক্ষী: নবীজি (সাঃ) বললেন, তুমি ও তোমার সম্পদ তোমার বাবারই | ইবনে মাজাহ 2291 | এক ব্যক্তি বললো, ইয়া রাসূলুল্লাহ! আমার সম্পদও আছে, | hasan | you and your wealth belong to your father; sound |
+| 5 | বাবা জান্নাতের মধ্যবর্তী দরজা: চাইলে তা নষ্ট করো, চাইলে হেফাজত করো | ইবনে মাজাহ 3663 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে বলতে শুনেছেনঃ পিতা | hasan | Abu Darda: the father is the middle gate of Paradise; same words as Tirmidhi 1900; sound |
+| 6 | বৃদ্ধ মা-বাবাকে পেয়েও যে জান্নাতে যেতে পারল না, নবীজি (সাঃ) তিনবার বললেন: তার নাক ধুলায় মলিন হোক | মুসলিম 6279 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সে ব্যক্তির নাক | sahih | may his nose be in the dust; parents in old age |
+| 7 | কবীরা গুনাহের তালিকায় নবীজি (সাঃ)-এর মুখে: আল্লাহর সাথে শরীকের পরেই মা-বাবার অবাধ্যতা | বুখারী 2477 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে কবীরা গুনাহ সম্পর্কে | sahih | major sins: shirk, disobedience to parents, killing, false witness |
+| 8 | তিন দু’আ নিঃসন্দেহে কবুল হয়: মজলুমের, মুসাফিরের আর সন্তানের জন্য বাবার দু’আ | ইবনে মাজাহ 3862 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ তিন ব্যক্তির দোয়া | hasan | the father's dua for his child is among three answered duas; sound (also Tirmidhi 3448) |
+| 9 | সালাতে থাকায় মায়ের ডাকে সাড়া দেননি আবেদ জুরায়জ: মায়ের বদ-দু’আয় নেমে এল কঠিন পরীক্ষা | বুখারী 2320 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন বনী ইসরাঈলের মধ্যে | sahih | Juraij and his mother's curse |
+| 10 | জিহাদে যেতে চাইলে নবীজি (সাঃ)-এর প্রশ্ন: তোমার মা-বাবা আছেন? তাহলে তাঁদের সেবার মধ্যেই জিহাদ করো | বুখারী 5547 | এক ব্যাক্তি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে জিজ্ঞাসা | sahih | strive (jihad) in serving the parents |
+| 11 | মায়ের সেবায় উওয়াইস কারনী (রহঃ): নবীজি (সাঃ) বললেন, সুযোগ পেলে তাঁর কাছে মাগফিরাতের দু’আ চেয়ো | মুসলিম 6261 | উমার ইবনু খাত্তাব (রাঃ) এর অভ্যাস ছিল, যখন | sahih | Uways: very kind to his mother; his oath is fulfilled by Allah; ask him for forgiveness; sahih |
+| 12 | মুশরিক মা দেখা করতে এলেন: নবীজি (সাঃ) আসমা (রাঃ)-কে বললেন, তাঁর সাথে সদাচার করো | বুখারী 2444 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর যামানায় আমার আম্মা | sahih | kindness to a mushrik mother |
+| 13 | মা হঠাৎ মারা গেছেন, তাঁর পক্ষ থেকে সদকা করতে পারি? নবীজি (সাঃ) বললেন, হ্যাঁ | বুখারী 2572 | একজন সাহাবী নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে বললেন, | sahih | charity on behalf of a deceased mother |
+| 14 | এক বেদুঈনকে নিজের গাধা ও পাগড়ি দিয়ে দিলেন এক সাহাবী: বাবার বন্ধুর সাথে সদাচারই সর্বোত্তম নেকী | মুসলিম 6283 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সর্বোত্তম সদাচারন (পুণ্য) | sahih | best righteousness is keeping ties with the friends of your father (6282 gives the story; 6283 is the short saying) |
+| 15 | আল্লাহর কাছে সবচেয়ে প্রিয় আমল: সময়মতো নামায, তারপর মা-বাবার সাথে উত্তম ব্যবহার, তারপর জিহাদ | বুখারী 5545 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে জিজ্ঞাসা করলাম | sahih | prayer on time, then kindness to parents, then jihad |
+| 16 | মা-বাবাকে লানত করা সবচেয়ে বড় কবীরা গুনাহ: অন্যের মা-বাবাকে গালি দিলেই সে নিজের মা-বাবাকে গালি শোনায় | বুখারী 5548 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ কবীরা গুনাহসমূহের মধ্যে | sahih | cursing one's parents, and how it happens indirectly |
+| 17 | আল্লাহ হারাম করেছেন মা-বাবার নাফরমানী: নবীজি (সাঃ)-এর সতর্কবাণী | বুখারী 5550 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ আল্লাহ তাআলা তোমাদের | sahih | Allah has forbidden disobedience to parents (together with other prohibitions) |
+| 18 | গুহার মুখে পাথর, তিন জনের দু’আ: ঘুমন্ত মা-বাবার শিয়রে সারা রাত দুধ নিয়ে দাঁড়িয়ে থাকার ওসিলা | বুখারী 5549 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম থেকে বর্ণনা করেন যে, | sahih | the cave story: the man who served milk to his sleeping parents first (long, 2600 chars, not for the daily pool) |
+| 19 | মায়ের হিদায়াতের জন্য কেঁদে এলেন আবূ হুরায়রা (রাঃ): নবীজি (সাঃ)-এর দু’আয় মা ইসলাম গ্রহণ করলেন | মুসলিম 6171 | আবূ হুরায়রা (রাঃ) বর্ণনা করেছেন যেন, আমি আমার | sahih | Abu Hurayra and his mother: the Prophet prays for her guidance and she accepts Islam |
+| 20 | মা-বাবাকে কাঁদিয়ে হিজরতে এসেছেন যে, তাঁকে নবীজি (সাঃ): ফিরে যাও, তাঁদের হাসাও যেভাবে কাঁদিয়েছ | নাসাঈ 4164 | এক ব্যক্তি রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর নিকট | sahih | go back and make them laugh as you made them cry; same report as Abu Dawud 2520, Ibn Majah 2782 |
+| 21 | জান্নাতে যাবে না তিনজন: খোঁটাদানকারী, মা-বাবার অবাধ্য ও মাদকাসক্ত | নাসাঈ 5672 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ উপকার করে খোটা | sahih | one who reminds of favours, the disobedient to parents, the drunkard will not enter Paradise; sound |
+| 22 | বাবার সন্তুষ্টিতে প্রভুর সন্তুষ্টি, বাবার অসন্তুষ্টিতে প্রভুর অসন্তুষ্টি | তিরমিযী 1905 | আবূ হাফস ’আমর ইবনু আলী (রহঃ) ... আবদুল্লাহ | hasan | the Lord's pleasure is in the father's pleasure; sound per scholars (some narrators report it as the Companion's words) |
+| 23 | সন্তানের উপর মা-বাবার অধিকার কী? নবীজি (সাঃ): তাঁরাই তোমার জান্নাত, তাঁরাই তোমার জাহান্নাম | ইবনে মাজাহ 3662 | এক ব্যক্তি বললো, হে আল্লাহর রাসূল! সন্তানের উপর | hasan | parents are your Paradise and your Hell; hasan |
+| 24 | মা, তারপর বাবা, তারপর পর্যায়ক্রমে নিকটজন: তাঁদের সম্পর্কে আল্লাহ উপদেশ দিচ্ছেন, বললেন নবীজি (সাঃ) | ইবনে মাজাহ 3661 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেনঃ নিশ্চয় আল্লাহ তা’আলা | hasan | Allah commands kindness to mothers, fathers, then the nearest kin; sound (Ahmad, Ibn Majah) |
+| 25 | মায়ের বোনের মর্যাদা: নবীজি (সাঃ) বললেন, খালা হলেন মায়ের স্থানে | তিরমিযী 1910 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, খালা হল মায়ের | sahih | the maternal aunt is in the place of the mother (kin through the mother) |
+| 26 | আরশে ঝুলে থাকা আত্মীয়তার বন্ধন: যে তা রক্ষা করে আল্লাহ তার সাথে সম্পর্ক রাখেন, যে ছিন্ন করে তার সাথে ছিন্ন করেন | মুসলিম 6288 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ রেহম (আত্মীয়তার সম্বন্ধ) | sahih | the womb-tie hangs from the Throne; upholding ties of kinship |
+| 27 | বাবার হক কি শোধ হয়? নবীজি (সাঃ): দাস বাবাকে কিনে মুক্ত করা ছাড়া নয় | তিরমিযী 1912 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, পিতাকে ক্রীতদাস হিসাবে | sahih | a son cannot repay his father except by buying and freeing him |
+| 28 | মৃত্যুর পরও থেমে না যাওয়া তিন আমল: সাদাকায়ে জারিয়া, উপকারী ইলম আর দু’আকারী নেককার সন্তান | মুসলিম 4077 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যখন মানুষ মারা | sahih | the righteous child who prays for the parent after death |
+| 29 | বৃদ্ধ বাবার পক্ষ থেকে হজ্জ করতে পারি? বিদায় হজ্জে এক নারীকে নবীজি (সাঃ): হ্যাঁ | মুসলিম 3121 | ফযল ইবনু আব্বাস (রাঃ) সওয়ারীতে রাসুলুলাহ সাল্লাল্লাহু আলাইহি | sahih | Hajj on behalf of an aged father who cannot ride |
 
-## Not found
+## Not found / still missing
 
-- none
+- "জান্নাত মায়ের পায়ের নিচে" এই হুবহু শব্দে (আছে শুধু "তাঁর পায়ের কাছে থাকো, সেখানেই জান্নাত": ইবনে মাজাহ 2781)
+- মা-বাবার মৃত্যুর পর তাঁদের জন্য দু’আ-ইস্তিগফার, অসিয়ত পূরণ ও তাঁদের আত্মীয়-বন্ধুদের সম্মান (এই শব্দে আবু দাউদ 5052 ও ইবনে মাজাহ 3664 আছে, কিন্তু সনদ দুর্বল: বাদ)
