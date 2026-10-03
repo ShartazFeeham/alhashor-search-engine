@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
 import { buildWordMatcher, highlightParts } from '../lib/matchPattern';
@@ -41,32 +41,53 @@ function RelatedItem({ tag, words }) {
     <li className="related-item" style={{ '--bk': `var(${book.colorVar})` }} onClick={open}>
       <BookBadge bookId={book.id} size="sm" />
       <div className="related-main">
-        <Link href={href} className="related-link">
-          {book.name} {digits(number)}
-        </Link>
+        <div className="related-head">
+          <Link href={href} className="related-link">
+            {book.name} {digits(number)}
+          </Link>
+          {shared > 0 && <span className="related-reason">{digits(shared)} টি শব্দ মিলেছে</span>}
+        </div>
         {status === 'loading' && <div className="hadis-skel related-skel" aria-hidden="true" />}
         {saying !== '' && (
           <p className="related-text">
             {parts.map((part, index) => (part.match ? <strong key={index} className="related-match">{part.text}</strong> : part.text))}
           </p>
         )}
-        {shared > 0 && <p className="related-reason">{digits(shared)} টি শব্দ মিলেছে</p>}
       </div>
     </li>
   );
 }
 
-// Similar hadis: a live search with the words of the whole text. The best 20 are kept, 5 are shown
-// and the button shows 5 more each time. Nothing is drawn (no card, no gap) when there are none.
+// Similar hadis: a live search with the words of the whole text. The best 20 are kept and 5 are shown;
+// when the end of the list comes into view a small spinner row shows and the next 5 are added, until the
+// results end. (Without IntersectionObserver every kept result is shown.) Nothing is drawn (no card, no gap)
+// when there are none.
 export default function RelatedList({ bookId, number, text }) {
   const { status, tags, words } = useSimilar(bookId, number, text);
   const [shown, setShown] = useState({ tag: null, count: FIRST });
-  const count = shown.tag === `${bookId}-${number}` ? shown.count : FIRST;
+  const key = `${bookId}-${number}`;
+  const lazy = typeof IntersectionObserver !== 'undefined';
+  const count = lazy ? (shown.tag === key ? shown.count : FIRST) : tags.length;
+  const more = lazy && status === 'ok' && tags.length > count;
+  const end = useRef(null);
 
-  // The other 15 are fetched in the background once the first 5 show, so the button is instant.
+  // The other 15 are fetched in the background once the first 5 show, so the next batch is instant.
   useEffect(() => {
     if (status === 'ok') tags.slice(FIRST).forEach((tag) => loadHadisText(tag));
   }, [status, tags]);
+
+  useEffect(() => {
+    const row = end.current;
+    if (!more || !row || typeof IntersectionObserver === 'undefined') return undefined;
+    const watcher = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) setShown({ tag: key, count: count + STEP });
+      },
+      { rootMargin: '120px' }
+    );
+    watcher.observe(row);
+    return () => watcher.disconnect();
+  }, [more, count, key]);
 
   if (status === 'ok' && tags.length === 0) return null;
   const visible = tags.slice(0, count);
@@ -83,10 +104,11 @@ export default function RelatedList({ bookId, number, text }) {
               <RelatedItem key={tag} tag={tag} words={words} />
             ))}
           </ul>
-          {tags.length > count && (
-            <button type="button" className="related-more" onClick={() => setShown({ tag: `${bookId}-${number}`, count: count + STEP })}>
-              আরও সদৃশ হাদীস
-            </button>
+          {more && (
+            <div className="related-loader" role="status" data-testid="related-loader" ref={end}>
+              <span className="related-spinner" aria-hidden="true" />
+              <span>আরও হাদীস আনছি...</span>
+            </div>
           )}
         </>
       )}

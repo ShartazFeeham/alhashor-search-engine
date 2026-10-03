@@ -93,3 +93,26 @@ describe('the same width as the hadis list pages', () => {
     expect(rule(hadis, '.hadis-read')).toMatch(/line-height:var\(--rlh\)/);
   });
 });
+
+describe('similar hadis list', () => {
+  test('the text is clamped to 3 lines', () => {
+    const text = rule(related, '.related-text');
+    expect(text).toMatch(/-webkit-line-clamp:3/);
+    expect(text).toMatch(/(?:^|;)line-clamp:3/);
+    expect(text).not.toMatch(/line-clamp:2/);
+  });
+
+  test('the head row has the link on the left and the word count pushed to the right', () => {
+    expect(rule(related, '.related-head')).toMatch(/display:flex/);
+    expect(rule(related, '.related-head')).toMatch(/justify-content:space-between/);
+    expect(rule(related, '.related-reason')).toMatch(/margin-left:auto/);
+    expect(rule(related, '.related-reason')).toMatch(/white-space:nowrap/);
+  });
+
+  test('the loader is a centred spinner row, and the spinner stops for people who ask for less motion (base.css)', () => {
+    expect(rule(related, '.related-loader')).toMatch(/justify-content:center/);
+    expect(rule(related, '.related-spinner')).toMatch(/animation:/);
+    expect(related).toMatch(/@keyframes related-spin/);
+    expect(related).not.toMatch(/\.related-more/);
+  });
+});

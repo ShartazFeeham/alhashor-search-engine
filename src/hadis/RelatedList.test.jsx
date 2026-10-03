@@ -1,5 +1,5 @@
 /* eslint-disable testing-library/no-node-access */
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { clearHadisTextCache } from '../lib/useHadisText';
 import { searchClient } from '../search/searchClient';
 import { SettingsProvider } from '../settings/SettingsProvider';
@@ -31,15 +31,44 @@ const show = (number = 903, text = TEXT) =>
 const items = () => within(screen.getByRole('region', { name: 'সদৃশ হাদীস' })).getAllByRole('listitem');
 // The list row (li) that holds the link with this name.
 const rowOf = (name) => screen.getAllByRole('listitem').find((row) => within(row).queryByRole('link', { name }));
-const moreButton = () => screen.queryByRole('button', { name: 'আরও সদৃশ হাদীস' });
+const loader = () => screen.queryByTestId('related-loader');
+
+// The end of the list coming into view is played by hand.
+let observers;
+class FakeObserver {
+  constructor(callback, options) {
+    this.callback = callback;
+    this.options = options;
+    this.targets = new Set();
+    observers.push(this);
+  }
+  observe(target) {
+    this.targets.add(target);
+  }
+  unobserve(target) {
+    this.targets.delete(target);
+  }
+  disconnect() {
+    this.targets.clear();
+  }
+}
+const reachEnd = async () => {
+  await waitFor(() => expect(observers.some((o) => o.targets.size > 0)).toBe(true));
+  await act(async () => {
+    observers.filter((o) => o.targets.size > 0).forEach((o) => o.callback([...o.targets].map((target) => ({ target, isIntersecting: true }))));
+  });
+};
 
 beforeEach(() => {
   localStorage.clear();
   serveRealData();
+  observers = [];
+  window.IntersectionObserver = FakeObserver;
 });
 
 afterEach(() => {
   clearHadisTextCache();
+  delete window.IntersectionObserver;
 });
 
 test('searches with the meaningful words of the whole text, and shows the first 5 results', async () => {
@@ -61,33 +90,72 @@ test('the hadis being read is never in its own list', async () => {
   expect(screen.queryByRole('link', { name: 'নাসাঈ ৯০৩' })).not.toBeInTheDocument();
 });
 
-test('the button shows the next 5 each time: 5, 10, 15, 20, then it is gone', async () => {
+test('there is no "show more" button: the next 5 load when the end of the list comes into view, 5, 10, 15, 20, then the loader is gone', async () => {
   stubSearch(buk(30));
   show();
   await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  expect(screen.queryByRole('button', { name: /আরও/ })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button')).not.toBeInTheDocument();
   for (const shown of [10, 15, 20]) {
-    fireEvent.click(moreButton());
+    expect(loader()).toBeInTheDocument();
+    await reachEnd();
     expect(items()).toHaveLength(shown);
   }
-  expect(moreButton()).not.toBeInTheDocument();
+  expect(loader()).not.toBeInTheDocument();
   expect(screen.queryByRole('link', { name: 'বুখারী ২১' })).not.toBeInTheDocument(); // only the top 20 are kept
 });
 
-test('with fewer than 20 results the button goes away when all are shown', async () => {
+test('the loader is a small spinner row after the list, announced politely, and it is what the observer watches', async () => {
+  stubSearch(buk(30));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  const row = loader();
+  expect(row).toHaveClass('related-loader');
+  expect(row).toHaveAttribute('role', 'status');
+  expect(row.querySelector('.related-spinner')).not.toBeNull();
+  expect(row.compareDocumentPosition(screen.getByRole('list')) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy(); // after the list
+  await waitFor(() => expect(observers.some((o) => o.targets.has(row))).toBe(true));
+});
+
+test('with fewer than 20 results the loader goes away when all are shown', async () => {
   stubSearch(buk(8));
   show();
   await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
-  fireEvent.click(moreButton());
+  await reachEnd();
   expect(items()).toHaveLength(8);
-  expect(moreButton()).not.toBeInTheDocument();
+  expect(loader()).not.toBeInTheDocument();
 });
 
-test('with 5 results or fewer there is no button at all', async () => {
+test('with 5 results or fewer there is no loader and nothing is watched', async () => {
   stubSearch(buk(5));
   show();
   await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
   expect(items()).toHaveLength(5);
-  expect(moreButton()).not.toBeInTheDocument();
+  expect(loader()).not.toBeInTheDocument();
+  expect(observers.every((o) => o.targets.size === 0)).toBe(true);
+});
+
+test('without IntersectionObserver every kept result is shown at once, and there is no loader', async () => {
+  delete window.IntersectionObserver;
+  stubSearch(buk(30));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  expect(items()).toHaveLength(20);
+  expect(loader()).not.toBeInTheDocument();
+});
+
+test('a new hadis starts again from the first 5', async () => {
+  stubSearch(buk(30));
+  const { rerender } = show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  await reachEnd();
+  expect(items()).toHaveLength(10);
+  rerender(
+    <SettingsProvider>
+      <RelatedList bookId="nasai" number={904} text={realText('nasai', 904)} />
+    </SettingsProvider>
+  );
+  await waitFor(() => expect(items()).toHaveLength(5));
 });
 
 test('the texts of results 6 to 20 are fetched in the background, right after the first 5 show', async () => {
@@ -112,6 +180,22 @@ test('each item has the book badge, a link, the saying and the number of shared 
   await waitFor(() => expect(item.querySelector('.related-text')).toHaveTextContent(/সালাত শুরু করার পর বলতেন/));
   expect(within(item).getByText(/^[০-৯]+ টি শব্দ মিলেছে$/)).toBeInTheDocument();
   expect(within(item).queryByText(/%/)).not.toBeInTheDocument();
+});
+
+test('the word count is on the right of the same row as the book and the number (not under the text)', async () => {
+  stubSearch(['TIR-243']);
+  show();
+  const link = await screen.findByRole('link', { name: 'তিরমিযী ২৪৩' });
+  const item = rowOf('তিরমিযী ২৪৩');
+  const count = await within(item).findByText(/^[০-৯]+ টি শব্দ মিলেছে$/);
+  const head = link.parentElement;
+  expect(head).toHaveClass('related-head');
+  expect(head).toContainElement(count);
+  expect(link.compareDocumentPosition(count) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // link first, count after it
+  expect(head.children).toHaveLength(2);
+  // and the text comes after that row
+  await waitFor(() => expect(item.querySelector('.related-text')).not.toBeNull());
+  expect(head.compareDocumentPosition(item.querySelector('.related-text')) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
 });
 
 test('the items are list items with the separator class, inside one card', async () => {

@@ -10,17 +10,19 @@
 .related-item .ui-badge{margin-top:9px}
 .related-main{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
 
+.related-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+
 /* The link is the row's title; 44px tall with a negative margin (the row stays compact), and a plain click anywhere else on the item opens it too (RelatedList.jsx). */
 .related-link{display:inline-flex;align-items:center;min-height:44px;margin:-6px 0;font-weight:600;font-size:.825rem;color:var(--ink);text-decoration:none;align-self:flex-start}
 .related-link:hover{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
 .related-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 
-.related-text{margin:0;font-family:var(--f-read),serif;font-size:.9375rem;line-height:1.7;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.related-text{margin:0;font-family:var(--f-read),serif;font-size:.9375rem;line-height:1.7;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .related-match{font-weight:700;color:var(--match-text)}
-.related-reason{margin:0;font-size:.7375rem;color:var(--ink3)}
+.related-reason{margin:0;margin-left:auto;padding-left:8px;flex:none;font-size:.7375rem;color:var(--ink3);white-space:nowrap}
 .related-skel{height:14px;width:90%}
 
-/* The load-more button: a quiet pill under the list, 44px tap area. */
-.related-more{position:relative;align-self:center;min-height:32px;margin-top:4px;padding:4px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface2);color:var(--accent2);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
-.related-more::after{content:"";position:absolute;inset:-6px 0}
-.related-more:hover{border-color:var(--accent)}
+/* The loader: a small spinner row under the list while the next batch comes in (RelatedList.jsx). */
+.related-loader{display:flex;align-items:center;justify-content:center;gap:8px;min-height:36px;margin-top:4px;font-size:.7375rem;color:var(--ink3)}
+.related-spinner{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:related-spin .8s linear infinite}
+@keyframes related-spin{to{transform:rotate(360deg)}}

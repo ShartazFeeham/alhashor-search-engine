@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import { renderToStaticMarkup as toMarkup } from 'react-dom/server';
 import { clearHadisTextCache } from '../lib/useHadisText';
 import { searchClient } from '../search/searchClient';
@@ -79,12 +79,34 @@ test('the actions row has no next-hadis button; the only next link is in the bot
   expect(nextLinks[0]).toHaveAttribute('href', '/hadis/bukhari/2');
 });
 
-test('the similar hadis are searched with the page text and load more on the button', async () => {
-  show('bukhari', 1);
-  const region = await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
-  await waitFor(() => expect(searchClient.search).toHaveBeenCalled());
-  expect(within(region).getAllByRole('listitem')).toHaveLength(5);
-  fireEvent.click(within(region).getByRole('button', { name: 'আরও সদৃশ হাদীস' }));
-  expect(within(region).getAllByRole('listitem')).toHaveLength(6);
-  expect(within(region).queryByRole('button', { name: 'আরও সদৃশ হাদীস' })).not.toBeInTheDocument();
+test('the similar hadis are searched with the page text and the rest load when the end of the list is reached (no button)', async () => {
+  const watchers = [];
+  window.IntersectionObserver = class {
+    constructor(callback) {
+      this.callback = callback;
+      this.targets = new Set();
+      watchers.push(this);
+    }
+    observe(target) {
+      this.targets.add(target);
+    }
+    disconnect() {
+      this.targets.clear();
+    }
+  };
+  try {
+    show('bukhari', 1);
+    const region = await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+    await waitFor(() => expect(searchClient.search).toHaveBeenCalled());
+    expect(within(region).getAllByRole('listitem')).toHaveLength(5);
+    expect(within(region).queryByRole('button')).not.toBeInTheDocument();
+    await waitFor(() => expect(watchers.some((w) => w.targets.size > 0)).toBe(true));
+    await act(async () => {
+      watchers.filter((w) => w.targets.size > 0).forEach((w) => w.callback([{ isIntersecting: true }]));
+    });
+    expect(within(region).getAllByRole('listitem')).toHaveLength(6);
+    expect(within(region).queryByTestId('related-loader')).not.toBeInTheDocument();
+  } finally {
+    delete window.IntersectionObserver;
+  }
 });
