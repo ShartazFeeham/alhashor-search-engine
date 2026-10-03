@@ -2,23 +2,34 @@
 
 সকাল-সন্ধ্যা, ঘুমানো ও জাগার সময়ের সহীহ যিকর ও দু'আ
 
-| Line | Book + number | Opening words | Grade | Reason |
-|---|---|---|---|---|
-| সাইয়্যিদুল ইস্তিগফার, আয়াতুল কুরসী, তিন কুল | বুখারী 5867 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সাইয়্যেদুল ইস্তিগফার হলো | sahih | sayyid al-istighfar (Shaddad ibn Aws); Ayat al-Kursi: Bukhari 3045, three Quls: Bukhari 4648 |
-| "আসবাহনা ওয়া আসবাহাল মুলকু লিল্লাহ" | মুসলিম 6661 | যখন সন্ধা হতো তখন রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম | sahih | Ibn Masud: the evening dua: we have reached the evening and the kingdom belongs to Allah |
-| "বিসমিল্লাহিল্লাযী লা ইয়াদুররু মাআস্মিহী শাইউন" | আবু দাউদ 5000 | আমি রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম-কে বলতে শুনেছিঃ যে | hasan | Uthman: whoever says it three times is not harmed; sound |
-| "রাযীতু বিল্লাহি রাব্বান" | আবু দাউদ 525 | রাসূলুল্লাহ্ সাল্লাল্লাহু আলাইহি ওয়া সাল্লাম বলেনঃ যে ব্যক্তি | sahih | Sad: whoever says radiytu billahi rabban...; the report is in Muslim; the morning-evening wording (Abu Dawud 5072) is not in the data, this is the same words after the adhan |
-| "হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুওয়া" | - | - | - | the narration (Abu Dawud 5081) is not sound; nothing else in the data |
-| "আল্লাহুম্মা আফিনী ফী বাদানী" | - | - | - | the narration (Abu Dawud 5090) is not sound; nothing else in the data |
-| "সুবহানাল্লাহি ওয়া বিহামদিহী" ১০০ বার | তিরমিযী 3469 | যে, নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ কেউ যদি | sahih | subhan Allahi wa bihamdihi a hundred in the morning and a hundred in the evening; the same report is in Muslim |
-| "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু" ১০ বার ও ১০০ বার | মুসলিম 6598 | যে, রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যে ব্যক্তিلاَ | sahih | la ilaha illa Allah wahdahu a hundred times a day: ten slaves freed, protection until evening; ten times: Tirmidhi 3474 (line 13) |
-| ঘুমের দু'আ | বুখারী 245 | وَقَالَ عَفَّانُ حَدَّثَنَا صَخْرُ بْنُ جُوَيْرِيَةَ، عَنْ نَافِعٍ، | sahih | Bara: lie on the right side and say allahumma aslamtu wajhi ilayk |
-| ঘুম থেকে ওঠার দু'আ | বুখারী 5875 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম রাতে নিজ বিছানায় শোয়ার | sahih | Hudhayfa: bismika amutu wa ahya; and on waking alhamdulillahilladhi ahyana (also covers line 9) |
-| ঘুমের আগে আয়াতুল কুরসী ও তিন কুল | বুখারী 4648 | যে, প্রতি রাতে রাসূল সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম শয্যা | sahih | Aisha: he recites the three Quls into his hands and wipes his body; the Ayat al-Kursi hadis is Bukhari 3045 |
-| ফাতিমা (রাঃ)-এর তাসবীহ: ৩৩, ৩৩, ৩৪ | বুখারী 3440 | যে, ফাতিমা (রাঃ) যাঁতা চালানোর কষ্ট সম্পর্কে একদিন | sahih | Ali: Fatima and the tasbih at bedtime, 33, 33, 34 |
-| ফজর ও মাগরিবের পরের যিকর | তিরমিযী 3474 | যে, রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ ফজরের সালাত | hasan | Abu Dharr: ten times la ilaha illa Allah after fajr before speaking; hasan sahih gharib |
+| x | line | book + number | opening words | grade | reason |
+|---|---|---|---|---|---|
+| 1 | সাইয়্যিদুল ইস্তিগফার: সকালে বিশ্বাসের সাথে পড়লে সন্ধ্যার আগে মারা গেলেও সে জান্নাতী | বুখারী 5867 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ সাইয়্যেদুল ইস্তিগফার হলো | sahih | Sayyid al-Istighfar, with its morning promise (one clear hadith; the old line bundled Ayat al-Kursi and the Quls, which are now items 9, 12, 13) |
+| 2 | সন্ধ্যা হলে নবীজি (সাঃ) বলতেন: আমরা সন্ধ্যায় উপনীত হলাম, রাজত্ব আল্লাহরই, সকল প্রশংসা আল্লাহর | মুসলিম 6661 | যখন সন্ধা হতো তখন রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম | sahih | the evening dua "Amsayna wa amsal mulku lillah" (the morning form is the same with Asbahna) |
+| 3 | সকাল-সন্ধ্যায় তিনবার "বিসমিল্লাহিল্লাযী লা ইয়াদুররু মা‘আসমিহী শাইউন": সেদিন আকস্মিক বিপদ আসবে না | আবু দাউদ 5000 | আমি রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম-কে বলতে শুনেছিঃ যে | hasan | Uthman: three times morning and evening, no sudden harm; sound (also Tirmidhi 3388) |
+| 4 | সকালে ও সন্ধ্যায় "আল্লাহুম্মা বিকা আসবাহনা ওয়া বিকা আমসাইনা": নবীজি (সাঃ)-এর শেখানো দু’আ | তিরমিযী 3391 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম তার সাহাবীদের শিখাতেন যে | hasan | Allahumma bika asbahna wa bika amsayna; hasan |
+| 5 | সকাল-সন্ধ্যায় একশ বার "সুবহানাল্লাহি ওয়া বিহামদিহী": কিয়ামতে এর চেয়ে উত্তম আমল কেউ আনবে না | মুসলিম 6599 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যে ব্যক্তি সকালে | sahih | subhanallahi wa bihamdihi 100 times morning and evening |
+| 6 | দিনে একশ বার "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু…": দশ গোলাম আযাদের সওয়াব, একশ নেকী, একশ গুনাহ মাফ, সন্ধ্যা পর্যন্ত শয়তান থেকে হেফাজত | মুসলিম 6598 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যে ব্যক্তিلاَ إِلَهَ | sahih | la ilaha illallahu wahdahu 100 times a day; the text has 100 (the 10-times form is Tirmidhi 3474, item 11) |
+| 7 | শোয়ার সময় ওযূ করে ডান কাতে শুয়ে নবীজি (সাঃ)-এর শেখানো দু’আ: এটিই যেন রাতের শেষ কথা হয় | বুখারী 5872 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম আমাকে বললেনঃ যখন তুমি | sahih | the dua before sleeping (Bara ibn Azib): Allahumma aslamtu wajhi ilayk |
+| 8 | ঘুমানোর সময় "বিসমিকা আমূতু ওয়া আহইয়া", জেগে উঠে "আলহামদু লিল্লাহিল্লাযী আহইয়ানা বা‘দা মা আমাতানা" | বুখারী 5875 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম রাতে নিজ বিছানায় শোয়ার | sahih | the dua when sleeping and when waking up |
+| 9 | প্রতি রাতে শোয়ার সময় তিন কুল পড়ে দু’হাতে ফুঁ দিয়ে সারা শরীরে হাত বুলাতেন নবীজি (সাঃ) | বুখারী 4648 | প্রতি রাতে রাসূল সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম শয্যা গ্রহনকালে | sahih | Ikhlas, Falaq and Nas at bedtime, wiping the body three times |
+| 10 | ফাতিমা (রাঃ) খাদেম চাইলেন, নবীজি (সাঃ) শেখালেন ঘুমানোর আগে তেত্রিশ-তেত্রিশ-চৌত্রিশ তাসবীহ | বুখারী 3440 | ফাতিমা (রাঃ) যাঁতা চালানোর কষ্ট সম্পর্কে একদিন (আমার | sahih | Fatima's tasbih: 33 subhanallah, 33 alhamdulillah, 34 Allahu akbar before sleep |
+| 11 | ফজরের নামাযের পর কথা বলার আগে দশবার "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু…": সারা দিন হেফাজত | তিরমিযী 3474 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ ফজরের সালাত (নামায) | hasan | ten times after Fajr before speaking; the Maghrib part is not in this text; hasan |
+| 12 | রমযানের যাকাত পাহারায় ধরা পড়া শয়তান শেখাল: শোয়ার সময় আয়াতুল কুরসী পড়ো; নবীজি (সাঃ): সে সত্য বলেছে | বুখারী 4642 | যে দু’টি আয়াত তিলাওয়াত করে। আবূ নু’আইম (রহঃ) | sahih | Ayat al-Kursi before sleep gives a guard until morning (the heading also gives the last two verses of al-Baqarah) |
+| 13 | রাতে সূরা বাকারার শেষ দুই আয়াত পড়লে তা-ই তার জন্য যথেষ্ট | বুখারী 4682 | আমি রাসূল সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর সঙ্গে সাক্ষাত | sahih | the last two verses of al-Baqarah at night suffice |
+| 14 | শয্যা গ্রহণের দু’আ: সকল প্রশংসা আল্লাহর, যিনি আমাদের খাওয়ালেন, পান করালেন, আশ্রয় দিলেন | মুসলিম 6646 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম যখন শয্যা গ্রহণ করতেন | sahih | Alhamdulillahilladhi at'amana wa saqana wa kafana wa awana at bedtime |
+| 15 | বিছানা ঝেড়ে নিয়ে বলো: "বিসমিকা রাব্বি ওয়াদা‘তু জানবী": নবীজি (সাঃ)-এর শেখানো ঘুমের দু’আ | বুখারী 5881 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যদি তোমাদের কেউ | sahih | shake the bed, then Bismika rabbi wada'tu janbi |
+| 16 | ফজরের পর জায়নামাযে বসে থাকা জুওয়ায়রিয়া (রাঃ)-কে নবীজি (সাঃ): চারটি কালেমা তিনবার, ওজনে তোমার সারা সকালের যিকরের চেয়ে ভারী | মুসলিম 6665 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম প্রত্যূষে তাঁর নিকট থেকে | sahih | Juwayriya: Subhanallahi wa bihamdihi adada khalqihi... outweighs the morning's dhikr |
+| 17 | সন্ধ্যায় "আউযু বিকালিমাতিল্লাহিত তাম্মাতি মিন শাররি মা খালাক" বললে বিছার দংশনও সকাল পর্যন্ত ক্ষতি করত না | ইবনে মাজাহ 3518 | একটি বিছা এক ব্যক্তিকে দংশন করলে ঐ রাতে | sahih | the evening protection with Allah's perfect words (also Muslim 2709) |
+| 18 | ঘরে প্রবেশ ও খাওয়ার সময় আল্লাহর নাম স্মরণ করলে শয়তান বলে: তোমাদের থাকা-খাওয়ার জায়গা হলো না | ইবনে মাজাহ 3887 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে বলতে শুনেছেনঃ কোন | sahih | mentioning Allah on entering the house and when eating (Muslim 2018) |
+| 19 | খাওয়া-পানের পর নবীজি (সাঃ): সব প্রশংসা আল্লাহর, যিনি আমাদের খাওয়ালেন, পান করালেন, মুসলিম করলেন | তিরমিযী 3457 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম যখন কিছু আহার করতেন | hasan | the dhikr after eating and drinking; hasan |
+| 20 | বৃষ্টি দেখলে নবীজি (সাঃ) বলতেন: হে আল্লাহ, মুষলধারে কল্যাণকর বৃষ্টি দিন | বুখারী 975 | কুরআনের আয়াত كَصَيِّبٍ অর্থ বৃষ্টি। অন্যরা বলেছেন صَيِّبٍ | sahih | the dua at the sight of rain |
+| 21 | শৌচাগারে যাওয়ার সময় নবীজি (সাঃ)-এর দু’আ: হে আল্লাহ, মন্দ ও মন্দ শক্তি থেকে আপনার আশ্রয় চাই | বুখারী 144 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম যখন প্রকৃতির ডাকে শৌচাগারে | sahih | the dua before entering the toilet |
 
-## Not found
+## Not found / still missing
 
-- "হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুওয়া"
-- "আল্লাহুম্মা আফিনী ফী বাদানী"
+- "হাসবিয়াল্লাহু লা ইলাহা ইল্লা হুওয়া আলাইহি তাওয়াক্কালতু" সকাল-সন্ধ্যায় সাতবার: এই হাদীস পাওয়া যায়নি (আছে শুধু আয়াতের অংশ, বুখারী 4322, 4621, আর "হাসবুনাল্লাহ" বুখারী 4208 অন্য প্রসঙ্গে)
+- "আল্লাহুম্মা আফিনী ফী বাদানী, আল্লাহুম্মা আফিনী ফী সাম‘ঈ…" সকাল-সন্ধ্যায় তিনবার: এই শব্দে হাদীস পাওয়া যায়নি
+- সকাল-সন্ধ্যায় "রাযীতু বিল্লাহি রাব্বা…" (তিন বার): এই প্রসঙ্গে পাওয়া যায়নি, আছে শুধু আযানের পরের দু’আ হিসেবে (আবু দাউদ 525)
+- মাগরিবের পর ও ফজরের পর দশবার "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু…" (মাগরিবের অংশসহ): তিরমিযী 3474-এ শুধু ফজরের কথা আছে
+- ঘর থেকে বের হওয়ার দু’আ ("বিসমিল্লাহি তাওয়াক্কালতু আলাল্লাহ…") ও বাহনে ওঠার দু’আ ("সুবহানাল্লাযী সাখখারা লানা…"): বাংলা পাঠে পাওয়া যায়নি
