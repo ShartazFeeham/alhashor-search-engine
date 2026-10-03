@@ -2,23 +2,31 @@
 
 বিপদে সবর, নেয়ামতে শোকর এবং ধৈর্যশীলদের জন্য আল্লাহর প্রতিদান
 
-| Line | Book + number | Opening words | Grade | Reason |
-|---|---|---|---|---|
-| "মুমিনের সব কাজ কল্যাণ" | মুসলিম 7229 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ মু’মিনের অবস্থা ভারি | sahih | the believer's affair is all good: thanks in ease, patience in hardship (also covers line 2) |
-| সুখে শোকর ও দুঃখে সবর | - | - | - | the only text is the same hadis (Muslim 7229) used for line 1 |
-| বিপদে "ইন্না লিল্লাহি ওয়া ইন্না ইলাইহি রাজিউন" | মুসলিম 1999 | ১৯৯৯। আবূ বকর ইবনু আবূ শায়বা (রহঃ) ... | sahih | Umm Salama: say inna lillahi wa inna ilayhi rajiun and the dua; Allah gives a better replacement |
-| প্রথম আঘাতেই সবর | মুসলিম 2012 | ২০১২। মুহাম্মাদ ইবনুল মূসান্না (রহঃ) ... আনাস ইবনু | sahih | patience is at the first blow |
-| রোগে গুনাহ মাফ | বুখারী 5259 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর অসুস্থতার সময় | sahih | Ibn Masud: no hardship strikes a Muslim but sins fall like leaves |
-| বিপদগ্রস্তদের বেশি প্রতিদান | ইবনে মাজাহ 4031 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেনঃ বিপদ যত তীব্র | hasan | the greater the trial the greater the reward (Anas); sound |
-| সন্তান হারানোর ধৈর্য ও জান্নাতে "বাইতুল হামদ" | তিরমিযী 1021 | যে, তিনি বলেন, আমার ছেলে সিনানকে দাফন করছিলাম। | hasan | Abu Musa: the servant who is patient at the loss of a child, Allah orders a house of praise (Bayt al-Hamd) in Paradise; hasan |
-| অন্ধত্বে ধৈর্যের প্রতিদান | বুখারী 5251 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে বলতে শুনেছি | sahih | whoever is tested in his two dear things (eyes) and is patient, Paradise is the replacement |
-| নবীজির পা ফুলে যাওয়া পর্যন্ত নামায | বুখারী 4474 | আল্লাহর নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম রাতে এত বেশি | sahih | Aisha: he prays until his feet crack; shall I not be a grateful servant |
-| "আফালা আকূনু আবদান শাকূরা" | মুসলিম 6863 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এমনভাবে সালাত আদায় করেছেন | sahih | Mughira version of the same report: feet swell; shall I not be a thankful servant (lines 9 and 10 are one report in two chains) |
-| "নিচের দিকে তাকাও" | - | - | - | Muslim 7430 and Bukhari 6490 (look at those below you) are not in the data; Tirmidhi 2514 has the same teaching but its authenticity is doubtful, so it was not used |
-| আলহামদুলিল্লাহ মীযান ভরে দেয় | মুসলিম 427 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন যে, পবিত্রতা হল | sahih | Abu Malik al-Ashari: alhamdulillah fills the scale; patience is light |
-| "সবরের চেয়ে প্রশস্ত দান কাউকে দেওয়া হয়নি" | বুখারী 6026 | ৬০২৬। আবূল ইয়ামান (রহঃ) ... আবূ সাঈদ খুদরী | sahih | no one is given a gift better and wider than patience |
+| x | line | book + number | opening words | grade | reason |
+|---|---|---|---|---|---|
+| 1 | মুমিনের সবই কল্যাণ: সুখ এলে শুকরিয়া, দুঃখ এলে সবর | মুসলিম 7229 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ মু’মিনের অবস্থা ভারি | sahih | the believer's affairs are all good: thanks in ease, patience in hardship (this is the wanted wording) |
+| 2 | বিপদে "ইন্না লিল্লাহি ওয়া ইন্না ইলাইহি রাজিউন" বলে ধৈর্য ও উত্তম বিনিময় চাইলে আল্লাহ তা দান করেন | মুসলিম 1999 | আবূ বকর ইবনু আবূ শায়বা (রহঃ) ... ইবনু | sahih | inna lillahi and the dua for patience and a better replacement |
+| 3 | প্রথম আঘাতেই সবর: সন্তানহারা কাঁদতে থাকা নারীকে নবীজি (সাঃ)-এর উপদেশ | মুসলিম 2012 | মুহাম্মাদ ইবনুল মূসান্না (রহঃ) ... আনাস ইবনু মালিক | sahih | patience at the first blow (the text names the woman's grief and the Prophet's advice) |
+| 4 | জ্বরে কাতর নবীজি (সাঃ): মুসলিমের কষ্টে গুনাহ ঝরে যায় গাছের পাতা ঝরার মতো | বুখারী 5259 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর অসুস্থতার সময় | sahih | sins fall away from the afflicted Muslim like leaves from a tree |
+| 5 | বিপদ যত বড়, প্রতিদান তত বড়: আল্লাহ কোনো জাতিকে ভালোবাসলে তাদের পরীক্ষা করেন | ইবনে মাজাহ 4031 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেনঃ বিপদ যত তীব্র | hasan | greater affliction, greater reward; Allah tests a people He loves (also Tirmidhi 2396); sound |
+| 6 | সন্তান মারা গেলে বান্দা যা বলে, তা শুনে আল্লাহ জান্নাতে তার জন্য গড়ান "বাইতুল হামদ" | তিরমিযী 1021 | তিনি বলেন, আমার ছেলে সিনানকে দাফন করছিলাম। সে | hasan | Bayt al-Hamd for the parent who says praise and inna lillahi after losing a child; hasan |
+| 7 | প্রিয় দুই চোখ নিয়ে পরীক্ষায় ধৈর্য ধরলে আল্লাহ বিনিময়ে দেবেন জান্নাত | বুখারী 5251 | আমি নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে বলতে শুনেছি | sahih | hadith qudsi: patience in the loss of the two eyes, reward Paradise |
+| 8 | পা ফুলে যাওয়া পর্যন্ত নামাযে দাঁড়াতেন নবীজি (সাঃ): আমি কি কৃতজ্ঞ বান্দা হবো না? | বুখারী 4473 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এত বেশি সালাত (নামায/নামাজ) | sahih | feet swollen from prayer: shall I not be a thankful servant |
+| 9 | যে মানুষের কৃতজ্ঞতা জানায় না, সে আল্লাহরও কৃতজ্ঞতা জানায় না | আবু দাউদ 4736 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ যে ব্যক্তি মানুষের | sahih | he who does not thank people does not thank Allah (also Tirmidhi 1954); sound |
+| 10 | আলহামদুলিল্লাহ পাল্লা ভরে দেয়; নামায আলো, সদকা প্রমাণ, ধৈর্য জ্যোতি | মুসলিম 427 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন যে, পবিত্রতা হল | sahih | alhamdulillah fills the scale; patience is light |
+| 11 | ধৈর্যের চেয়ে প্রশস্ত দান কাউকে দেওয়া হয়নি: নবীজি (সাঃ)-এর কথা | বুখারী 6026 | আবূল ইয়ামান (রহঃ) ... আবূ সাঈদ খুদরী (রাঃ) | sahih | no gift better and wider than patience |
+| 12 | আল্লাহর ঘোষণা: প্রিয়জনকে তুলে নেওয়ার পর মুমিন ধৈর্য ধরলে তার জন্য জান্নাত ছাড়া কোনো প্রতিদান নেই | বুখারী 5981 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ আল্লাহ তা’আলা ইরশাদ | sahih | hadith qudsi: patience after the loss of a dear one, nothing but Paradise |
+| 13 | তিন সন্তান হারিয়ে সওয়াবের আশায় ধৈর্য ধরলে জান্নাত: দুই সন্তান হলেও, বললেন নবীজি (সাঃ) | মুসলিম 6459 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কতিপয় আনসারী মহিলাদের লক্ষ্য | sahih | patience at the death of three (even two) children, Paradise |
+| 14 | মৃগী রোগে আক্রান্ত নারীকে নবীজি (সাঃ): চাইলে ধৈর্য ধরো, তোমার জন্য জান্নাত; সে ধৈর্যই বেছে নিল | বুখারী 5249 | ইবনু আব্বাস (রাঃ) আমাকে বললেন আমি কি তোমাকে | sahih | the woman with epilepsy chose patience and Paradise |
+| 15 | নবী-রাসুলদের পরীক্ষাই সবচেয়ে কঠিন: দীনদারির মাত্রা অনুযায়ী পরীক্ষা, শেষে গুনাহমুক্ত হয়ে চলা | ইবনে মাজাহ 4023 | আমি বললাম, হে আল্লাহর রাসূল! কোন্ মানুষের সর্বাপেক্ষা | hasan | the prophets are tried most, then the next best; the servant walks sinless at the end (Tirmidhi 2398 hasan sahih) |
+| 16 | দুশ্চিন্তা, কষ্ট, পেরেশানী, এমনকি একটি কাঁটার খোঁচাতেও আল্লাহ মুসলিমের গুনাহ ক্ষমা করেন | বুখারী 5239 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ মুসলিম ব্যাক্তির উপর | sahih | any hardship, even a thorn, expiates sins |
+| 17 | মহামারীর এলাকায় সওয়াবের আশায় ধৈর্য ধরে থাকলে শহীদের সমান সওয়াব | বুখারী 3228 | আমি রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে প্লেগ সম্পর্কে | sahih | plague: staying patiently, sure that nothing but what Allah decreed will strike, earns a martyr's reward |
+| 18 | অসুস্থকে দেখতে গিয়ে নবীজি (সাঃ): চিন্তা নেই, ইনশাআল্লাহ গুনাহ থেকে পবিত্র হয়ে যাবে | বুখারী 3358 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম একদিন অসুস্থ একজন বেদুঈনকে | sahih | visiting the sick: no harm, purification, God willing (the sick bedouin's reply is part of the text) |
+| 19 | অত্যাচারে সাহায্যের দু’আ চাইলেন সাহাবীরা: নবীজি (সাঃ) স্মরণ করালেন আগের মুমিনদের অটল ধৈর্য | বুখারী 3354 | আমরা নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর খেদমতে (কাফিরদের | sahih | Khabbab: the earlier believers were sawn in two and did not turn back; Islam will be completed (long-ish, 1100 chars) |
+| 20 | সুসংবাদ পেলে আল্লাহর উদ্দেশ্যে শোকরের সিজদা করতেন নবীজি (সাঃ) | আবু দাউদ 2765 | বস্তুত যখন তাঁর নিকট কোন খুশীর খবর আসতো, | hasan | sujud of thanks on good news; hasan |
 
-## Not found
+## Not found / still missing
 
-- সুখে শোকর ও দুঃখে সবর
-- "নিচের দিকে তাকাও"
+- "নিচের দিকে তাকাও" (দুনিয়ার ব্যাপারে নিজের চেয়ে নিচের মানুষের দিকে তাকানোর হাদীস): বহু বানানে খুঁজেও বাংলা পাঠে পাওয়া যায়নি
+- অসুস্থ বা বিপদগ্রস্তকে দেখে "আলহামদু লিল্লাহিল্লাযী আফানী…" পড়ার দু’আ: আমাদের তথ্যে নেই
+- খাওয়া-পানের পর আলহামদুলিল্লাহ বলায় আল্লাহর সন্তুষ্টি: আমাদের তথ্যে পাওয়া যায়নি
