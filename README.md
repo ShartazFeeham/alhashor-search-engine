@@ -12,7 +12,7 @@ Live site (when deployed): https://hadis.feeham.com. Work currently stays local:
 - **Narrators** (`/narrators?name=<id>&page=&book=&sort=`): the same layout as Topics, but the menu lists every narrator as one row with the number of hadis at its right (most hadis first by default; sticky sidebar from 900px, full-screen overlay on phones). The search row stays on top while the list scrolls, with a sort select of four options: hadis count high to low (default), low to high, name ক → হ and name হ → ক (the two name sorts bring back the letter blocks); the address holds `&sort=count-asc|name-asc|name-desc` (the old `&sort=desc` and `&sort=asc` still work). For the chosen narrator the listing of search and topics (count line, book chips with counts, plain cards, boxed pager, 20 to a page) from the static files in `public/json/narrators`.
 - **Hadis page** (`/hadis/<book>/<number>`): calm reading column, folded narrator chain, reading time and progress line, copy / cite / link buttons, previous and next (arrow keys and swipe), breadcrumb back to the book.
 - **Share** (`/share/<book>/<number>`): citation, share text, native share sheet and a quote-card image drawn on a canvas in the browser (download or share).
-- **Daily** (`/daily`): hadis of the day, chosen from the date with no randomness, always from the owner's featured top-picks sets (`FEATURED_SET_NUMBERS` in `src/lib/featuredSets.js`: sets 5, 1, 4, 6, 2, the display positions 1, 2, 4, 5 and 7 of the জনপ্রিয় হাদীস list; the Home top list picks its three random sets from the same five; pool built by `src/lib/dailyPool.js`, de-duplicated, in set order). Today and the previous seven days are all different, the whole pool is used once before any hadis repeats, and the RSS feed uses the same pool. Only while the pool has fewer than 8 hadis does it fall back to the old short-hadis list (and `public/json/daily-picks.json`, still built by `scripts/build-daily-picks.mjs` for that case).
+- **Daily** (`/daily`): hadis of the day, chosen from the date with no randomness, always from the owner's featured top-picks sets (`FEATURED_SET_NUMBERS` in `src/lib/featuredSets.js`: sets 5, 1, 4, 6, 2, the display positions 1, 2, 4, 5 and 7 of the জনপ্রিয় হাদীস list; the Home top list picks its three random sets from the same five; pool built by `src/lib/dailyPool.js`, de-duplicated, in set order). Today and the previous seven days are all different, the whole pool is used once before any hadis repeats, and the RSS feed uses the same pool. There is no fallback: the pool is the only source (an empty pool shows no hadis of the day).
 - **Top picks, টপ লিস্ট/হাদীস** (shown as জনপ্রিয় হাদীস in the top bar, the phone bottom tab (জনপ্রিয়) and the Home card) (`/top-picks`, `/top-picks/<set id>`): the owner's hand-picked hadis in themed sets (`src/data/topPicks/set-01.json` to `set-12.json`, read by `src/lib/topPicks.js`), then the three older plans (রমযান, ছোট হাদীস, উত্তম চরিত্র). One compact card per set (a colour tile with a list icon, the title which wraps and is never cut, the count and description, and "আপনি পড়েছেন N/M" with a small progress ring: red below 33%, yellow below 66%, green above, a tick at 100%); a set with no hadis is not listed; a set page is a hadis-by-hadis checklist with progress kept on the device only. The old addresses `/daily?tab=plans` and `/daily?tab=plans&plan=<id>` redirect permanently (`next.config.mjs`).
 - **Similar hadis**: under each hadis page, a live search with the meaningful words of the whole hadis (common words removed, at most 25 longest words), the best 20 kept, 5 shown and "আরও সদৃশ হাদীস" shows 5 more each time. The hadis page is a stack of cards as wide as the list pages.
 - **Home**: the hero with the search bar, a টপ লিস্ট/হাদীস section (three random sets out of the five featured ones, chosen in the browser after mount, titles only with a "পড়ুন" label), a row of four cards (জনপ্রিয় হাদীস, বর্ণনাকারী, বিষয়ভিত্তিক হাদীস, আজকের হাদীস) and the books shelf, হাদীসের বই.
@@ -25,7 +25,7 @@ Needs Node 20.9 or newer (`.nvmrc` says 20). The browser scripts under `scripts/
 ```sh
 npm ci            # install
 npm run dev       # dev server at http://localhost:3000
-npm run build     # production build (first runs `prebuild`: packs the hadis texts into .data/hadis and renews public/json/daily-picks.json when it has under 60 days left)
+npm run build     # production build (first runs `prebuild`: packs the hadis texts into .data/hadis)
 npm start         # serve the production build at http://localhost:3000
 npm test          # Vitest in watch mode; npm test -- --run runs once
 npm run lint      # ESLint, zero warnings allowed (includes jsx-a11y)
@@ -77,7 +77,6 @@ public/json/
                                  sorted by the words' hadis count, the most first, so the search can take
                                  the first N (the cap). Made from substring/ and tags/ by
                                  scripts/build-substring-3.mjs. The search reads these by default
-  short-hadis.json               numbers of hadis of 60 words or fewer, per book code (daily pick)
   related/<CODE>-<n>.json        up to 3 related hadis per hadis, 100 hadis per shard (BUK-0.json ...);
                                  no longer read by the site (the hadis page searches live), kept until the owner decides
 docs/         redesign-plan.md (decisions, phases, deviations), redesign-ideas.md, design/ (D2 and D5 references)
@@ -128,9 +127,8 @@ scripts/with-server.sh 3000 "npm start" node scripts/theme-shots.mjs http://loca
 
 ## Data scripts
 
-Run once from the repo root when the data changes. Both read `public/json/hadis` and tolerate a text with a raw control character.
+Run once from the repo root when the data changes. These scripts read the files under `public/json`.
 
-- `node scripts/build-short-hadis.mjs` writes `public/json/short-hadis.json` (hadis of 60 words or fewer, used by the daily pick).
 - `node scripts/build-index-3.mjs` regroups `public/json/tags/*.json` into `public/json/tags3/<first three letters>.json` (no network; the same output every time; it reads `tags/` and replaces `tags3/`; `src/lib/indexShards.test.js` checks that both folders hold the same words and tags). Run it again whenever `tags/` changes.
 - `node scripts/build-substring-3.mjs` regroups `public/json/substring/*.json` into `public/json/substring3/<first three letters of the key>.json` and sorts each list by the words' hadis count (read from `public/json/tags`), the most first, ties by code point order (no network; the same output every time; about 4 s; it replaces `substring3/`). `src/lib/substringShards.test.js` checks that both folders hold the same (key, word) pairs and that every list is sorted. Run it again whenever `substring/` or `tags/` changes.
 - `node scripts/build-related.mjs` writes `public/json/related/<CODE>-<n>.json`: for each hadis up to 3 related ones, by words they share weighted by rarity, with a small bonus for another book; two near-identical texts in different books are marked as the same report. The method is described at the top of the script. The site no longer reads these files (the similar list is a live search now); the script and the files are kept for now.

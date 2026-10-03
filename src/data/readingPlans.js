@@ -2,7 +2,7 @@
 //
 // Each plan is a list of days; every day is one hadis ({ book, number }, with the book id from
 // src/lib/books.js). The numbers were checked against the real texts. The 'short-40' plan uses
-// only hadis of 60 words or fewer (they are all in public/json/short-hadis.json).
+// only hadis of 60 words or fewer (a test counts the words of each).
 
 export const PLANS = [
   {

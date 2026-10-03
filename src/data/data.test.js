@@ -1,11 +1,7 @@
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
-import { BOOKS, bookByCode, bookById, hasHadis } from '../lib/books';
+import { bookById, hasHadis } from '../lib/books';
 import { CURATED_TOPICS } from './curatedTopics';
+import { realText } from '../test/hadisFixtures';
 import { PLANS } from './readingPlans';
-
-const root = process.cwd();
-const short = JSON.parse(readFileSync(path.join(root, 'public/json/short-hadis.json'), 'utf8'));
 
 const wordCount = (text) => text.trim().split(/\s+/).length;
 
@@ -77,27 +73,11 @@ describe('reading plans', () => {
     }
   });
 
-  test('the short-40 plan uses only hadis from the short list', () => {
+  test('the short-40 plan uses only hadis of 60 words or fewer', () => {
     const plan = PLANS.find((p) => p.id === 'short-40');
     for (const day of plan.days) {
-      expect(short[bookById(day.book).code]).toContain(day.number);
-    }
-  });
-});
-
-describe('short-hadis.json', () => {
-  test('has the six book codes', () => {
-    expect(Object.keys(short).sort()).toEqual(BOOKS.map((b) => b.code).sort());
-  });
-
-  test('numbers are ascending, unique and all exist', () => {
-    for (const [code, numbers] of Object.entries(short)) {
-      const book = bookByCode(code);
-      expect(numbers.length).toBeGreaterThan(0);
-      for (let i = 0; i < numbers.length; i += 1) {
-        if (i > 0) expect(numbers[i]).toBeGreaterThan(numbers[i - 1]);
-        expect(hasHadis(book, numbers[i]), `${code} ${numbers[i]}`).toBe(true);
-      }
+      const body = realText(day.book, day.number).replace(/^\s*[0-9০-৯]+(?:\/[0-9০-৯]+)?\s*[।.]\s*/, '');
+      expect(wordCount(body), `${day.book} ${day.number}`).toBeLessThanOrEqual(60);
     }
   });
 });

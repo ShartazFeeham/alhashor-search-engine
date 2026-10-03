@@ -1,10 +1,10 @@
 import { renderHook } from '@testing-library/react';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { useHomePick } from '../daily/useHomePick';
 import { FEATURED_SET_NUMBERS as FEATURED_FILE } from './featuredSets';
 import { dayNumber } from './dailyPick';
-import { MIN_POOL, getDailyPool, pickDay, pickFromPool, poolIsEnough, recentDays } from './dailyPool';
+import { getDailyPool, pickDay, pickFromPool, recentDays } from './dailyPool';
 import { createHadisReader } from './hadisServer';
 import { feedEntries } from './rss';
 import { ALL_SETS, FEATURED_SET_NUMBERS, featuredSets, randomSets } from './topPicks';
@@ -40,11 +40,10 @@ describe('the rule', () => {
     expect(featuredSets().map((set) => set.number)).toEqual([5, 1, 4, 6, 2]);
   });
 
-  test('the pool is the de-duplicated union, in set order then item order, and big enough for no fallback', () => {
+  test('the pool is the de-duplicated union, in set order then item order', () => {
     const pool = getDailyPool();
     expect(pool.map(keyOf)).toEqual(union);
-    expect(pool.length).toBeGreaterThanOrEqual(MIN_POOL);
-    expect(poolIsEnough(pool)).toBe(true);
+    expect(pool.length).toBeGreaterThan(0);
   });
 
   test('every item of the five sets has a known book and a number that exists, and a hadis text file', async () => {
@@ -68,18 +67,18 @@ describe('every date in the next 400 days, through the exact functions of each s
     let picks = 0;
     for (let offset = 0; offset < DATES; offset++) {
       const today = dateAt(offset);
-      // /daily: the page calls pickDay and recentDays with the pool and the (unused) short list
-      const context = { pool, list: null };
+      // /daily: the page calls pickDay and recentDays with the pool
+      const context = { pool };
       const daily = [pickDay(today, context), ...recentDays(today, context).map((entry) => entry.pick)];
       expect(recentDays(today, context)).toHaveLength(7);
-      // Home card: the hook, which has no fetch when the pool is enough
+      // Home card: the hook, which fetches nothing
       const { result } = renderHook(() => useHomePick(today));
       expect(result.current.status).toBe('ok');
       expect(keyOf(result.current.pick)).toBe(keyOf(daily[0]));
       expect(keyOf(pickFromPool(pool, today))).toBe(keyOf(daily[0]));
       // RSS: noon UTC of the date is the same Dhaka date; the feed lists 14 days, newest first
       const now = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate(), 6, 0));
-      const feed = feedEntries(null, now);
+      const feed = feedEntries(now);
       expect(feed).toHaveLength(14);
       expect(feed.slice(0, 8).map(keyOf)).toEqual(daily.map(keyOf));
       for (const entry of feed) expect(UNION.has(keyOf(entry)), `rss ${keyOf(entry)}`).toBe(true);
@@ -152,13 +151,25 @@ describe('no other source of the daily hadis', () => {
     expect(rss).toMatch(/from '\.\/dailyPool'/);
   });
 
-  test('the daily code never reads curated topic lists, and the old short list is only the pool-too-small fallback', () => {
+  test('the daily code never reads curated topic lists', () => {
     for (const file of ['src/lib/dailyPool.js', 'src/daily/TodaySection.jsx', 'src/daily/useHomePick.js', 'src/lib/rss.js']) {
       expect(read(file), file).not.toMatch(/topics|curated/i);
     }
-    // the fallback is guarded by the pool size, and the real pool is never below it
-    expect(read('src/daily/TodaySection.jsx')).toMatch(/useShortList\(!fromPool\)/);
-    expect(read('src/daily/useHomePick.js')).toMatch(/if \(fromPool\) return undefined/);
-    expect(getDailyPool().length).toBeGreaterThanOrEqual(MIN_POOL);
+  });
+
+  test('the old fallback is gone: no code, script, config or doc names its files, hooks or helpers', () => {
+    const files = [
+      ...sources('src'),
+      ...sources('scripts'),
+      ...['package.json', 'next.config.mjs', 'netlify.toml', 'README.md', 'TODO.md', 'docs/redesign-plan.md'].map((file) => path.join(root, file)),
+    ];
+    const old = /daily-picks|short-hadis|build-daily-picks|build-short-hadis|useShortList|loadShortList|clearShortListCache|loadDailyPicks|clearDailyPicksCache|pickPrecomputed|picksCover|poolIsEnough|MIN_POOL|pickDaily|recentPicks/;
+    for (const file of files) {
+      expect(readFileSync(file, 'utf8'), path.relative(root, file)).not.toMatch(old);
+    }
+    for (const gone of ['public/json/daily-picks.json', 'public/json/short-hadis.json', 'scripts/build-daily-picks.mjs', 'scripts/build-short-hadis.mjs', 'src/daily/useShortList.js']) {
+      expect(existsSync(path.join(root, gone)), gone).toBe(false);
+    }
+    expect(JSON.parse(read('package.json')).scripts.prebuild).toBe('node scripts/build-text-shards.mjs');
   });
 });

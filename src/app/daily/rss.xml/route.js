@@ -1,4 +1,3 @@
-import shortHadis from '../../../../public/json/short-hadis.json';
 import { getHadisText } from '../../../lib/hadisServer';
 import { dailyFeedXml, feedEntries } from '../../../lib/rss';
 
@@ -7,7 +6,7 @@ export const revalidate = 3600;
 
 export async function GET() {
   const now = new Date();
-  const entries = feedEntries(shortHadis, now);
+  const entries = feedEntries(now);
   const texts = {};
   await Promise.all(
     entries.map(async ({ book, number }) => {

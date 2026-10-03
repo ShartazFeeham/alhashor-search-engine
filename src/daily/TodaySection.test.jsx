@@ -4,21 +4,15 @@ import path from 'node:path';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { bookById } from '../lib/books';
 import { formatNumber } from '../lib/digits';
-import { pickDaily, recentPicks } from '../lib/dailyPick';
+import { pickDay, recentDays } from '../lib/dailyPool';
 import { stripChain } from '../lib/hadisCore';
 import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
-import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
+import { diskFetch, realText } from '../test/hadisFixtures';
 import { ToastProvider } from '../ui/Toast';
 import TodaySection from './TodaySection';
-import { clearShortListCache } from './useShortList';
-
-// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
-// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
-vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
 
 const TODAY = new Date(2026, 9, 2, 10, 30);
-const SHORT = realShortList();
 
 const cite = ({ book, number }) => `${book.cite}, হাদীস নং ${formatNumber(number, 'bn')}`;
 // The day's article and the seven-day list show the core of the hadis only: no number, no chain of
@@ -45,7 +39,6 @@ async function settle() {
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(TODAY);
-  clearShortListCache();
   global.fetch = vi.fn(diskFetch);
   Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue() } });
 });
@@ -59,8 +52,8 @@ afterEach(async () => {
 describe('the hadis of the day', () => {
   test('shows a loading note first, then the day, the weekday and the hadis', async () => {
     show();
-    expect(screen.getByLabelText('লোড হচ্ছে')).toBeInTheDocument();
-    const today = pickDaily(SHORT, TODAY);
+    expect(screen.getAllByLabelText('লোড হচ্ছে').length).toBeGreaterThan(0);
+    const today = pickDay(TODAY);
     expect(await screen.findByText(wholeText(today))).toBeInTheDocument();
     const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
     expect(within(card).getByText('২ অক্টোবর ২০২৬')).toBeInTheDocument();
@@ -69,7 +62,7 @@ describe('the hadis of the day', () => {
 
   test('is the same hadis the pure pick gives, with its book badge and full title', async () => {
     show();
-    const today = pickDaily(SHORT, TODAY);
+    const today = pickDay(TODAY);
     await screen.findByText(wholeText(today));
     const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
     expect(within(card).getByRole('heading', { level: 2, name: `${today.book.full} - হাদীস নং ${formatNumber(today.number, 'bn')}` })).toBeInTheDocument();
@@ -78,7 +71,7 @@ describe('the hadis of the day', () => {
 
   test('links to the full hadis page', async () => {
     show();
-    const today = pickDaily(SHORT, TODAY);
+    const today = pickDay(TODAY);
     await screen.findByText(wholeText(today));
     const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
     expect(within(card).getByRole('link', { name: 'পুরো হাদীস' })).toHaveAttribute('href', `/hadis/${today.book.id}/${today.number}`);
@@ -86,7 +79,7 @@ describe('the hadis of the day', () => {
 
   test('copies the hadis with its citation and says so', async () => {
     show();
-    const today = pickDaily(SHORT, TODAY);
+    const today = pickDay(TODAY);
     await screen.findByText(wholeText(today));
     fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
     await settle();
@@ -100,7 +93,7 @@ describe('the hadis of the day', () => {
   test('says so when the clipboard is blocked', async () => {
     navigator.clipboard.writeText.mockRejectedValue(new Error('blocked'));
     show();
-    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    await screen.findByText(wholeText(pickDay(TODAY)));
     fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
     await settle();
     expect(screen.getByText('কপি করা যায়নি')).toBeInTheDocument();
@@ -108,12 +101,12 @@ describe('the hadis of the day', () => {
 
   test('a different date shows a different hadis', async () => {
     const { unmount } = show();
-    const first = pickDaily(SHORT, TODAY);
+    const first = pickDay(TODAY);
     await screen.findByText(wholeText(first));
     unmount();
     vi.setSystemTime(new Date(2026, 9, 3, 9, 0));
     show();
-    const second = pickDaily(SHORT, new Date(2026, 9, 3, 9, 0));
+    const second = pickDay(new Date(2026, 9, 3, 9, 0));
     await screen.findByText(wholeText(second));
     // yesterday's hadis is now in the list of past days, no longer in the card
     const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
@@ -123,29 +116,14 @@ describe('the hadis of the day', () => {
 
   test('moves to the new day when the visitor comes back after midnight', async () => {
     show();
-    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    await screen.findByText(wholeText(pickDay(TODAY)));
     const tomorrow = new Date(2026, 9, 3, 0, 5);
     vi.setSystemTime(tomorrow);
     act(() => {
       document.dispatchEvent(new Event('visibilitychange'));
     });
-    expect(await screen.findByText(wholeText(pickDaily(SHORT, tomorrow)))).toBeInTheDocument();
+    expect(await screen.findByText(wholeText(pickDay(tomorrow)))).toBeInTheDocument();
     expect(screen.getByText('৩ অক্টোবর ২০২৬')).toBeInTheDocument();
-  });
-
-  test('says so when the list of short hadis cannot be loaded, and tries again on request', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
-    show();
-    expect(await screen.findByText(/আনা যায়নি/)).toBeInTheDocument();
-    global.fetch = vi.fn(diskFetch);
-    fireEvent.click(screen.getByRole('button', { name: 'আবার চেষ্টা করুন' }));
-    expect(await screen.findByText(wholeText(pickDaily(SHORT, TODAY)))).toBeInTheDocument();
-  });
-
-  test('says so when there is nothing to pick from', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({}) }));
-    show();
-    expect(await screen.findByText('আজকের জন্য কোনো হাদীস পাওয়া যায়নি।')).toBeInTheDocument();
   });
 });
 
@@ -153,7 +131,7 @@ describe('the hadis of the day', () => {
 describe('the shared hadis article', () => {
   test('has the hadis page structure: header card, reading card with progress, actions card (and no chain card)', async () => {
     const { container } = show();
-    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    await screen.findByText(wholeText(pickDay(TODAY)));
     const article = container.querySelector('article.hadis-article');
     expect(article).toBe(screen.getByRole('article', { name: 'আজকের হাদীস' }));
     expect(article.querySelector('header.hadis-head.hadis-card')).toBeInTheDocument();
@@ -165,7 +143,7 @@ describe('the shared hadis article', () => {
 
   test('keeps one h1 on the page: the article title is an h2, the date line is above it', async () => {
     const { container } = show();
-    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    await screen.findByText(wholeText(pickDay(TODAY)));
     const article = screen.getByRole('article', { name: 'আজকের হাদীস' });
     expect(article.querySelector('h1')).toBeNull();
     expect(within(article).getByText(/আজকের হাদীস ·/)).toHaveClass('daily-date');
@@ -174,7 +152,7 @@ describe('the shared hadis article', () => {
 
   test('offers the same actions as the hadis page, plus the full page first', async () => {
     show();
-    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    await screen.findByText(wholeText(pickDay(TODAY)));
     const actions = screen.getByRole('article', { name: 'আজকের হাদীস' }).querySelector('.hadis-actions');
     expect(within(actions).getAllByRole('link').map((l) => l.textContent)).toEqual(['পুরো হাদীস', 'ছবি বানান']);
     expect(within(actions).getAllByRole('button').map((b) => b.textContent)).toEqual(expect.arrayContaining(['কপি', 'লিংক কপি']));
@@ -185,7 +163,7 @@ describe('the shared hadis article', () => {
 describe('the core of the hadis only', () => {
   test('the article shows the saying without the chain of narrators, and has no chain block', async () => {
     const { container } = show();
-    const today = pickDaily(SHORT, TODAY);
+    const today = pickDay(TODAY);
     await screen.findByText(wholeText(today));
     const { chain } = splitHadis(realText(today.book.id, today.number));
     const article = screen.getByRole('article', { name: 'আজকের হাদীস' });
@@ -197,7 +175,7 @@ describe('the core of the hadis only', () => {
 
   test('the full text with its chain is still what copy takes', async () => {
     show();
-    const today = pickDaily(SHORT, TODAY);
+    const today = pickDay(TODAY);
     await screen.findByText(wholeText(today));
     fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
     await settle();
@@ -210,7 +188,7 @@ describe('the last seven days', () => {
 
   test('lists the pick of each of the seven days before, newest first, each linking to its page', async () => {
     show();
-    const recent = recentPicks(SHORT, TODAY);
+    const recent = recentDays(TODAY);
     await screen.findByText(listText(recent[6].pick));
     const items = within(section()).getAllByRole('listitem');
     expect(items).toHaveLength(7);
@@ -225,7 +203,7 @@ describe('the last seven days', () => {
 
   test('shows the start of each hadis', async () => {
     show();
-    const recent = recentPicks(SHORT, TODAY);
+    const recent = recentDays(TODAY);
     const body = stripChain(realText(recent[0].pick.book.id, recent[0].pick.number)).core;
     await screen.findByText(listText(recent[0].pick));
     expect(within(section()).getAllByRole('listitem')[0]).toHaveTextContent(body.slice(0, 20));
@@ -238,7 +216,7 @@ describe('the last seven days list is justified and as wide as the article', () 
 
   test('each hadis text carries the shared justified class', async () => {
     show();
-    const recent = recentPicks(SHORT, TODAY);
+    const recent = recentDays(TODAY);
     await screen.findByText(listText(recent[0].pick));
     const texts = within(screen.getByRole('region', { name: 'গত ৭ দিন' })).getAllByText(/\S/, { selector: 'p.daily-recent-text' });
     expect(texts.length).toBeGreaterThan(0);
@@ -255,7 +233,7 @@ describe('the last seven days list is justified and as wide as the article', () 
 describe('the hadis of the day has no khutbah list button', () => {
   test('only the full page and copy actions are there', async () => {
     show();
-    await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
+    await screen.findByText(wholeText(pickDay(TODAY)));
     const card = screen.getByRole('article', { name: 'আজকের হাদীস' });
     expect(within(card).queryByRole('button', { name: /খুতবার তালিকা/ })).not.toBeInTheDocument();
   });

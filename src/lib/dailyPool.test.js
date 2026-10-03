@@ -1,5 +1,5 @@
 import { dayNumber } from './dailyPick';
-import { MIN_POOL, dailyPool, getDailyPool, pickDay, pickFromPool, poolIsEnough, recentDays } from './dailyPool';
+import { dailyPool, getDailyPool, pickDay, pickFromPool, recentDays } from './dailyPool';
 import { feedEntries } from './rss';
 import { ALL_SETS, FEATURED_SET_NUMBERS, featuredSets } from './topPicks';
 
@@ -85,25 +85,13 @@ describe('the pick', () => {
   });
 });
 
-describe('the fallback', () => {
-  const list = { BUK: [1, 2, 3], MUS: [4, 5, 6] };
+describe('an empty pool', () => {
   const date = new Date(2026, 9, 3, 12);
 
-  test('applies only below eight hadis', () => {
-    expect(MIN_POOL).toBe(8);
-    const seven = poolOf(made(1)).slice(0, 7);
-    expect(poolIsEnough(seven)).toBe(false);
-    expect(poolIsEnough(poolOf(made(2)).slice(0, 8))).toBe(true);
-    const fallback = pickDay(date, { pool: seven, list });
-    expect(['BUK', 'MUS']).toContain(fallback.book.code);
-    expect(list[fallback.book.code]).toContain(fallback.number);
-    const eight = poolOf(made(2)).slice(0, 8);
-    expect(keyOf(pickDay(date, { pool: eight, list }))).toBe(keyOf(pickFromPool(eight, date)));
-  });
-
-  test('with no pool and no list there is no pick (the page shows its own message)', () => {
-    expect(pickDay(date, { pool: [], list: null })).toBeNull();
-    expect(recentDays(date, { pool: [], list: null })).toEqual([]);
+  test('gives no pick and no earlier days, and nothing else is consulted', () => {
+    expect(pickFromPool([], date)).toBeNull();
+    expect(pickDay(date, { pool: [] })).toBeNull();
+    expect(recentDays(date, { pool: [] })).toEqual([]);
   });
 });
 
@@ -112,7 +100,7 @@ describe('the feed uses the same pool', () => {
   const NOW = new Date(Date.UTC(2026, 9, 2, 10, 0));
 
   test('each day of the feed is that day\'s pick from the pool', () => {
-    const entries = feedEntries(null, NOW, 14, pool);
+    const entries = feedEntries(NOW, 14, pool);
     expect(entries).toHaveLength(14);
     for (const entry of entries) expect(keyOf(entry)).toBe(keyOf(pickFromPool(pool, entry.date)));
     expect(new Set(entries.map(keyOf)).size).toBe(14);

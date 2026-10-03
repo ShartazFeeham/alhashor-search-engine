@@ -1,18 +1,12 @@
 /* eslint-disable testing-library/no-node-access */
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { clearDailyPicksCache } from '../daily/useHomePick';
-import { clearShortListCache } from '../daily/useShortList';
-import { pickDaily } from '../lib/dailyPick';
+import { pickDay } from '../lib/dailyPool';
 import { stripChain } from '../lib/hadisCore';
 import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
-import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
+import { diskFetch, realText } from '../test/hadisFixtures';
 import { getUrl } from '../test/nextNavigation';
 import Home from './Home';
-
-// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
-// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
-vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
 
 const renderHome = () => render(<SettingsProvider><Home /></SettingsProvider>);
 
@@ -26,8 +20,6 @@ async function settle() {
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(new Date(2026, 9, 2, 10, 0));
-  clearShortListCache();
-  clearDailyPicksCache();
   global.fetch = vi.fn(diskFetch);
 });
 
@@ -148,7 +140,7 @@ test('no longer has the placeholder tile saying more is coming', () => {
 
 describe('the daily hadis card', () => {
   const card = () => screen.getByRole('region', { name: 'আজকের হাদীস' });
-  const today = () => pickDaily(realShortList(), new Date(2026, 9, 2, 10, 0));
+  const today = () => pickDay(new Date(2026, 9, 2, 10, 0));
   const flat = (text) => text.replace(/\s+/g, ' ');
 
   test('shows the citation above the start of today\'s hadis, without its number', async () => {
@@ -194,34 +186,10 @@ describe('the daily hadis card', () => {
 
   const urlsFetched = () => global.fetch.mock.calls.map(([url]) => url);
 
-  test('picks from the small precomputed file and never loads the 88 KB list', async () => {
+  test('takes the hadis from the featured sets: no daily or short list file is requested', async () => {
     renderHome();
     await screen.findByTestId('home-daily-text');
-    expect(urlsFetched()).toContain('/json/daily-picks.json');
-    expect(urlsFetched()).not.toContain('/json/short-hadis.json');
-  });
-
-  test('starts the picks request as soon as the card mounts, before any other request', () => {
-    renderHome();
-    expect(urlsFetched()[0]).toBe('/json/daily-picks.json');
-  });
-
-  test('shows the hadis the daily page shows (the full list) when the picks file is missing', async () => {
-    global.fetch = vi.fn((url) => (url.endsWith('daily-picks.json') ? Promise.resolve({ ok: false }) : diskFetch(url)));
-    renderHome();
-    const pick = today();
-    await screen.findByTestId('home-daily-text');
-    expect(urlsFetched()).toContain('/json/short-hadis.json');
-    expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
-  });
-
-  test('falls back to the full list for a date beyond the precomputed range, with the same pick as /daily', async () => {
-    vi.setSystemTime(new Date(2029, 5, 15, 10, 0));
-    renderHome();
-    const pick = pickDaily(realShortList(), new Date(2029, 5, 15, 10, 0));
-    await screen.findByTestId('home-daily-text');
-    expect(urlsFetched()).toContain('/json/short-hadis.json');
-    expect(within(card()).getByText(new RegExp(pick.book.cite))).toBeInTheDocument();
+    expect(urlsFetched().filter((url) => /daily-picks|short-hadis/.test(url))).toEqual([]);
   });
 });
 

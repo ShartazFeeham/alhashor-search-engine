@@ -1,5 +1,5 @@
 import { stripChain, MIN_CORE_LENGTH } from './hadisCore';
-import { realShortList, realText } from '../test/hadisFixtures';
+import { realText } from '../test/hadisFixtures';
 
 describe('stripChain', () => {
   test('drops the number, the chain up to "থেকে বর্ণিত" and a bare "তিনি বলেন," lead-in', () => {
@@ -67,14 +67,18 @@ describe('stripChain', () => {
     expect(result.core.length).toBeGreaterThan(MIN_CORE_LENGTH);
   });
 
-  test('over the whole short list: almost none fall back, none is empty', () => {
-    const list = realShortList();
+  test('over a sample of real hadis: almost none fall back, none is empty', () => {
     let total = 0;
     let fallbacks = 0;
-    for (const [code, numbers] of Object.entries(list)) {
-      const id = { BUK: 'bukhari', MUS: 'muslim', TIR: 'tirmidhi', DAU: 'abudawud', MAJ: 'ibnmajah', NAS: 'nasai' }[code];
-      for (const number of numbers.filter((_, index) => index % 40 === 0)) {
-        const result = stripChain(realText(id, number));
+    for (const id of ['bukhari', 'muslim', 'tirmidhi', 'abudawud', 'ibnmajah', 'nasai']) {
+      for (let number = 1; number <= 3000; number += 40) {
+        let text;
+        try {
+          text = realText(id, number);
+        } catch {
+          continue; // a number a book does not have
+        }
+        const result = stripChain(text);
         total += 1;
         expect(result.core.length, `${id} ${number}`).toBeGreaterThan(0);
         if (result.fellBack) fallbacks += 1;

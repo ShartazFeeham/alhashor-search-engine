@@ -26,14 +26,13 @@ export function dhakaToday(now) {
 }
 
 // The hadis of the day for today and the days before it, newest first: { date, book, number }.
-// Same pool as the pages (the featured top-picks sets); `list` is only the fallback for a pool that
-// is still too small.
-export function feedEntries(list, now, days = FEED_DAYS, pool = getDailyPool()) {
+// Same pool as the pages (the featured top-picks sets).
+export function feedEntries(now, days = FEED_DAYS, pool = getDailyPool()) {
   const today = dhakaToday(now);
   const entries = [];
   for (let back = 0; back < days; back++) {
     const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - back, 12);
-    const pick = pickDay(date, { pool, list });
+    const pick = pickDay(date, { pool });
     if (pick) entries.push({ date, book: pick.book, number: pick.number });
   }
   return entries;

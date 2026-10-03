@@ -2,20 +2,14 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
-import { pickDaily } from '../lib/dailyPick';
+import { pickDay } from '../lib/dailyPool';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { stripChain } from '../lib/hadisCore';
-import { diskFetch, realShortList, realText } from '../test/hadisFixtures';
+import { diskFetch, realText } from '../test/hadisFixtures';
 import HomeDailyCard from './HomeDailyCard';
-import { clearDailyPicksCache } from './useHomePick';
-import { clearShortListCache } from './useShortList';
-
-// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
-// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
-vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
 
 const NOW = new Date(2026, 9, 2, 10, 0);
-const pick = () => pickDaily(realShortList(), NOW);
+const pick = () => pickDay(NOW);
 const renderCard = () => render(<SettingsProvider><HomeDailyCard /></SettingsProvider>);
 const card = () => screen.getByRole('region', { name: 'আজকের হাদীস' });
 
@@ -37,8 +31,6 @@ async function settle() {
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(NOW);
-  clearShortListCache();
-  clearDailyPicksCache();
   global.fetch = vi.fn(diskFetch);
 });
 
@@ -107,12 +99,6 @@ test('shows a loading card, with the heading and no link, until the pick and its
   expect(within(card()).queryByRole('link')).not.toBeInTheDocument();
   await screen.findByTestId('home-daily-text');
   expect(within(card()).queryByLabelText('লোড হচ্ছে')).not.toBeInTheDocument();
-});
-
-test('renders nothing when the daily pick cannot load', async () => {
-  global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
-  const { container } = renderCard();
-  await waitFor(() => expect(container).toBeEmptyDOMElement());
 });
 
 test('renders nothing when the text of the pick cannot load', async () => {
@@ -195,10 +181,15 @@ const cssRule = (selector) => {
   return rules[0];
 };
 
-// The first real Bukhari hadis (from the short list) whose displayed text satisfies `fits`.
+// The first real Bukhari hadis (of the first 400) whose displayed text satisfies `fits`.
 function realHadis(fits) {
-  for (const number of realShortList().BUK) {
-    const raw = realText('bukhari', number);
+  for (let number = 1; number <= 400; number++) {
+    let raw;
+    try {
+      raw = realText('bukhari', number);
+    } catch {
+      continue; // a number Bukhari does not have
+    }
     const shown = stripChain(raw).core.replace(/\s+/g, ' ').trim();
     if (fits(shown, shown.split(' ').length)) return { raw, shown };
   }
@@ -213,8 +204,6 @@ describe('where the link goes', () => {
     for (const fits of [(_, words) => words < 12, (shown) => shown.length > 300]) {
       const real = realHadis(fits);
       withText(real.raw);
-      clearShortListCache();
-      clearDailyPicksCache();
       const { unmount } = renderCard();
       const excerpt = await screen.findByTestId('home-daily-text');
       const paragraph = excerpt.closest('p');

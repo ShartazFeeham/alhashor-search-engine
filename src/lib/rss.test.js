@@ -1,14 +1,9 @@
 import { GET } from '../app/daily/rss.xml/route';
 import { metadata as dailyMetadata } from '../app/daily/page';
-import { realShortList, realText } from '../test/hadisFixtures';
-import { pickDaily } from './dailyPick';
+import { realText } from '../test/hadisFixtures';
+import { pickDay } from './dailyPool';
 import { dailyFeedXml, dhakaToday, escapeXml, feedEntries, pubDateOf } from './rss';
 
-// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
-// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
-vi.mock('./dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
-
-const list = realShortList();
 const NOW = new Date(Date.UTC(2026, 9, 2, 10, 0)); // 2 October 2026, 16:00 in Bangladesh
 const parse = (xml) => new DOMParser().parseFromString(xml, 'application/xml');
 const textOf = (node, tag) => node.getElementsByTagName(tag)[0]?.textContent;
@@ -26,17 +21,17 @@ test('the date is the one in Bangladesh: just after 18:00 UTC is already tomorro
 });
 
 test('there are 14 entries, newest first, one per day, the same picks as the daily page', () => {
-  const entries = feedEntries(list, NOW);
+  const entries = feedEntries(NOW);
   expect(entries).toHaveLength(14);
   expect(entries.map((entry) => entry.date.getDate())).toEqual([2, 1, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19]);
-  const today = pickDaily(list, new Date(2026, 9, 2));
+  const today = pickDay(new Date(2026, 9, 2));
   expect([entries[0].book.id, entries[0].number]).toEqual([today.book.id, today.number]);
-  const earlier = pickDaily(list, new Date(2026, 8, 19));
+  const earlier = pickDay(new Date(2026, 8, 19));
   expect([entries[13].book.id, entries[13].number]).toEqual([earlier.book.id, earlier.number]);
 });
 
 test('no hadis appears twice in the feed', () => {
-  const keys = feedEntries(list, NOW).map((entry) => `${entry.book.id}-${entry.number}`);
+  const keys = feedEntries(NOW).map((entry) => `${entry.book.id}-${entry.number}`);
   expect(new Set(keys).size).toBe(14);
 });
 
@@ -45,7 +40,7 @@ test('a day is dated from its start in Bangladesh, in RFC 822 form', () => {
 });
 
 test('the feed is well-formed RSS 2.0 with a channel and one item per entry', () => {
-  const entries = feedEntries(list, NOW);
+  const entries = feedEntries(NOW);
   const texts = Object.fromEntries(entries.map(({ book, number }) => [`${book.id}-${number}`, realText(book.id, number)]));
   const doc = parse(dailyFeedXml(entries, texts, NOW));
   expect(doc.getElementsByTagName('parsererror')).toHaveLength(0);
@@ -58,7 +53,7 @@ test('the feed is well-formed RSS 2.0 with a channel and one item per entry', ()
 });
 
 test('an item has the citation as title, the text as description, the hadis address and a date', () => {
-  const entries = feedEntries(list, NOW);
+  const entries = feedEntries(NOW);
   const first = entries[0];
   const text = realText(first.book.id, first.number);
   const doc = parse(dailyFeedXml(entries, { [`${first.book.id}-${first.number}`]: text }, NOW));
@@ -74,7 +69,7 @@ test('an item has the citation as title, the text as description, the hadis addr
 });
 
 test('markup characters in a text cannot break the feed', () => {
-  const entries = feedEntries(list, NOW).slice(0, 1);
+  const entries = feedEntries(NOW).slice(0, 1);
   const key = `${entries[0].book.id}-${entries[0].number}`;
   const doc = parse(dailyFeedXml(entries, { [key]: '<b>& "quote" ]]></b>' }, NOW));
   expect(doc.getElementsByTagName('parsererror')).toHaveLength(0);
@@ -82,7 +77,7 @@ test('markup characters in a text cannot break the feed', () => {
 });
 
 test('an entry whose text could not be read is listed with its citation only', () => {
-  const doc = parse(dailyFeedXml(feedEntries(list, NOW).slice(0, 2), {}, NOW));
+  const doc = parse(dailyFeedXml(feedEntries(NOW).slice(0, 2), {}, NOW));
   expect(doc.getElementsByTagName('item')).toHaveLength(2);
   expect(doc.getElementsByTagName('description')).toHaveLength(1); // only the channel's own
 });

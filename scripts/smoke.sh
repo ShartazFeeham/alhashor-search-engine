@@ -72,7 +72,7 @@ expect_text /books/muslim "মোট ৭,২৮১ টি হাদীস" "a bo
 expect_text "/books/bukhari?page=4" "হাদীস নং ৬১ - ৮১" "a deep link to page 4 of a book renders (63 is skipped)"
 expect_html /books/muslim "<h1>মুসলিম শরীফ</h1>" "a book page is pre-built with its header (not blank before scripts run)"
 expect_text /share/bukhari/6628 "ছবি ডাউনলোড" "the share page renders its card and buttons"
-expect_text /daily "গত ৭ দিন" "the daily page renders today's hadis and the last seven days (the short-hadis list loads)"
+expect_text /daily "গত ৭ দিন" "the daily page renders today's hadis and the last seven days"
 expect_text /top-picks "রমযানের ৩০ দিন" "the top picks page lists the sets"
 expect_text /top-picks/ramadan-30 "দিন ৩০" "a set page renders its hadis-by-hadis checklist"
 expect_text /narrators "স্বয়ংক্রিয়ভাবে বাছাই করা" "the narrators page renders its list and the note about the names"

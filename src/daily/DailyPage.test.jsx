@@ -6,11 +6,6 @@ import { diskFetch } from '../test/hadisFixtures';
 import { setUrl } from '../test/nextNavigation';
 import { ToastProvider } from '../ui/Toast';
 import DailyPage from './DailyPage';
-import { clearShortListCache } from './useShortList';
-
-// These tests pin the fallback (the short-hadis list). The pool of the featured top-picks sets is
-// tested in lib/dailyPool.test.js; here it is empty, whatever the owner's sets hold today.
-vi.mock('../lib/dailyPool', async (importOriginal) => ({ ...(await importOriginal()), getDailyPool: () => [] }));
 
 const show = () =>
   render(
@@ -28,7 +23,6 @@ async function settle() {
 }
 
 beforeEach(() => {
-  clearShortListCache();
   global.fetch = vi.fn(diskFetch);
 });
 
