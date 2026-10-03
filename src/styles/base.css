@@ -105,3 +105,9 @@ mark {
 .skip-link{position:fixed;top:-80px;left:12px;z-index:100;padding:12px 18px;border-radius:12px;background:var(--accent);color:var(--on-accent);font-weight:700;text-decoration:none;box-shadow:var(--shadow)}
 .skip-link:focus{top:12px}
 main:focus-visible{outline:none}
+
+/* The text of a hadis is justified (the last line stays left). Used by every list and page that shows it; any other
+   place that shows hadis text adds the class .hadis-justify (or the token --hadis-align). Never on headings, buttons
+   or short labels. Words are only stretched by the gaps between them (no letter-spacing, no hyphens), and a very
+   long unbroken word wraps instead of pushing the page wider. */
+.hadis-justify,.hadis-read,.related-text,.search-text,.hcard-text{text-align:var(--hadis-align);text-justify:inter-word;hyphens:none;text-align-last:left;overflow-wrap:anywhere}
