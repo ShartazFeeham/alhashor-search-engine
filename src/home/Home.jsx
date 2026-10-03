@@ -9,6 +9,7 @@ import { bookHref } from '../lib/bookBrowse';
 import { TOP_PICKS_TAGLINE } from '../lib/topPicks';
 import { useDigits } from '../lib/useDigits';
 import Icon from '../ui/Icon';
+import QuickIcon from './QuickIcon';
 
 const MOST = Math.max(...BOOKS.map(hadisCount));
 
@@ -17,8 +18,8 @@ const spineHeight = (book) => Math.round(140 + (hadisCount(book) / MOST) * 40);
 
 // The new-features cards: a title and one plain line saying what the page is.
 const QUICK = [
-  { id: 'top-picks', href: '/top-picks', icon: 'plan', title: 'জনপ্রিয় হাদীস', note: TOP_PICKS_TAGLINE },
-  { id: 'narrators', href: '/narrators', icon: 'user', title: 'বর্ণনাকারীভিত্তিক', note: 'বর্ণনাকারী ধরে তাঁর হাদীস দেখুন' },
+  { id: 'top-picks', href: '/top-picks', icon: 'heart', title: 'জনপ্রিয় হাদীস', note: TOP_PICKS_TAGLINE },
+  { id: 'narrators', href: '/narrators', icon: 'speaker', title: 'বর্ণনাকারীভিত্তিক', note: 'বর্ণনাকারী ধরে তাঁর হাদীস দেখুন' },
   { id: 'topics', href: '/topics', icon: 'tag', title: 'বিষয়ভিত্তিক', note: 'বিষয় ধরে হাদীস খুঁজুন' },
   { id: 'daily', href: '/daily', icon: 'clock', title: 'আজকের হাদীস', note: 'প্রতিদিন একটি নির্বাচিত হাদীস' },
 ];
@@ -45,7 +46,7 @@ export default function Home() {
         <div className="home-quick-links">
           {QUICK.map(({ id, href, icon, title, note }) => (
             <Link key={id} href={href} aria-labelledby={`home-${id}-t`} aria-describedby={`home-${id}-n`}>
-              <Icon name={icon} size={22} />
+              <QuickIcon kind={icon} size={26} />
               <span className="home-quick-text">
                 <b id={`home-${id}-t`}>{title}</b>
                 <span className="home-quick-note" id={`home-${id}-n`}>{note}</span>
