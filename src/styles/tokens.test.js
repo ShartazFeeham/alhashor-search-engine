@@ -8,7 +8,7 @@ const required = [
   '--accent', '--accent2', '--on-accent', '--accent-soft', '--hl', '--hl-ink',
   '--ok', '--warn', '--bad', '--link',
   '--bk-bukhari', '--bk-muslim', '--bk-tirmidhi', '--bk-abudawud', '--bk-ibnmajah', '--bk-nasai', '--on-bk',
-  '--shadow', '--rs', '--rlh', '--rw', '--match-text',
+  '--shadow', '--rs', '--rlh', '--rw', '--related-text', '--match-text',
 ];
 
 test.each(required)('the light theme defines %s', (name) => {
@@ -95,11 +95,13 @@ describe.each(names)('contrast in the %s theme', (name) => {
     expect(ratio(t['--match-text'], t[bg])).toBeGreaterThanOrEqual(4.5);
   });
 
-  test('--match-text is one step lighter than --ink2, the colour of the similar hadis text, and not lighter than --ink3', () => {
-    const contrast = (token) => ratio(t[token], t['--surface']);
-    expect(contrast('--match-text')).toBeLessThan(contrast('--ink2'));
-    expect(contrast('--match-text')).toBeGreaterThanOrEqual(contrast('--ink3'));
-    expect(t['--match-text']).not.toBe(t['--ink2']);
+  test.each(['--page', '--bg', '--surface', '--surface2'])('--related-text (similar hadis text) on %s is at least 4.5:1', (bg) => {
+    expect(ratio(t['--related-text'], t[bg])).toBeGreaterThanOrEqual(4.5);
+  });
+
+  test('--match-text is softer than --related-text but still readable', () => {
+    expect(ratio(t['--match-text'], t['--surface'])).toBeLessThan(ratio(t['--related-text'], t['--surface']));
+    expect(t['--match-text']).not.toBe(t['--related-text']);
   });
 
   test('--ink3 stays quieter than --ink2 (the hierarchy is kept)', () => {
@@ -240,4 +242,23 @@ test('the automatic dark theme carries the tree colours too', () => {
   for (const part of ['trunk', 'leaf', 'canopy', 'canopy2', 'seed', 'ground']) {
     expect(css.split(`--tree-${part}:`).length - 1, part).toBe(4);
   }
+});
+
+test('the similar hadis text is #333 and the bold matching words #555 in the light theme', () => {
+  expect(themes.light['--related-text']).toBe('#333333');
+  expect(themes.light['--match-text']).toBe('#555555');
+});
+
+test('every theme block (including the device-dark one) defines both similar hadis tokens', () => {
+  const blocks = css.split(/\n(?=:root|@media)/);
+  expect(blocks.length).toBeGreaterThanOrEqual(4);
+  for (const name of ['--related-text', '--match-text']) {
+    expect(css.match(new RegExp(`${name}\\s*:`, 'g')).length).toBe(4);
+  }
+});
+
+test('.related-text uses --related-text and .related-match uses --match-text', () => {
+  const related = readFileSync(path.resolve(process.cwd(), 'src/styles/related.css'), 'utf8');
+  expect(related).toMatch(/\.related-text\{[^}]*color:var\(--related-text\)/);
+  expect(related).toMatch(/\.related-match\{[^}]*color:var\(--match-text\)/);
 });

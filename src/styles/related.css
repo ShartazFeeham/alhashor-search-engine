@@ -17,7 +17,7 @@
 .related-link:hover{color:var(--accent2);text-decoration:underline;text-underline-offset:3px}
 .related-link:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 
-.related-text{margin:0;font-family:var(--f-read),serif;font-size:.9375rem;line-height:1.7;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.related-text{margin:0;font-family:var(--f-read),serif;font-size:.9375rem;line-height:1.7;color:var(--related-text);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .related-match{font-weight:700;color:var(--match-text)}
 .related-reason{margin:0;margin-left:auto;padding-left:8px;flex:none;font-size:.7375rem;color:var(--ink3);white-space:nowrap}
 .related-skel{height:14px;width:90%}
