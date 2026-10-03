@@ -213,12 +213,11 @@ describe('text and link', () => {
     await ready();
   });
 
-  test('the citation box shows the citation and copies it', async () => {
+  test('the citation box shows the citation and has no separate copy button', async () => {
     show();
     await screen.findByRole('img');
     expect(screen.getByTestId('citebox')).toHaveTextContent(CITE);
-    fireEvent.click(screen.getByRole('button', { name: 'উদ্ধৃতি কপি' }));
-    await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalledWith(CITE));
+    expect(screen.queryByRole('button', { name: 'উদ্ধৃতি কপি' })).not.toBeInTheDocument();
     await ready();
   });
 

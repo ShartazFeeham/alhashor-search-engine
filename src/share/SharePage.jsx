@@ -154,7 +154,6 @@ export default function SharePage({ bookId, number }) {
             <div className="share-citebox" data-testid="citebox">
               <Icon name="book" size={18} />
               <span>{cite}</span>
-              <Button size="sm" aria-label="উদ্ধৃতি কপি" onClick={() => copy(cite, 'উদ্ধৃতি কপি করা হয়েছে')}>কপি</Button>
             </div>
             <h2 className="h3">শেয়ারের লেখা</h2>
             <p className="share-text" data-testid="share-text">

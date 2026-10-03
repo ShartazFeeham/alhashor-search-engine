@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { stripChain } from '../lib/hadisCore';
 import { splitHadis, wordCount } from '../lib/hadisText';
-import { shareHref } from '../lib/share';
+import { shareHref, textWithCitation } from '../lib/share';
+import { citationOf } from '../daily/citation';
 import { useDigits } from '../lib/useDigits';
 import BookBadge from '../ui/BookBadge';
 import Icon from '../ui/Icon';
@@ -58,13 +59,9 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
 
       <div className="hadis-actions hadis-card">
         {lead}
-        <button type="button" className="act-btn act-copy" onClick={() => copy(text)}>
+        <button type="button" className="act-btn act-copy" onClick={() => copy(textWithCitation(text, citationOf(book, number, digits)))}>
           <Icon name="copy" size={16} />
           <span>কপি</span>
-        </button>
-        <button type="button" className="act-btn act-quote" onClick={() => copy(`${book.cite}, হাদীস নং ${digits(number)}`)}>
-          <Icon name="quote" size={16} />
-          <span>উদ্ধৃতি<span className="act-more"> কপি</span></span>
         </button>
         <button type="button" className="act-btn act-link" onClick={() => copy(permanentUrl(book.id, number), 'লিংক কপি করা হয়েছে')}>
           <Icon name="link" size={16} />

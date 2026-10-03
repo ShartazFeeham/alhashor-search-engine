@@ -84,16 +84,15 @@ test('shows reading time and the word count', async () => {
   expect(screen.getByRole('progressbar', { name: 'পড়ার অগ্রগতি' })).toBeInTheDocument();
 });
 
-test('copy, copy citation and copy link put the right text on the clipboard', async () => {
+test('copy (text and citation) and copy link put the right text on the clipboard', async () => {
   serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
   show('bukhari', 6628);
   await loaded();
 
   fireEvent.click(screen.getByRole('button', { name: 'কপি' }));
-  expect(navigator.clipboard.writeText).toHaveBeenLastCalledWith(BUKHARI_6628);
-
-  fireEvent.click(screen.getByRole('button', { name: 'উদ্ধৃতি কপি' }));
-  expect(navigator.clipboard.writeText).toHaveBeenLastCalledWith('সহীহ বুখারী, হাদীস নং ৬,৬২৮');
+  expect(navigator.clipboard.writeText).toHaveBeenLastCalledWith(`${BUKHARI_6628}\n\nসহীহ বুখারী, হাদীস নং ৬,৬২৮`);
+  expect(screen.queryByRole('button', { name: /উদ্ধৃতি/ })).not.toBeInTheDocument();
+  expect(screen.getAllByRole('button', { name: /কপি/ }).map((b) => b.textContent)).toEqual(['কপি', 'লিংক কপি']);
 
   fireEvent.click(screen.getByRole('button', { name: 'লিংক কপি' }));
   expect(navigator.clipboard.writeText).toHaveBeenLastCalledWith(`${window.location.origin}/hadis/bukhari/6628`);

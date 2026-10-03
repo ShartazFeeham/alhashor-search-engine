@@ -341,7 +341,7 @@ test('copy on a result copies the whole hadis and confirms it', async () => {
   renderSearch('/search?q=copyword');
   await screen.findByText('t1');
   fireEvent.click(screen.getByRole('button', { name: 'কপি' }));
-  expect(navigator.clipboard.writeText).toHaveBeenCalledWith('t1');
+  expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringMatching(/^t1\n\n.+, হাদীস নং ১$/));
   await waitFor(() => expect(screen.getAllByRole('status').map((e) => e.textContent).join(' ')).toContain('কপি করা হয়েছে'));
 });
 
@@ -557,7 +557,7 @@ describe('the whole result card opens the full hadis', () => {
       fireEvent.click(screen.getByRole('button', { name }));
       expect(getUrl().pathname).toBe('/search');
     }
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith('t1');
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expect.stringMatching(/^t1\n\n.+, হাদীস নং ১$/));
   });
 
   test('a click with selected text does not open it', async () => {

@@ -32,7 +32,7 @@
 
 /* The action row under a hadis (HadisArticle, and the same buttons in the hadis card): one line, right-aligned, never a
    sideways scroll. The row is a size container: as it narrows the second word of a label drops out ("লিংক কপি" is
-   "লিংক"; the full name stays for screen readers), then all the labels, so the five buttons always fit. */
+   "লিংক"; the full name stays for screen readers), then all the labels, so the buttons always fit. */
 .hadis-actions{display:flex;flex-wrap:nowrap;justify-content:flex-end;align-items:center;gap:4px;min-width:0;container:acts / inline-size}
 .act-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:4px;flex:0 1 auto;min-width:0;min-height:40px;padding:0 7px;border-radius:7px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:12px;font-weight:600;white-space:nowrap;text-decoration:none;cursor:pointer;transition:transform .12s,background .2s}
 .act-btn::after{content:"";position:absolute;inset:-2px}
@@ -40,7 +40,6 @@
 .act-btn:active{transform:scale(.96)}
 .act-btn .ui-icon{flex:none}
 .act-copy .ui-icon{color:var(--act-copy)}
-.act-quote .ui-icon{color:var(--act-quote)}
 .act-link .ui-icon{color:var(--act-link)}
 .act-share .ui-icon{color:var(--act-share)}
 .act-image .ui-icon{color:var(--act-image)}

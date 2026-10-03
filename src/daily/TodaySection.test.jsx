@@ -89,7 +89,9 @@ describe('the hadis of the day', () => {
     fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
     await settle();
     const copied = navigator.clipboard.writeText.mock.calls[0][0];
-    expect(copied.replace(/\s+/g, ' ')).toBe(realText(today.book.id, today.number).replace(/\s+/g, ' '));
+    const [saying, cite] = copied.split('\n\n');
+    expect(saying.replace(/\s+/g, ' ')).toBe(realText(today.book.id, today.number).replace(/\s+/g, ' '));
+    expect(cite).toBe(`${today.book.cite}, হাদীস নং ${formatNumber(today.number, 'bn')}`);
     expect(screen.getByText('কপি করা হয়েছে')).toBeInTheDocument();
   });
 
@@ -173,7 +175,8 @@ describe('the shared hadis article', () => {
     await screen.findByText(wholeText(pickDaily(SHORT, TODAY)));
     const actions = screen.getByRole('article', { name: 'আজকের হাদীস' }).querySelector('.hadis-actions');
     expect(within(actions).getAllByRole('link').map((l) => l.textContent)).toEqual(['পুরো হাদীস', 'ছবি বানান']);
-    expect(within(actions).getAllByRole('button').map((b) => b.textContent)).toEqual(expect.arrayContaining(['কপি', 'উদ্ধৃতি কপি', 'লিংক কপি']));
+    expect(within(actions).getAllByRole('button').map((b) => b.textContent)).toEqual(expect.arrayContaining(['কপি', 'লিংক কপি']));
+    expect(within(actions).queryByRole('button', { name: /উদ্ধৃতি/ })).not.toBeInTheDocument();
   });
 });
 
@@ -196,7 +199,7 @@ describe('the core of the hadis only', () => {
     await screen.findByText(wholeText(today));
     fireEvent.click(within(screen.getByRole('article', { name: 'আজকের হাদীস' })).getByRole('button', { name: 'কপি' }));
     await settle();
-    expect(navigator.clipboard.writeText.mock.calls[0][0].replace(/\s+/g, ' ')).toBe(realText(today.book.id, today.number).replace(/\s+/g, ' '));
+    expect(navigator.clipboard.writeText.mock.calls[0][0].split('\n\n')[0].replace(/\s+/g, ' ')).toBe(realText(today.book.id, today.number).replace(/\s+/g, ' '));
   });
 });
 

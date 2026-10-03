@@ -21,7 +21,6 @@ const PATHS = {
   more: <><circle cx="5" cy="12" r="1.4" /><circle cx="12" cy="12" r="1.4" /><circle cx="19" cy="12" r="1.4" /></>,
   user: <><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></>,
   list: <><path d="M9 6h11M9 12h11M9 18h11" /><circle cx="4.5" cy="6" r="1.2" /><circle cx="4.5" cy="12" r="1.2" /><circle cx="4.5" cy="18" r="1.2" /></>,
-  quote: <><path d="M9 7C6 8 4.5 10.5 4.5 14c0 2 1.2 3 3 3 1.6 0 2.7-1.1 2.7-2.6 0-1.6-1.1-2.6-2.6-2.6" /><path d="M19 7c-3 1-4.5 3.5-4.5 7 0 2 1.2 3 3 3 1.6 0 2.7-1.1 2.7-2.6 0-1.6-1.1-2.6-2.6-2.6" /></>,
   image: <><rect x="3" y="4" width="18" height="16" rx="3" /><circle cx="9" cy="10" r="1.8" /><path d="m21 16-5-5L7 20" /></>,
   plan: <><rect x="4" y="4" width="16" height="17" rx="3" /><path d="M8 3v3M16 3v3M8 11h8M8 15h5" /></>,
 };

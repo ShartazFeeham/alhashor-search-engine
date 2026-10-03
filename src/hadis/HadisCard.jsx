@@ -5,6 +5,8 @@ import { useId } from 'react';
 import { bookById } from '../lib/books';
 import { hadisHref, tagOf } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
+import { textWithCitation } from '../lib/share';
+import { citationOf } from '../daily/citation';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import BookBadge from '../ui/BookBadge';
@@ -33,7 +35,7 @@ export default function HadisCard({ bookId, number, level = 2 }) {
   const href = hadisHref(bookId, number);
   const title = `${book.full} - হাদীস নং ${digits(number)}`;
 
-  const copy = () => copyText(text);
+  const copy = () => copyText(textWithCitation(text, citationOf(book, number, digits)));
 
   let body;
   let cut = null;

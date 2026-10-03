@@ -30,6 +30,11 @@ export function cleanText(text) {
   return chain && chain.length <= MAX_NARRATOR_LENGTH ? `${chain}\n${body}` : body;
 }
 
+// What the copy button puts on the clipboard: the whole text, a blank line, the citation.
+export function textWithCitation(text, cite) {
+  return `${text}\n\n${cite}`;
+}
+
 // The quote-card page of a hadis.
 export function shareHref(bookId, number) {
   return `/share/${bookId}/${number}`;

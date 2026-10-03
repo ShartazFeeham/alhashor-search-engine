@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useId } from 'react';
 import { hadisHref, parseTag } from '../lib/hadisRoute';
 import { splitHadis } from '../lib/hadisText';
+import { textWithCitation } from '../lib/share';
+import { citationOf } from '../daily/citation';
 import { hasMatch, highlightParts, makeSnippet } from '../lib/matchPattern';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
@@ -29,7 +31,7 @@ export default function ResultItem({ tag, matcher = null, anchor, marked = false
   const { book, number } = parsed;
   const href = hadisHref(book.id, number);
 
-  const copy = () => copyText(text);
+  const copy = () => copyText(textWithCitation(text, citationOf(book, number, digits)));
 
   // A mouse convenience: a plain click on the text or empty space opens the full hadis. Buttons and
   // links keep their own behaviour, and selecting text by dragging does not navigate.

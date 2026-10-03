@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { bookById } from './books';
 import { splitHadis } from './hadisText';
-import { citation, cleanText, excerptFor, shareHref, shareText, shortLink } from './share';
+import { citation, cleanText, textWithCitation as withCitation, excerptFor, shareHref, shareText, shortLink } from './share';
 
 // Real texts from the data files.
 const read = (folder, number) =>
@@ -113,4 +113,10 @@ test('shortLink drops the scheme', () => {
 
 test('shareHref is the quote-card page of a hadis', () => {
   expect(shareHref('bukhari', 6628)).toBe('/share/bukhari/6628');
+});
+
+describe('textWithCitation (what the copy button puts on the clipboard)', () => {
+  test('is the whole text, a blank line, then the citation', () => {
+    expect(withCitation('এক দুই', 'সহীহ মুসলিম, হাদীস নং ৭,৬৬৯')).toBe('এক দুই\n\nসহীহ মুসলিম, হাদীস নং ৭,৬৬৯');
+  });
 });

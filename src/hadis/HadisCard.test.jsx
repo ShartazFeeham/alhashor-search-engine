@@ -69,7 +69,7 @@ test('copy puts the whole text on the clipboard and says so', async () => {
   show('muslim', 12);
   await screen.findByText(/সৎকাজ করো/);
   fireEvent.click(screen.getByRole('button', { name: /কপি/ }));
-  await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalledWith(SHORT));
+  await waitFor(() => expect(navigator.clipboard.writeText).toHaveBeenCalledWith(`${SHORT}\n\nসহীহ মুসলিম, হাদীস নং ১২`));
   expect(await screen.findByText('কপি করা হয়েছে')).toBeInTheDocument();
 });
 
