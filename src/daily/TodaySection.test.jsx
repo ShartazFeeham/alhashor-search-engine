@@ -1,4 +1,6 @@
 /* eslint-disable testing-library/no-node-access, testing-library/no-container */
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { bookById } from '../lib/books';
 import { formatNumber } from '../lib/digits';
@@ -227,6 +229,26 @@ describe('the last seven days', () => {
     const body = stripChain(realText(recent[0].pick.book.id, recent[0].pick.number)).core;
     await screen.findByText(listText(recent[0].pick));
     expect(within(section()).getAllByRole('listitem')[0]).toHaveTextContent(body.slice(0, 20));
+  });
+});
+
+describe('the last seven days list is justified and as wide as the article', () => {
+  const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const rule = (selector) => new RegExp(`(?:^|\\})\\s*${selector.replace(/\./g, '\\.')}\\s*\\{([^}]*)\\}`).exec(css)[1];
+
+  test('each hadis text carries the shared justified class', async () => {
+    show();
+    const recent = recentPicks(SHORT, TODAY);
+    await screen.findByText(listText(recent[0].pick));
+    const texts = within(screen.getByRole('region', { name: 'গত ৭ দিন' })).getAllByText(/\S/, { selector: 'p.daily-recent-text' });
+    expect(texts.length).toBeGreaterThan(0);
+    for (const text of texts) expect(text).toHaveClass('hadis-justify');
+  });
+
+  test.each(['.daily-recent', '.daily-recent-list', '.daily-recent-item', '.daily-recent-text'])('%s has no width-limiting style and spans the container', (selector) => {
+    const body = rule(selector);
+    expect(body).not.toMatch(/max-width|fit-content|inline-flex|inline-block|margin(?:-left|-right|-inline)?:\s*(?:0\s+)?auto/);
+    expect(body).toMatch(/width:100%/);
   });
 });
 

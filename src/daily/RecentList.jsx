@@ -13,8 +13,8 @@ import { citationOf } from './citation';
 function Excerpt({ bookId, number }) {
   const { status, text } = useHadisText(tagOf(bookId, number));
   if (status === 'loading') return <div className="hadis-skel" style={{ width: '80%' }} aria-busy="true" aria-label="লোড হচ্ছে" />;
-  if (status !== 'ok') return <p className="daily-recent-text daily-muted">হাদীসটি আনা যায়নি।</p>;
-  return <p className="daily-recent-text">{stripChain(text).core}</p>;
+  if (status !== 'ok') return <p className="daily-recent-text hadis-justify daily-muted">হাদীসটি আনা যায়নি।</p>;
+  return <p className="daily-recent-text hadis-justify">{stripChain(text).core}</p>;
 }
 
 // The pick of each of the last seven days, newest first, each a link to its page.
