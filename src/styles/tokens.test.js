@@ -220,3 +220,24 @@ describe.each(names)('day number boxes in the %s theme', (name) => {
     expect(ratio(t['--surface'], t['--ink3'])).toBeGreaterThanOrEqual(4.5);
   });
 });
+
+// ---------- top picks set page: the progress tree ----------
+describe.each(names)('progress tree colours in the %s theme', (name) => {
+  const t = themes[name];
+
+  test.each(['trunk', 'leaf', 'canopy', 'seed'])('the %s is at least 3:1 on the hero background', (part) => {
+    expect(t[`--tree-${part}`]).toMatch(/^#[0-9a-f]{6}$/i);
+    expect(ratio(t[`--tree-${part}`], t['--surface'])).toBeGreaterThanOrEqual(3);
+  });
+
+  test('the ground line is a faint tint (below 3:1) but not invisible', () => {
+    expect(ratio(t['--tree-ground'], t['--surface'])).toBeLessThan(3);
+    expect(ratio(t['--tree-ground'], t['--surface'])).toBeGreaterThan(1.1);
+  });
+});
+
+test('the automatic dark theme carries the tree colours too', () => {
+  for (const part of ['trunk', 'leaf', 'canopy', 'canopy2', 'seed', 'ground']) {
+    expect(css.split(`--tree-${part}:`).length - 1, part).toBe(4);
+  }
+});

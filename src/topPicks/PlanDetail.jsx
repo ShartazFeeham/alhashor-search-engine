@@ -9,6 +9,7 @@ import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import PlanDay from './PlanDay';
 import ProgressBar from './ProgressBar';
+import ProgressTree from './ProgressTree';
 import { bandOf } from './ProgressRing';
 
 // A counter-clockwise arrow: start again.
@@ -83,6 +84,9 @@ export default function PlanDetail({ plan, progress, onToggle, onReset }) {
             </div>
           )}
           <p className="tiny">অগ্রগতি শুধু এই ডিভাইসেই থাকে, কোনো অ্যাকাউন্ট লাগে না।</p>
+        </div>
+        <div className="plan-detail-tree">
+          <ProgressTree percent={percent} />
         </div>
       </header>
       <ol className="plan-days" aria-label="দিনের তালিকা">

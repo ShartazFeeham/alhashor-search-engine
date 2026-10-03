@@ -131,8 +131,31 @@ describe('the hero header', () => {
   });
 
   test('is compact: small gaps and padding', () => {
-    const head = rule('.plan-detail-head');
-    expect(Number(/gap:(\d+)px/.exec(head)[1])).toBeLessThanOrEqual(6);
-    expect(Number(/padding:(\d+)px/.exec(head)[1])).toBeLessThanOrEqual(14);
+    const main = rule('.plan-detail-main');
+    expect(Number(/gap:(\d+)px/.exec(main)[1])).toBeLessThanOrEqual(6);
+    expect(Number(/padding:(\d+)px/.exec(main)[1])).toBeLessThanOrEqual(14);
+  });
+});
+
+describe('the tree column', () => {
+  test('the right quarter of the hero holds the progress tree, with a decent height', () => {
+    show([0]);
+    const tree = screen.getByTestId('progress-tree');
+    expect(tree.closest('.plan-detail-head')).not.toBeNull();
+    expect(tree.closest('.plan-detail-tree')).not.toBeNull();
+    expect(rule('.plan-detail-head')).toMatch(/grid-template-columns:minmax\(0,3fr\) minmax\(0,1fr\)/);
+    expect(Number(/min-height:(\d+)px/.exec(rule('.plan-detail-head'))[1])).toBeGreaterThanOrEqual(160);
+    expect(css).toMatch(/@media \(max-width: 640px\)\{[^@]*\.plan-detail-head\{min-height:140px\}/);
+  });
+
+  test('the tree follows the progress of this set', () => {
+    show([0, 1]);
+    const percent = Math.round((2 / SET.days.length) * 100);
+    expect(screen.getByTestId('progress-tree')).toHaveAttribute('data-stage', String(Math.floor(percent / 10) * 10));
+  });
+
+  test('the shimmer only runs when motion is welcome', () => {
+    expect(css).toMatch(/@media \(prefers-reduced-motion:no-preference\)\{[^}]*shine[^}]*animation:tree-shimmer/);
+    expect(rule('.progress-tree-gold [data-part="shine"]')).not.toMatch(/animation/);
   });
 });

@@ -49,8 +49,18 @@
 .plan-detail{display:flex;flex-direction:column;gap:12px}
 .plan-back{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;min-height:44px;color:var(--accent2);font-weight:600;text-decoration:none}
 .plan-back:hover{text-decoration:underline;text-underline-offset:3px}
-.plan-detail-head{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
-.plan-detail-main{display:flex;flex-direction:column;gap:4px;min-width:0}
+.plan-detail-head{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);min-height:170px;overflow:hidden;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
+/* the right quarter of the hero is the progress tree */
+.plan-detail-tree{position:relative;min-width:0}
+.plan-detail-tree .progress-tree{position:absolute;left:0;top:8px;width:calc(100% - 10px);height:calc(100% - 8px);overflow:visible}
+.progress-tree-gold [data-part="shine"]{opacity:.85}
+@media (prefers-reduced-motion:no-preference){
+  .progress-tree-gold [data-part="shine"]{animation:tree-shimmer 2.4s ease-in-out infinite}
+  .progress-tree-gold [data-part="canopy"],.progress-tree-gold [data-part="trunk"]{animation:tree-glow 3.2s ease-in-out infinite}
+}
+@keyframes tree-shimmer{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes tree-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.1)}}
+.plan-detail-main{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;padding:12px 8px 12px 14px}
 .plan-detail-desc{margin:0;font-size:13px;line-height:1.5}
 .plan-detail-count{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .plan-detail-count p{display:inline-flex;align-items:center;gap:6px;margin:0;font-weight:600;color:var(--progress-label)}
@@ -148,6 +158,8 @@
 
 @media (max-width: 640px){
   .plan-pinned{margin-right:56px}
+  .plan-detail-head{min-height:140px}
+  .plan-detail-main{padding:10px 4px 10px 12px}
   .home-daily{margin-top:6px}
   .home-quick{gap:4px}
   .home-picks .h2{font-size:15px}
