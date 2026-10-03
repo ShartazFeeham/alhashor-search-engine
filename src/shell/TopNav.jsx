@@ -3,18 +3,21 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
+import QuickIcon from '../home/QuickIcon';
 import Icon from '../ui/Icon';
 import { activeSection } from './activeTab';
 import { leaveSettings, rememberReturn } from './settingsReturn';
 
+// The owner's order; topics stay reachable on desktop in the last place. The icon is the one the
+// same page has on the home cards (QuickIcon); the text stays the link's accessible name.
 const LINKS = [
-  ['home', '/', 'হোম'],
-  ['search', '/search', 'সার্চ'],
-  ['books', '/books', 'হাদীস বই'],
-  ['topics', '/topics', 'বিষয়ভিত্তিক হাদীস'],
-  ['daily', '/daily', 'আজকের হাদীস'],
-  ['top-picks', '/top-picks', 'জনপ্রিয় হাদীস'],
-  ['narrators', '/narrators', 'বর্ণনাকারী'],
+  ['home', '/', 'হোম', 'home'],
+  ['search', '/search', 'সার্চ', 'search'],
+  ['top-picks', '/top-picks', 'জনপ্রিয় হাদীস', 'heart'],
+  ['books', '/books', 'হাদীসের বই', 'book'],
+  ['narrators', '/narrators', 'বর্ণনাকারীভিত্তিক হাদীস', 'speaker'],
+  ['daily', '/daily', 'আজকের হাদীস', 'clock'],
+  ['topics', '/topics', 'বিষয়ভিত্তিক হাদীস', 'tag'],
 ];
 
 export default function TopNav() {
@@ -57,9 +60,10 @@ export default function TopNav() {
           </span>
         </Link>
         <nav className="shell-links" aria-label="প্রধান মেনু">
-          {LINKS.map(([id, href, label]) => (
-            <Link key={id} href={href} aria-current={current === id ? 'page' : undefined}>
-              {label}
+          {LINKS.map(([id, href, label, icon]) => (
+            <Link key={id} href={href} title={label} aria-current={current === id ? 'page' : undefined}>
+              <QuickIcon kind={icon} size={17} />
+              <span className="shell-link-label">{label}</span>
             </Link>
           ))}
         </nav>

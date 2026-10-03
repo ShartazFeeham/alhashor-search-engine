@@ -19,8 +19,8 @@
   --progress-red-track:#f6d9d5; --progress-yellow-track:#f5e6bf; --progress-green-track:#cfeadb;
   /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
   --progress-label:#333333; --progress-red-text:#b8342a; --progress-yellow-text:#8a5a00; --progress-green-text:#17713c;
-  /* home cards: the filled icon colours (heart, speaker, tag, clock), at least 3:1 on the card */
-  --qi-pink:#d6336c; --qi-blue:#2f6fdb; --qi-green:#1f8a4c; --qi-purple:#7e44c9;
+  /* home cards and top bar: the filled icon colours (heart, speaker, tag, clock, and teal for home, search and books), at least 3:1 on the card, the page and the active link */
+  --qi-pink:#d6336c; --qi-blue:#2f6fdb; --qi-green:#1f8a4c; --qi-purple:#7e44c9; --qi-teal:#0a796a;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#7a5230; --tree-leaf:#2f9e57; --tree-canopy:#2e8b4f; --tree-canopy2:#55b676; --tree-seed:#3a9a52; --tree-ground:#c5d3ce;
   /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
@@ -50,8 +50,8 @@
   --progress-red-track:#4a2724; --progress-yellow-track:#4a3d17; --progress-green-track:#1e4a31;
   /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
   --progress-label:#dcebe6; --progress-red-text:#f07468; --progress-yellow-text:#e8b43c; --progress-green-text:#4ec97f;
-  /* home cards: the filled icon colours (heart, speaker, tag, clock), at least 3:1 on the card */
-  --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0;
+  /* home cards and top bar: the filled icon colours (heart, speaker, tag, clock, and teal for home, search and books), at least 3:1 on the card, the page and the active link */
+  --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0; --qi-teal:#3fcbb3;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#c49a6c; --tree-leaf:#4ec97f; --tree-canopy:#36a863; --tree-canopy2:#62d38c; --tree-seed:#5fd68c; --tree-ground:#2e4a42;
   /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
@@ -75,8 +75,8 @@
   --progress-red-track:#efd3c8; --progress-yellow-track:#ecdcae; --progress-green-track:#cfe0c3;
   /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
   --progress-label:#3a2e1a; --progress-red-text:#a8321f; --progress-yellow-text:#7d5200; --progress-green-text:#1f6a38;
-  /* home cards: the filled icon colours (heart, speaker, tag, clock), at least 3:1 on the card */
-  --qi-pink:#c2255c; --qi-blue:#2b62c4; --qi-green:#2f7a3a; --qi-purple:#7340b5;
+  /* home cards and top bar: the filled icon colours (heart, speaker, tag, clock, and teal for home, search and books), at least 3:1 on the card, the page and the active link */
+  --qi-pink:#c2255c; --qi-blue:#2b62c4; --qi-green:#2f7a3a; --qi-purple:#7340b5; --qi-teal:#2a7a66;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#6e4a2a; --tree-leaf:#3f8a3f; --tree-canopy:#357a35; --tree-canopy2:#5aa65a; --tree-seed:#3f8a3f; --tree-ground:#d4c39c;
   /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
@@ -101,8 +101,8 @@
     --progress-red-track:#4a2724; --progress-yellow-track:#4a3d17; --progress-green-track:#1e4a31;
     /* the same, as text: the label (--progress-label) and the N/M numbers (--progress-NAME-text), at least 4.5:1 on the card */
     --progress-label:#dcebe6; --progress-red-text:#f07468; --progress-yellow-text:#e8b43c; --progress-green-text:#4ec97f;
-    /* home cards: the filled icon colours (heart, speaker, tag, clock), at least 3:1 on the card */
-    --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0;
+    /* home cards and top bar: the filled icon colours (heart, speaker, tag, clock, and teal for home, search and books), at least 3:1 on the card, the page and the active link */
+    --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0; --qi-teal:#3fcbb3;
     /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
     --tree-trunk:#c49a6c; --tree-leaf:#4ec97f; --tree-canopy:#36a863; --tree-canopy2:#62d38c; --tree-seed:#5fd68c; --tree-ground:#2e4a42;
     /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */

@@ -204,14 +204,16 @@ test('the label is #333 in the light theme', () => {
 describe.each(names)('home card icon colours in the %s theme', (name) => {
   const t = themes[name];
 
-  test.each(['pink', 'blue', 'green', 'purple'])('%s is at least 3:1 on the card surface', (colour) => {
+  test.each(['pink', 'blue', 'green', 'purple', 'teal'])('%s is at least 3:1 on the card surface, the page and the active top-bar link', (colour) => {
     expect(t[`--qi-${colour}`]).toMatch(/^#[0-9a-f]{6}$/i);
     expect(ratio(t[`--qi-${colour}`], t['--surface'])).toBeGreaterThanOrEqual(3);
+    expect(ratio(t[`--qi-${colour}`], t['--bg'])).toBeGreaterThanOrEqual(3);
+    expect(ratio(t[`--qi-${colour}`], t['--accent-soft'])).toBeGreaterThanOrEqual(3);
   });
 });
 
 test('the automatic dark theme carries the same icon colours as the dark theme', () => {
-  for (const colour of ['pink', 'blue', 'green', 'purple']) {
+  for (const colour of ['pink', 'blue', 'green', 'purple', 'teal']) {
     expect(css.split(`--qi-${colour}:`).length - 1, colour).toBe(4);
   }
 });

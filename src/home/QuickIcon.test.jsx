@@ -6,10 +6,12 @@ import QuickIcon, { QUICK_ICON_COLORS } from './QuickIcon';
 const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
 
 test('each of the four cards has its own filled icon colour: pink, blue, green, purple', () => {
-  expect(QUICK_ICON_COLORS).toEqual({ heart: 'pink', speaker: 'blue', tag: 'green', clock: 'purple' });
+  expect(QUICK_ICON_COLORS).toMatchObject({ heart: 'pink', speaker: 'blue', tag: 'green', clock: 'purple' });
+  // the top bar's three more: home, search and books share one calm teal
+  expect(QUICK_ICON_COLORS).toMatchObject({ home: 'teal', search: 'teal', book: 'teal' });
 });
 
-test.each(['heart', 'speaker', 'tag', 'clock'])('the %s icon is filled, hidden from screen readers and coloured by its token', (kind) => {
+test.each(['heart', 'speaker', 'tag', 'clock', 'home', 'search', 'book'])('the %s icon is filled, hidden from screen readers and coloured by its token', (kind) => {
   render(<QuickIcon kind={kind} />);
   const svg = screen.getByTestId(`quick-icon-${kind}`);
   expect(svg).toHaveAttribute('aria-hidden', 'true');

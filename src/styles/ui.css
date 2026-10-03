@@ -38,7 +38,8 @@ body>main{flex:1 0 auto;width:100%}
 .shell-brand b{display:block;font:800 14px/1.1 var(--f-lat),system-ui,sans-serif;letter-spacing:-.01em}
 .shell-brand small{display:block;font-size:11px;color:var(--ink2);line-height:1.2}
 .shell-links{display:none;margin-left:12px;gap:2px;align-items:center}
-.shell-links a{padding:8px 12px;border-radius:99px;font-size:14px;font-weight:600;color:var(--ink2);white-space:nowrap;text-decoration:none}
+.shell-links a{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:99px;font-size:14px;font-weight:600;color:var(--ink2);white-space:nowrap;text-decoration:none}
+.shell-links .quick-icon{flex:none}
 .shell-links a:hover{background:var(--surface2)}
 .shell-links a[aria-current="page"]{background:var(--accent-soft);color:var(--accent2)}
 .shell-iconbtn{margin-left:auto;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface);box-shadow:var(--shadow);color:var(--ink2);text-decoration:none;flex:none}

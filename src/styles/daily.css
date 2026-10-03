@@ -169,9 +169,11 @@
   .home-quick-links{grid-template-columns:repeat(4,1fr)}
 }
 
-/* five links in the top bar need a little more room between phone and desktop widths */
-@media (min-width: 641px) and (max-width: 959px){
+/* seven links with icons do not fit on one line below about 1050px: the labels are hidden visually
+   (they stay in the link for screen readers, and as a tooltip) so only the icons show; never wrap or scroll */
+@media (min-width: 641px) and (max-width: 1049px){
   .shell-links{margin-left:4px}
-  .shell-links a{padding:8px 9px;font-size:12.5px}
+  .shell-links a{padding:8px 11px}
+  .shell-link-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
   .shell-brand small{display:none}
 }
