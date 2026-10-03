@@ -73,7 +73,10 @@ export default function HadisCard({ bookId, number, level = 2 }) {
       </div>
       {status === 'ok' && (
         <footer className="hcard-foot">
-          <Button size="sm" aria-describedby={titleId} onClick={copy}><Icon name="copy" size={16} />কপি</Button>
+          <button type="button" className="act-btn act-copy" aria-describedby={titleId} onClick={copy}>
+            <Icon name="copy" size={16} />
+            <span>কপি</span>
+          </button>
           <ShareButton book={book} number={number} text={text} variant="icon" describedBy={titleId} />
         </footer>
       )}

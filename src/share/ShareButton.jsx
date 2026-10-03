@@ -1,6 +1,5 @@
 'use client';
 
-import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import { useShare } from './useShare';
 
@@ -13,7 +12,7 @@ export default function ShareButton({ book, number, text, variant = 'pill', desc
 
   if (variant === 'icon') {
     return (
-      <button type="button" className="share-icon-btn" aria-label="শেয়ার" aria-describedby={describedBy} title="শেয়ার" onClick={onClick}>
+      <button type="button" className="share-icon-btn act-share" aria-label="শেয়ার" aria-describedby={describedBy} title="শেয়ার" onClick={onClick}>
         <Icon name="share" size={18} />
       </button>
     );
@@ -26,9 +25,9 @@ export default function ShareButton({ book, number, text, variant = 'pill', desc
     );
   }
   return (
-    <Button size="sm" variant="ghost" aria-describedby={describedBy} onClick={onClick}>
+    <button type="button" className="act-btn act-share" aria-describedby={describedBy} onClick={onClick}>
       <Icon name="share" size={16} />
-      শেয়ার
-    </Button>
+      <span>শেয়ার</span>
+    </button>
   );
 }

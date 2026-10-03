@@ -7,7 +7,6 @@ import { splitHadis, wordCount } from '../lib/hadisText';
 import { shareHref } from '../lib/share';
 import { useDigits } from '../lib/useDigits';
 import BookBadge from '../ui/BookBadge';
-import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import ShareButton from '../share/ShareButton';
 import { permanentUrl, useCopy } from '../share/useShare';
@@ -59,11 +58,23 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
 
       <div className="hadis-actions hadis-card">
         {lead}
-        <Button size="sm" variant="ghost" onClick={() => copy(text)}><Icon name="copy" size={16} />কপি</Button>
-        <Button size="sm" variant="ghost" onClick={() => copy(`${book.cite}, হাদীস নং ${digits(number)}`)}>উদ্ধৃতি কপি</Button>
-        <Button size="sm" variant="ghost" onClick={() => copy(permanentUrl(book.id, number), 'লিংক কপি করা হয়েছে')}><Icon name="link" size={16} />লিংক কপি</Button>
+        <button type="button" className="act-btn act-copy" onClick={() => copy(text)}>
+          <Icon name="copy" size={16} />
+          <span>কপি</span>
+        </button>
+        <button type="button" className="act-btn act-quote" onClick={() => copy(`${book.cite}, হাদীস নং ${digits(number)}`)}>
+          <Icon name="quote" size={16} />
+          <span>উদ্ধৃতি<span className="act-more"> কপি</span></span>
+        </button>
+        <button type="button" className="act-btn act-link" onClick={() => copy(permanentUrl(book.id, number), 'লিংক কপি করা হয়েছে')}>
+          <Icon name="link" size={16} />
+          <span>লিংক<span className="act-more"> কপি</span></span>
+        </button>
         <ShareButton book={book} number={number} text={text} />
-        <Link href={shareHref(book.id, number)} className="ui-btn ghost sm">ছবি বানান</Link>
+        <Link href={shareHref(book.id, number)} className="act-btn act-image">
+          <Icon name="image" size={16} />
+          <span>ছবি<span className="act-more"> বানান</span></span>
+        </Link>
       </div>
     </article>
   );

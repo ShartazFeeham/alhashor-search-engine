@@ -2,8 +2,9 @@
    D2 look: rounded cards, pill buttons, 44px touch targets. */
 
 /* ---------- the share buttons shown with a hadis ---------- */
-.share-icon-btn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:transparent;border:1px solid transparent;color:var(--ink2);cursor:pointer;transition:background .2s,color .2s}
-.share-icon-btn:hover{background:var(--surface2);color:var(--accent2)}
+.share-icon-btn{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:7px;background:transparent;border:1px solid transparent;color:var(--ink2);cursor:pointer;transition:background .2s,color .2s}
+.share-icon-btn:hover{background:var(--surface2)}
+.share-icon-btn .ui-icon{color:var(--act-share)}
 .hadis-actions a.ui-btn{text-decoration:none}
 
 /* ---------- the quote-card page ---------- */

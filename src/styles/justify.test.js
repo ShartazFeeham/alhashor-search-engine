@@ -8,7 +8,7 @@ const css = FILES.map(read).join('\n').replace(/\/\*[\s\S]*?\*\//g, '');
 // Every declaration block whose selector list contains `selector` exactly, joined.
 function declarationsOf(selector) {
   const blocks = [];
-  for (const [, list, body] of css.matchAll(/(?:^|})\s*([^{}@]+)\{([^}]*)\}/g)) {
+  for (const [, list, body] of css.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
     if (list.split(',').map((part) => part.trim()).includes(selector)) blocks.push(body);
   }
   if (blocks.length === 0) throw new Error(`no rule for ${selector}`);

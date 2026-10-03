@@ -21,6 +21,8 @@
   --qi-pink:#d6336c; --qi-blue:#2f6fdb; --qi-green:#1f8a4c; --qi-purple:#7e44c9;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#7a5230; --tree-leaf:#2f9e57; --tree-canopy:#2e8b4f; --tree-canopy2:#55b676; --tree-seed:#3a9a52; --tree-ground:#c5d3ce;
+  /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
+  --act-copy:#2f6fdb; --act-quote:#7e44c9; --act-link:#0b7f73; --act-share:#c25b0a; --act-image:#d6336c;
   --shadow:0 1px 2px rgba(10,50,44,.06),0 8px 22px rgba(10,50,44,.07);
   /* reading: font size and line height (changed by the reading settings); the column width --rw is fixed, nothing writes it */
   --rs:16px; --rlh:1.9; --rw:34em;
@@ -50,6 +52,8 @@
   --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#c49a6c; --tree-leaf:#4ec97f; --tree-canopy:#36a863; --tree-canopy2:#62d38c; --tree-seed:#5fd68c; --tree-ground:#2e4a42;
+  /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
+  --act-copy:#6ea8ff; --act-quote:#b48cf0; --act-link:#4fd1c0; --act-share:#ffa45c; --act-image:#f472a3;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
   color-scheme: dark;
 }
@@ -73,6 +77,8 @@
   --qi-pink:#c2255c; --qi-blue:#2b62c4; --qi-green:#2f7a3a; --qi-purple:#7340b5;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#6e4a2a; --tree-leaf:#3f8a3f; --tree-canopy:#357a35; --tree-canopy2:#5aa65a; --tree-seed:#3f8a3f; --tree-ground:#d4c39c;
+  /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
+  --act-copy:#2a62c0; --act-quote:#7440b0; --act-link:#1d6e61; --act-share:#a8500a; --act-image:#b82d62;
   --shadow:0 1px 2px rgba(80,55,15,.08),0 8px 22px rgba(80,55,15,.09);
 }
 
@@ -97,6 +103,8 @@
     --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0;
     /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
     --tree-trunk:#c49a6c; --tree-leaf:#4ec97f; --tree-canopy:#36a863; --tree-canopy2:#62d38c; --tree-seed:#5fd68c; --tree-ground:#2e4a42;
+    /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
+    --act-copy:#6ea8ff; --act-quote:#b48cf0; --act-link:#4fd1c0; --act-share:#ffa45c; --act-image:#f472a3;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
     color-scheme: dark;
   }
