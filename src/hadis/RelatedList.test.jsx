@@ -80,7 +80,11 @@ test('searches with the meaningful words of the whole text, and shows the first 
   expect(words.length).toBeLessThanOrEqual(25);
   expect(words).not.toContain('বলতেন');
   expect(items()).toHaveLength(5);
-  expect(screen.getByRole('link', { name: 'বুখারী ১' })).toHaveAttribute('href', '/hadis/bukhari/1');
+  // the first 5 of the (reordered) top 20: any of them links to its own hadis page
+  for (const row of items()) {
+    const link = within(row).getAllByRole('link')[0];
+    expect(link).toHaveAttribute('href', expect.stringMatching(/^\/hadis\/bukhari\/\d+$/));
+  }
 });
 
 test('the hadis being read is never in its own list', async () => {
@@ -308,4 +312,19 @@ test('the bold words count as many words as the hadis shares with the page (at m
   const shared = Number(/^([০-৯]+)/.exec(within(item).getByText(/টি শব্দ মিলেছে/).textContent)[0].replace(/[০-৯]/g, (d) => '০১২৩৪৫৬৭৮৯'.indexOf(d)));
   expect(item.querySelectorAll('.related-text strong').length).toBeGreaterThan(0);
   expect(shared).toBeGreaterThan(0);
+});
+
+test('hadis with the same number of shared words are listed shortest first; more shared words still come first', async () => {
+  stubSearch(buk(12, false));
+  show();
+  await screen.findByRole('region', { name: 'সদৃশ হাদীস' });
+  const [words] = searchClient.search.mock.calls[0];
+  const names = items().map((row) => within(row).getAllByRole('link')[0].textContent);
+  const digit = (n) => String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+  const rows = Array.from({ length: 12 }, (_, i) => {
+    const text = realText('bukhari', i + 1);
+    return { name: `বুখারী ${digit(i + 1)}`, matched: words.filter((w) => normalizeBengali(text).includes(w)).length, length: text.length };
+  });
+  const expected = rows.sort((a, b) => b.matched - a.matched || a.length - b.length).slice(0, 5).map((row) => row.name);
+  expect(names).toEqual(expected);
 });
