@@ -1,10 +1,11 @@
 // The pure part of the quote-card image: where words wrap, which font size fits, where a long
 // text is cut, and the card colours. The drawing itself is in src/share/drawCard.js.
 
-export const CARD_SIZES = {
-  square: { width: 1080, height: 1080 },
-  tall: { width: 1080, height: 1350 },
-};
+// The card is always this wide; its height is worked out from the text (see measureCard in src/share/drawCard.js).
+export const CARD_WIDTH = 1080;
+// The tallest card drawn. Phone browsers refuse a canvas of more than about 16.7 million pixels
+// (15,534 px at this width), so a text that would need more is set smaller and then cut to an excerpt.
+export const CARD_MAX_HEIGHT = 15400;
 
 // The book colours of the light theme (src/styles/tokens.css). A card always uses these, whatever
 // theme the visitor reads in, so a shared image looks the same everywhere.

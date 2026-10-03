@@ -24,14 +24,15 @@ afterEach(() => {
   delete document.fonts;
 });
 
-test('draws the card on a 1080 x 1080 canvas', async () => {
+test('draws the card on a canvas 1080 wide, as tall as the text needs', async () => {
   const onDrawn = vi.fn();
   render(card({ onDrawn }));
   await waitFor(() => expect(onDrawn).toHaveBeenCalled());
   const canvas = screen.getByRole('img');
   expect(canvas.tagName).toBe('CANVAS');
   expect(canvas).toHaveAttribute('width', '1080');
-  expect(canvas).toHaveAttribute('height', '1080');
+  const height = Number(canvas.getAttribute('height'));
+  expect(height).toBe(stub.texts.find((t) => t.text === 'Alhashor').y + 134); // the site name sits 134 above the bottom edge
   const drawn = stub.texts.map((t) => t.text);
   expect(drawn).toContain(CITE);
   expect(drawn).toContain('বুখারী শরীফ');
@@ -39,11 +40,33 @@ test('draws the card on a 1080 x 1080 canvas', async () => {
   expect(stub.texts.some((t) => t.text.includes('বর্তমান যুগের মুনাফিকরা'))).toBe(true);
 });
 
-test('the tall size is 1080 x 1350', async () => {
+test('has no size prop: a longer hadis gives a taller canvas on the same width', async () => {
+  const heightOf = async (props) => {
+    const onDrawn = vi.fn();
+    const view = render(card({ onDrawn, ...props }));
+    await waitFor(() => expect(onDrawn).toHaveBeenCalled());
+    const canvas = screen.getByRole('img');
+    const size = [canvas.getAttribute('width'), Number(canvas.getAttribute('height'))];
+    view.unmount();
+    return size;
+  };
+  const short = await heightOf({});
+  const long = await heightOf({ number: 6, text: BUKHARI_6 });
+  expect(short[0]).toBe('1080');
+  expect(long[0]).toBe('1080');
+  expect(long[1]).toBeGreaterThan(short[1]);
+});
+
+test('the height is measured from the text before drawing: every line is inside the canvas, and the whole text is drawn', async () => {
   const onDrawn = vi.fn();
-  render(card({ ratio: 'tall', onDrawn }));
+  render(card({ number: 6, text: BUKHARI_6, onDrawn }));
   await waitFor(() => expect(onDrawn).toHaveBeenCalled());
-  expect(screen.getByRole('img')).toHaveAttribute('height', '1350');
+  const result = onDrawn.mock.calls[0][0];
+  expect(Number(screen.getByRole('img').getAttribute('height'))).toBe(result.height);
+  const body = stub.texts.filter((t) => t.font.includes(`${result.fontSize}px`) && t.font.startsWith('500'));
+  expect(body.length).toBe(result.lines.length);
+  expect(Math.max(...body.map((t) => t.y))).toBeLessThan(result.height - 88 - 150);
+  expect(result.excerpted).toBe(false);
 });
 
 test('describes the picture for screen readers with the saying and the citation', async () => {
@@ -56,12 +79,12 @@ test('describes the picture for screen readers with the saying and the citation'
   await waitFor(() => expect(onDrawn).toHaveBeenCalled());
 });
 
-test('the description of a long hadis is the excerpt that is on the card, not the whole text', async () => {
+test('the description of a long hadis is its first part only, not the whole text', async () => {
   const onDrawn = vi.fn();
   render(card({ number: 6, text: BUKHARI_6, onDrawn }));
   await waitFor(() => expect(onDrawn).toHaveBeenCalled());
-  expect(onDrawn.mock.calls[0][0].excerpted).toBe(true);
-  await waitFor(() => expect(screen.getByRole('img').getAttribute('aria-label').length).toBeLessThan(1500));
+  expect(onDrawn.mock.calls[0][0].excerpted).toBe(false);
+  await waitFor(() => expect(screen.getByRole('img').getAttribute('aria-label').length).toBeLessThan(600));
   expect(screen.getByRole('img').getAttribute('aria-label')).toContain(' ...');
 });
 
@@ -96,13 +119,13 @@ test('still draws when a font cannot be loaded', async () => {
   await waitFor(() => expect(onDrawn).toHaveBeenCalled());
 });
 
-test('draws again when the size changes', async () => {
+test('draws again when the text changes, with the new height', async () => {
   const onDrawn = vi.fn();
   const { rerender } = render(card({ onDrawn }));
   await waitFor(() => expect(onDrawn).toHaveBeenCalledTimes(1));
-  rerender(card({ ratio: 'tall', onDrawn }));
+  rerender(card({ number: 6, text: BUKHARI_6, onDrawn }));
   await waitFor(() => expect(onDrawn).toHaveBeenCalledTimes(2));
-  expect(onDrawn.mock.calls[1][0]).toBeDefined();
+  expect(onDrawn.mock.calls[1][0].height).toBeGreaterThan(onDrawn.mock.calls[0][0].height);
 });
 
 test('a browser with no canvas context does not break the page', async () => {

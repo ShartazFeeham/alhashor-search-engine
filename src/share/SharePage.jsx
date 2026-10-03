@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import PageTitle from '../Helpers/PageTitle';
 import { bookById } from '../lib/books';
-import { CARD_SIZES } from '../lib/cardLayout';
-import { toBengaliDigits } from '../lib/digits';
 import { hadisHref, tagOf } from '../lib/hadisRoute';
 import { citation, shareText } from '../lib/share';
 import { useDigits } from '../lib/useDigits';
@@ -13,13 +11,10 @@ import { useHadisText } from '../lib/useHadisText';
 import { useSettings } from '../settings/SettingsProvider';
 import BookBadge from '../ui/BookBadge';
 import Button from '../ui/Button';
-import Chip from '../ui/Chip';
 import Icon from '../ui/Icon';
 import { useToast } from '../ui/Toast';
 import QuoteCard from './QuoteCard';
 import { permanentUrl, useCopy } from './useShare';
-
-const SIZE_LABELS = { square: 'বর্গ', tall: 'লম্বা' };
 
 const canvasToBlob = (canvas) => new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
 
@@ -43,23 +38,15 @@ export default function SharePage({ bookId, number }) {
   const copy = useCopy();
   const { status, text, retry } = useHadisText(tagOf(bookId, number));
   const canvasRef = useRef(null);
-  const [ratio, setRatio] = useState('square');
   const [drawn, setDrawn] = useState(null);
   const [fileShare, setFileShare] = useState(false);
 
   useEffect(() => setFileShare(canShareFiles()), []);
 
-  const dims = (value) => (settings.digits === 'en' ? String(value) : toBengaliDigits(value));
   const title = `${book.full} - হাদীস নং ${digits(number)}`;
   const cite = citation(book, number, settings.digits);
   const url = status === 'ok' ? permanentUrl(bookId, number) : '';
   const fileName = `alhashor-${bookId}-${number}.png`;
-
-  const chooseRatio = (next) => {
-    if (next === ratio) return;
-    setDrawn(null);
-    setRatio(next);
-  };
 
   const download = async () => {
     const blob = await canvasToBlob(canvasRef.current);
@@ -131,19 +118,11 @@ export default function SharePage({ bookId, number }) {
       {status === 'ok' && (
         <>
           <section className="share-card-wrap" aria-label="কার্ডের প্রিভিউ">
-            <div className="share-sizes" role="group" aria-label="কার্ডের মাপ">
-              {Object.keys(CARD_SIZES).map((key) => (
-                <Chip key={key} pressed={ratio === key} onClick={() => chooseRatio(key)}>
-                  {SIZE_LABELS[key]} ({dims(CARD_SIZES[key].width)} × {dims(CARD_SIZES[key].height)})
-                </Chip>
-              ))}
-            </div>
             <div className="share-preview">
               <QuoteCard
                 book={book}
                 number={number}
                 text={text}
-                ratio={ratio}
                 citationText={cite}
                 canvasRef={canvasRef}
                 onDrawn={setDrawn}

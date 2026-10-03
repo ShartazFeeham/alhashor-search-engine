@@ -106,6 +106,38 @@ describe('useCopy', () => {
   });
 });
 
+describe('useCopy fallback', () => {
+  const setExec = (impl) => Object.defineProperty(document, 'execCommand', { value: impl, configurable: true, writable: true });
+  afterEach(() => {
+    delete document.execCommand;
+  });
+
+  test('copies through the textarea when the async clipboard is missing, and confirms', async () => {
+    Object.assign(navigator, { clipboard: undefined });
+    setExec(vi.fn(() => true));
+    const { result } = renderHook(() => useCopy(), { wrapper });
+    let copied;
+    await act(async () => {
+      copied = await result.current('abc');
+    });
+    expect(copied).toBe(true);
+    expect(screen.getByRole('status')).toHaveTextContent('কপি করা হয়েছে');
+  });
+
+  test('confirms only on success: a failed copy shows the error and resolves to false', async () => {
+    Object.assign(navigator, { clipboard: undefined });
+    setExec(vi.fn(() => false));
+    const { result } = renderHook(() => useCopy(), { wrapper });
+    let copied;
+    await act(async () => {
+      copied = await result.current('abc', 'লিংক কপি করা হয়েছে');
+    });
+    expect(copied).toBe(false);
+    expect(screen.getByRole('status')).toHaveTextContent('কপি করা যায়নি');
+    expect(screen.getByRole('status')).not.toHaveTextContent('করা হয়েছে');
+  });
+});
+
 describe('ShareButton', () => {
   test('the pill is a real button named "শেয়ার"', () => {
     render(<ShareButton {...hadis} />, { wrapper });

@@ -9,8 +9,8 @@ import { hasMatch, highlightParts, makeSnippet } from '../lib/matchPattern';
 import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import ShareButton from '../share/ShareButton';
+import { useCopy } from '../share/useShare';
 import BookBadge from '../ui/BookBadge';
-import { useToast } from '../ui/Toast';
 
 // One search result: the book and number (a link), the text around the match with the matched
 // words highlighted, and quiet actions.
@@ -20,7 +20,7 @@ import { useToast } from '../ui/Toast';
 // nothing highlighted.
 export default function ResultItem({ tag, matcher = null, anchor, marked = false, plain = false }) {
   const digits = useDigits();
-  const toast = useToast();
+  const copyText = useCopy();
   const router = useRouter();
   const titleId = useId();
   const { status, text } = useHadisText(tag);
@@ -29,12 +29,7 @@ export default function ResultItem({ tag, matcher = null, anchor, marked = false
   const { book, number } = parsed;
   const href = hadisHref(book.id, number);
 
-  const copy = () => {
-    Promise.resolve(navigator.clipboard?.writeText(text)).then(
-      () => toast('কপি করা হয়েছে'),
-      () => toast('কপি করা যায়নি')
-    );
-  };
+  const copy = () => copyText(text);
 
   // A mouse convenience: a plain click on the text or empty space opens the full hadis. Buttons and
   // links keep their own behaviour, and selecting text by dragging does not navigate.

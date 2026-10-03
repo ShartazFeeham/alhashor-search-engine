@@ -97,19 +97,15 @@ test('a network failure offers another try', async () => {
 });
 
 describe('card size', () => {
-  test('is square by default and can be made tall', async () => {
+  test('has no size or shape control: the width is fixed and the height follows the text', async () => {
     show();
     const canvas = await screen.findByRole('img');
-    expect(canvas).toHaveAttribute('height', '1080');
-    const square = screen.getByRole('button', { name: /বর্গ/ });
-    const tall = screen.getByRole('button', { name: /লম্বা/ });
-    expect(square).toHaveAttribute('aria-pressed', 'true');
-    expect(tall).toHaveAttribute('aria-pressed', 'false');
-    fireEvent.click(tall);
-    expect(screen.getByRole('img')).toHaveAttribute('height', '1350');
-    expect(tall).toHaveAttribute('aria-pressed', 'true');
-    expect(square).toHaveAttribute('aria-pressed', 'false');
     await ready();
+    expect(canvas).toHaveAttribute('width', '1080');
+    expect(screen.queryByRole('group', { name: 'কার্ডের মাপ' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /বর্গ|লম্বা|মাপ/ })).not.toBeInTheDocument();
+    expect(screen.queryByText(/১,০৮০|1080/)).not.toBeInTheDocument();
+    expect(Number(canvas.getAttribute('height'))).toBeGreaterThan(0);
   });
 });
 
@@ -236,11 +232,12 @@ describe('text and link', () => {
   });
 });
 
-test('a long hadis says that the picture holds an excerpt with the link to the rest', async () => {
+test('a long hadis is on the picture whole, so there is no excerpt note and no link line', async () => {
   show('bukhari', 6);
-  expect(await screen.findByText(/ছবিতে হাদীসের শুরুর অংশ/)).toBeInTheDocument();
   await ready();
-  expect(stub.texts.some((t) => t.text.startsWith('সম্পূর্ণ হাদীস:'))).toBe(true);
+  expect(screen.queryByText(/ছবিতে হাদীসের শুরুর অংশ/)).not.toBeInTheDocument();
+  expect(stub.texts.some((t) => t.text.startsWith('সম্পূর্ণ হাদীস:'))).toBe(false);
+  expect(Number(screen.getByRole('img').getAttribute('height'))).toBeGreaterThan(1080);
 });
 
 test('a short hadis has no excerpt note', async () => {

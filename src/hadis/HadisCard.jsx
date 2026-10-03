@@ -9,9 +9,9 @@ import { useDigits } from '../lib/useDigits';
 import { useHadisText } from '../lib/useHadisText';
 import BookBadge from '../ui/BookBadge';
 import ShareButton from '../share/ShareButton';
+import { useCopy } from '../share/useShare';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
-import { useToast } from '../ui/Toast';
 
 const LIMIT = 600;
 
@@ -27,18 +27,13 @@ export default function HadisCard({ bookId, number, level = 2 }) {
   const Heading = `h${level}`;
   const book = bookById(bookId);
   const digits = useDigits();
-  const toast = useToast();
+  const copyText = useCopy();
   const titleId = useId();
   const { status, text, retry } = useHadisText(tagOf(bookId, number));
   const href = hadisHref(bookId, number);
   const title = `${book.full} - হাদীস নং ${digits(number)}`;
 
-  const copy = () => {
-    Promise.resolve(navigator.clipboard?.writeText(text)).then(
-      () => toast('কপি করা হয়েছে'),
-      () => toast('কপি করা যায়নি')
-    );
-  };
+  const copy = () => copyText(text);
 
   let body;
   let cut = null;

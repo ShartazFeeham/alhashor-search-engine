@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { CARD_COLOURS, CARD_SIZES } from '../lib/cardLayout';
+import { CARD_COLOURS, CARD_WIDTH } from '../lib/cardLayout';
 import { cleanText, excerptFor, shortLink } from '../lib/share';
-import { drawCard } from './drawCard';
+import { drawCard, measureCard } from './drawCard';
 import { permanentUrl } from './useShare';
 
 // The CSS font lists of the three site fonts. next/font gives them generated names, which it
@@ -32,16 +32,16 @@ async function loadFonts(fonts, text) {
 }
 
 // The quote card of one hadis, drawn in the browser on a canvas (no outside library or request).
+// It is always CARD_WIDTH wide; its height is measured from the wrapped text, so the whole hadis is on it.
 // `canvasRef` gives the parent the canvas, for saving or sharing the picture. `onDrawn` is called
-// with what was drawn ({ fontSize, lines, text, excerpted }) after each drawing.
-export default function QuoteCard({ book, number, text, ratio = 'square', citationText, canvasRef, onDrawn }) {
+// with what was drawn ({ fontSize, lines, text, excerpted, width, height }) after each drawing.
+export default function QuoteCard({ book, number, text, citationText, canvasRef, onDrawn }) {
   const ownRef = useRef(null);
   const ref = canvasRef ?? ownRef;
   const drawn = useRef(onDrawn);
   drawn.current = onDrawn;
   const clean = cleanText(text);
-  const size = CARD_SIZES[ratio] ?? CARD_SIZES.square;
-  // What is on the card, for screen readers (the excerpt when the text is long).
+  // What is on the card, for screen readers (its first 450 characters when the text is long: the whole hadis is on its page).
   const [shown, setShown] = useState(() => excerptFor(clean, 450));
 
   useEffect(() => {
@@ -50,30 +50,36 @@ export default function QuoteCard({ book, number, text, ratio = 'square', citati
     loadFonts(fonts, clean).then(() => {
       const ctx = cancelled ? null : ref.current?.getContext('2d');
       if (!ctx) return;
+      const canvas = ref.current;
+      const linkText = shortLink(permanentUrl(book.id, number));
+      // Measure first: the height is set on the canvas (which erases it) before anything is drawn.
+      const layout = measureCard(ctx, { text: clean, linkText, fonts });
+      if (canvas.width !== layout.width) canvas.width = layout.width;
+      canvas.height = layout.height;
       const result = drawCard(ctx, {
-        ...size,
+        layout,
         badge: book.badge,
         bookName: book.full,
         text: clean,
         citationText,
-        linkText: shortLink(permanentUrl(book.id, number)),
+        linkText,
         fonts,
         colour: CARD_COLOURS[book.id],
       });
-      setShown(result.text);
+      setShown(excerptFor(result.text, 450));
       drawn.current?.(result);
     });
     return () => {
       cancelled = true;
     };
-  }, [book, number, clean, citationText, size, ref]);
+  }, [book, number, clean, citationText, ref]);
 
   return (
     <canvas
       ref={ref}
       className="share-canvas"
-      width={size.width}
-      height={size.height}
+      width={CARD_WIDTH}
+      height={CARD_WIDTH} // only the first guess: the height is set from the measured text, never by React
       role="img"
       aria-label={`${shown}. ${citationText}`}
     />

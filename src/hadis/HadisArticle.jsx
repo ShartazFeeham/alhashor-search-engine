@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { hadisHref } from '../lib/hadisRoute';
 import { stripChain } from '../lib/hadisCore';
 import { splitHadis, wordCount } from '../lib/hadisText';
 import { shareHref } from '../lib/share';
@@ -11,7 +10,7 @@ import BookBadge from '../ui/BookBadge';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
 import ShareButton from '../share/ShareButton';
-import { useToast } from '../ui/Toast';
+import { permanentUrl, useCopy } from '../share/useShare';
 import ReadingProgress from './ReadingProgress';
 
 // Every block is a card of its own: the header (with the breadcrumb handed in as `crumbs`), the
@@ -22,21 +21,15 @@ import ReadingProgress from './ReadingProgress';
 export default function HadisArticle({ book, number, text, id, crumbs, headingLevel = 1, label, lead, coreOnly = false }) {
   const Heading = `h${headingLevel}`;
   const digits = useDigits();
-  const toast = useToast();
+  const copyText = useCopy();
   const [open, setOpen] = useState(false);
   const split = splitHadis(text);
   // `coreOnly` (the daily page): the saying alone, with no chain block; copy and share keep the full text
   const chain = coreOnly ? '' : split.chain;
   const { summary } = split;
   const body = coreOnly ? stripChain(text).core : split.body;
-  const href = hadisHref(book.id, number);
 
-  const copy = (value) => {
-    Promise.resolve(navigator.clipboard?.writeText(value)).then(
-      () => toast('কপি করা হয়েছে'),
-      () => toast('কপি করা যায়নি')
-    );
-  };
+  const copy = (value, message) => copyText(value, message);
 
   return (
     <article className="hadis-article" id={id} aria-label={label}>
@@ -68,7 +61,7 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
         {lead}
         <Button size="sm" variant="ghost" onClick={() => copy(text)}><Icon name="copy" size={16} />কপি</Button>
         <Button size="sm" variant="ghost" onClick={() => copy(`${book.cite}, হাদীস নং ${digits(number)}`)}>উদ্ধৃতি কপি</Button>
-        <Button size="sm" variant="ghost" onClick={() => copy(`${window.location.origin}${href}`)}><Icon name="link" size={16} />লিংক কপি</Button>
+        <Button size="sm" variant="ghost" onClick={() => copy(permanentUrl(book.id, number), 'লিংক কপি করা হয়েছে')}><Icon name="link" size={16} />লিংক কপি</Button>
         <ShareButton book={book} number={number} text={text} />
         <Link href={shareHref(book.id, number)} className="ui-btn ghost sm">ছবি বানান</Link>
       </div>

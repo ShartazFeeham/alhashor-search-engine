@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { BOOKS } from './books';
-import { CARD_COLOURS, CARD_SIZES, cardPalette, contrastRatio, fitText, mix, wrapWords } from './cardLayout';
+import { CARD_COLOURS, CARD_MAX_HEIGHT, CARD_WIDTH, cardPalette, contrastRatio, fitText, mix, wrapWords } from './cardLayout';
 import { cleanText } from './share';
 
 const read = (folder, number) =>
@@ -98,9 +98,9 @@ describe('fitText', () => {
 });
 
 describe('card palette', () => {
-  test('there is a size for the square and the tall card', () => {
-    expect(CARD_SIZES.square).toEqual({ width: 1080, height: 1080 });
-    expect(CARD_SIZES.tall).toEqual({ width: 1080, height: 1350 });
+  test('the card has one fixed width, and a tallest height a phone canvas can hold', () => {
+    expect(CARD_WIDTH).toBe(1080);
+    expect(CARD_WIDTH * CARD_MAX_HEIGHT).toBeLessThan(16777216);
   });
 
   test('mix blends two colours', () => {

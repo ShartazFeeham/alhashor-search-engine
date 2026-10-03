@@ -100,6 +100,63 @@ test('copy, copy citation and copy link put the right text on the clipboard', as
   await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('কপি করা হয়েছে'));
 });
 
+describe('copying the link', () => {
+  const FULL = () => `${window.location.origin}/hadis/bukhari/6628`;
+  const setExec = (impl) => Object.defineProperty(document, 'execCommand', { value: impl, configurable: true, writable: true });
+  afterEach(() => {
+    delete document.execCommand;
+  });
+
+  test('success: the full absolute address is copied and the link toast shows', async () => {
+    serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+    show('bukhari', 6628);
+    await loaded();
+    fireEvent.click(screen.getByRole('button', { name: 'লিংক কপি' }));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(FULL());
+    expect(FULL()).toMatch(/^https?:\/\/[^/]+\/hadis\/bukhari\/6628$/);
+    expect(await screen.findByText('লিংক কপি করা হয়েছে')).toBeInTheDocument();
+  });
+
+  test('a page with no async clipboard (non-secure, iOS Safari) falls back to the textarea and still copies the same address', async () => {
+    serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+    Object.assign(navigator, { clipboard: undefined });
+    let copied;
+    setExec(
+      vi.fn(() => {
+        // eslint-disable-next-line testing-library/no-node-access
+        copied = document.querySelector('textarea').value;
+        return true;
+      })
+    );
+    show('bukhari', 6628);
+    await loaded();
+    fireEvent.click(screen.getByRole('button', { name: 'লিংক কপি' }));
+    expect(await screen.findByText('লিংক কপি করা হয়েছে')).toBeInTheDocument();
+    expect(copied).toBe(FULL());
+  });
+
+  test('failure: only the error message shows, never the success one', async () => {
+    serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+    Object.assign(navigator, { clipboard: { writeText: vi.fn().mockRejectedValue(new Error('blocked')) } });
+    setExec(vi.fn(() => false));
+    show('bukhari', 6628);
+    await loaded();
+    fireEvent.click(screen.getByRole('button', { name: 'লিংক কপি' }));
+    expect(await screen.findByText('কপি করা যায়নি')).toBeInTheDocument();
+    expect(screen.queryByText(/কপি করা হয়েছে/)).not.toBeInTheDocument();
+  });
+
+  test('no clipboard at all: the error shows, not a false success', async () => {
+    serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+    Object.assign(navigator, { clipboard: undefined });
+    show('bukhari', 6628);
+    await loaded();
+    fireEvent.click(screen.getByRole('button', { name: 'কপি' }));
+    expect(await screen.findByText('কপি করা যায়নি')).toBeInTheDocument();
+    expect(screen.queryByText(/কপি করা হয়েছে/)).not.toBeInTheDocument();
+  });
+});
+
 test('a number with no data file says so and still offers previous and next (Review Focus 2)', async () => {
   serve({});
   show('bukhari', 63);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
+import { copyToClipboard } from '../lib/clipboard';
 import { hadisHref } from '../lib/hadisRoute';
 import { citation, shareText } from '../lib/share';
 import { useSettings } from '../settings/SettingsProvider';
@@ -11,20 +12,15 @@ export function permanentUrl(bookId, number) {
   return `${window.location.origin}${hadisHref(bookId, number)}`;
 }
 
-// copy(value, message) puts the value on the clipboard and says so. A blocked clipboard says so too,
-// instead of claiming success. Resolves to true when the copy worked.
+// copy(value, message) puts the value on the clipboard (with the textarea fallback, see lib/clipboard.js) and says so
+// only when it worked; a blocked clipboard says so too, instead of claiming success. Resolves to true when the copy worked.
 export function useCopy() {
   const toast = useToast();
   return useCallback(
     async (value, message = 'কপি করা হয়েছে') => {
-      try {
-        await navigator.clipboard.writeText(value);
-        toast(message);
-        return true;
-      } catch {
-        toast('কপি করা যায়নি');
-        return false;
-      }
+      const copied = await copyToClipboard(value);
+      toast(copied ? message : 'কপি করা যায়নি');
+      return copied;
     },
     [toast]
   );
