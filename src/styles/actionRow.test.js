@@ -22,7 +22,7 @@ const THEMES = {
   sepia: tokens.slice(tokens.indexOf(':root[data-theme="sepia"]'), tokens.indexOf('@media (prefers-color-scheme: dark)')),
   'automatic dark': tokens.slice(tokens.indexOf('@media (prefers-color-scheme: dark)')),
 };
-const ICONS = ['copy', 'quote', 'link', 'share', 'image'];
+const ICONS = ['copy', 'link', 'share', 'image'];
 
 describe('the action row after a hadis', () => {
   test('every button has radius exactly 7px and a small padding', () => {
@@ -67,7 +67,7 @@ describe.each(Object.keys(THEMES))('icon colours in the %s theme', (theme) => {
     expect(contrastRatio(colour, block['--surface2'])).toBeGreaterThanOrEqual(3);
   });
 
-  test('the five colours are all different', () => {
-    expect(new Set(ICONS.map((name) => block[`--act-${name}`])).size).toBe(5);
+  test('the four colours are all different', () => {
+    expect(new Set(ICONS.map((name) => block[`--act-${name}`])).size).toBe(4);
   });
 });
