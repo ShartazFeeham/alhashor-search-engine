@@ -33,11 +33,11 @@ describe('the set files', () => {
 });
 
 describe('the Ahl al-Bayt set (set-04)', () => {
-  test('ends with Bukhari 3290 (Abu Bakr carries Hasan: he looks like the Prophet), graded sahih', () => {
+  test('has Bukhari 3290 (Abu Bakr carries Hasan: he looks like the Prophet) once, graded sahih', () => {
     const items = read('set-04.json').items;
-    const last = items[items.length - 1];
-    expect(last).toMatchObject({ book: 'bukhari', number: 3290, note: null, grade: 'sahih' });
-    expect(items.filter((item) => item.book === 'bukhari' && item.number === 3290)).toHaveLength(1);
+    const found = items.filter((item) => item.book === 'bukhari' && item.number === 3290);
+    expect(found).toHaveLength(1);
+    expect(found[0]).toMatchObject({ note: null, grade: 'sahih' });
   });
 });
 

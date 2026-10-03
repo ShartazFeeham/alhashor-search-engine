@@ -24,11 +24,6 @@
 | আহলে বাইতের জন্য দরূদ | বুখারী 3131 | কা’আব ইবনু উজরা (রাঃ) আমার সাথে দেখা করে | sahih | how to send durud on the Ahl al-Bayt |
 | মাহদী, আহলে বাইত থেকে | আবু দাউদ 4236 | রাসূলুল্লাহ্‌ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেনঃ মাহদী আমার বংশোদ্ভুত | hasan | Abu Said: the Mahdi is of my line; sound per scholars |
 | খাদিজা (রাঃ)-এর ফযীলত | বুখারী 3543 | নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, মরিয়াম (আলাইহিস সালাম) | sahih | Khadija is the best of the women of this Ummah |
-| আয়িশা (রাঃ)-এর ফযীলত | বুখারী 3499 | রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম কে আমি বলতে শুনেছি, | sahih | Aisha's excellence over women as tharid over all food |
-| হামযা (রাঃ) শহীদদের নেতা | - | - | - | the only text in the data (Ibn Majah 4087) is weak; not used |
-| জাফর (রাঃ) জান্নাতে ডানায় উড়ছেন | বুখারী 3938 | ইবনু উমর (রাঃ)-এর নিয়ম ছিল যে, যখনই তিনি | sahih | Ibn Umar greets Jafar's son: peace on you, son of the one with two wings |
-| আব্বাস (রাঃ): "আমার চাচা পিতৃতুল্য" | আবু দাউদ 1623 | ১৬২৩. আল-হাসান ইব্‌নুস-সাব্বাহ (রহঃ) .... আবু হুরায়রা (রাঃ) | sahih | Abbas is the uncle of the Prophet, like a father; the same report is in Bukhari and Muslim |
-| যাইদ ও উসামা (রাঃ) | বুখারী 4117 | রাসূল সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম একটি সেনাদল প্রেরণ করেন | sahih | Usama ibn Zayd and his father: dearest to me |
 | নবীজির কন্যাগণ ও পুত্র ইবরাহীম | মুসলিম 5818 | রাসুলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন, রাত্রে আমার একটি | sahih | his son Ibrahim: birth, nursing, death and his tears; daughters are in Bukhari 1180 (Zaynab) |
 | হাসান (রাঃ): "নবীজির সাদৃশ্য, আলীর নয়" | বুখারী 3290 | ৩২৯০। আবূ ’আসিম (রহঃ) ... ’উক্‌বা ইবনু হারিস (রাঃ) | sahih | Abu Bakr carries Hasan on his shoulders: he looks like the Prophet, not like Ali (added by the owner) |
 
@@ -36,8 +31,37 @@
 
 - "আহলে বাইতের ব্যাপারে আল্লাহকে স্মরণ করাচ্ছি"
 - মুমিন ছাড়া আলী (রাঃ)-কে কেউ ভালোবাসে না
-- হামযা (রাঃ) শহীদদের নেতা
 
 ## Notes
 
 Line 2 shares its text with line 1 (Muslim 6007). Line 22: the only report in the data (Ibn Majah 4087) is weak.
+| খাদীজা (রাঃ)-কে আল্লাহ ও জিবরীল (আঃ)-এর সালাম, সাথে জান্নাতি প্রাসাদের সুসংবাদ | বুখারী 3548 | (Khadija, added) | sahih | more hadis about Khadija (RA) |
+| প্রথম ওহীর কম্পনে খাদীজা (রাঃ)-এর সান্ত্বনা: আল্লাহ আপনাকে কখনো অপমানিত করবেন না | বুখারী 3 | (Khadija, added) | sahih | more hadis about Khadija (RA) |
+| খাদীজা (রাঃ) জীবিত থাকতে নবীজি (সাঃ) আর বিয়ে করেননি | মুসলিম 6063 | (Khadija, added) | sahih | more hadis about Khadija (RA) |
+| ছাগল জবাই করলে খাদীজা (রাঃ)-এর বান্ধবীদের খুঁজে গোশত পাঠাতেন নবীজি (সাঃ) | তিরমিযী 2023 | (Khadija, added) | sahih | more hadis about Khadija (RA) |
+| বোনের কণ্ঠে খাদীজা (রাঃ)-কে মনে পড়ে নবীজি (সাঃ) শিহরিত হলেন | মুসলিম 6064 | (Khadija, added) | sahih | more hadis about Khadija (RA) |
+| খাদীজা (রাঃ)-এর হার দেখে নবীজি (সাঃ)-এর কান্না, ফিরিয়ে দিলেন যয়নবকে | আবু দাউদ 2683 | (Khadija, added) | hasan | more hadis about Khadija (RA) |
+| মুমিনই আলী (রাঃ)-কে ভালোবাসে, মুনাফিক রাখে বিদ্বেষ: নবীজি (সাঃ)-এর প্রতিশ্রুতি | মুসলিম 144 | (added) | sahih | more hadis on the Prophet's family |
+| যে হাসান (রাঃ) ও হুসাইন (রাঃ)-কে ভালোবাসে, সে নবীজি (সাঃ)-কেই ভালোবাসে | ইবনু মাজাহ 143 | (added) | hasan | more hadis on the Prophet's family |
+| দৌড়ে আসা হাসান (রাঃ) ও হুসাইন (রাঃ)-কে বুকে জড়িয়ে ধরলেন নবীজি (সাঃ) | ইবনু মাজাহ 3666 | (added) | hasan | more hadis on the Prophet's family |
+| হুসাইন (রাঃ)-এর শাহাদাতের পর: নবীজি (সাঃ)-এর পরিবারে তাঁর অবয়বই ছিল সবচেয়ে সদৃশ | বুখারী 3476 | (added) | sahih | more hadis on the Prophet's family |
+| ফাতিমা (রাঃ) খাদেম চাইলেন, নবীজি (সাঃ) শেখালেন তেত্রিশ তাসবীহ: সিফফীনের রাতেও আলী (রাঃ) ছাড়েননি | বুখারী 4971 | (added) | sahih | more hadis on the Prophet's family |
+| রাতে আলী (রাঃ) ও ফাতিমা (রাঃ)-এর ঘরে নবীজি (সাঃ): তোমরা কি নামায পড়ছ না? | বুখারী 1060 | (added) | sahih | more hadis on the Prophet's family |
+| আলী (রাঃ)-এর হাতে কিছু ছিল না: নবীজি (সাঃ) বললেন, তোমার হুতামী বর্মটি কোথায়? | নাসাঈ 3379 | (added) | hasan | more hadis on the Prophet's family |
+| চাদরের নিচে হাসান (রাঃ), হুসাইন (রাঃ), ফাতিমা (রাঃ) ও আলী (রাঃ)-কে টেনে নিলেন নবীজি (সাঃ): হে আহলে বাইত, আল্লাহ তোমাদের পূর্ণ পবিত্র করতে চান | মুসলিম 6043 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| মিম্বরে হাসান (রাঃ)-কে পাশে নিয়ে নবীজি (সাঃ): আমার এই দৌহিত্র সর্দার, তার মাধ্যমে আল্লাহ মুসলিমদের দুই দলে সন্ধি করাবেন | নাসাঈ 1413 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| গলিতে খেলতে থাকা হুসাইন (রাঃ)-কে হাসাতে হাসাতে ধরে চুমু দিলেন নবীজি (সাঃ): হুসাইন আমার থেকে, আমি হুসাইন থেকে | ইবনু মাজাহ 144 | (added, 17 more) | hasan | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| সিজদায় পিঠে উঠে পড়লেন হাসান (রাঃ) অথবা হুসাইন (রাঃ): নবীজি (সাঃ) সিজদা লম্বা করলেন, যেন সে খেলা শেষ করতে পারে | নাসাঈ 1144 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| হুসাইন (রাঃ)-কে কাঁধে বয়ে নবীজি (সাঃ): তাঁর মুখের লালা গড়িয়ে পড়ছিল নবীজি (সাঃ)-এর শরীরে | ইবনু মাজাহ 658 | (added, 17 more) | hasan | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| নাতি হাসান (রাঃ)-কে চুমু দিলেন নবীজি (সাঃ): যে দয়া করে না, তাকে দয়া করা হয় না | বুখারী 5571 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| নবীজি (সাঃ)-এর পরিবারে হাসান (রাঃ)-এর চেয়ে তাঁর বেশি সদৃশ আর কেউ ছিলেন না | বুখারী 3480 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| হাসান (রাঃ)-এর মনে রাখা নবীজি (সাঃ)-এর কথা: যাতে দ্বিধা আছে তা ছাড়ো; সত্য প্রশান্তি, মিথ্যা দ্বিধা | তিরমিযী 2520 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| নবীজি (সাঃ)-এর ঘোষণা: আলী (রাঃ) আমার থেকে, আমি আলী (রাঃ) থেকে | ইবনু মাজাহ 119 | (added, 17 more) | hasan | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| রাগ করে মসজিদে ঘুমিয়ে পড়লেন আলী (রাঃ): গায়ের ধুলো ঝেড়ে নবীজি (সাঃ) ডাকলেন, ওঠো আবূ তুরাব | বুখারী 5845 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| আলী (রাঃ)-কে গালি দিতে বলা হলে সাহাবী সাহল (রাঃ)-এর অস্বীকার: আবূ তুরাব নামটিই ছিল আলী (রাঃ)-এর সবচেয়ে প্রিয় | মুসলিম 6011 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| উমর (রাঃ)-এর সাক্ষ্য: আলী (রাঃ) আমাদের মধ্যে সর্বোত্তম বিচারক | বুখারী 4639 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| ফাতিমা (রাঃ)-কে নবীজি (সাঃ)-এর বিয়ের উপহার: একটি চাদর, একটি মশক আর ইযখির ঘাসের বালিশ | নাসাঈ 3387 | (added, 17 more) | hasan | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| মৃত্যুমুখী পুত্র ইবরাহীমকে কোলে নিয়ে কাঁদলেন নবীজি (সাঃ): নিষেধ করেছি শুধু চিৎকার আর বিলাপ | তিরমিযী 1006 | (added, 17 more) | hasan | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| রুকাইয়া (রাঃ)-এর অসুস্থতায় বদরে যাননি উসমান (রাঃ): নবীজি (সাঃ) বললেন, তুমি বদরীদের সমান সওয়াব ও গনীমত পাবে | বুখারী 3433 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| কন্যা যায়নাব (রাঃ)-এর ইন্তেকালে নবীজি (সাঃ): বরই পাতার পানিতে বেজোড় গোসল দাও, নিজের চাদর দিলেন কাফনের ভেতরে | বুখারী 1181 | (added, 17 more) | sahih | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
+| কন্যা উম্মু কুলসূম (রাঃ)-এর গোসলের পর নবীজি (সাঃ) নিজের জামা দিলেন: এটি দিয়ে ভালো করে আবৃত করো | ইবনু মাজাহ 1458 | (added, 17 more) | hasan | family of Ali, Fatima, Hasan, Husain and the Prophet's children |
