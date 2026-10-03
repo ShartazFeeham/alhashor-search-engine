@@ -6,10 +6,11 @@ import { topPicksHref } from '../lib/topPicks';
 import { useDigits } from '../lib/useDigits';
 import PickTile from './PickTile';
 import ProgressRing, { bandOf } from './ProgressRing';
+import ProgressTree from './ProgressTree';
 
 // Every set (the loader leaves out a set with no hadis) as a compact card with a colour tile and three lines:
 // the title (never cut, it wraps), the hadis count and description, and the reader's own progress
-// as text with a small ring.
+// as text with a small ring; this set's own growth tree stands at the right (a fifth of the card).
 export default function PlanList({ plans, progress }) {
   const digits = useDigits();
   return (
@@ -35,6 +36,10 @@ export default function PlanList({ plans, progress }) {
                   </span>
                   <ProgressRing percent={percent} label={`${digits(percent)} শতাংশ পড়া হয়েছে`} />
                 </span>
+              </span>
+              {/* the progress text already says it, so the tree is only decoration */}
+              <span className="plan-card-tree" aria-hidden="true">
+                <ProgressTree percent={percent} />
               </span>
             </Link>
           </li>

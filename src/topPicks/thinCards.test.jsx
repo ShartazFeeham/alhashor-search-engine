@@ -5,8 +5,9 @@ import { SettingsProvider } from '../settings/SettingsProvider';
 import { formatNumber } from '../lib/digits';
 import TopPicksPage from './TopPicksPage';
 
-// jsdom has no layout, so the cards' size is pinned from their CSS. Measured in headless Chrome
-// (one-line title): 78px at 390, 320 and 1470 px wide, in all three themes.
+// jsdom has no layout, so the cards' size is pinned from their CSS. The text part (below) is
+// 78px with a one-line title; with the growth tree at the right the card is as tall as the tree
+// needs (see planCardTree.test.jsx: 84 to 110px).
 const bn = (n) => formatNumber(n, 'bn');
 const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

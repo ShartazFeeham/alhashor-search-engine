@@ -26,6 +26,8 @@
 .plan-card-title{font-size:14px;line-height:20px;overflow-wrap:anywhere}
 .plan-card-text{font-size:12px;line-height:16px;color:var(--ink2);overflow-wrap:anywhere}
 .plan-card-meta{font-size:11.5px;font-weight:600;color:var(--ink3)}
+.plan-card-tree{display:block;flex:0 0 20%;min-width:64px;max-width:140px}
+.plan-card-tree .progress-tree{display:block;width:100%;height:72px}
 .plan-card-progress{display:flex;align-items:center;gap:8px;min-height:20px;line-height:20px}
 .plan-card-progress .plan-card-meta{flex:none}
 .plan-card-read{color:var(--progress-label)}
@@ -162,6 +164,7 @@
 }
 
 @media (min-width: 641px){
+  .plan-card-tree .progress-tree{height:80px}
   .home-quick-links{grid-template-columns:repeat(4,1fr)}
 }
 
