@@ -1,0 +1,1 @@
+Resource guard: never run the full Vitest suite with many workers or from two places at once (use `--maxWorkers=1`, 2 at most, only the touched test files while working, the full suite once at the end), keep at most 2 sub agents in parallel, and avoid headless Chrome (one instance, killed when done).
