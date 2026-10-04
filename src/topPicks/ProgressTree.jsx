@@ -1,6 +1,6 @@
 'use client';
 
-import { useId } from 'react';
+import { memo, useId } from 'react';
 import { useDigits } from '../lib/useDigits';
 
 // A tree that grows with the reader's progress through a set. Eleven stages, chosen by
@@ -53,7 +53,8 @@ function fruitsOf(stage) {
 
 // `ghost` draws the full tree as a plain grey dashed outline: the empty placeholder of the home page's
 // achievements (no colour, no fruit; the look comes from .progress-tree-ghost in styles/daily.css).
-export default function ProgressTree({ percent, ghost = false }) {
+// memo: its props are two primitives, so a parent that re-renders for something else (the home slider) skips the ~90 nodes.
+function ProgressTree({ percent, ghost = false }) {
   const digits = useDigits();
   const stage = ghost ? 60 : treeStage(percent);
   const gold = stage === 100;
@@ -168,3 +169,5 @@ export default function ProgressTree({ percent, ghost = false }) {
     </svg>
   );
 }
+
+export default memo(ProgressTree);

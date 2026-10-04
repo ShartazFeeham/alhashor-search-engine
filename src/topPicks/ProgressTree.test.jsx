@@ -1,7 +1,15 @@
 /* eslint-disable testing-library/no-node-access */
-import { render, screen } from '@testing-library/react';
-import { SettingsProvider } from '../settings/SettingsProvider';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { useState } from 'react';
+import { SettingsProvider, useSettings } from '../settings/SettingsProvider';
 import ProgressTree, { treeStage } from './ProgressTree';
+
+// every draw of the tree calls useDigits once
+const counter = vi.hoisted(() => ({ draws: 0 }));
+vi.mock('../lib/useDigits', async () => {
+  const real = await vi.importActual('../lib/useDigits');
+  return { useDigits: () => { counter.draws += 1; return real.useDigits(); } };
+});
 
 const draw = (percent) => render(<SettingsProvider><ProgressTree percent={percent} /></SettingsProvider>);
 const parts = (name) => screen.getByTestId('progress-tree').querySelectorAll(`[data-part="${name}"]`);
@@ -165,5 +173,38 @@ describe('the ghost placeholder', () => {
     expect(parts('canopy').length).toBeGreaterThan(0);
     expect(parts('leaf')).toHaveLength(0);
     expect(fruits()).toHaveLength(0);
+  });
+});
+
+describe('memo', () => {
+  function Parent({ percent }) {
+    const [ticks, setTicks] = useState(0);
+    const { update } = useSettings();
+    return (
+      <>
+        <button onClick={() => setTicks(ticks + 1)}>tick {ticks}</button>
+        <button onClick={() => update({ digits: 'en' })}>english</button>
+        <ProgressTree percent={percent} />
+      </>
+    );
+  }
+
+  test('is not drawn again when the parent re-renders with the same props', () => {
+    render(<SettingsProvider><Parent percent={100} /></SettingsProvider>);
+    const html = screen.getByTestId('progress-tree').outerHTML;
+    const before = counter.draws;
+    fireEvent.click(screen.getByRole('button', { name: /tick/ }));
+    expect(screen.getByRole('button', { name: 'tick 1' })).toBeInTheDocument();
+    expect(counter.draws).toBe(before);
+    expect(screen.getByTestId('progress-tree').outerHTML).toBe(html);
+  });
+
+  test('is drawn again for new props, and when the digit setting (context) changes', () => {
+    const { rerender } = render(<SettingsProvider><Parent percent={40} /></SettingsProvider>);
+    expect(screen.getByTestId('progress-tree')).toHaveAttribute('aria-label', 'অগ্রগতির গাছ: ৪০%');
+    rerender(<SettingsProvider><Parent percent={100} /></SettingsProvider>);
+    expect(screen.getByTestId('progress-tree')).toHaveAttribute('data-stage', '100');
+    fireEvent.click(screen.getByRole('button', { name: 'english' }));
+    expect(screen.getByTestId('progress-tree')).toHaveAttribute('aria-label', 'অগ্রগতির গাছ: 100%');
   });
 });

@@ -19,6 +19,9 @@ const FULL_SPARKS = [[-18, 30], [118, 28], [-24, 70], [124, 66], [20, -14], [80,
 // How long a slider preview lasts after the last touch of the slider.
 export const PREVIEW_MS = 3000;
 
+// The block's animations pause once it is this far outside the screen (the glow spills past its box, so well clear of it).
+const OFFSCREEN_MARGIN = '300px';
+
 export const shineOf = (count, total) => (total > 0 ? Math.min(Math.max(count, 0), total) : 0);
 
 // অ্যাচিভমেন্ট on the home page: how many of the জনপ্রিয় হাদীস sets (the ones listed on /top-picks) the reader
@@ -36,6 +39,7 @@ export default function HomeAchievements({ sets = TOP_PICKS }) {
   const own = shineOf(count, total);
   const [preview, setPreview] = useState(null);
   const timer = useRef(null);
+  const section = useRef(null);
   const level = preview ?? own;
   // every set golden: the tree glows vividly
   const full = total > 0 && level === total;
@@ -52,8 +56,20 @@ export default function HomeAchievements({ sets = TOP_PICKS }) {
   };
   useEffect(() => () => clearTimeout(timer.current), []);
 
+  // data-offscreen="true" (set on the element directly, never in the first render) pauses the CSS animations while the block is far off screen
+  useEffect(() => {
+    const node = section.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[entries.length - 1].isIntersecting) node.removeAttribute('data-offscreen');
+      else node.setAttribute('data-offscreen', 'true');
+    }, { rootMargin: OFFSCREEN_MARGIN });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="home-achv" aria-labelledby="home-achv-title">
+    <section ref={section} className="home-achv" aria-labelledby="home-achv-title">
       <div className="home-achv-body">
         <div className="home-achv-text">
           <h2 className="h2" id="home-achv-title">অ্যাচিভমেন্ট</h2>

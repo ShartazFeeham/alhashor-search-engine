@@ -68,6 +68,8 @@
   .home-achv-stage[data-full="true"] .home-achv-spark{animation-duration:1.3s}
   .home-achv-crown{animation:achv-bob 2.4s ease-in-out infinite}
 }
+/* far off screen: nothing animates (the phase is kept, and !important beats the longer selectors above) */
+.home-achv[data-offscreen="true"] *,.home-achv[data-offscreen="true"] *::before,.home-achv[data-offscreen="true"] *::after{animation-play-state:paused!important}
 @keyframes achv-bob{0%,100%{translate:0 0}50%{translate:0 -3px}}
 @keyframes achv-pulse{0%,100%{scale:1;opacity:.85}50%{scale:1.12;opacity:1}}
 @keyframes achv-spin{to{transform:rotate(1turn)}}

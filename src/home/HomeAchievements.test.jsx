@@ -326,3 +326,57 @@ describe('the golden number and the crown', () => {
     vi.useRealTimers();
   });
 });
+
+describe('pausing the animations while far off screen', () => {
+  let observers;
+  class FakeObserver {
+    constructor(callback, options) { this.callback = callback; this.options = options; this.targets = new Set(); this.disconnected = false; observers.push(this); }
+    observe(target) { this.targets.add(target); }
+    disconnect() { this.disconnected = true; this.targets.clear(); }
+  }
+  const see = (observer, isIntersecting) => act(() => { observer.callback([...observer.targets].map((target) => ({ target, isIntersecting }))); });
+
+  beforeEach(() => {
+    observers = [];
+    window.IntersectionObserver = FakeObserver;
+  });
+  afterEach(() => { delete window.IntersectionObserver; });
+
+  test('no attribute at first; set when it leaves the screen, removed when it comes back', () => {
+    renderIt();
+    expect(block()).not.toHaveAttribute('data-offscreen');
+    expect(observers).toHaveLength(1);
+    expect(observers[0].options.rootMargin).toBe('300px');
+    expect(observers[0].targets.has(block())).toBe(true);
+    see(observers[0], false);
+    expect(block()).toHaveAttribute('data-offscreen', 'true');
+    see(observers[0], true);
+    expect(block()).not.toHaveAttribute('data-offscreen');
+  });
+
+  test('re-renders (slider, progress) keep the state, and the observer is made once', () => {
+    saveDone(0);
+    renderIt({ sets: sets(8) });
+    see(observers[0], false);
+    fireEvent.change(screen.getByRole('slider'), { target: { value: '3' } });
+    expect(block()).toHaveAttribute('data-offscreen', 'true');
+    expect(observers).toHaveLength(1);
+  });
+
+  test('the observer is disconnected on unmount', () => {
+    const { unmount } = renderIt();
+    expect(observers[0].disconnected).toBe(false);
+    unmount();
+    expect(observers[0].disconnected).toBe(true);
+  });
+
+  test('without IntersectionObserver nothing is set and nothing breaks', () => {
+    delete window.IntersectionObserver;
+    renderIt();
+    expect(block()).not.toHaveAttribute('data-offscreen');
+  });
+
+  test('the server markup has no attribute', () => {
+    expect(toHtml(<SettingsProvider><HomeAchievements /></SettingsProvider>)).not.toContain('data-offscreen');
+  });
+});
