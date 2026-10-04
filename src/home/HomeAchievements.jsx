@@ -17,7 +17,7 @@ const FULL_SPARKS = [[-18, 30], [118, 28], [-24, 70], [124, 66], [20, -14], [80,
 
 // The shine steps: one for each set that can be won, so the tree shines fully once every set is golden.
 // How long a slider preview lasts after the last touch of the slider.
-export const PREVIEW_MS = 5000;
+export const PREVIEW_MS = 3000;
 
 export const shineOf = (count, total) => (total > 0 ? Math.min(Math.max(count, 0), total) : 0);
 

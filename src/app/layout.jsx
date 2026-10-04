@@ -26,7 +26,6 @@ export const metadata = {
   description:
     'হাদীস খুঁজুন: বুখারি, মুসলিম, তিরমিজি, আবু দাউদ, ইবনে মাজাহ ও নাসাঈ শরীফের হাদীস বাংলায় সার্চ, বিষয়ভিত্তিক ও বই অনুযায়ী পড়ুন।',
   manifest: '/manifest.json',
-  icons: { icon: '/favicon.ico', apple: '/logo192.png' },
 };
 
 // The phone's browser bar follows the page colour, not black. Light is the default for everyone;

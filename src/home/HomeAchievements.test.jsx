@@ -179,7 +179,7 @@ describe('the preview slider', () => {
     expect(block().querySelector('.home-achv-side').lastElementChild).toBe(slider());
   });
 
-  test('dragging raises the shine at once, and 5 seconds later the tree and the slider are back at the own level', () => {
+  test('dragging raises the shine at once, and 3 seconds later the tree and the slider are back at the own level', () => {
     saveDone(2);
     renderIt({ sets: sets(8) });
     drag(6);
@@ -188,30 +188,30 @@ describe('the preview slider', () => {
     expect(screen.getAllByTestId('achv-spark')).toHaveLength(6);
     expect(slider()).toHaveValue('6');
     expect(slider()).toHaveAttribute('aria-valuetext', 'লেভেল ৬, সর্বোচ্চ ৮');
-    wait(4999);
+    wait(2999);
     expect(shine()).toBe(6);
     wait(1);
     expect(shine()).toBe(2);
     expect(slider()).toHaveValue('2');
   });
 
-  test('every touch restarts the 5 seconds (a key press too)', () => {
+  test('every touch restarts the 3 seconds (a key press too)', () => {
     saveDone(1);
     renderIt({ sets: sets(8) });
     drag(3);
-    wait(4000);
+    wait(2000);
     drag(4);
-    wait(4000);
+    wait(2000);
     expect(shine()).toBe(4);
     fireEvent.change(slider(), { target: { value: '5' } });
     fireEvent.keyDown(slider(), { key: 'ArrowRight' });
-    wait(4999);
+    wait(2999);
     expect(shine()).toBe(5);
     wait(1);
     expect(shine()).toBe(1);
   });
 
-  test('the big number, the ribbon and the spoken count follow the preview, and go back to the real count after 5 seconds; the best-reader line keeps the real count', () => {
+  test('the big number, the ribbon and the spoken count follow the preview, and go back to the real count after 3 seconds; the best-reader line keeps the real count', () => {
     saveDone(1);
     renderIt({ sets: sets(8) });
     const number = () => block().querySelector('.home-achv-num');
@@ -221,13 +221,13 @@ describe('the preview slider', () => {
     expect(block().querySelector('.home-achv-ribbon')).toHaveTextContent('৭');
     expect(block()).toHaveTextContent('আপনার ৭টি গাছ সোনালি হয়েছে');
     expect(block().querySelector('.home-achv-best')).toHaveTextContent('সারতাজ ফিহাম (৬ টি)');
-    wait(5000);
+    wait(3000);
     expect(number()).toHaveTextContent('এক');
     expect(block().querySelector('.home-achv-ribbon')).toHaveTextContent('এক');
     expect(block()).toHaveTextContent('আপনার ১টি গাছ সোনালি হয়েছে');
   });
 
-  test('with nothing golden, dragging previews the golden tree and 5 seconds later the grey placeholder is back', () => {
+  test('with nothing golden, dragging previews the golden tree and 3 seconds later the grey placeholder is back', () => {
     renderIt({ sets: sets(8) });
     expect(slider()).toHaveValue('0');
     drag(3);
@@ -237,7 +237,7 @@ describe('the preview slider', () => {
     expect(within(block()).queryByText('শূন্য')).not.toBeInTheDocument();
     expect(block().querySelector('.home-achv-num')).toHaveTextContent('৩');
     expect(block().querySelector('.home-achv-ribbon')).toHaveTextContent('৩');
-    wait(5000);
+    wait(3000);
     expect(within(block()).getByText('শূন্য')).toBeInTheDocument();
     expect(block().querySelector('.home-achv-ribbon')).toBeNull();
     expect(golden()).toBeNull();
@@ -289,7 +289,7 @@ describe('the full level', () => {
     renderIt({ sets: sets(8) });
     fireEvent.change(screen.getByRole('slider'), { target: { value: '8' } });
     expect(stage()).toHaveAttribute('data-full', 'true');
-    act(() => { vi.advanceTimersByTime(5000); });
+    act(() => { vi.advanceTimersByTime(3000); });
     expect(stage()).toHaveAttribute('data-full', 'false');
     vi.useRealTimers();
   });
@@ -320,7 +320,7 @@ describe('the golden number and the crown', () => {
     fireEvent.change(screen.getByRole('slider'), { target: { value: '8' } });
     expect(number()).toHaveAttribute('data-max', 'true');
     expect(screen.getByTestId('achv-crown')).toBeInTheDocument();
-    act(() => { vi.advanceTimersByTime(5000); });
+    act(() => { vi.advanceTimersByTime(3000); });
     expect(number()).toHaveAttribute('data-max', 'false');
     expect(screen.queryByTestId('achv-crown')).not.toBeInTheDocument();
     vi.useRealTimers();

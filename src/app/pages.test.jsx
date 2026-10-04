@@ -123,6 +123,14 @@ test('site metadata names the site and describes it in Bengali', () => {
   expect(metadata.manifest).toBe('/manifest.json');
 });
 
+test('the tab, apple and manifest icons are the nav brand icon, not a stale metadata link', () => {
+  expect(metadata.icons).toBeUndefined();
+  for (const file of ['icon.svg', 'apple-icon.png', 'favicon.ico']) {
+    expect(existsSync(path.resolve(process.cwd(), 'src/app', file))).toBe(true);
+  }
+  expect(readFileSync(path.resolve(process.cwd(), 'src/app/icon.svg'), 'utf8')).toContain('M12 6c-2-1.5-5-2-8-2v14');
+});
+
 test('the layout loads every global stylesheet, in order', () => {
   const source = readFileSync(path.resolve(process.cwd(), 'src/app/layout.jsx'), 'utf8');
   const stylesheets = [...source.matchAll(/import '([^']*\.css)';/g)].map((match) => match[1]);
