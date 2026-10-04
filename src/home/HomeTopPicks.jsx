@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { featuredSets, randomSets, topPicksHref } from '../lib/topPicks';
+import { colorOf } from '../lib/topPickColors';
 import PickTile from '../topPicks/PickTile';
 import Icon from '../ui/Icon';
 
@@ -34,7 +35,7 @@ export default function HomeTopPicks({ sets = FEATURED }) {
             <Link href={topPicksHref(set.id)} className="home-pick">
               <PickTile set={set} />
               <b className="home-pick-title">{set.title}</b>
-              <span className="home-pick-go">পড়ুন</span>
+              <span className="home-pick-go" style={{ '--go-bg': `var(--pick-${colorOf(set)}-fg)`, '--go-fg': `var(--pick-${colorOf(set)}-bg)` }}>পড়ুন</span>
             </Link>
           </li>
         ))}

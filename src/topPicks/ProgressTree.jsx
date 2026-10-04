@@ -51,9 +51,11 @@ function fruitsOf(stage) {
   return [...onTree, ...onGround];
 }
 
-export default function ProgressTree({ percent }) {
+// `ghost` draws the full tree as a plain grey dashed outline: the empty placeholder of the home page's
+// achievements (no colour, no fruit; the look comes from .progress-tree-ghost in styles/daily.css).
+export default function ProgressTree({ percent, ghost = false }) {
   const digits = useDigits();
-  const stage = treeStage(percent);
+  const stage = ghost ? 60 : treeStage(percent);
   const gold = stage === 100;
   const thick = stage >= 60;
   const hasTree = stage >= 40;
@@ -61,14 +63,14 @@ export default function ProgressTree({ percent }) {
   const body = `url(#${uid}-gold)`;
   const light = `url(#${uid}-goldlight)`;
   const shown = Math.round(Math.min(100, Math.max(0, Number.isFinite(percent) ? percent : 0)));
-  const fruits = fruitsOf(stage);
+  const fruits = ghost ? [] : fruitsOf(stage);
 
   const fruitFill = (fruit) => (gold ? body : stage >= 90 ? FRUIT_COLORS[fruit.index % FRUIT_COLORS.length] : GREEN_FRUIT);
   const fruitKind = (fruit) => (gold ? 'golden' : fruit.ground ? 'ground' : stage >= 90 ? 'colorful' : 'green');
 
   return (
     <svg
-      className={gold ? 'progress-tree progress-tree-gold' : 'progress-tree'}
+      className={gold ? 'progress-tree progress-tree-gold' : ghost ? 'progress-tree progress-tree-ghost' : 'progress-tree'}
       data-testid="progress-tree"
       data-stage={stage}
       data-golden={gold ? 'true' : 'false'}
@@ -123,7 +125,7 @@ export default function ProgressTree({ percent }) {
         <circle key={index} data-part="canopy" cx={x} cy={y} r={r} fill={gold ? body : 'var(--tree-canopy)'} stroke={gold ? GOLD_EDGE : 'none'} strokeWidth="0.5" />
       ))}
 
-      {stage >= 50 && LEAVES.map(([x, y], index) => (
+      {stage >= 50 && !ghost && LEAVES.map(([x, y], index) => (
         <ellipse
           key={index}
           data-part="leaf"

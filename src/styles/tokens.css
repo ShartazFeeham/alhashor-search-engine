@@ -4,7 +4,7 @@
 :root {
   color-scheme: light;
   --page:#d9e8e3; --bg:#f2f8f6; --surface:#ffffff; --surface2:#e7f1ee; --line:#d3e3dd;
-  --ink:#0f2d28; --ink2:#46655e; --ink3:#576964; --related-text:#333333; --match-text:#333333;
+  --ink:#0f2d28; --ink2:#46655e; --ink3:#576964; --related-text:#333333; --match-text:#333333; --pick-title:#000000;
   --accent:#0a796a; --accent2:#096658; --on-accent:#ffffff; --accent-soft:#d6f0ea;
   --hl:#ffe9a0; --hl-ink:#3a2a00;
   --ok:#1f9d55; --warn:#b86e05; --bad:#cf4337; --link:#1a55c8;
@@ -23,6 +23,8 @@
   --qi-pink:#d6336c; --qi-blue:#2f6fdb; --qi-green:#1f8a4c; --qi-purple:#7e44c9; --qi-teal:#0a796a;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#7a5230; --tree-leaf:#2f9e57; --tree-canopy:#2e8b4f; --tree-canopy2:#55b676; --tree-seed:#3a9a52; --tree-ground:#c5d3ce;
+  /* home achievements: the empty tree's outline, and the gold glow of a tree that shines (the gold and the ribbon ink are the same in every theme) */
+  --tree-ghost:#aab6b1; --ach-glow:#f0b323; --ach-gold-1:#ffe680; --ach-gold-2:#f0b323; --ach-gold-3:#b9770b; --ach-ink:#3d2600; --ach-hot:#ff9a00;
   /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
   --act-copy:#2f6fdb; --act-link:#0b7f73; --act-share:#c25b0a; --act-image:#d6336c;
   --shadow:0 1px 2px rgba(10,50,44,.06),0 8px 22px rgba(10,50,44,.07);
@@ -36,7 +38,7 @@
 
 :root[data-theme="dark"] {
   --page:#050c0a; --bg:#0c1714; --surface:#14231f; --surface2:#1b2f29; --line:#27423b;
-  --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b; --related-text:#d6e6e1; --match-text:#d6e6e1;
+  --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b; --related-text:#d6e6e1; --match-text:#d6e6e1; --pick-title:#e7f3ef;
   --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
   --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
   --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
@@ -54,6 +56,7 @@
   --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0; --qi-teal:#3fcbb3;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#c49a6c; --tree-leaf:#4ec97f; --tree-canopy:#36a863; --tree-canopy2:#62d38c; --tree-seed:#5fd68c; --tree-ground:#2e4a42;
+  --tree-ghost:#52665f; --ach-glow:#ffd24a;
   /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
   --act-copy:#6ea8ff; --act-link:#4fd1c0; --act-share:#ffa45c; --act-image:#f472a3;
   --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);
@@ -62,7 +65,7 @@
 
 :root[data-theme="sepia"] {
   --page:#e2d3b3; --bg:#f4ead3; --surface:#fbf4e2; --surface2:#eee0c3; --line:#dccba6;
-  --ink:#382c19; --ink2:#675638; --ink3:#6a5a3d; --related-text:#3f3320; --match-text:#3f3320;
+  --ink:#382c19; --ink2:#675638; --ink3:#6a5a3d; --related-text:#3f3320; --match-text:#3f3320; --pick-title:#000000;
   --accent:#2a7a66; --accent2:#1d5a4b; --on-accent:#fffaf0; --accent-soft:#d8e5d2;
   --hl:#f2d684; --hl-ink:#3a2a00; --link:#2f5aa8;
   /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
@@ -79,6 +82,7 @@
   --qi-pink:#c2255c; --qi-blue:#2b62c4; --qi-green:#2f7a3a; --qi-purple:#7340b5; --qi-teal:#2a7a66;
   /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
   --tree-trunk:#6e4a2a; --tree-leaf:#3f8a3f; --tree-canopy:#357a35; --tree-canopy2:#5aa65a; --tree-seed:#3f8a3f; --tree-ground:#d4c39c;
+  --tree-ghost:#b3a27a; --ach-glow:#e0a010;
   /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
   --act-copy:#2a62c0; --act-link:#1d6e61; --act-share:#a8500a; --act-image:#b82d62;
   --shadow:0 1px 2px rgba(80,55,15,.08),0 8px 22px rgba(80,55,15,.09);
@@ -87,7 +91,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     --page:#050c0a; --bg:#0c1714; --surface:#14231f; --surface2:#1b2f29; --line:#27423b;
-    --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b; --related-text:#d6e6e1; --match-text:#d6e6e1;
+    --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b; --related-text:#d6e6e1; --match-text:#d6e6e1; --pick-title:#e7f3ef;
     --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
     --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
     --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
@@ -105,6 +109,7 @@
     --qi-pink:#f472a3; --qi-blue:#6ea8ff; --qi-green:#4ec97f; --qi-purple:#b48cf0; --qi-teal:#3fcbb3;
     /* top picks progress tree: trunk, leaf, canopy and seed are at least 3:1 on the card; the ground line is a faint tint */
     --tree-trunk:#c49a6c; --tree-leaf:#4ec97f; --tree-canopy:#36a863; --tree-canopy2:#62d38c; --tree-seed:#5fd68c; --tree-ground:#2e4a42;
+  --tree-ghost:#52665f; --ach-glow:#ffd24a;
     /* the action row under a hadis: one soft colour for each icon (copy, quote, link, share, picture), at least 3:1 on the card and on the quiet surface */
     --act-copy:#6ea8ff; --act-link:#4fd1c0; --act-share:#ffa45c; --act-image:#f472a3;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 22px rgba(0,0,0,.35);

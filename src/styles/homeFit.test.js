@@ -92,10 +92,8 @@ describe('Home first view: compact spacing', () => {
     expect(rule(daily, '.home-pick-title')).not.toMatch(/text-overflow|line-clamp|nowrap/);
   });
 
-  test('the daily card is two text lines plus its header: the link shares the second line instead of having a line of its own', () => {
-    expect(rule(daily, '.home-daily-body')).toContain('display:grid');
-    expect(rule(daily, '.home-daily-body>*')).toContain('grid-area:1/1');
-    expect(rule(daily, '.home-daily-text')).toContain('-webkit-line-clamp:2');
+  test('the daily card shows its whole line (no clamp); the link is inline in the text, not on a line of its own', () => {
+    expect(rule(daily, '.home-daily-text')).not.toMatch(/line-clamp|overflow:/);
     expect(rule(daily, '.home-daily-more')).not.toMatch(/margin-top|min-height/);
   });
 

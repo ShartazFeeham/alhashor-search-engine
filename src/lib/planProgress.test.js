@@ -1,5 +1,5 @@
 import {
-  STORAGE_KEY, doneCount, isDone, loadProgress, nextDay, percentDone, resetPlan, saveProgress, toggleDay,
+  STORAGE_KEY, doneCount, goldenCount, isDone, isGolden, loadProgress, nextDay, percentDone, resetPlan, saveProgress, toggleDay,
 } from './planProgress';
 
 const blocked = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
@@ -109,5 +109,21 @@ describe('saving and loading', () => {
   test('a full storage (quota error on write) is tolerated', () => {
     const full = { getItem: () => null, setItem() { throw new DOMException('full', 'QuotaExceededError'); } };
     expect(() => saveProgress({ a: [0] }, full)).not.toThrow();
+  });
+});
+
+describe('golden trees', () => {
+  const sets = [{ id: 'a', days: [1, 2] }, { id: 'b', days: [1, 2] }, { id: 'c', days: [] }];
+
+  test('a set is golden only when every day is done', () => {
+    expect(isGolden({ a: [0, 1] }, 'a', 2)).toBe(true);
+    expect(isGolden({ a: [0] }, 'a', 2)).toBe(false);
+    expect(isGolden({}, 'a', 0)).toBe(false);
+  });
+
+  test('counts the golden sets, ignoring days past the end of a set', () => {
+    expect(goldenCount({}, sets)).toBe(0);
+    expect(goldenCount({ a: [0, 1], b: [0, 5] }, sets)).toBe(1);
+    expect(goldenCount({ a: [0, 1], b: [0, 1] }, sets)).toBe(2);
   });
 });

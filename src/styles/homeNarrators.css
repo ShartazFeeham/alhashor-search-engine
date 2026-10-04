@@ -1,0 +1,31 @@
+/* Home: শীর্ষ বর্ণনাকারী. The rows wear the narrators menu's classes (.topics-row, .narr-bar, see topics.css); only what differs is here. */
+.home-narr{display:flex;flex-direction:column;gap:6px}
+.home-narr-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 8px}
+.home-narr .h2{font-size:17px;line-height:1.3;font-weight:700;margin:0}
+/* the outlined button: transparent, accent border and text, a 44px target */
+.home-narr-all{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border:1.5px solid var(--accent);border-radius:99px;background:transparent;color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;transition:background .2s}
+.home-narr-all:hover,.home-narr-all:focus-visible{background:var(--accent-soft)}
+.home-narr-card{display:flex;flex-direction:column;gap:4px;padding:8px 4px 4px;background:var(--surface);border-radius:14px;box-shadow:var(--shadow)}
+.home-narr-list{list-style:none;margin:0;padding:0}
+.home-narr-list li{position:relative;min-width:0}
+.home-narr .topics-row{height:44px;font-size:14px}
+.home-narr .narr-plain{font-weight:700}
+/* a taller bar than the menu's, and it takes the pointer (the menu's has none), so a segment can be hovered */
+.home-narr .narr-bar{bottom:5px;height:6px;pointer-events:auto}
+/* the tooltip: above the hovered segment, centred on it (--tip-x), never past the row's edges, and never in the way of the click */
+.home-narr-tip{position:absolute;bottom:16px;left:clamp(72px,var(--tip-x),calc(100% - 72px));transform:translateX(-50%);z-index:2;padding:3px 8px;border-radius:8px;background:var(--ink);color:var(--surface);font-size:12px;line-height:1.4;white-space:nowrap;pointer-events:none}
+/* the colour key, on top of the card: all six books on one line, even on a 320px phone */
+.home-narr-legend{list-style:none;margin:0;padding:0 8px;display:flex;flex-wrap:nowrap;justify-content:space-between;gap:2px;font-size:11px;line-height:1.4;color:var(--ink2);white-space:nowrap}
+.home-narr-legend li{display:inline-flex;align-items:center;gap:2px}
+.home-narr-legend i{flex:none;width:6px;height:6px;border-radius:50%}
+
+@media (min-width: 641px){
+  .home-narr-legend{justify-content:flex-start;gap:16px;font-size:13px}
+  .home-narr-legend i{width:9px;height:9px}
+}
+
+/* phone: after the shelf (order 2) and the achievements (order 3), see home.css */
+@media (max-width: 640px){
+  .home-narr{order:4}
+  .home-narr .h2{font-size:15px}
+}

@@ -17,7 +17,7 @@ export function dailyPool(sets = featuredSets()) {
       const book = bookById(day.book);
       if (!book || seen.has(key)) continue;
       seen.add(key);
-      pool.push({ book, number: day.number });
+      pool.push({ book, number: day.number, line: day.line });
     }
   }
   return pool;

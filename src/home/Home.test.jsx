@@ -1,10 +1,8 @@
 /* eslint-disable testing-library/no-node-access */
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { pickDay } from '../lib/dailyPool';
-import { stripChain } from '../lib/hadisCore';
-import { splitHadis } from '../lib/hadisText';
 import { SettingsProvider } from '../settings/SettingsProvider';
-import { diskFetch, realText } from '../test/hadisFixtures';
+import { diskFetch } from '../test/hadisFixtures';
 import { getUrl } from '../test/nextNavigation';
 import Home from './Home';
 
@@ -36,12 +34,13 @@ test('has a clear title and a search entry that opens the search page', () => {
   expect(getUrl().pathname).toBe('/search');
 });
 
-test('the search link carries a purely visual "খুঁজুন" pill (aria-hidden, same link, no second link)', () => {
+test('the search link carries a purely visual search-icon pill (aria-hidden, same link, no second link)', () => {
   renderHome();
   const link = screen.getByRole('link', { name: /হাদীস খুঁজুন/ });
-  const pill = within(link).getByText('খুঁজুন', { exact: true });
+  const pill = link.querySelector('.home-search-go');
   expect(pill).toHaveAttribute('aria-hidden', 'true');
-  expect(pill).toHaveClass('home-search-go');
+  expect(pill.querySelector('svg')).not.toBeNull();
+  expect(pill).toHaveTextContent('');
   expect(within(link).queryAllByRole('link')).toHaveLength(0);
   expect(link).toHaveAttribute('href', '/search');
 });
@@ -57,7 +56,8 @@ describe('the hero', () => {
   const hero = () => screen.getByRole('region', { name: 'হাদীস সম্ভার' });
   const follows = (first, second) => Boolean(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING);
 
-  test('holds the eyebrow, the heading, the daily card and the search link, in that order', () => {
+  // the markup puts the card after the greeting box; CSS shows it between the heading and the search (wide) or below the quick cards (phone)
+  test('holds the eyebrow, the heading, the search link and the daily card, in that order', () => {
     renderHome();
     const eyebrow = within(hero()).getByText('আসসালামু আলাইকুম');
     const heading = within(hero()).getByRole('heading', { level: 1, name: 'হাদীস সম্ভার' });
@@ -65,8 +65,8 @@ describe('the hero', () => {
     const search = within(hero()).getByRole('link', { name: /হাদীস খুঁজুন/ });
     expect(search).toHaveAttribute('href', '/search');
     expect(follows(eyebrow, heading)).toBe(true);
-    expect(follows(heading, card)).toBe(true);
-    expect(follows(card, search)).toBe(true);
+    expect(follows(heading, search)).toBe(true);
+    expect(follows(search, card)).toBe(true);
     expect(card).not.toContainElement(search);
   });
 
@@ -88,16 +88,6 @@ describe('the hero', () => {
     }
   });
 
-  test('leaves no card and no empty gap in the hero when the daily pick cannot load', async () => {
-    global.fetch = vi.fn(() => Promise.resolve({ ok: false }));
-    renderHome();
-    await waitFor(() => expect(screen.queryByRole('region', { name: 'আজকের হাদীস' })).not.toBeInTheDocument());
-    expect(hero()).not.toHaveTextContent('আজকের হাদীস');
-    const heading = within(hero()).getByRole('heading', { level: 1 });
-    const search = within(hero()).getByRole('link', { name: /হাদীস খুঁজুন/ });
-    expect(follows(heading, search)).toBe(true);
-    expect(within(hero()).queryAllByRole('region')).toHaveLength(0);
-  });
 });
 
 test('has no tiles block and no "হাদীসের বই" tile: the shelf is the way to the books', () => {
@@ -143,32 +133,17 @@ describe('the daily hadis card', () => {
   const today = () => pickDay(new Date(2026, 9, 2, 10, 0));
   const flat = (text) => text.replace(/\s+/g, ' ');
 
-  test('shows the citation above the start of today\'s hadis, without its number', async () => {
+  test("shows the citation above the owner's whole core line of today's hadis, uncut", async () => {
     renderHome();
     const pick = today();
-    const { chain } = splitHadis(realText(pick.book.id, pick.number));
-    const whole = flat(stripChain(realText(pick.book.id, pick.number)).core);
     const excerpt = await screen.findByTestId('home-daily-text');
-    expect(flat(excerpt.textContent).slice(0, 40)).toBe(whole.slice(0, 40));
-    expect(excerpt.textContent).not.toMatch(/^\s*[০-৯0-9]/);
-    if (chain) expect(flat(excerpt.textContent)).not.toContain(flat(chain).slice(0, 25)); // the chain of narrators is left out
+    expect(pick.line.length).toBeGreaterThan(0);
+    expect(flat(excerpt.textContent)).toBe(flat(pick.line));
+    expect(excerpt.textContent).not.toMatch(/…/);
     const cite = within(card()).getByText(new RegExp(pick.book.cite));
     expect(cite).toHaveTextContent(/হাদীস নং/);
     expect(cite.compareDocumentPosition(excerpt) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(within(card()).getByText('২ অক্টোবর ২০২৬')).toBeInTheDocument();
-  });
-
-  test('cuts a long real hadis at a word with an ellipsis', async () => {
-    renderHome();
-    const pick = today();
-    const whole = flat(stripChain(realText(pick.book.id, pick.number)).core);
-    const excerpt = flat((await screen.findByTestId('home-daily-text')).textContent);
-    expect(whole.length).toBeGreaterThan(excerpt.length);
-    expect(excerpt.endsWith('…')).toBe(true);
-    expect(excerpt.length).toBeLessThanOrEqual(110);
-    const kept = excerpt.slice(0, -1);
-    expect(whole.startsWith(kept)).toBe(true);
-    expect(whole[kept.length]).toBe(' ');
   });
 
   test('has a quiet "আরও দেখুন" link to the full hadis page', async () => {
@@ -202,7 +177,7 @@ describe('the new-features row', () => {
       ['জনপ্রিয় হাদীস', '/top-picks'],
       ['বর্ণনাকারীভিত্তিক', '/narrators'],
       ['বিষয়ভিত্তিক', '/topics'],
-      ['আজকের হাদীস', '/daily'],
+      ['ডেইলি হাদীস', '/daily'],
     ]);
   });
 

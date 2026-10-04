@@ -98,8 +98,8 @@ describe('the loader', () => {
       missing: ['গ'],
     });
     expect(set.days).toEqual([
-      { book: 'muslim', number: 2626, note: 'টীকা', grade: 'sahih' },
-      { book: 'bukhari', number: 37, note: null, grade: 'hasan' },
+      { book: 'muslim', number: 2626, line: 'ক', note: 'টীকা', grade: 'sahih' },
+      { book: 'bukhari', number: 37, line: 'খ', note: null, grade: 'hasan' },
     ]);
     expect(set.missing).toEqual(['গ']);
     expect(set).toMatchObject({ id: 'x', number: 1, title: 'টি', description: 'ডি' });

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 // The hero search bar is the most important element of Home: muted text (as before), accent border and glow,
-// a solid "খুঁজুন" pill, and a continuous blinking glow that reduced motion switches off.
+// a solid search-icon pill, and a continuous blinking glow that reduced motion switches off.
 const read = (name) => readFileSync(path.resolve(process.cwd(), 'src/styles', name), 'utf8');
 const home = read('home.css');
 const tokens = read('tokens.css');

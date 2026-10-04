@@ -34,6 +34,7 @@ export function setFromFile(file) {
   const days = (file.items ?? []).filter(isValidItem).map((item) => ({
     book: item.book,
     number: item.number,
+    line: item.line || null,
     note: item.note || null,
     grade: item.grade ?? null,
   }));

@@ -1,18 +1,24 @@
 /* Home, ported from the D2 design. Compact: the first view reaches the new-features row (see homeFit.test.js). */
-.screen.home{padding-top:8px;padding-bottom:12px;gap:8px}
+.screen.home{padding-top:8px;padding-bottom:12px;gap:8px;overflow-x:clip}
+/* overflow-x:clip (not hidden: no scroll container) keeps the achievements glow, which spills out of its card, from adding a sideways scroll; vertically it is never cut */
 .home-hero{position:relative;overflow:hidden;border-radius:26px;padding:10px 12px;background:linear-gradient(160deg,var(--accent-soft),var(--surface));box-shadow:var(--shadow)}
 .home-hero::before,.home-hero::after{content:"";position:absolute;border-radius:50%;background:var(--accent);opacity:.1}
 .home-hero::before{width:100px;height:100px;right:-34px;top:-40px}
 .home-hero::after{width:60px;height:60px;right:30px;bottom:-30px}
 .home-hero>*{position:relative}
+/* the greeting and search sit in .home-hero-box; the daily card comes after it in the markup and is shown between the heading and the search (wide) or below the quick cards (phone, see the max-width block) */
+.home-hero{display:flex;flex-direction:column}
+.home-hero-box{display:contents}
+.home-hero .home-daily{order:1}
 .home-eyebrow{margin:0 0 2px;font-size:11.5px;font-weight:600;letter-spacing:.02em;color:var(--accent2)}
-.home-hero .home-search{margin-top:13px}
+.home-hero .home-search{margin-top:13px;order:2}
 .home-hero .h1{font-size:22px;line-height:1.2}
 .home-search{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:16px;min-height:56px;padding:4px 4px 4px 14px;color:var(--ink3);box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 28%,transparent);border:2px solid var(--accent);text-decoration:none;transition:border-color .2s,box-shadow .2s}
 .home-search:hover,.home-search:focus-visible{border-color:var(--accent2);box-shadow:0 8px 26px color-mix(in srgb,var(--accent) 44%,transparent)}
 .home-search .ui-icon{color:var(--accent2);flex:none}
+.home-search-go .ui-icon{color:var(--on-accent)}
 .home-search>span:not(.home-search-go){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.home-search-go{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:16px;font-weight:700}
+.home-search-go{flex:none;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:99px;background:var(--accent);color:var(--on-accent);box-shadow:0 3px 8px color-mix(in srgb,var(--accent) 40%,transparent);font-size:16px;font-weight:700}
 @keyframes home-search-pulse{
 0%,100%{box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 28%,transparent),0 0 0 0 color-mix(in srgb,var(--accent) 0%,transparent),0 0 0 0 color-mix(in srgb,var(--accent) 0%,transparent)}
 50%{box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 28%,transparent),0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent),0 0 26px 6px color-mix(in srgb,var(--accent) 55%,transparent)}
@@ -29,9 +35,54 @@
 .home-shelf{display:flex;align-items:flex-end;justify-content:center;gap:6px;padding-top:6px}
 .home-spine{flex:1 1 0;min-width:0;max-width:52px;border-radius:8px 8px 3px 3px;background:var(--bk);color:var(--on-bk);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 0 8px;gap:4px;text-decoration:none;transition:transform .2s;box-shadow:inset -5px 0 0 rgba(0,0,0,.12),inset 3px 0 0 rgba(255,255,255,.16)}
 .home-spine:hover,.home-spine:focus-visible{transform:translateY(-10px)}
-.home-spine-name{writing-mode:vertical-rl;font-weight:700;font-size:13px;letter-spacing:.02em;white-space:nowrap}
+.home-spine-name{writing-mode:vertical-rl;font-weight:700;font-size:13px;line-height:1.25;letter-spacing:.02em;white-space:nowrap}
+.home-spine-name>span{display:block}
+.home-spine-kind{font-size:11px;font-weight:600;opacity:.85}
 .home-spine-count{font-size:11px;font-weight:600;white-space:nowrap;letter-spacing:-.02em}
 .home-plank{height:8px;margin:0 -12px;background:linear-gradient(var(--surface2),var(--line));border-top:2px solid var(--line)}
+
+/* অ্যাচিভমেন্ট: nothing in the block is clipped (the glow spills over the card edge); the halo and rays sit at z-index -1 inside the card's own stacking context, so they are above the card's background and below the text, the slider and the button, and never take a click. The whole block is the link (the button's ::after stretches over it, .home-achv is the containing block). --shine (0..1) is the golden trees over the sets that can be won; the glow, halo, rays and sparkles all grow with it, and at the full level ([data-full]) they turn vivid amber */
+.home-achv{position:relative;isolation:isolate;padding:10px 12px 12px;background:var(--surface);border-radius:20px;box-shadow:var(--shadow)}
+.home-achv:has(.home-achv-go:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.home-achv .h2{font-size:17px;line-height:1.3;font-weight:700;margin:0}
+.home-achv-body{display:flex;align-items:center;gap:12px}
+.home-achv-side{flex:0 0 36%;min-width:96px;max-width:160px;display:flex;flex-direction:column}
+.home-achv-stage{position:relative;height:150px}
+/* the preview slider: above the stretched link's ::after (z-index), so dragging it never follows the link; gold track and thumb */
+.home-achv-range{position:relative;z-index:2;display:block;width:100%;min-width:0;height:44px;margin:0;padding:0;background:transparent;cursor:pointer;accent-color:var(--ach-gold-2);-webkit-appearance:none;appearance:none}
+.home-achv-range::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--ach-gold-1),var(--ach-gold-2) 60%,var(--ach-gold-3))}
+.home-achv-range::-moz-range-track{height:6px;border-radius:99px;background:linear-gradient(90deg,var(--ach-gold-1),var(--ach-gold-2) 60%,var(--ach-gold-3))}
+.home-achv-range::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;border:2px solid var(--ach-gold-3);background:var(--ach-gold-1);box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.home-achv-range::-moz-range-thumb{width:20px;height:20px;border-radius:50%;border:2px solid var(--ach-gold-3);background:var(--ach-gold-1);box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.home-achv-range:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.home-achv-stage .progress-tree{position:relative;z-index:1;display:block;width:100%;height:100%;overflow:visible}
+.home-achv-stage .progress-tree-ghost{opacity:.8}
+.home-achv-stage .progress-tree-gold{filter:drop-shadow(0 0 calc(3px + 10px*var(--shine)) var(--ach-glow)) drop-shadow(0 0 calc(8px + 34px*var(--shine)) var(--ach-glow)) drop-shadow(0 0 calc(14px + 60px*var(--shine)) var(--ach-glow))}
+.home-achv-halo,.home-achv-rays{position:absolute;left:50%;top:50%;z-index:-1;translate:-50% -50%;aspect-ratio:1;border-radius:50%;pointer-events:none}
+.home-achv-halo{width:calc(190px + 190px*var(--shine));background:radial-gradient(closest-side,var(--ach-glow),color-mix(in srgb,var(--ach-glow) 45%,transparent) 55%,transparent);opacity:calc(.3 + .55*var(--shine))}
+.home-achv-rays{width:calc(230px + 230px*var(--shine));background:repeating-conic-gradient(var(--ach-glow) 0 5deg,transparent 5deg 22deg);-webkit-mask-image:radial-gradient(closest-side,#000 20%,transparent 100%);mask-image:radial-gradient(closest-side,#000 20%,transparent 100%);opacity:calc(.12 + .5*var(--shine))}
+.home-achv-spark{position:absolute;z-index:2;pointer-events:none;width:calc(8px + 8px*var(--shine));height:calc(8px + 8px*var(--shine));transform:translate(-50%,-50%);background:var(--ach-gold-1);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:.95}
+/* the full level: a vivid amber core, a wider and brighter halo, stronger rays, bigger sparkles (the extra ones sit outside the tree box); the amber is the same in every theme and saturated enough to show on the light ones */
+.home-achv-stage[data-full="true"] .progress-tree-gold{filter:saturate(1.35) drop-shadow(0 0 6px var(--ach-hot)) drop-shadow(0 0 22px var(--ach-hot)) drop-shadow(0 0 48px var(--ach-hot)) drop-shadow(0 0 90px var(--ach-glow))}
+.home-achv-stage[data-full="true"] .home-achv-halo{width:460px;background:radial-gradient(closest-side,var(--ach-hot),color-mix(in srgb,var(--ach-hot) 60%,transparent) 50%,transparent);opacity:1}
+.home-achv-stage[data-full="true"] .home-achv-rays{width:560px;background:repeating-conic-gradient(var(--ach-hot) 0 6deg,transparent 6deg 20deg);opacity:.85}
+.home-achv-stage[data-full="true"] .home-achv-spark{width:18px;height:18px;background:#fff6c8;filter:drop-shadow(0 0 4px var(--ach-hot))}
+.home-achv-ribbon{position:absolute;z-index:3;left:50%;bottom:-2px;transform:translateX(-50%);min-width:64px;padding:2px 20px;text-align:center;font-family:var(--f-digits),var(--f-ui),system-ui,sans-serif;font-size:21px;font-weight:800;line-height:1.4;white-space:nowrap;color:var(--ach-ink);background:linear-gradient(var(--ach-gold-1),var(--ach-gold-2) 55%,var(--ach-gold-3));clip-path:polygon(0 0,100% 0,calc(100% - 12px) 50%,100% 100%,0 100%,12px 50%)}
+.home-achv-text{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.home-achv-num{display:flex;flex-direction:column;align-items:center;margin:0;max-width:100%;font-size:66px;line-height:1.1;font-weight:800;color:var(--accent2);overflow-wrap:anywhere}
+.home-achv-zero{color:var(--ink3)}
+/* the max level: a rich gold number with a pure black outline (painted under the fill, so the gold keeps its full size, and what makes it readable on every theme) and a soft golden glow; a small crown sits on top, sized from the number's own font size so it never widens the column */
+.home-achv-num[data-max="true"]{color:var(--ach-gold-2);-webkit-text-stroke:1.5px #000;paint-order:stroke fill;text-shadow:0 0 14px var(--ach-hot),0 0 30px var(--ach-glow)}
+.home-achv-crown{display:block;width:.5em;height:.34em;margin-bottom:-.02em;fill:var(--ach-gold-2);stroke:#000;stroke-width:1.2;paint-order:stroke fill;filter:drop-shadow(0 0 6px var(--ach-hot))}
+@media (forced-colors:active){
+  .home-achv-num[data-max="true"]{color:CanvasText;-webkit-text-stroke:0;text-shadow:none}
+  .home-achv-crown{fill:CanvasText;stroke:CanvasText;filter:none}
+}
+.home-achv-desc,.home-achv-best{margin:0;font-size:13px;line-height:1.5;color:var(--ink2)}
+.home-achv-best b{color:var(--accent2)}
+.home-achv-go{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:6px 16px;border-radius:99px;background:var(--accent);color:var(--on-accent);font-size:14px;font-weight:700;line-height:1.3;text-align:center;text-decoration:none;box-shadow:0 3px 8px color-mix(in srgb,var(--accent) 40%,transparent);transition:background .2s}
+.home-achv-go::after{content:"";position:absolute;inset:0;border-radius:20px}
+.home-achv-go:focus-visible{background:var(--accent2)}
 
 @media (min-width: 641px){
   .home-hero{padding:14px 24px}
@@ -42,6 +93,19 @@
 @media (max-width: 640px){
   .screen.home{padding-top:6px;gap:6px}
   .home-hero{border-radius:20px;padding:8px 12px}
+  /* phone: the hero box stops wrapping the card; the greeting box takes the hero look and the card is ordered after the quick cards, before the book shelf */
+  .home-hero{display:contents}
+  .home-hero::before,.home-hero::after{content:none}
+  .home-hero-box{display:block;position:relative;overflow:hidden;border-radius:20px;padding:8px 12px;background:linear-gradient(160deg,var(--accent-soft),var(--surface));box-shadow:var(--shadow)}
+  .home-hero-box::before,.home-hero-box::after{content:"";position:absolute;border-radius:50%;background:var(--accent);opacity:.1}
+  .home-hero-box::before{width:100px;height:100px;right:-34px;top:-40px}
+  .home-hero-box::after{width:60px;height:60px;right:30px;bottom:-30px}
+  .home-hero-box>*{position:relative}
+  .home-hero .home-daily{order:1;margin:0}
+  .home-shelf-wrap{order:2}
+  .home-achv{order:3;border-radius:18px}
+  .home-achv .h2{font-size:15px}
+  .home-achv-side{flex-basis:34%}
   /* the greeting shares the heading's row (the floated line sits at the right) */
   .home-hero .home-eyebrow{float:right;margin:7px 0 0}
   .home-hero .h1{font-size:20px}

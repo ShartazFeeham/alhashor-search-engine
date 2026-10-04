@@ -2,24 +2,13 @@
 
 import Link from 'next/link';
 import { formatDate } from '../lib/bnDate';
-import { hadisHref, tagOf } from '../lib/hadisRoute';
-import { stripChain } from '../lib/hadisCore';
+import { hadisHref } from '../lib/hadisRoute';
 import { useDigits } from '../lib/useDigits';
-import { useHadisText } from '../lib/useHadisText';
 import { useSettings } from '../settings/SettingsProvider';
 import Icon from '../ui/Icon';
 import { citationOf } from './citation';
 import { useHomePick } from './useHomePick';
 import { useToday } from './useToday';
-
-const LIMIT = 110; // about two lines of the card
-
-// { text, cut }: cut at the last space before the limit so a word is never split; a short text
-// stays whole.
-export function excerptOf(text) {
-  if (text.length <= LIMIT) return { text, cut: false };
-  return { text: `${text.slice(0, LIMIT).replace(/\s+\S*$/, '')}…`, cut: true };
-}
 
 const MORE = (
   <>
@@ -49,55 +38,29 @@ function Shell({ today, loading = false, children }) {
   );
 }
 
-// The excerpt (two lines: the first uses the whole card width) with the "আরও দেখুন" link inline at
-// the right end of the second line. Two empty floats inside the text (aria-hidden) keep the right end
-// of line 2 free for the link, which sits over that slot in the same grid cell. The link's ::after
-// stretches over the card, so the whole card is that one link.
-function Body({ excerpt, href }) {
-  return (
-    <div className="home-daily-body" data-testid="home-daily-body">
-      <p className="home-daily-text">
-        <span className="home-daily-flow">
-          <span className="home-daily-lead" aria-hidden="true" />
-          <span className="home-daily-slot" aria-hidden="true" />
-          <span data-testid="home-daily-text">{excerpt}</span>
-        </span>
-      </p>
-      <Link href={href} className="home-daily-more">{MORE}</Link>
-    </div>
-  );
-}
-
-// Today's hadis once the pick is known: the citation, a short excerpt and the link to the full
-// page. Nothing at all when the text cannot be had.
+// The card: the citation, the owner's own one-line core of the hadis (the "line" of its top-picks
+// item) shown in full, however many lines it takes, with the "আরও দেখুন" link inline right after it.
+// The link's ::after stretches over the card, so the whole card is that one link.
 function Picked({ today, pick }) {
   const digits = useDigits();
-  const { status, text } = useHadisText(tagOf(pick.book.id, pick.number));
-  if (status === 'missing' || status === 'error') return null;
-  if (status === 'loading') {
-    return (
-      <Shell today={today} loading>
-        <Skeleton />
-      </Shell>
-    );
-  }
-  // the saying only, without the number and the chain of narrators (the hadis page has them)
-  const { text: excerpt } = excerptOf(stripChain(text).core.replace(/\s+/g, ' ').trim());
   return (
     <Shell today={today}>
       <p className="home-daily-cite">{citationOf(pick.book, pick.number, digits)}</p>
-      <Body excerpt={excerpt} href={hadisHref(pick.book.id, pick.number)} />
+      <p className="home-daily-text">
+        <span data-testid="home-daily-text">{pick.line}</span>{' '}
+        <Link href={hadisHref(pick.book.id, pick.number)} className="home-daily-more">{MORE}</Link>
+      </p>
     </Shell>
   );
 }
 
-// The daily-hadis card in the home hero: a short excerpt of today's hadis with its citation and a
-// "আরও দেখুন" link to the full page. While the pick loads it holds its place; if it cannot load
-// there is no card at all.
+// The daily-hadis card in the home hero: today's hadis as its core line with its citation and a
+// "আরও দেখুন" link to the full page. While the date loads it holds its place; a pick with no
+// line, or no pick at all, gives no card.
 export default function HomeDailyCard() {
   const today = useToday();
   const { status, pick } = useHomePick(today);
-  if (status === 'error') return null;
+  if (status === 'error' || (pick && !pick.line)) return null;
   if (!pick) {
     return (
       <Shell today={today} loading>

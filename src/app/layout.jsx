@@ -10,6 +10,7 @@ import '../styles/topics.css';
 import '../styles/share.css';
 import '../styles/daily.css';
 import '../styles/related.css';
+import '../styles/homeNarrators.css';
 import { uiFont, readFont, latinFont, digitFont } from '../fonts';
 import TopNav from '../shell/TopNav';
 import TabBar from '../shell/TabBar';

@@ -154,3 +154,16 @@ describe('the picture', () => {
     }
   });
 });
+
+describe('the ghost placeholder', () => {
+  test('draws the whole tree as an outline: no fruit, no leaves, not golden', () => {
+    render(<SettingsProvider><ProgressTree percent={0} ghost /></SettingsProvider>);
+    const tree = screen.getByTestId('progress-tree');
+    expect(tree).toHaveClass('progress-tree-ghost');
+    expect(tree).toHaveAttribute('data-golden', 'false');
+    expect(parts('trunk')).toHaveLength(1);
+    expect(parts('canopy').length).toBeGreaterThan(0);
+    expect(parts('leaf')).toHaveLength(0);
+    expect(fruits()).toHaveLength(0);
+  });
+});

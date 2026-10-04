@@ -74,3 +74,9 @@ export function nextDay(progress, planId, totalDays) {
   }
   return null;
 }
+
+// A set's tree is golden at 100% (the same rounded percent the cards' trees are drawn from).
+export const isGolden = (progress, planId, totalDays) => totalDays > 0 && percentDone(progress, planId, totalDays) === 100;
+
+// How many of the sets have a golden tree.
+export const goldenCount = (progress, sets) => sets.filter((set) => isGolden(progress, set.id, set.days.length)).length;

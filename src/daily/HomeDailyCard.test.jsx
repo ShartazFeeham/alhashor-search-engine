@@ -1,296 +1,104 @@
 /* eslint-disable testing-library/no-node-access */
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import { pickDay } from '../lib/dailyPool';
 import { SettingsProvider } from '../settings/SettingsProvider';
-import { stripChain } from '../lib/hadisCore';
-import { diskFetch, realText } from '../test/hadisFixtures';
 import HomeDailyCard from './HomeDailyCard';
 
 const NOW = new Date(2026, 9, 2, 10, 0);
 const pick = () => pickDay(NOW);
 const renderCard = () => render(<SettingsProvider><HomeDailyCard /></SettingsProvider>);
 const card = () => screen.getByRole('region', { name: 'আজকের হাদীস' });
-
-// Serves everything from disk, but the one hadis text of the day is replaced by `text`.
-function withText(text) {
-  const { book, number } = pick();
-  const own = `/${book.folder}/${String(number).padStart(4, '0')}/text.txt`;
-  global.fetch = vi.fn((url) =>
-    url.endsWith(own) ? Promise.resolve({ ok: true, json: () => Promise.resolve(text) }) : diskFetch(url),
-  );
-}
-
-async function settle() {
-  await act(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-  });
-}
-
-beforeEach(() => {
-  vi.useFakeTimers({ toFake: ['Date'] });
-  vi.setSystemTime(NOW);
-  global.fetch = vi.fn(diskFetch);
-});
-
-afterEach(async () => {
-  await settle();
-  vi.useRealTimers();
-  delete global.fetch;
-});
-
-test('cuts a long real hadis with an ellipsis and still shows the link', async () => {
-  const { book, number } = pick();
-  renderCard();
-  const excerpt = await screen.findByTestId('home-daily-text');
-  expect(excerpt.textContent).toMatch(/…$/);
-  expect(excerpt.textContent).not.toMatch(/\.\.\./);
-  expect(within(card()).getByRole('link', { name: 'আরও দেখুন' })).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
-  expect(realText(book.id, number).length).toBeGreaterThan(excerpt.textContent.length);
-});
-
-test('shows the saying only: no number, no chain of narrators, no bare "তিনি বলেন," lead-in', async () => {
-  withText('১২। উবায়দুল্লাহ (রহঃ) ... আনাস (রাঃ) থেকে বর্ণিত। তিনি বলেন, সৎকাজ করো এবং অসৎকাজ থেকে বিরত থাকো।');
-  renderCard();
-  const excerpt = await screen.findByTestId('home-daily-text');
-  expect(excerpt.textContent).toBe('সৎকাজ করো এবং অসৎকাজ থেকে বিরত থাকো।');
-  expect(card()).not.toHaveTextContent('উবায়দুল্লাহ');
-  expect(card()).not.toHaveTextContent('থেকে বর্ণিত');
-});
-
-test('the 2-line clamp applies to the core text, which is cut at a word with an ellipsis', async () => {
-  const words = Array.from({ length: 60 }, (_, index) => `কথা${'ক'.repeat(index % 5)}`);
-  withText(`৩। আবূ হুরায়রা (রাঃ) থেকে বর্ণিত। ${words.join(' ')}`);
-  renderCard();
-  const excerpt = (await screen.findByTestId('home-daily-text')).textContent;
-  expect(excerpt.endsWith('…')).toBe(true);
-  expect(excerpt).not.toMatch(/আবূ হুরায়রা/);
-  expect(excerpt.length).toBeLessThanOrEqual(112);
-});
-
-test('never cuts inside a word', async () => {
-  const words = Array.from({ length: 80 }, (_, index) => `শব্দ${'ক'.repeat(index % 7)}`);
-  withText(`১২৩। ${words.join(' ')}`);
-  renderCard();
-  const excerpt = (await screen.findByTestId('home-daily-text')).textContent;
-  expect(excerpt.endsWith('…')).toBe(true);
-  const kept = excerpt.slice(0, -1).split(' ');
-  expect(kept.every((word) => words.includes(word))).toBe(true);
-  expect(excerpt).not.toMatch(/^১২৩/);
-});
-
-test('a very short hadis is shown whole, with no ellipsis, and still has the link', async () => {
-  withText('৫। রাসূলুল্লাহ (সাঃ) বলেছেনঃ সত্য কথা বল।');
-  const { book, number } = pick();
-  renderCard();
-  const excerpt = await screen.findByTestId('home-daily-text');
-  expect(excerpt).toHaveTextContent('রাসূলুল্লাহ (সাঃ) বলেছেনঃ সত্য কথা বল।');
-  expect(excerpt.textContent).not.toMatch(/…|\.\.\./);
-  expect(excerpt.textContent).not.toMatch(/^\s*৫/);
-  const link = within(card()).getByRole('link', { name: 'আরও দেখুন' });
-  expect(link).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
-  expect(link).toContainHTML('<svg');
-});
-
-test('shows a loading card, with the heading and no link, until the pick and its text arrive', async () => {
-  renderCard();
-  expect(within(card()).getByLabelText('লোড হচ্ছে')).toHaveAttribute('aria-busy', 'true');
-  expect(within(card()).queryByRole('link')).not.toBeInTheDocument();
-  await screen.findByTestId('home-daily-text');
-  expect(within(card()).queryByLabelText('লোড হচ্ছে')).not.toBeInTheDocument();
-});
-
-test('renders nothing when the text of the pick cannot load', async () => {
-  const { book, number } = pick();
-  const own = `/${book.folder}/${String(number).padStart(4, '0')}/text.txt`;
-  global.fetch = vi.fn((url) => (url.endsWith(own) ? Promise.resolve({ ok: false }) : diskFetch(url)));
-  const { container } = renderCard();
-  await waitFor(() => expect(container).toBeEmptyDOMElement());
-});
-
-test('clamps the excerpt to two lines, on every width, in the stylesheet', () => {
-  const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
-  const rules = css.split('\n').filter((line) => line.startsWith('.home-daily-text{'));
-  expect(rules).toHaveLength(1);
-  expect(rules[0]).toContain('-webkit-line-clamp:2');
-  expect(rules[0]).toContain('line-clamp:2');
-  expect(rules[0]).toContain('overflow:hidden');
-  expect(rules[0]).not.toMatch(/line-clamp:3/);
-  // no media rule gives the excerpt more room
-  expect(css.slice(css.indexOf('@media (min-width: 641px)'))).not.toContain('.home-daily-text');
-});
-
-test('the excerpt has the same size and colour as the citation line, from shared tokens', () => {
-  const excerpt = cssRule('.home-daily-text');
-  const cite = cssRule('.home-daily-cite');
-  expect(excerpt).toContain('font-size:var(--home-daily-fs)');
-  expect(cite).toContain('font-size:var(--home-daily-fs)');
-  expect(excerpt).toContain('color:var(--home-daily-ink)');
-  expect(cite).toContain('color:var(--home-daily-ink)');
-  const card = cssRule('.home-daily');
-  expect(card).toMatch(/--home-daily-fs:13px/);
-  expect(card).toContain('--home-daily-ink:var(--ink2)');
-  expect(excerpt).toMatch(/line-height:1\.[67]\d*[;}]/);
-});
-
-describe('the whole card is one link', () => {
-  test('has a single link, to the hadis page, still labelled "আরও দেখুন", and no other interactive element', async () => {
-    const { book, number } = pick();
-    renderCard();
-    await screen.findByTestId('home-daily-text');
-    const links = within(card()).getAllByRole('link');
-    expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
-    expect(links[0]).toHaveTextContent('আরও দেখুন');
-    expect(within(card()).queryByRole('button')).not.toBeInTheDocument();
-    expect(links[0].querySelector('a, button')).toBeNull();
-  });
-
-  test('the click target covers the card: the card is the containing block of the link\'s stretched ::after', () => {
-    expect(cssRule('.home-daily')).toMatch(/position:relative/);
-    const stretch = cssRule('.home-daily-more::after');
-    expect(stretch).toMatch(/content:""/);
-    expect(stretch).toMatch(/position:absolute/);
-    expect(stretch).toMatch(/inset:0/);
-    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
-    // nothing between the link and the card may become the containing block
-    for (const selector of ['.home-daily-body', '.home-daily-text']) {
-      expect(cssRule(selector), selector).not.toMatch(/position:(relative|absolute|fixed|sticky)/);
-    }
-    expect(css).not.toMatch(/\.home-daily-more\{[^}]*overflow/);
-  });
-
-  test('has a hover state and a visible keyboard focus ring on the whole card', () => {
-    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
-    expect(css).toMatch(/\.home-daily:hover\{[^}]*background:var\(--[a-z0-9-]+\)/);
-    expect(css).toMatch(/\.home-daily:has\(\.home-daily-more:focus-visible\)\{[^}]*outline:2px solid var\(--accent\)/);
-  });
-});
-
-test('the excerpt is short enough for about two lines', async () => {
-  renderCard();
-  const excerpt = await screen.findByTestId('home-daily-text');
-  expect(excerpt.textContent.length).toBeLessThanOrEqual(110);
-});
-
+const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
 const cssRule = (selector) => {
-  const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
   const rules = css.split('\n').filter((line) => line.startsWith(`${selector}{`));
   expect(rules).toHaveLength(1);
   return rules[0];
 };
 
-// The first real Bukhari hadis (of the first 400) whose displayed text satisfies `fits`.
-function realHadis(fits) {
-  for (let number = 1; number <= 400; number++) {
-    let raw;
-    try {
-      raw = realText('bukhari', number);
-    } catch {
-      continue; // a number Bukhari does not have
-    }
-    const shown = stripChain(raw).core.replace(/\s+/g, ' ').trim();
-    if (fits(shown, shown.split(' ').length)) return { raw, shown };
-  }
-  throw new Error('no such real hadis');
-}
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(NOW);
+});
 
-describe('where the link goes', () => {
-  const body = () => screen.getByTestId('home-daily-body');
-  const link = () => within(card()).getByRole('link', { name: 'আরও দেখুন' });
-
-  test('the text takes the whole width of the card; the link is in the same grid cell, after the text, at the right end of its second line, for a short and a long hadis', async () => {
-    for (const fits of [(_, words) => words < 12, (shown) => shown.length > 300]) {
-      const real = realHadis(fits);
-      withText(real.raw);
-      const { unmount } = renderCard();
-      const excerpt = await screen.findByTestId('home-daily-text');
-      const paragraph = excerpt.closest('p');
-      expect(paragraph).toHaveClass('home-daily-text');
-      expect(within(paragraph).queryByRole('link')).not.toBeInTheDocument();
-      expect(paragraph).toHaveTextContent(excerpt.textContent);
-      expect(body()).toContainElement(link());
-      expect(paragraph.compareDocumentPosition(link()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-      expect(link()).toContainHTML('<svg');
-      expect(body().children).toHaveLength(2);
-      unmount();
-    }
+afterEach(async () => {
+  await act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 0));
   });
+  vi.useRealTimers();
+});
 
-  test('a short hadis is shown whole, with no ellipsis', async () => {
-    const short = realHadis((_, words) => words < 12);
-    withText(short.raw);
-    renderCard();
-    expect((await screen.findByTestId('home-daily-text')).textContent).toBe(short.shown);
-  });
+test("shows the owner's whole core line of the hadis, with the citation above it and nothing fetched", async () => {
+  global.fetch = vi.fn();
+  const { book, number, line } = pick();
+  renderCard();
+  const text = await screen.findByTestId('home-daily-text');
+  expect(line.length).toBeGreaterThan(0);
+  expect(text.textContent).toBe(line);
+  expect(text.textContent).not.toMatch(/…|\.\.\./);
+  expect(within(card()).getByText(/হাদীস নং/).compareDocumentPosition(text) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(global.fetch).not.toHaveBeenCalled();
+  delete global.fetch;
+  expect(within(card()).getByRole('link', { name: 'আরও দেখুন' })).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
+});
 
-  test('the link always goes to the full hadis page, wherever it sits', async () => {
+test('the line is never cut: no clamp, no hidden overflow, on any width', () => {
+  expect(cssRule('.home-daily-text')).not.toMatch(/line-clamp|overflow:|-webkit-box/);
+  expect(css.slice(css.indexOf('@media (min-width: 641px)'))).not.toContain('.home-daily-text{');
+});
+
+test('the line is darker than the citation: the full ink colour, same size and font as before', () => {
+  const rule = cssRule('.home-daily-text');
+  expect(rule).toContain('color:var(--ink)');
+  expect(rule).toContain('font-size:var(--home-daily-fs)');
+  expect(cssRule('.home-daily-cite')).toContain('color:var(--home-daily-ink)');
+  expect(cssRule('.home-daily')).toContain('--home-daily-ink:var(--ink2)');
+});
+
+describe('the whole card is one link', () => {
+  test('has a single link, to the hadis page, labelled "আরও দেখুন", inline right after the line, and no other interactive element', async () => {
     const { book, number } = pick();
     renderCard();
-    await screen.findByTestId('home-daily-text');
-    expect(link()).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
+    const text = await screen.findByTestId('home-daily-text');
+    const links = within(card()).getAllByRole('link');
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAttribute('href', `/hadis/${book.id}/${number}`);
+    expect(links[0]).toHaveTextContent('আরও দেখুন');
+    expect(links[0]).toContainHTML('<svg');
+    expect(text.compareDocumentPosition(links[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(text.closest('p')).toContainElement(links[0]);
+    expect(within(card()).queryByRole('button')).not.toBeInTheDocument();
   });
 
-  test('the citation stays outside the text block, on one line above it', async () => {
-    renderCard();
-    await screen.findByTestId('home-daily-text');
-    const cite = within(card()).getByText(/হাদীস নং/);
-    expect(body()).not.toContainElement(cite);
-    expect(cite.compareDocumentPosition(body()) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(cssRule('.home-daily-cite')).toContain('white-space:nowrap');
+  test("the card is the containing block of the link's stretched ::after, and has a hover state and a focus ring", () => {
+    expect(cssRule('.home-daily')).toMatch(/position:relative/);
+    const stretch = cssRule('.home-daily-more::after');
+    expect(stretch).toMatch(/content:""/);
+    expect(stretch).toMatch(/position:absolute/);
+    expect(stretch).toMatch(/inset:0/);
+    expect(cssRule('.home-daily-text')).not.toMatch(/position:(relative|absolute|fixed|sticky)/);
+    expect(css).toMatch(/\.home-daily:hover\{[^}]*background:var\(--[a-z0-9-]+\)/);
+    expect(css).toMatch(/\.home-daily:has\(\.home-daily-more:focus-visible\)\{[^}]*outline:2px solid var\(--accent\)/);
+  });
+
+  test('the link is accent coloured, inline in the text (no line of its own), underlined on hover and focus', () => {
+    const more = cssRule('.home-daily-more');
+    expect(more).toContain('color:var(--accent2)');
+    expect(more).toContain('display:inline');
+    expect(css).toMatch(/\.home-daily-more:hover,\.home-daily-more:focus-visible\{text-decoration:underline\}/);
   });
 });
 
-describe('the stylesheet for the link row and the compact card', () => {
-  test('the link shares the second line of the text: one grid cell, the link at its bottom right edge, two floats keep the slot free', () => {
-    const bodyRule = cssRule('.home-daily-body');
-    expect(bodyRule).toContain('display:grid');
-    expect(cssRule('.home-daily-body>*')).toContain('grid-area:1/1');
-    const more = cssRule('.home-daily-more');
-    expect(more).toContain('justify-self:end');
-    expect(more).toContain('align-self:end');
-    expect(more).toContain('text-align:right');
-    // the slot kept free in the text is exactly as wide as the link, and one text line tall
-    const slotWidth = /width:(\d+)px/.exec(cssRule('.home-daily-slot'))[1];
-    expect(/width:(\d+)px/.exec(more)[1]).toBe(slotWidth);
-    expect(cssRule('.home-daily-slot')).toMatch(/float:right;clear:right/);
-    expect(cssRule('.home-daily-lead')).toMatch(/float:right/);
-    expect(cssRule('.home-daily-text')).toContain('line-height:1.7');
-    expect(more).toContain('line-height:1.7');
-  });
+test('the card has no min-height of its own: only the loading state holds a height', () => {
+  expect(cssRule('.home-daily')).not.toContain('min-height');
+  expect(Number(/min-height:(\d+)px/.exec(cssRule('.home-daily-loading'))[1])).toBeLessThanOrEqual(110);
+});
 
-  test('the link is accent coloured, underlined on hover and focus; the tap area is the whole card', () => {
-    const css = readFileSync(path.resolve(process.cwd(), 'src/styles/daily.css'), 'utf8');
-    const more = cssRule('.home-daily-more');
-    expect(more).toContain('color:var(--accent2)');
-    expect(more).toContain('white-space:nowrap');
-    expect(css).toMatch(/\.home-daily-more:hover,\.home-daily-more:focus-visible\{text-decoration:underline\}/);
-  });
-
-  test('the card has no min-height of its own: only the loading state holds a height, of about two lines', () => {
-    expect(cssRule('.home-daily')).not.toContain('min-height');
-    const loading = cssRule('.home-daily-loading');
-    const height = Number(/min-height:(\d+)px/.exec(loading)[1]);
-    expect(height).toBeGreaterThanOrEqual(90);
-    expect(height).toBeLessThanOrEqual(110);
-  });
-
-  test('the card and the hero around it are compact: 6 to 13px gaps, 6 to 12px card padding', () => {
-    const px = (rule, property) => Number(new RegExp(`${property}:(\\d+)px`).exec(rule)[1]);
-    const card = cssRule('.home-daily');
-    expect(/padding:(\d+)px (\d+)px/.exec(card).slice(1).map(Number).every((value) => value >= 6 && value <= 12)).toBe(true);
-    expect(/margin:(\d+)px 0 0/.test(card)).toBe(true);
-    const gap = Number(/margin:(\d+)px 0 0/.exec(card)[1]);
-    expect(gap).toBeGreaterThanOrEqual(6);
-    expect(gap).toBeLessThanOrEqual(12);
-    const home = readFileSync(path.resolve(process.cwd(), 'src/styles/home.css'), 'utf8');
-    const search = Number(/\.home-hero \.home-search\{margin-top:(\d+)px\}/.exec(home)[1]);
-    expect(search).toBeGreaterThanOrEqual(6);
-    expect(search).toBeLessThanOrEqual(13); // 8 + 5: the daily card has 5px more room below it
-    const bottoms = [...home.matchAll(/\.home-hero\{[^}]*padding:(\d+)px (\d+)px/g)].map((match) => Number(match[1]));
-    expect(bottoms.length).toBeGreaterThan(0);
-    expect(bottoms.every((value) => value >= 8 && value <= 14)).toBe(true);
-    expect(px(cssRule('.home-daily'), 'gap')).toBeLessThanOrEqual(8);
-  });
+test('the card is compact: 6 to 12px card padding and top gap', () => {
+  const card = cssRule('.home-daily');
+  expect(/padding:(\d+)px (\d+)px/.exec(card).slice(1).map(Number).every((value) => value >= 6 && value <= 12)).toBe(true);
+  const gap = Number(/margin:(\d+)px 0 0/.exec(card)[1]);
+  expect(gap).toBeGreaterThanOrEqual(6);
+  expect(gap).toBeLessThanOrEqual(12);
 });
