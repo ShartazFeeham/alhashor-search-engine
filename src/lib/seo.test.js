@@ -57,7 +57,7 @@ describe('hadisMetadata', () => {
   test('has the title, the saying as the description and an absolute canonical address', () => {
     expect(metadata.title).toBe('বুখারী শরীফ - হাদীস নং ৬,৬২৮ - Alhashor');
     expect(metadata.description).toBe(descriptionFor(text));
-    expect(metadata.alternates.canonical).toBe('https://hadis.feeham.com/hadis/bukhari/6628');
+    expect(metadata.alternates.canonical).toBe('https://islam.feeham.com/hadis/bukhari/6628');
   });
 
   test('has the link-preview tags: an article on the site, in Bengali, with the logo', () => {
@@ -65,11 +65,11 @@ describe('hadisMetadata', () => {
       type: 'article',
       siteName: 'Alhashor',
       locale: 'bn_BD',
-      url: 'https://hadis.feeham.com/hadis/bukhari/6628',
+      url: 'https://islam.feeham.com/hadis/bukhari/6628',
       title: metadata.title,
       description: metadata.description,
     });
-    expect(metadata.openGraph.images[0].url).toBe('https://hadis.feeham.com/logo512.png');
+    expect(metadata.openGraph.images[0].url).toBe('https://islam.feeham.com/logo512.png');
     expect(metadata.twitter).toMatchObject({ card: 'summary', title: metadata.title, description: metadata.description });
   });
 

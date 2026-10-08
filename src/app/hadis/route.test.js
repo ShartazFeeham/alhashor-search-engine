@@ -12,8 +12,8 @@ test('the title names the book and the number in Bengali', async () => {
 test('the description is the saying, and the preview tags and canonical address are absolute', async () => {
   const metadata = await generateMetadata(at('bukhari', '6628'));
   expect(metadata.description.startsWith('তিনি বলেন, বর্তমান যুগের মুনাফিকরা')).toBe(true);
-  expect(metadata.alternates.canonical).toBe('https://hadis.feeham.com/hadis/bukhari/6628');
-  expect(metadata.openGraph).toMatchObject({ type: 'article', url: 'https://hadis.feeham.com/hadis/bukhari/6628', locale: 'bn_BD' });
+  expect(metadata.alternates.canonical).toBe('https://islam.feeham.com/hadis/bukhari/6628');
+  expect(metadata.openGraph).toMatchObject({ type: 'article', url: 'https://islam.feeham.com/hadis/bukhari/6628', locale: 'bn_BD' });
   expect(metadata.twitter.card).toBe('summary');
 });
 

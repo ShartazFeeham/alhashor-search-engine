@@ -48,7 +48,7 @@ test('the feed is well-formed RSS 2.0 with a channel and one item per entry', ()
   expect(doc.documentElement.getAttribute('version')).toBe('2.0');
   const channel = doc.getElementsByTagName('channel')[0];
   expect(textOf(channel, 'language')).toBe('bn');
-  expect(textOf(channel, 'link')).toBe('https://hadis.feeham.com/daily');
+  expect(textOf(channel, 'link')).toBe('https://islam.feeham.com/daily');
   expect(doc.getElementsByTagName('item')).toHaveLength(14);
 });
 
@@ -60,7 +60,7 @@ test('an item has the citation as title, the text as description, the hadis addr
   const item = doc.getElementsByTagName('item')[0];
   expect(textOf(item, 'title')).toBe(`${first.book.cite}, হাদীস নং ${first.number.toLocaleString('en-US').replace(/[0-9]/g, (d) => '০১২৩৪৫৬৭৮৯'[d])}`);
   expect(textOf(item, 'description')).toBe(text);
-  expect(textOf(item, 'link')).toBe(`https://hadis.feeham.com/hadis/${first.book.slug}/${first.number}`);
+  expect(textOf(item, 'link')).toBe(`https://islam.feeham.com/hadis/${first.book.slug}/${first.number}`);
   expect(textOf(item, 'guid')).toBe(textOf(item, 'link'));
   expect(item.getElementsByTagName('guid')[0].getAttribute('isPermaLink')).toBe('true');
   expect(textOf(item, 'pubDate')).toBe('Thu, 01 Oct 2026 18:00:00 GMT');
