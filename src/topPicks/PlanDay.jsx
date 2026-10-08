@@ -61,11 +61,14 @@ export default function PlanDay({ index, day, done, onToggle, term }) {
 
   return (
     <li className="plan-day" data-done={done ? 'true' : undefined} style={{ '--bk': `var(${book.colorVar})` }}>
-      <label className="plan-day-head" htmlFor={id}>
-        <input id={id} type="checkbox" checked={done} onChange={onToggle} />
-        <span className="plan-day-no" data-testid="plan-day-no">{digits(index + 1)}</span>{' '}
-        <span className="plan-day-cite">{day.line || citationOf(book, day.number, digits)}</span>
-      </label>
+      <div className="plan-day-head">
+        {/* The box and the number toggle "read"; the title opens the full hadis. The box is named by both. */}
+        <label className="plan-day-tick" htmlFor={id}>
+          <input id={id} type="checkbox" checked={done} onChange={onToggle} aria-labelledby={`${id}-no ${id}-title`} />
+          <span className="plan-day-no" id={`${id}-no`} data-testid="plan-day-no">{digits(index + 1)}</span>
+        </label>
+        <Link href={href} className="plan-day-cite" id={`${id}-title`}>{day.line || citationOf(book, day.number, digits)}</Link>
+      </div>
       {excerpt}
       {day.note && <p className="plan-day-extra">{day.note}</p>}
       {status !== 'ok' && (
