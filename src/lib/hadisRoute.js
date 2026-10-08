@@ -10,8 +10,11 @@ export function parseTag(tag) {
   return book ? { book, number: Number(match[2]) } : null;
 }
 
-export function hadisHref(bookId, number) {
-  return `/hadis/${bookId}/${number}`;
+// `term` (optional) is the page the reader came from: the searched text, or the list's title. It rides
+// in ?q= and the hadis page bolds its words in the text.
+export function hadisHref(bookId, number, term) {
+  const path = `/hadis/${bookId}/${number}`;
+  return term?.trim() ? `${path}?q=${encodeURIComponent(term.trim())}` : path;
 }
 
 // The address parts /hadis/<book>/<number> as a book and a number, or null if they are not one.

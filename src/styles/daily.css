@@ -100,7 +100,7 @@
 .plan-days{list-style:none;margin:0;padding:4px 16px;display:flex;flex-direction:column;border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
 .plan-day{display:flex;flex-direction:column;gap:6px;padding:10px 0 12px;border-bottom:1px solid var(--line)}
 .plan-day:last-child{border-bottom:0}
-.plan-day-head{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;min-height:44px;cursor:pointer}
+.plan-day-head{display:flex;align-items:center;gap:2px 10px;min-height:44px;cursor:pointer}
 .plan-day-head input{appearance:none;-webkit-appearance:none;display:grid;place-items:center;flex:none;width:28px;height:28px;margin:0;border-radius:9px;border:2px solid var(--ink3);background:var(--surface);cursor:pointer;transition:background .2s,border-color .2s}
 .plan-day-head input::after{content:"";width:13px;height:7px;border:solid var(--on-accent);border-width:0 0 3px 3px;transform:translateY(-1px) rotate(-45deg);opacity:0;transition:opacity .15s}
 .plan-day-head input:checked{background:var(--accent);border-color:var(--accent)}
@@ -108,7 +108,7 @@
 /* the day number: a solid box with the number knocked out in the card colour */
 .plan-day-no{display:inline-grid;place-items:center;min-width:26px;height:26px;padding:0 7px;border-radius:7px;background:var(--accent2);color:var(--surface);font-size:13px;font-weight:700;line-height:1}
 .plan-day[data-done="true"] .plan-day-no{background:var(--ink3)}
-.plan-day-cite{font-weight:700}
+.plan-day-cite{font-weight:700;flex:1 1 0;min-width:0}
 .plan-day[data-done="true"] .plan-day-cite{color:var(--ink2)}
 .plan-day-body{display:grid;min-width:0;margin-left:38px}
 .plan-day-body>*{grid-area:1/1}

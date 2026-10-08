@@ -307,7 +307,7 @@ test('a result shows a snippet with the matched word highlighted and links to th
   renderSearch('/search?q=snipword');
   const mark = await screen.findByText('snipword', { selector: 'mark' });
   expect(mark).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /সম্পূর্ণ হাদীস দেখুন/ })).toHaveAttribute('href', '/hadis/bukhari/1');
+  expect(screen.getByRole('link', { name: /সম্পূর্ণ হাদীস দেখুন/ })).toHaveAttribute('href', '/hadis/bukhari/1?q=snipword');
 });
 
 test('a short hadis is shown whole, without the "full hadis" link', async () => {

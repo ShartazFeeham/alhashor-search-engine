@@ -26,7 +26,7 @@ export const DONE = 2;
     extras of a search: `live` (inside the count's live region), `aside` (at the right of the
     count line) and `between` (between the count line and the book filter).
 */
-export default function ResultsListing({ status, tags, ordered = tags, book, pageParam, onChange, matcher = null, plain = false, live = null, aside = null, between = null }) {
+export default function ResultsListing({ status, tags, ordered = tags, book, pageParam, onChange, matcher = null, term = '', plain = false, live = null, aside = null, between = null }) {
   const digits = useDigits();
   const counts = useMemo(() => countByBook(tags), [tags]);
   const visible = useMemo(() => filterByBook(ordered, book), [ordered, book]);
@@ -81,7 +81,7 @@ export default function ResultsListing({ status, tags, ordered = tags, book, pag
             <>
               <ol className="search-list" ref={listRef} tabIndex={-1} aria-label="ফলাফল">
                 {pageSlice(visible, page).map((tag) => (
-                  <ResultItem key={tag} tag={tag} matcher={matcher} plain={plain} />
+                  <ResultItem key={tag} tag={tag} matcher={matcher} term={term} plain={plain} />
                 ))}
               </ol>
               <Pager page={page} lastPage={lastPageOf(visible.length)} onPage={(target) => onChange({ book, page: target === 0 ? 0 : target + 1 })} />

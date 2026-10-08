@@ -7,6 +7,7 @@ import { topPicksHref } from '../lib/topPicks';
 import { useDigits } from '../lib/useDigits';
 import Button from '../ui/Button';
 import Icon from '../ui/Icon';
+import { similarWords } from '../lib/similarWords';
 import PlanDay from './PlanDay';
 import ProgressBar from './ProgressBar';
 import ProgressTree from './ProgressTree';
@@ -41,6 +42,7 @@ const NAV_H = 57;
 export default function PlanDetail({ plan, progress, onToggle, onReset }) {
   const digits = useDigits();
   const [confirming, setConfirming] = useState(false);
+  const titleTerm = similarWords(plan.title).join(' ');
   const total = plan.days.length;
   const done = doneCount(progress, plan.id, total);
   const percent = percentDone(progress, plan.id, total);
@@ -125,6 +127,7 @@ export default function PlanDetail({ plan, progress, onToggle, onReset }) {
             key={`${day.book}-${day.number}-${index}`}
             index={index}
             day={day}
+            term={titleTerm}
             done={isDone(progress, plan.id, index)}
             onToggle={() => onToggle(plan.id, index)}
           />

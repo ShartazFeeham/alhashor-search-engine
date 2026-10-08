@@ -15,7 +15,7 @@ const isTyping = (target) =>
 
 // Links to the previous and next hadis of the same book. The arrow keys, and (when
 // swipeTarget is "page") a horizontal swipe anywhere on the page, move between them too.
-export default function PrevNext({ bookId, number, swipeTarget }) {
+export default function PrevNext({ bookId, number, swipeTarget, term }) {
   const router = useRouter();
   const digits = useDigits();
   const book = bookById(bookId);
@@ -23,7 +23,7 @@ export default function PrevNext({ bookId, number, swipeTarget }) {
 
   useEffect(() => {
     const go = (target) => {
-      if (target !== null) router.push(hadisHref(bookId, target));
+      if (target !== null) router.push(hadisHref(bookId, target, term));
     };
     const onKey = (event) => {
       if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || isTyping(event.target)) return;
@@ -63,19 +63,19 @@ export default function PrevNext({ bookId, number, swipeTarget }) {
       document.removeEventListener('touchend', onTouchEnd);
       document.removeEventListener('touchcancel', onTouchCancel);
     };
-  }, [bookId, prev, next, router, swipeTarget]);
+  }, [bookId, prev, next, router, swipeTarget, term]);
 
   return (
     <nav className="hadis-pn hadis-card" aria-label="আগের ও পরের হাদীস">
       {prev !== null ? (
-        <Link href={hadisHref(bookId, prev)} className="prev">
+        <Link href={hadisHref(bookId, prev, term)} className="prev">
           <span className="pn-arrow" aria-hidden="true">‹</span>
           <small>আগের</small>
           <span className="pn-name">{book.name} {digits(prev)}</span>
         </Link>
       ) : <span />}
       {next !== null ? (
-        <Link href={hadisHref(bookId, next)} className="next">
+        <Link href={hadisHref(bookId, next, term)} className="next">
           <small>পরের</small>
           <span className="pn-name">{book.name} {digits(next)}</span>
           <span className="pn-arrow" aria-hidden="true">›</span>

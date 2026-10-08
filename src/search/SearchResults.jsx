@@ -107,6 +107,7 @@ export default function SearchResults({ query, book, near, pageParam, onChange, 
       pageParam={pageParam}
       onChange={onChange}
       matcher={matcher}
+      term={query}
       live={<DidYouMean suggestions={suggestions} onPick={onSuggest} />}
       aside={canNear && allowNear && <Chip pressed={near} onClick={() => onChange({ book, near: !near })}>কাছাকাছি শব্দ</Chip>}
       between={nearNote}

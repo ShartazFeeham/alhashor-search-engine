@@ -1,5 +1,7 @@
 'use client';
 
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import PageTitle from '../Helpers/PageTitle';
 import { bookById } from '../lib/books';
 import { tagOf } from '../lib/hadisRoute';
@@ -15,7 +17,7 @@ const ARTICLE_ID = 'hadis-article';
 
 // `initialText` comes from the server-rendered route: the text (so it is in the HTML), or null
 // for a number with no file. Leave it out and the page fetches the text itself.
-export default function HadisPage({ bookId, number, initialText }) {
+function HadisView({ bookId, number, initialText, term }) {
   const book = bookById(bookId);
   const digits = useDigits();
   const { status, text, retry } = useHadisText(tagOf(bookId, number), initialText);
@@ -54,11 +56,25 @@ export default function HadisPage({ bookId, number, initialText }) {
       )}
 
       {status === 'ok' && (
-        <HadisArticle id={ARTICLE_ID} book={book} number={number} text={text} crumbs={crumbs} />
+        <HadisArticle id={ARTICLE_ID} book={book} number={number} text={text} crumbs={crumbs} term={term} />
       )}
 
-      {status !== 'loading' && <PrevNext bookId={bookId} number={number} swipeTarget="page" />}
+      {status !== 'loading' && <PrevNext bookId={bookId} number={number} swipeTarget="page" term={term} />}
       {status === 'ok' && <RelatedList bookId={bookId} number={number} text={text} />}
     </main>
+  );
+}
+
+function WithTerm(props) {
+  return <HadisView {...props} term={useSearchParams().get('q') ?? ''} />;
+}
+
+// The route is cached as static HTML, so ?q= (the term of the page the reader came from) is read in the
+// browser: the cached page shows the plain text first and the term's words turn bold on load.
+export default function HadisPage(props) {
+  return (
+    <Suspense fallback={<HadisView {...props} term="" />}>
+      <WithTerm {...props} />
+    </Suspense>
   );
 }

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { ToastProvider } from '../ui/Toast';
-import { getUrl } from '../test/nextNavigation';
+import { getUrl, setUrl } from '../test/nextNavigation';
 import HadisPage from './HadisPage';
 
 const BUKHARI_6628 = '৬৬২৮। আদম ইবনু আবূ ইয়াস (রহঃ) ... হুযায়ফা ইবনুু-ইয়ামান (রাঃ) থেকে বর্ণিত। তিনি বলেন, বর্তমান যুগের মুনাফিকরা নবী সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম এর যুগের মুনাফিকদের চাইতেও জঘন্য।';
@@ -227,4 +227,13 @@ test('when the text cannot be fetched the page keeps one h1 and the retry button
   show('bukhari', 6628);
   expect(await screen.findByRole('button', { name: 'আবার চেষ্টা করুন' })).toBeInTheDocument();
   expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+});
+
+test('the words of ?q= are bolded in the text, and the prev/next links carry the term', async () => {
+  serve({ '/json/hadis/Bukhari/6628/text.txt': BUKHARI_6628 });
+  setUrl('/hadis/bukhari/6628?q=মুনাফিকরা');
+  show('bukhari', 6628);
+  await loaded();
+  expect(screen.getByText('মুনাফিকরা', { selector: 'strong' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /পরের/ })).toHaveAttribute('href', expect.stringContaining('?q=%E0%A6%AE'));
 });

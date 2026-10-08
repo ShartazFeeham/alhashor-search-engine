@@ -15,12 +15,12 @@ import { citationOf } from '../daily/citation';
 // the owner's note when there is one. Two empty floats inside the text (aria-hidden) keep the right
 // end of line 3 free for the link, which sits over that slot in the same grid cell (the same
 // technique as the home daily card's "আরও দেখুন").
-export default function PlanDay({ index, day, done, onToggle }) {
+export default function PlanDay({ index, day, done, onToggle, term }) {
   const digits = useDigits();
   const book = bookById(day.book);
   const { status, text, retry } = useHadisText(tagOf(day.book, day.number));
   const id = `plan-day-${index}`;
-  const href = hadisHref(day.book, day.number);
+  const href = hadisHref(day.book, day.number, term);
   const fullLink = (
     <Link href={href} className="plan-day-more">
       পুরো হাদীস <Icon name="cr" size={16} />
@@ -64,7 +64,7 @@ export default function PlanDay({ index, day, done, onToggle }) {
       <label className="plan-day-head" htmlFor={id}>
         <input id={id} type="checkbox" checked={done} onChange={onToggle} />
         <span className="plan-day-no" data-testid="plan-day-no">{digits(index + 1)}</span>{' '}
-        <span className="plan-day-cite">{citationOf(book, day.number, digits)}</span>
+        <span className="plan-day-cite">{day.line || citationOf(book, day.number, digits)}</span>
       </label>
       {excerpt}
       {day.note && <p className="plan-day-extra">{day.note}</p>}

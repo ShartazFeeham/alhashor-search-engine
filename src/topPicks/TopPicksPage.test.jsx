@@ -3,6 +3,7 @@ import { PLANS } from '../data/readingPlans';
 import { TOP_PICKS } from '../lib/topPicks';
 import { bookById } from '../lib/books';
 import { formatNumber } from '../lib/digits';
+import { similarWords } from '../lib/similarWords';
 import { splitHadis } from '../lib/hadisText';
 import { STORAGE_KEY } from '../lib/planProgress';
 import { SettingsProvider } from '../settings/SettingsProvider';
@@ -136,11 +137,11 @@ describe('a set as a checklist', () => {
     expect(screen.getByRole('link', { name: /সব সেট/ })).toHaveAttribute('href', '/top-picks');
   });
 
-  test('has a real checkbox for every day, named by the day and its citation', () => {
+  test('has a real checkbox for every day, named by the day and its line (or citation)', () => {
     show();
     expect(checkboxes()).toHaveLength(PLAN.days.length);
     PLAN.days.forEach((day, index) => {
-      expect(checkboxes()[index]).toHaveAccessibleName(`${bn(index + 1)} ${cite(day)}`);
+      expect(checkboxes()[index]).toHaveAccessibleName(`${bn(index + 1)} ${day.line || cite(day)}`);
       expect(checkboxes()[index]).not.toBeChecked();
     });
   });
@@ -152,7 +153,7 @@ describe('a set as a checklist', () => {
     const items = within(screen.getByRole('list', { name: 'দিনের তালিকা' })).getAllByRole('listitem');
     expect(items).toHaveLength(PLAN.days.length);
     await within(items[0]).findByText(body.replace(/\s+/g, ' '));
-    expect(within(items[0]).getByRole('link', { name: 'পুরো হাদীস' })).toHaveAttribute('href', `/hadis/${first.book}/${first.number}`);
+    expect(within(items[0]).getByRole('link', { name: 'পুরো হাদীস' })).toHaveAttribute('href', `/hadis/${first.book}/${first.number}?q=${encodeURIComponent(similarWords(PLAN.title).join(' '))}`);
   });
 
   test('checking a day ticks it, counts it in a live message, and saves it on the device', async () => {

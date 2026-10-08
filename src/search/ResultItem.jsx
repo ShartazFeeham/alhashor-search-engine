@@ -22,7 +22,7 @@ import BookBadge from '../ui/BookBadge';
 // the hadis a jump points at, and `plain` shows the beginning of the text (number removed) with
 // nothing highlighted. The daily page's earlier-days list adds `dateLabel` (a small line above the
 // card's heading) and `core` (the saying only, without the number and the chain of narrators).
-export default function ResultItem({ tag, matcher = null, anchor, marked = false, plain = false, dateLabel = null, core = false }) {
+export default function ResultItem({ tag, matcher = null, term = '', anchor, marked = false, plain = false, dateLabel = null, core = false }) {
   const digits = useDigits();
   const copyText = useCopy();
   const router = useRouter();
@@ -31,7 +31,7 @@ export default function ResultItem({ tag, matcher = null, anchor, marked = false
   const parsed = parseTag(tag);
   if (!parsed) return null;
   const { book, number } = parsed;
-  const href = hadisHref(book.id, number);
+  const href = hadisHref(book.id, number, term);
 
   const copy = () => copyText(textWithCitation(text, citationOf(book, number, digits)));
 

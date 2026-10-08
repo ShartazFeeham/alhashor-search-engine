@@ -2,7 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useMemo } from 'react';
 import { stripChain } from '../lib/hadisCore';
+import { normalizeQuery } from '../search/searchIndex';
+import { buildWordMatcher, highlightParts } from '../lib/matchPattern';
 import { splitHadis, wordCount } from '../lib/hadisText';
 import { shareHref, textWithCitation } from '../lib/share';
 import { citationOf } from '../daily/citation';
@@ -18,7 +21,7 @@ import ReadingProgress from './ReadingProgress';
 // it too: it hands in its own `crumbs` line (the date), `headingLevel` 2 (the page has the h1),
 // a `label` for the article and a first action (`lead`), and `coreOnly`, which shows the saying
 // without its chain of narrators.
-export default function HadisArticle({ book, number, text, id, crumbs, headingLevel = 1, label, lead, coreOnly = false }) {
+export default function HadisArticle({ book, number, text, id, crumbs, headingLevel = 1, label, lead, coreOnly = false, term = '' }) {
   const Heading = `h${headingLevel}`;
   const digits = useDigits();
   const copyText = useCopy();
@@ -28,6 +31,9 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
   const chain = coreOnly ? '' : split.chain;
   const { summary } = split;
   const body = coreOnly ? stripChain(text).core : split.body;
+
+  // The words of the page the reader came from (?q=) are bolded, as in the similar-hadis list.
+  const parts = useMemo(() => highlightParts(body, buildWordMatcher(normalizeQuery(term))), [body, term]);
 
   const copy = (value, message) => copyText(value, message);
 
@@ -54,7 +60,9 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
 
       <div className="hadis-reading hadis-card">
         <ReadingProgress words={wordCount(coreOnly ? body : text)} targetId={id} />
-        <p className="hadis-read">{body}</p>
+        <p className="hadis-read">
+          {parts.map((part, index) => (part.match ? <strong key={index} className="related-match">{part.text}</strong> : part.text))}
+        </p>
       </div>
 
       <div className="hadis-actions hadis-card">
