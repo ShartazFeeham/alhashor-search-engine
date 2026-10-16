@@ -178,7 +178,7 @@ describe('the book switcher', () => {
     const group = screen.getByRole('navigation', { name: 'গ্রন্থ বাছুন' });
     const links = within(group).getAllByRole('link');
     expect(links.map((l) => l.getAttribute('href'))).toEqual([
-      '/books/bukhari', '/books/muslim', '/books/tirmidhi', '/books/abudawud', '/books/ibnmajah', '/books/nasai',
+      '/books/bukhari', '/books/muslim', '/books/tirmidhi', '/books/abudawud', '/books/ibnmajah', '/books/nasai', '/books/khazainul',
     ]);
     expect(within(group).getByRole('link', { name: /মুসলিম/ })).toHaveAttribute('aria-current', 'page');
     expect(within(group).getByRole('link', { name: /বুখারী/ })).not.toHaveAttribute('aria-current');

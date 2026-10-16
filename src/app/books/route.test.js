@@ -18,8 +18,8 @@ test('every book has an address that renders its page', async () => {
   }
 });
 
-test('the six book pages are generated ahead of time, not on demand', () => {
+test('the seven book pages are generated ahead of time, not on demand', () => {
   expect(generateStaticParams()).toEqual([
-    { book: 'bukhari' }, { book: 'muslim' }, { book: 'tirmidhi' }, { book: 'abudawud' }, { book: 'ibnmajah' }, { book: 'nasai' },
+    { book: 'bukhari' }, { book: 'muslim' }, { book: 'tirmidhi' }, { book: 'abudawud' }, { book: 'ibnmajah' }, { book: 'nasai' }, { book: 'khazainul' },
   ]);
 });

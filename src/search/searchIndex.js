@@ -173,8 +173,11 @@ export function createSearchIndex(load = fetchJson) {
 
         let ranked = [...matches.entries()];
         if (requireAll) ranked = ranked.filter(([, match]) => match.words === words.length);
+        // The Quran (tafsir tags, KHZ-) counts one word more than it matched, for the order only: with the
+        // same number of matched words it comes before a hadis. The shown count is never raised.
+        const rankWords = ([tag, match]) => match.words + (tag.startsWith('KHZ-') ? 1 : 0);
         return ranked
-            .sort((a, b) => b[1].words - a[1].words || b[1].exact - a[1].exact)
+            .sort((a, b) => rankWords(b) - rankWords(a) || b[1].exact - a[1].exact)
             .map(([tag]) => tag);
     }
 

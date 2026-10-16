@@ -33,7 +33,7 @@ test("Nasa'i 435 (once broken by a raw control character) is valid JSON and keep
 test(`${SAMPLE_SIZE} files sampled evenly across all books strict-parse to a non-empty string`, () => {
   const sample = evenlySampledFiles();
   expect(sample).toHaveLength(SAMPLE_SIZE);
-  expect(new Set(sample.map(([folder]) => folder)).size).toBe(6);
+  expect(new Set(sample.map(([folder]) => folder)).size).toBe(7);
   for (const [folder, number] of sample) {
     const text = realHadisText(folder, number);
     expect(typeof text, `${folder} ${number}`).toBe('string');

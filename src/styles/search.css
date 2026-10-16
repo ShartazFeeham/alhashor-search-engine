@@ -76,3 +76,15 @@
   .search-filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px 0;margin:-2px 0}
   .search-filters::-webkit-scrollbar{display:none}
 }
+
+/* Quran (tafsir) results: a golden card with a few twinkling sparks, so they stand out from the hadis. */
+.search-item.quran-item{position:relative;overflow:hidden;border-color:#d4a62a;background:linear-gradient(135deg,rgba(255,213,102,.30),rgba(255,247,215,.10) 55%,rgba(212,166,42,.24)),var(--surface);box-shadow:0 0 0 1px rgba(212,166,42,.35),0 6px 20px rgba(212,166,42,.22)}
+.search-item.quran-item>*{position:relative;z-index:1}
+.search-item.quran-item::before,.search-item.quran-item::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background-repeat:no-repeat}
+.search-item.quran-item::before{background-image:radial-gradient(circle at 8% 22%,#fff1b0 0 1.5px,transparent 3px),radial-gradient(circle at 93% 16%,#ffe38a 0 2px,transparent 3.5px),radial-gradient(circle at 78% 82%,#fff1b0 0 1.5px,transparent 3px),radial-gradient(circle at 30% 90%,#ffe38a 0 1px,transparent 2.5px)}
+.search-item.quran-item::after{background-image:radial-gradient(circle at 55% 12%,#fff6c9 0 1.5px,transparent 3px),radial-gradient(circle at 96% 60%,#ffe38a 0 1px,transparent 2.5px),radial-gradient(circle at 4% 75%,#fff6c9 0 2px,transparent 3.5px)}
+@media (prefers-reduced-motion:no-preference){
+  .search-item.quran-item::before{animation:quran-twinkle 2.8s ease-in-out infinite}
+  .search-item.quran-item::after{animation:quran-twinkle 3.6s ease-in-out -1.4s infinite}
+  @keyframes quran-twinkle{0%,100%{opacity:.25}50%{opacity:1}}
+}

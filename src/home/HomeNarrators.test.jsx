@@ -111,12 +111,12 @@ test('hovering a segment shows a tooltip naming the book and the count; leaving 
   expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
 });
 
-test('the legend lists the six short book names, with decorative circles', async () => {
+test('the legend lists the seven short book names, with decorative circles', async () => {
   render(wrap());
   await settle();
   const legend = screen.getByRole('list', { name: 'বইয়ের রং' });
   const items = within(legend).getAllByRole('listitem');
-  expect(items.map((li) => li.textContent)).toEqual(['বুখারী', 'মুসলিম', 'তিরমিযী', 'আবু দাউদ', 'ইবনে মাজাহ', 'নাসাঈ']);
+  expect(items.map((li) => li.textContent)).toEqual(['বুখারী', 'মুসলিম', 'তিরমিযী', 'আবু দাউদ', 'ইবনে মাজাহ', 'নাসাঈ', 'খাযাইনুল ইরফান']);
   for (const [i, li] of items.entries()) {
     const dot = li.querySelector('i');
     expect(dot).toHaveAttribute('aria-hidden', 'true');

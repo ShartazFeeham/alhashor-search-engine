@@ -26,14 +26,21 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
   const digits = useDigits();
   const copyText = useCopy();
   const [open, setOpen] = useState(false);
-  const split = splitHadis(text);
+  // A tafsir entry (Khazainul Irfan) is "<number>। <ayah range>\n<commentary>": the range is the title,
+  // there is no narrator chain, and the commentary reads as paragraphs.
+  const tafsir = book.kind === 'tafsir';
+  const [firstLine, ...rest] = text.split('\n');
+  const split = tafsir ? { chain: '', summary: '', body: rest.join('\n').replace(/\*\*/g, '').trim() } : splitHadis(text);
   // `coreOnly` (the daily page): the saying alone, with no chain block; copy and share keep the full text
   const chain = coreOnly ? '' : split.chain;
   const { summary } = split;
-  const body = coreOnly ? stripChain(text).core : split.body;
+  const body = coreOnly && !tafsir ? stripChain(text).core : split.body;
 
   // The words of the page the reader came from (?q=) are bolded, as in the similar-hadis list.
-  const parts = useMemo(() => highlightParts(body, buildWordMatcher(normalizeQuery(term))), [body, term]);
+  const paragraphs = useMemo(() => {
+    const matcher = buildWordMatcher(normalizeQuery(term));
+    return (tafsir ? body.split(/\n{2,}/) : [body]).map((p) => highlightParts(p, matcher));
+  }, [body, term, tafsir]);
 
   const copy = (value, message) => copyText(value, message);
 
@@ -43,7 +50,7 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
         {crumbs}
         <div className="hadis-title">
           <BookBadge bookId={book.id} />
-          <Heading>{book.full} - হাদীস নং {digits(number)}</Heading>
+          <Heading>{tafsir ? `${book.name} - ${firstLine.replace(/^[০-৯]+।\s*/, '')}` : `${book.full} - হাদীস নং ${digits(number)}`}</Heading>
         </div>
       </header>
 
@@ -60,9 +67,11 @@ export default function HadisArticle({ book, number, text, id, crumbs, headingLe
 
       <div className="hadis-reading hadis-card">
         <ReadingProgress words={wordCount(coreOnly ? body : text)} targetId={id} />
-        <p className="hadis-read">
-          {parts.map((part, index) => (part.match ? <strong key={index} className="related-match">{part.text}</strong> : part.text))}
-        </p>
+        {paragraphs.map((parts, at) => (
+          <p className="hadis-read" key={at}>
+            {parts.map((part, index) => (part.match ? <strong key={index} className="related-match">{part.text}</strong> : part.text))}
+          </p>
+        ))}
       </div>
 
       <div className="hadis-actions hadis-card">

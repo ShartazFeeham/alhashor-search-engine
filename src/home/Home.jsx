@@ -34,7 +34,7 @@ export default function Home() {
       <section className="home-hero" aria-labelledby="home-title">
         <div className="home-hero-box">
           <p className="home-eyebrow">আসসালামু আলাইকুম</p>
-          <h1 className="h1" id="home-title">হাদীস সম্ভার</h1>
+          <h1 className="h1" id="home-title">কুরআন ও হাদীস সম্ভার</h1>
           <Link href="/search" className="home-search">
             <Icon name="search" size={24} />
             <span>হাদীস খুঁজুন: শব্দ, বিষয় বা হাদীস নম্বর</span>

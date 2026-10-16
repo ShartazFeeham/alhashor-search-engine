@@ -1,8 +1,145 @@
-# Alhashor Search Engine
+<div align="center">
 
-A Bengali hadis site covering six books: Bukhari, Muslim, Tirmidhi, Abu Dawud, Ibn Majah and Nasa'i (32,886 hadis files). It is a Next.js 16 / React 19 app that reads static JSON files shipped with it. There is no database and no outside service. All hadis text is Bengali.
+# Alhashor · কুরআন ও হাদীস সম্ভার
 
-Live site (when deployed): https://islam.feeham.com. Work currently stays local: nothing is pushed or deployed.
+**A Bengali library of hadis (the six major books) and Quran tafsir (Kanzul Iman & Khazainul Irfan).**
+32,886 hadis · instant search with no search server · hand-picked reading lists · one cached page per hadis · light, dark and sepia.
+
+<sub>Live site: <a href="https://islam.feeham.com">islam.feeham.com</a></sub>
+
+</div>
+
+---
+
+## At a glance
+
+| | |
+|---|---|
+| **Content** | Bukhari, Muslim, Tirmidhi, Abu Dawud, Ibn Majah and Nasa'i: 32,886 hadis, 203 topics, every narrator, 12 hand-picked sets (290 hadis) |
+| **App** | Next.js 16 (App Router) and React 19, plain CSS, 161 source files, about 8,700 lines, 15 routes |
+| **Data** | Static JSON under `public/json`: the texts, a word index cut at three letters, longer-word lists, narrators. No database |
+| **Search** | Runs in the browser in a Web Worker over small index files. English letters turn into Bengali as you type |
+| **Pages** | A hadis page is built on its first visit, then cached for a year (incremental static regeneration) |
+| **Privacy** | No accounts, analytics, trackers, CDN fonts or third-party scripts. Settings and reading progress stay on the device |
+| **Verification** | 2,104 automated tests (132 test files), ESLint with zero warnings, headless-Chrome checks for layout, themes and network |
+
+## Quick start
+
+Requirements: Node 20.9 or newer (the browser scripts under `scripts/` need Node 22+), Google Chrome only for those scripts.
+
+```bash
+npm ci             # install
+npm run dev        # http://localhost:3000
+npm run build      # production build (first packs the hadis texts into .data/hadis)
+npm start          # serve the build on :3000
+npm test -- --run  # the test suite once
+```
+
+Nothing else to start: there is no database, queue or second service. The full reference (features in detail, data layout, search switches, data scripts, checks) follows below.
+
+## What it does
+
+- **Search**: a word, a phrase, a hadis number or a narrator. Counts per book, filters, the matched words highlighted, a "near words" mode, and "did you mean" for spelling.
+- **Read**: a calm hadis page with the narrator chain folded, reading time, copy, cite and link buttons, previous/next with arrow keys or a swipe, and a live list of similar hadis.
+- **Continue where you were**: open a hadis from a search or a list and the words you came with are bold, carried in the address (`?q=`).
+- **Browse**: six colour-coded books, a jump bar for a number, 203 topics, and every narrator with the number of his hadis.
+- **Popular hadis**: themed sets chosen by hand, each hadis with a one-line title, a "read" tick and a progress ring that never leave your device.
+- **Every day**: a hadis of the day (the same for everyone, from the date alone) with an RSS feed, and a share page that draws a quote card in the browser.
+- **Make it yours**: light, dark or sepia; text size 3 to 30 px; line gap; works on a phone with a bottom tab bar, and has a web app manifest so Chrome can offer to install it.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  R([Reader]) --> UI[React 19 app<br/>pages · settings · progress]
+  UI --> CDN[Netlify CDN<br/>islam.feeham.com]
+  CDN --> NX[Next.js 16<br/>hadis page built on first visit]
+  NX --> SH[(334 text shards<br/>read by the server)]
+  UI --> WK[Search worker<br/>Web Worker]
+  WK --> IX[(Word index<br/>tags3 · substring3)]
+  UI --> TX[(32,886 hadis texts<br/>public/json/hadis)]
+  UI --> LS[(localStorage<br/>theme · text size · read ticks)]
+```
+
+| Part | What it is |
+|---|---|
+| `src/app` | The routes: home, search, books, hadis, share, topics, narrators, daily, top-picks, settings, sitemaps, robots, RSS |
+| `public/json/hadis` | One text file per hadis (32,886), read by the browser, and packed into 334 shards for the server |
+| `public/json/tags3`, `substring3` | The word index: word to hadis tags, and word to longer words that contain it (9,655 and 6,123 small files) |
+| `src/search` | The search engine: query rules, ranking, "did you mean", the Web Worker client |
+| `src/data/topPicks` | The twelve hand-picked sets, one JSON file each |
+| `netlify.toml`, `next.config.mjs` | Netlify build through its Next.js adapter, headers, and which files ship in the server function |
+
+### Key flows
+
+**Search**: a query becomes a handful of small index files, never a server call.
+
+```mermaid
+flowchart LR
+  A[Search box<br/>namaz becomes নামায] --> B[Normalise<br/>one spelling per letter]
+  B --> C[Web Worker]
+  C --> D[tags3 file of each word's<br/>first three letters]
+  D --> E[substring3: longer words,<br/>first 50]
+  E --> F[Ranked results<br/>most words matched first]
+  F --> G[Texts of the page shown,<br/>matches highlighted]
+```
+
+**Opening a hadis**: the same cached page for everyone; the words you came with are bolded in your browser.
+
+```mermaid
+flowchart LR
+  A[Search or a list<br/>the term] --> B["/hadis/bukhari/1?q=term"]
+  B --> C[Cached page<br/>saying already in the HTML]
+  C --> D[Browser reads ?q=]
+  D --> E[Bold the matching words]
+  D --> F[Similar hadis:<br/>a live search, best 20 kept]
+```
+
+**Popular hadis**: hand-picked sets in plain JSON; progress is kept on the reader's device.
+
+```mermaid
+flowchart LR
+  A[set-NN.json<br/>title · line · book · number] --> B[Set page<br/>one line per hadis]
+  B --> C[Tick as read]
+  C --> D[(localStorage)]
+  D --> E[Progress ring and tree]
+  B --> F[Title opens the full hadis<br/>with the set's words in ?q=]
+```
+
+**From a change to the live site**: one build on the command line, served from islam.feeham.com.
+
+```mermaid
+flowchart LR
+  A[Code and data] --> B[GitHub Actions<br/>lint · test · build]
+  A --> C[netlify deploy --build<br/>shards · next build · adapter]
+  C --> D[Netlify<br/>CDN files + one function]
+  E[Cloudflare DNS<br/>islam CNAME] --> D
+  D --> F[Reader over HTTPS]
+```
+
+### Why it is built this way
+
+| Choice | Reason |
+|---|---|
+| Static JSON, no database | The data never changes, so every file can be cached forever and nothing has to run at read time |
+| Word index in 3-letter files | A search opens a few small files, not one big one; a longer-word list with a cap of 50 keeps common words cheap |
+| One cached page per hadis | The saying is in the first HTML for search engines and link previews, built once and kept for a year |
+| The term in `?q=`, read in the browser | Reading the address on the server would make every page uncacheable; the browser bolds the words after load instead |
+| Progress in `localStorage` | No accounts to build or protect; the reader's data stays with the reader |
+
+## Showcase
+
+A 15-slide presentation of the site (a Mac monitor on desktop, a phone on mobile, a Light / Dark toggle for the screenshots, dark by default, and the architecture and flow animations) lives in the myworks portfolio, outside this repository: `FeehamEcosystem/apps/myworks`, project `alhashor`. Run `npm run dev:myworks` there and open http://localhost:5182/p/alhashor. Its screenshot tour (`npm run capture:alhashor`) captures every screen from this site running on port 3000.
+
+## Engineering notes
+
+- **Self-contained.** Everything ships with the app. A headless-Chrome check records every network request of the main pages and fails if one goes to another host.
+- **Both spellings.** The data spells some Bengali letters two ways (`য়` as one character or two, `ো` as one or as `ে` + `া`). Search, highlighting and index file names all treat them as one letter.
+- **Accessible by default.** ESLint runs `jsx-a11y` with zero warnings allowed; the keyboard walk, focus rings and the screen-reader names of the controls are checked in the browser scripts.
+- **Cost-aware hosting.** The pages, sitemaps and text shards are built so that later visits cost a CDN request only. Notes on credits are in `netlify.toml`.
+- **Known issue.** The CI run on GitHub currently fails: the 3-letter index folders hold file-name pairs that differ only in how a Bengali letter is spelled, which macOS cannot keep as two files but Linux can. A search for words in those pairs may miss hadis until the folders are regenerated on Linux.
+
+---
 
 ## Features
 

@@ -15,9 +15,6 @@ const LINKS = [
   ['search', '/search', 'সার্চ', 'search'],
   ['top-picks', '/top-picks', 'জনপ্রিয় হাদীস', 'heart'],
   ['books', '/books', 'হাদীসের বই', 'book'],
-  ['narrators', '/narrators', 'বর্ণনাকারীভিত্তিক হাদীস', 'speaker'],
-  ['daily', '/daily', 'আজকের হাদীস', 'clock'],
-  ['topics', '/topics', 'বিষয়ভিত্তিক হাদীস', 'tag'],
 ];
 
 export default function TopNav() {
@@ -56,7 +53,7 @@ export default function TopNav() {
           <span className="shell-logo"><Icon name="book" size={20} /></span>
           <span>
             <b>Alhashor</b>
-            <small>হাদীস সম্ভার</small>
+            <small>কুরআন ও হাদীস সম্ভার</small>
           </span>
         </Link>
         <nav className="shell-links" aria-label="প্রধান মেনু">

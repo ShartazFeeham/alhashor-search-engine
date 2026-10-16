@@ -24,8 +24,8 @@ test.each([
   expect(within(card).getByText(new RegExp(count))).toBeInTheDocument();
 });
 
-test('shows the six books and nothing else to open', () => {
+test('shows the seven books and nothing else to open', () => {
   show();
   const cards = screen.getAllByRole('link').filter((link) => link.getAttribute('href').startsWith('/books/'));
-  expect(cards).toHaveLength(6);
+  expect(cards).toHaveLength(7);
 });

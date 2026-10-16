@@ -45,7 +45,7 @@ test.each(pages)('page %s renders without React warnings', (path, Page) => {
 });
 
 test.each([
-  ['/', 'Alhashor - হাদীস সম্ভার', HomePage],
+  ['/', 'Alhashor - কুরআন ও হাদীস সম্ভার', HomePage],
   ['/search', 'হাদীস সার্চ - Alhashor', SearchPage],
   ['/search?q=রোজা', 'রোজা - হাদীস সার্চ - Alhashor', SearchPage],
   ['/books', 'হাদীসের বই - Alhashor', BooksPage],

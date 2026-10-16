@@ -32,6 +32,10 @@ export default function ResultItem({ tag, matcher = null, term = '', anchor, mar
   if (!parsed) return null;
   const { book, number } = parsed;
   const href = hadisHref(book.id, number, term);
+  const tafsir = book.kind === 'tafsir';
+  // A tafsir entry is "<number>। <ayah range>\n<commentary>": the range is its title.
+  const [firstLine = '', ...rest] = (text ?? '').split('\n');
+  const title = tafsir && status === 'ok' ? `${book.name} - ${firstLine.replace(/^[০-৯]+।\s*/, '')}` : `${book.full} - হাদীস নং ${digits(number)}`;
 
   const copy = () => copyText(textWithCitation(text, citationOf(book, number, digits)));
 
@@ -44,6 +48,7 @@ export default function ResultItem({ tag, matcher = null, term = '', anchor, mar
     router.push(href);
   };
 
+  let matched = 0; // how many different words of the text the search matched (shown like the similar-hadis list)
   let content = <div className="hadis-skel" style={{ width: '90%' }} />;
   let cut = false;
   if (status === 'missing' || status === 'error') {
@@ -51,7 +56,8 @@ export default function ResultItem({ tag, matcher = null, term = '', anchor, mar
   } else if (status === 'ok') {
     // The snippet is about the saying; when the words matched only the chain or the number
     // (a search for a narrator), it is taken from the whole text so the match is shown.
-    const { chain, body } = splitHadis(text);
+    const { chain, body } = tafsir ? { chain: '', body: rest.join('\n').replace(/\*\*/g, '').trim() } : splitHadis(text);
+    if (matcher && !plain) matched = new Set(highlightParts(body, matcher).filter((part) => part.match).map((part) => part.text)).size;
     const source = core ? stripChain(text).core.replace(/\s+/g, ' ').trim() : plain ? [chain, body].filter(Boolean).join(' ') : hasMatch(body, matcher) ? body : text;
     const snippet = makeSnippet(source, matcher);
     cut = snippet.cutStart || snippet.cutEnd;
@@ -71,7 +77,7 @@ export default function ResultItem({ tag, matcher = null, term = '', anchor, mar
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <li
       id={anchor}
-      className={anchor ? 'search-item books-item' : 'search-item'}
+      className={`${anchor ? 'search-item books-item' : 'search-item'}${tafsir ? ' quran-item' : ''}`}
       data-target={marked ? 'true' : undefined}
       onClick={openFromCard}
     >
@@ -79,12 +85,13 @@ export default function ResultItem({ tag, matcher = null, term = '', anchor, mar
       <div className="search-item-main">
         <div className="search-item-head">
           <BookBadge bookId={book.id} size="sm" />
-          <Link href={href} id={titleId}>{book.full} - হাদীস নং {digits(number)}</Link>
+          <Link href={href} id={titleId}>{title}</Link>
         </div>
         {content}
+        {matched > 0 && <span className="related-reason">{digits(matched)} টি শব্দ মিলেছে</span>}
       </div>
       <div className="search-item-actions">
-        {cut && <Link href={href} aria-describedby={titleId}>সম্পূর্ণ হাদীস দেখুন...</Link>}
+        {cut && <Link href={href} aria-describedby={titleId}>{tafsir ? 'সম্পূর্ণ দেখুন...' : 'সম্পূর্ণ হাদীস দেখুন...'}</Link>}
         {status === 'ok' && <button type="button" aria-describedby={titleId} onClick={copy}>কপি</button>}
         {status === 'ok' && <ShareButton book={book} number={number} text={text} variant="link" describedBy={titleId} />}
       </div>

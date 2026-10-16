@@ -71,7 +71,7 @@ describe('parseRow', () => {
   });
 
   test('a missing per-book count is 0', () => {
-    expect(parseRow(['aisha', 'আয়িশা', 5, 5]).perBook).toEqual({ bukhari: 5, muslim: 0, tirmidhi: 0, abudawud: 0, ibnmajah: 0, nasai: 0 });
+    expect(parseRow(['aisha', 'আয়িশা', 5, 5]).perBook).toEqual({ bukhari: 5, muslim: 0, tirmidhi: 0, abudawud: 0, ibnmajah: 0, nasai: 0, khazainul: 0 });
   });
 
   test.each([

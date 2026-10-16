@@ -1,4 +1,4 @@
-// The six books, in display order. `total` is the highest hadis number that has a file under
+// The books, in display order (six hadis books, then the Quran tafsir Khazainul Irfan, whose entries are ayah ranges). `total` is the highest hadis number that has a file under
 // public/json/hadis/<folder>; `missing` lists the numbers up to `total` that have no file, as
 // [first, last] ranges. `legacyName` is the spelling the old Books page uses (removed with it).
 
@@ -37,6 +37,7 @@ export const BOOKS = [
   { id: 'abudawud', slug: 'abudawud', code: 'DAU', folder: 'Daud', name: 'আবু দাউদ', full: 'আবু দাউদ শরীফ', cite: 'সুনান আবু দাউদ', badge: 'দা', legacyName: 'আবু দাউদ শরীফ', colorVar: '--bk-abudawud', total: 5184, missing: [] },
   { id: 'ibnmajah', slug: 'ibnmajah', code: 'MAJ', folder: 'Majah', name: 'ইবনে মাজাহ', full: 'ইবনে মাজাহ শরীফ', cite: 'সুনান ইবনে মাজাহ', badge: 'মা', legacyName: 'সুনানু ইবনে মাজাহ', colorVar: '--bk-ibnmajah', total: 4341, missing: [] },
   { id: 'nasai', slug: 'nasai', code: 'NAS', folder: 'Nasae', name: 'নাসাঈ', full: 'নাসাঈ শরীফ', cite: 'সুনান নাসাঈ', badge: 'না', legacyName: 'সুনানু নাসাঈ শরীফ', colorVar: '--bk-nasai', total: 5758, missing: NASAI_MISSING },
+  { id: 'khazainul', slug: 'khazainul', code: 'KHZ', folder: 'Khazainul', name: 'খাযাইনুল ইরফান', full: 'কানযুল ঈমান ও খাযাইনুল ইরফান', cite: 'খাযাইনুল ইরফান', badge: 'খা', legacyName: 'খাযাইনুল ইরফান', colorVar: '--bk-khazainul', kind: 'tafsir', total: 942, missing: [] },
 ];
 
 export const bookById = (id) => BOOKS.find((book) => book.id === id);

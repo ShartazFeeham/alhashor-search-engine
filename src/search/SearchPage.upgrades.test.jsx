@@ -134,7 +134,7 @@ describe('words near each other (real hadis texts)', () => {
 
   test('the option is not offered for a single word', async () => {
     renderSearch('/search?q=' + encodeURIComponent('রোজা'));
-    await screen.findByText(/মোট ৪০৩ টি হাদিস পাওয়া গেছে/);
+    await screen.findByText(/মোট ৪১২ টি হাদিস পাওয়া গেছে/);
     expect(screen.queryByRole('button', NEAR)).not.toBeInTheDocument();
   });
 
@@ -147,10 +147,10 @@ describe('words near each other (real hadis texts)', () => {
 
   test('turning it on writes near=1 to the address, shows "খুঁজছি...", then puts the closest hadis first and says what it looked at', async () => {
     renderSearch(URL);
-    await screen.findByText(/মোট ৫১০ টি হাদিস পাওয়া গেছে/);
-    expect(await screen.findByRole('link', { name: /বুখারী শরীফ - হাদীস নং ৬১৩/ })).toBeInTheDocument();
-    const firstBefore = screen.getAllByRole('listitem')[0];
-    expect(within(firstBefore).getByRole('link', { name: /হাদীস নং ৬১৩/ })).toBeInTheDocument();
+    await screen.findByText(/মোট ৫২১ টি হাদিস পাওয়া গেছে/);
+    // the Quran (Khazainul Irfan) counts one word more for the order, so it leads the search order
+    const firstBefore = (await screen.findAllByRole('listitem'))[0];
+    expect(within(firstBefore).getByRole('link', { name: /খাযাইনুল ইরফান/ })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', NEAR));
 
@@ -158,7 +158,7 @@ describe('words near each other (real hadis texts)', () => {
     expect(screen.getByRole('button', NEAR)).toHaveAttribute('aria-pressed', 'true');
     expect(screen.getByText('খুঁজছি...')).toBeInTheDocument();
 
-    expect(await screen.findByText(/মোট ৫১০ টির মধ্যে সেরা ৩০০টি ফলাফল দেখা হয়েছে/)).toBeInTheDocument();
+    expect(await screen.findByText(/মোট ৫২১ টির মধ্যে সেরা ৩০০টি ফলাফল দেখা হয়েছে/)).toBeInTheDocument();
     expect(screen.getByText(/সব শব্দ ৫ শব্দের মধ্যে আছে এমন হাদীস: ৪ টি/)).toBeInTheDocument();
     expect(screen.queryByText('খুঁজছি...')).not.toBeInTheDocument();
     await waitFor(() => {
@@ -166,7 +166,7 @@ describe('words near each other (real hadis texts)', () => {
       expect(within(first).getByRole('link', { name: /নাসাঈ শরীফ - হাদীস নং ৫০৩/ })).toBeInTheDocument();
     });
     // the count is the same: it re-ranks, it does not filter
-    expect(screen.getByText(/মোট ৫১০ টি হাদিস পাওয়া গেছে/)).toBeInTheDocument();
+    expect(screen.getByText(/মোট ৫২১ টি হাদিস পাওয়া গেছে/)).toBeInTheDocument();
   }, 20000);
 
   test('opening a link with near=1 starts with the option on', async () => {
@@ -188,13 +188,13 @@ describe('words near each other (real hadis texts)', () => {
     expect(screen.queryByText(/সেরা ৩০০টি ফলাফল দেখা হয়েছে/)).not.toBeInTheDocument();
     await waitFor(() => {
       const first = screen.getAllByRole('listitem')[0];
-      expect(within(first).getByRole('link', { name: /হাদীস নং ৬১৩/ })).toBeInTheDocument();
+      expect(within(first).getByRole('link', { name: /খাযাইনুল ইরফান/ })).toBeInTheDocument(); // Quran first again
     });
   }, 20000);
 
   test('near=1 on a one-word search is ignored', async () => {
     renderSearch('/search?q=' + encodeURIComponent('রোজা') + '&near=1');
-    await screen.findByText(/মোট ৪০৩ টি হাদিস পাওয়া গেছে/);
+    await screen.findByText(/মোট ৪১২ টি হাদিস পাওয়া গেছে/);
     expect(screen.queryByRole('button', NEAR)).not.toBeInTheDocument();
     expect(screen.queryByText('খুঁজছি...')).not.toBeInTheDocument();
   });

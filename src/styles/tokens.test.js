@@ -7,7 +7,7 @@ const required = [
   '--page', '--bg', '--surface', '--surface2', '--line', '--ink', '--ink2', '--ink3',
   '--accent', '--accent2', '--on-accent', '--accent-soft', '--hl', '--hl-ink',
   '--ok', '--warn', '--bad', '--link',
-  '--bk-bukhari', '--bk-muslim', '--bk-tirmidhi', '--bk-abudawud', '--bk-ibnmajah', '--bk-nasai', '--on-bk',
+  '--bk-bukhari', '--bk-muslim', '--bk-tirmidhi', '--bk-abudawud', '--bk-ibnmajah', '--bk-nasai', '--bk-khazainul', '--on-bk',
   '--shadow', '--rs', '--rlh', '--rw', '--related-text', '--match-text',
 ];
 

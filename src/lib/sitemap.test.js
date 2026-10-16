@@ -21,7 +21,7 @@ const urlsOf = async (id) => {
 };
 
 test('there is one sitemap per book, built at build time with no other id possible', () => {
-  expect(sitemapRoute.generateStaticParams()).toEqual(['0', '1', '2', '3', '4', '5'].map((id) => ({ id: `${id}.xml` })));
+  expect(sitemapRoute.generateStaticParams()).toEqual(['0', '1', '2', '3', '4', '5', '6'].map((id) => ({ id: `${id}.xml` })));
   expect(sitemapRoute.dynamicParams).toBe(false);
   expect(sitemapRoute.dynamic).toBe('force-static');
 });
@@ -34,8 +34,8 @@ test('a sitemap is well-formed XML with one <url> per hadis, and only a real boo
   expect(doc.getElementsByTagName('parsererror')).toHaveLength(0);
   expect(doc.documentElement.nodeName).toBe('urlset');
   expect(doc.getElementsByTagName('url')).toHaveLength(hadisCount(BOOKS[2]));
-  for (const part of ['6.xml', '2', 'x.xml', '-1.xml']) expect((await request(part)).status).toBe(404);
-  expect(['0.xml', '5.xml', '6.xml', '0', undefined].map(sitemapIdOf)).toEqual([0, 5, null, null, null]);
+  for (const part of ['7.xml', '2', 'x.xml', '-1.xml']) expect((await request(part)).status).toBe(404);
+  expect(['0.xml', '6.xml', '7.xml', '0', undefined].map(sitemapIdOf)).toEqual([0, 6, null, null, null]);
 });
 
 test('each book lists exactly the hadis that exist', async () => {
@@ -45,10 +45,10 @@ test('each book lists exactly the hadis that exist', async () => {
   }
 });
 
-test('all sitemaps together list 32,886 hadis plus the static pages', async () => {
+test('all sitemaps together list 33,828 entries (hadis and tafsir) plus the static pages', async () => {
   let total = 0;
   for (let id = 0; id < BOOKS.length; id++) total += (await urlsOf(id)).length;
-  expect(total).toBe(32886 + STATIC_PATHS.length);
+  expect(total).toBe(33828 + STATIC_PATHS.length);
 });
 
 test('a number with no file is absent: Bukhari 63 and 448, but 62 and 64 are there', async () => {
@@ -86,14 +86,14 @@ test('an id that is not a book has no entries', () => {
   expect(sitemapEntries(-1)).toEqual([]);
 });
 
-test('the index points at the six real sitemap addresses', async () => {
+test('the index points at the seven real sitemap addresses', async () => {
   const response = GET();
   expect(response.headers.get('content-type')).toMatch(/application\/xml/);
   const xml = await response.text();
   expect(xml).toBe(sitemapIndexXml());
   expect(xml).toMatch(/^<\?xml version="1.0" encoding="UTF-8"\?>\n<sitemapindex xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/);
   const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-  expect(locs).toEqual([0, 1, 2, 3, 4, 5].map((id) => `https://islam.feeham.com/sitemap/${id}.xml`));
+  expect(locs).toEqual([0, 1, 2, 3, 4, 5, 6].map((id) => `https://islam.feeham.com/sitemap/${id}.xml`));
   expect(locs[2]).toBe(sitemapUrl(2));
 });
 

@@ -19,7 +19,7 @@ describe('index.json', () => {
   test('lists hundreds of narrators, each as [id, name, count, six book counts]', () => {
     expect(index.length).toBeGreaterThan(200);
     for (const row of index) {
-      expect(row).toHaveLength(3 + BOOKS.length);
+      expect(row).toHaveLength(3 + BOOKS.filter((b) => !b.kind).length); // narrators exist for the hadis books only
       expect(typeof row[0]).toBe('string');
       expect(typeof row[1]).toBe('string');
       expect(row.slice(2).every((n) => Number.isInteger(n) && n >= 0)).toBe(true);
@@ -70,7 +70,7 @@ describe('<id>.json', () => {
     for (const [id, , count, ...perBook] of index) {
       const pairs = filesOf(id);
       expect(pairs).toHaveLength(count);
-      const own = BOOKS.map(() => 0);
+      const own = BOOKS.filter((b) => !b.kind).map(() => 0);
       pairs.forEach(([bookIndex], i) => {
         own[bookIndex] += 1;
         if (i > 0) {

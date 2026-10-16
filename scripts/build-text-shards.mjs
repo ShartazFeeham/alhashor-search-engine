@@ -9,7 +9,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const BOOKS = { BUK: 'Bukhari', MUS: 'Muslim', TIR: 'Tirmiji', DAU: 'Daud', MAJ: 'Majah', NAS: 'Nasae' };
+const BOOKS = { BUK: 'Bukhari', MUS: 'Muslim', TIR: 'Tirmiji', DAU: 'Daud', MAJ: 'Majah', NAS: 'Nasae', KHZ: 'Khazainul' };
 const SHARD_SIZE = 100; // keep in step with src/lib/seo.js (a test pins it)
 
 export const shardName = (code, number) => `${code}-${Math.floor((number - 1) / SHARD_SIZE)}.json`;

@@ -16,6 +16,7 @@ export const CARD_COLOURS = {
   abudawud: '#8a4bb8',
   ibnmajah: '#c45227',
   nasai: '#c3387f',
+  khazainul: '#1f7a8c',
 };
 
 const ELLIPSIS = ' ...';

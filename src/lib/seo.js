@@ -14,6 +14,7 @@ export const shardFile = (code, number) => `${code}-${shardOf(number)}.json`;
 
 // The page title, as the hadis page has always had it.
 export function titleFor(book, number) {
+  if (book.kind === 'tafsir') return `${book.full} - ${formatNumber(number)} - Alhashor`; // an ayah range, not a hadis
   return `${book.full} - হাদীস নং ${formatNumber(number)} - Alhashor`;
 }
 

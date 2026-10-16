@@ -8,7 +8,7 @@
   --accent:#0a796a; --accent2:#096658; --on-accent:#ffffff; --accent-soft:#d6f0ea;
   --hl:#ffe9a0; --hl-ink:#3a2a00;
   --ok:#1f9d55; --warn:#b86e05; --bad:#cf4337; --link:#1a55c8;
-  --bk-bukhari:#0f8663; --bk-muslim:#3a63c8; --bk-tirmidhi:#9e6a07; --bk-abudawud:#8a4bb8; --bk-ibnmajah:#c45227; --bk-nasai:#c3387f; --on-bk:#ffffff; --bk-wash:rgba(0,0,0,.22);
+  --bk-bukhari:#0f8663; --bk-muslim:#3a63c8; --bk-tirmidhi:#9e6a07; --bk-abudawud:#8a4bb8; --bk-ibnmajah:#c45227; --bk-nasai:#c3387f; --bk-khazainul:#1f7a8c; --on-bk:#ffffff; --bk-wash:rgba(0,0,0,.22);
   /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
   --pick-rose-bg:#fbdde6; --pick-rose-fg:#b0214f; --pick-green-bg:#d9f2dc; --pick-green-fg:#1f7a3a; --pick-teal-bg:#cdeee6; --pick-teal-fg:#0b6b5b;
   --pick-magenta-bg:#f5d8f0; --pick-magenta-fg:#9a1f8a; --pick-amber-bg:#fde9c0; --pick-amber-fg:#8a5a00; --pick-orange-bg:#fdddc7; --pick-orange-fg:#b04a0b;
@@ -41,7 +41,7 @@
   --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b; --related-text:#d6e6e1; --match-text:#d6e6e1; --pick-title:#e7f3ef;
   --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
   --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
-  --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
+  --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --bk-khazainul:#4fb7c9; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
   /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
   --pick-rose-bg:#3d1a28; --pick-rose-fg:#f59ab9; --pick-green-bg:#17361f; --pick-green-fg:#7fd99a; --pick-teal-bg:#123a33; --pick-teal-fg:#6fdcc6;
   --pick-magenta-bg:#3a1836; --pick-magenta-fg:#ec9be0; --pick-amber-bg:#3d2e0c; --pick-amber-fg:#f0c05a; --pick-orange-bg:#40220f; --pick-orange-fg:#f4a06a;
@@ -94,7 +94,7 @@
     --ink:#e7f3ef; --ink2:#a4bfb8; --ink3:#89a19b; --related-text:#d6e6e1; --match-text:#d6e6e1; --pick-title:#e7f3ef;
     --accent:#3fcbb3; --accent2:#7ee3d0; --on-accent:#042019; --accent-soft:#143a33;
     --hl:#5e4c0e; --hl-ink:#ffefb5; --link:#8ab4ff; --warn:#e8a23c; --bad:#f07468;
-    --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
+    --bk-bukhari:#2fc08f; --bk-muslim:#7096f2; --bk-tirmidhi:#e5a93a; --bk-abudawud:#b688e2; --bk-ibnmajah:#f28c58; --bk-nasai:#e86aa7; --bk-khazainul:#4fb7c9; --on-bk:#0a1512; --bk-wash:rgba(255,255,255,.22);
     /* top picks: a tile colour (--pick-NAME-bg) and its icon colour (--pick-NAME-fg), at least 3:1 apart. rose, green, teal and magenta are for the sets about the Prophet and his family. */
     --pick-rose-bg:#3d1a28; --pick-rose-fg:#f59ab9; --pick-green-bg:#17361f; --pick-green-fg:#7fd99a; --pick-teal-bg:#123a33; --pick-teal-fg:#6fdcc6;
     --pick-magenta-bg:#3a1836; --pick-magenta-fg:#ec9be0; --pick-amber-bg:#3d2e0c; --pick-amber-fg:#f0c05a; --pick-orange-bg:#40220f; --pick-orange-fg:#f4a06a;

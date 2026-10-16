@@ -158,9 +158,9 @@ describe('the real data: public/json/substring3 holds exactly what public/json/s
     });
     expect(sortedOk(['a', 'b'])).toBe(true);
     expect(sortedOk(['নামাযী', 'নামাযী'])).toBe(true);
-    count.set('few', 1);
-    count.set('many', 9);
-    expect(sortedOk(['few', 'many'])).toBe(false); // the check does catch an unsorted list
+    count.set('zzfew', 1); // made-up words: 'few' and 'many' are real words of the Khazainul text
+    count.set('zzmany', 9);
+    expect(sortedOk(['zzfew', 'zzmany'])).toBe(false); // the check does catch an unsorted list
     expect(sortedOk(['b', 'a'])).toBe(false);
 
     let lists = 0;

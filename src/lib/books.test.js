@@ -1,9 +1,9 @@
 import { BOOKS, bookByCode, bookById, hadisCount, hasHadis } from './books';
 
-test('the six books in display order', () => {
-  expect(BOOKS.map((b) => b.id)).toEqual(['bukhari', 'muslim', 'tirmidhi', 'abudawud', 'ibnmajah', 'nasai']);
-  expect(BOOKS.map((b) => b.code)).toEqual(['BUK', 'MUS', 'TIR', 'DAU', 'MAJ', 'NAS']);
-  expect(BOOKS.map((b) => b.folder)).toEqual(['Bukhari', 'Muslim', 'Tirmiji', 'Daud', 'Majah', 'Nasae']);
+test('the seven books in display order (six hadis books, then the Quran tafsir)', () => {
+  expect(BOOKS.map((b) => b.id)).toEqual(['bukhari', 'muslim', 'tirmidhi', 'abudawud', 'ibnmajah', 'nasai', 'khazainul']);
+  expect(BOOKS.map((b) => b.code)).toEqual(['BUK', 'MUS', 'TIR', 'DAU', 'MAJ', 'NAS', 'KHZ']);
+  expect(BOOKS.map((b) => b.folder)).toEqual(['Bukhari', 'Muslim', 'Tirmiji', 'Daud', 'Majah', 'Nasae', 'Khazainul']);
 });
 
 test('each book has Bengali names, a citation, a badge and a colour variable', () => {
@@ -28,7 +28,8 @@ test('the counts match the files on disk', () => {
   expect(hadisCount(bookById('abudawud'))).toBe(5184);
   expect(hadisCount(bookById('ibnmajah'))).toBe(4341);
   expect(hadisCount(bookById('nasai'))).toBe(5753);
-  expect(BOOKS.reduce((sum, b) => sum + hadisCount(b), 0)).toBe(32886);
+  expect(hadisCount(bookById('khazainul'))).toBe(942);
+  expect(BOOKS.reduce((sum, b) => sum + hadisCount(b), 0)).toBe(33828);
 });
 
 test('hasHadis knows the gaps (Bukhari 63 has no file, 62 and 64 do)', () => {

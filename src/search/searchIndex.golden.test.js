@@ -98,20 +98,18 @@ describe('golden: suggest with 2-letter and with 3-letter files', () => {
     return (await index.suggest(words, { resultCount, tagsPrefix: prefix })).map((choice) => choice.query);
   };
 
-  // each: a misspelling and what it should be
+  // each: a misspelling and what it should be (not তাকোয়া, মুমীন, দোআ, জাকাত: Khazainul Irfan spells them so,
+  // they are words of the index now, not typos)
   const MISSPELLINGS = [
     ['সয়তান', 'শয়তান'], // শ/স, first letter
     ['মুসলীম', 'মুসলিম'], // ী for ি
-    ['তাকোয়া', 'তাকওয়া'], // ো for ও
     ['কিয়ামাত', 'কিয়ামত'], // extra letter
     ['পবিত্রত', 'পবিত্রতা'], // dropped letter at the end
     ['জাহান্নম', 'জাহান্নাম'], // dropped letter
     ['মসজীদ', 'মসজিদ'],
-    ['মুমীন', 'মুমিন'],
     ['সালামম', 'সালাম'], // doubled letter
     ['মোনাফেক', 'মোনাফিক'],
     ['হিজরাত', 'হিজরত'],
-    ['দোআ', 'দুআ'],
   ];
 
   test.each(MISSPELLINGS)('%s: the same words are suggested, and %s is one of them', async (typed, expected) => {
@@ -151,7 +149,7 @@ describe('golden: suggest with 2-letter and with 3-letter files', () => {
   });
 
   test('where the sets differ the real correction is still offered when it is a swap, and only extra "close" words are lost', async () => {
-    for (const [typed, expected] of [['জাকাত', 'যাকাত'], ['জান্নত', 'জান্নাত'], ['যাকত', 'যাকাত'], ['কুরআণ', 'কুরআন'], ['দূআ', 'দুআ']]) {
+    for (const [typed, expected] of [['জান্নত', 'জান্নাত'], ['যাকত', 'যাকাত'], ['কুরআণ', 'কুরআন'], ['দূআ', 'দুআ']]) {
       expect(await suggested(2, [typed]), typed).toContain(expected);
       expect(await suggested(3, [typed]), typed).toContain(expected);
     }

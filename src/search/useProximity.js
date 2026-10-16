@@ -28,7 +28,8 @@ export function useProximity({ tags, words, enabled }) {
       return undefined;
     }
     let cancelled = false;
-    const head = tags.slice(0, PROXIMITY_LIMIT);
+    // ponytail: tafsir entries (KHZ-) are long (some 250k characters), so they are not fetched or re-ranked here; they keep their place after the near hadis. Re-rank them too if that matters.
+    const head = tags.filter((tag) => !tag.startsWith('KHZ-')).slice(0, PROXIMITY_LIMIT);
     const texts = new Map();
     setState({ tags, words, status: 'working', loaded: 0, total: head.length, ordered: null, nearCount: 0, looked: head.length });
 

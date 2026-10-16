@@ -1,5 +1,5 @@
 const SITE = 'Alhashor';
-const HOME_TITLE = 'Alhashor - হাদীস সম্ভার';
+const HOME_TITLE = 'Alhashor - কুরআন ও হাদীস সম্ভার';
 
 // pageTitle() is the home title; pageTitle("হাদীস সার্চ") gives "হাদীস সার্চ - Alhashor".
 // Empty parts are skipped, so pageTitle(query, "হাদীস সার্চ") works before anything is typed.

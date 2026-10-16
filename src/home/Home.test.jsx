@@ -53,14 +53,14 @@ test('has no lead paragraph under the heading', () => {
 });
 
 describe('the hero', () => {
-  const hero = () => screen.getByRole('region', { name: 'হাদীস সম্ভার' });
+  const hero = () => screen.getByRole('region', { name: 'কুরআন ও হাদীস সম্ভার' });
   const follows = (first, second) => Boolean(first.compareDocumentPosition(second) & Node.DOCUMENT_POSITION_FOLLOWING);
 
   // the markup puts the card after the greeting box; CSS shows it between the heading and the search (wide) or below the quick cards (phone)
   test('holds the eyebrow, the heading, the search link and the daily card, in that order', () => {
     renderHome();
     const eyebrow = within(hero()).getByText('আসসালামু আলাইকুম');
-    const heading = within(hero()).getByRole('heading', { level: 1, name: 'হাদীস সম্ভার' });
+    const heading = within(hero()).getByRole('heading', { level: 1, name: 'কুরআন ও হাদীস সম্ভার' });
     const card = within(hero()).getByRole('region', { name: 'আজকের হাদীস' });
     const search = within(hero()).getByRole('link', { name: /হাদীস খুঁজুন/ });
     expect(search).toHaveAttribute('href', '/search');
@@ -96,7 +96,7 @@ test('has no tiles block and no "হাদীসের বই" tile: the shelf i
   expect(within(main).queryByRole('link', { name: /হাদীসের বই/ })).not.toBeInTheDocument();
   expect(within(main).queryByText(/শুরু থেকে শেষ/)).not.toBeInTheDocument();
   expect(within(main).getAllByRole('link').filter((link) => link.getAttribute('href') === '/books')).toHaveLength(0);
-  expect(within(main).getAllByRole('link').filter((link) => link.getAttribute('href').startsWith('/books/'))).toHaveLength(6);
+  expect(within(main).getAllByRole('link').filter((link) => link.getAttribute('href').startsWith('/books/'))).toHaveLength(7);
 });
 
 test('has no search tile: the search bar in the top block is the only way to /search', () => {
@@ -223,7 +223,7 @@ describe('the new-features row', () => {
 
 test('sets the home page title', () => {
   renderHome();
-  expect(document.title).toBe('Alhashor - হাদীস সম্ভার');
+  expect(document.title).toBe('Alhashor - কুরআন ও হাদীস সম্ভার');
 });
 
 test('counts switch to English digits when chosen', () => {

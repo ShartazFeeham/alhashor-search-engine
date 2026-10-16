@@ -12,12 +12,8 @@ test.each([
   ['/', 'হোম'],
   ['/search', 'সার্চ'],
   ['/books', 'হাদীসের বই'],
-  ['/topics', 'বিষয়ভিত্তিক হাদীস'],
-  ['/daily', 'আজকের হাদীস'],
   ['/top-picks', 'জনপ্রিয় হাদীস'],
   ['/top-picks/ramadan-30', 'জনপ্রিয় হাদীস'],
-  ['/narrators', 'বর্ণনাকারীভিত্তিক হাদীস'],
-  ['/narrators?name=abu-hurayrah&page=2', 'বর্ণনাকারীভিত্তিক হাদীস'],
 ])('on %s the top navigation marks %s as the current page', (path, label) => {
   setUrl(path);
   show(<TopNav />);
@@ -37,9 +33,9 @@ test('a search with a query still marks search as current', () => {
   expect(screen.getByRole('link', { name: 'সার্চ' })).toHaveAttribute('aria-current', 'page');
 });
 
-test('the top navigation links to the daily hadis page', () => {
+test('the top navigation has no daily, narrators or topics link (the phone "more" menu keeps them)', () => {
   show(<TopNav />);
-  expect(screen.getByRole('link', { name: 'আজকের হাদীস' })).toHaveAttribute('href', '/daily');
+  for (const name of ['আজকের হাদীস', 'বর্ণনাকারীভিত্তিক হাদীস', 'বিষয়ভিত্তিক হাদীস']) expect(screen.queryByRole('link', { name })).not.toBeInTheDocument();
 });
 
 test('the brand links home and a settings link exists', () => {
@@ -113,16 +109,13 @@ test('choosing a link in the "more" menu goes there and closes the menu', () => 
   expect(screen.queryByRole('link', { name: 'বিষয়ভিত্তিক হাদীস' })).not.toBeInTheDocument();
 });
 
-test('the top navigation order: home, search, top picks, books, narrators, daily, topics (last), and no compare link', () => {
+test('the top navigation order: home, search, top picks, books, and no compare link', () => {
   show(<TopNav />);
   expect(screen.getAllByRole('link').slice(1, -1).map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
     ['হোম', '/'],
     ['সার্চ', '/search'],
     ['জনপ্রিয় হাদীস', '/top-picks'],
     ['হাদীসের বই', '/books'],
-    ['বর্ণনাকারীভিত্তিক হাদীস', '/narrators'],
-    ['আজকের হাদীস', '/daily'],
-    ['বিষয়ভিত্তিক হাদীস', '/topics'],
   ]);
   expect(screen.queryByRole('link', { name: 'তুলনা' })).not.toBeInTheDocument();
 });
@@ -163,9 +156,6 @@ describe('the icons in the top navigation', () => {
     show(<TopNav />);
     const kind = (name) => screen.getByRole('link', { name }).querySelector('svg').getAttribute('data-testid'); // eslint-disable-line testing-library/no-node-access
     expect(kind('জনপ্রিয় হাদীস')).toBe('quick-icon-heart');
-    expect(kind('বর্ণনাকারীভিত্তিক হাদীস')).toBe('quick-icon-speaker');
-    expect(kind('বিষয়ভিত্তিক হাদীস')).toBe('quick-icon-tag');
-    expect(kind('আজকের হাদীস')).toBe('quick-icon-clock');
     expect(kind('হোম')).toBe('quick-icon-home');
     expect(kind('সার্চ')).toBe('quick-icon-search');
     expect(kind('হাদীসের বই')).toBe('quick-icon-book');
@@ -187,9 +177,8 @@ test.each(['/daily', '/narrators'])('on %s the "more" button is marked as holdin
   expect(screen.getByRole('button', { name: 'আরও' })).toHaveAttribute('aria-current', 'true');
 });
 
-test('the top bar and the phone "more" menu each have one entry for the daily hadis and one for the top picks', () => {
+test('the top bar has one entry for the top picks', () => {
   show(<TopNav />);
-  expect(screen.getAllByRole('link', { name: 'আজকের হাদীস' })).toHaveLength(1);
   expect(screen.getAllByRole('link', { name: 'জনপ্রিয় হাদীস' })).toHaveLength(1);
   expect(screen.queryByRole('link', { name: 'পরিকল্পনা' })).not.toBeInTheDocument();
 });

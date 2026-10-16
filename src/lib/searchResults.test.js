@@ -2,9 +2,9 @@ import { countByBook, filterByBook } from './searchResults';
 
 const tags = ['BUK-1', 'BUK-2', 'MUS-5', 'TIR-7', 'BUK-9', 'NAS-3'];
 
-test('counts per book always list all six books', () => {
-  expect(countByBook(tags)).toEqual({ bukhari: 3, muslim: 1, tirmidhi: 1, abudawud: 0, ibnmajah: 0, nasai: 1 });
-  expect(countByBook([])).toEqual({ bukhari: 0, muslim: 0, tirmidhi: 0, abudawud: 0, ibnmajah: 0, nasai: 0 });
+test('counts per book always list all seven books', () => {
+  expect(countByBook(tags)).toEqual({ bukhari: 3, muslim: 1, tirmidhi: 1, abudawud: 0, ibnmajah: 0, nasai: 1, khazainul: 0 });
+  expect(countByBook([])).toEqual({ bukhari: 0, muslim: 0, tirmidhi: 0, abudawud: 0, ibnmajah: 0, nasai: 0, khazainul: 0 });
 });
 
 test('unknown tags are ignored in the counts', () => {

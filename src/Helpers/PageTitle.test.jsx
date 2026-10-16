@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import PageTitle, { pageTitle } from './PageTitle';
 
 test('no parts gives the home title', () => {
-  expect(pageTitle()).toBe('Alhashor - হাদীস সম্ভার');
+  expect(pageTitle()).toBe('Alhashor - কুরআন ও হাদীস সম্ভার');
 });
 
 test('parts are joined and followed by the site name; empty parts are skipped', () => {
@@ -25,5 +25,5 @@ test('the title follows the parts when they change', () => {
 
 test('with no parts it is the home title', () => {
   render(<PageTitle />);
-  expect(document.title).toBe('Alhashor - হাদীস সম্ভার');
+  expect(document.title).toBe('Alhashor - কুরআন ও হাদীস সম্ভার');
 });
