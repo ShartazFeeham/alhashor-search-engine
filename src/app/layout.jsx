@@ -18,7 +18,8 @@ import { ToastProvider } from '../ui/Toast';
 import BackToTop from '../Helpers/BackToTop';
 import { SettingsProvider } from '../settings/SettingsProvider';
 import { themeScript } from '../settings/themeScript';
-import { SITE_URL } from '../lib/site';
+import { SITE_URL, SITE_NAME } from '../lib/site';
+import { ogImage } from '../lib/seo';
 
 export const metadata = {
   // Relative addresses in any page's metadata (images, canonical, feeds) resolve against this.
@@ -26,6 +27,10 @@ export const metadata = {
   description:
     'হাদীস খুঁজুন: বুখারি, মুসলিম, তিরমিজি, আবু দাউদ, ইবনে মাজাহ ও নাসাঈ শরীফের হাদীস বাংলায় সার্চ, বিষয়ভিত্তিক ও বই অনুযায়ী পড়ুন।',
   manifest: '/manifest.json',
+  // The link preview of any page that does not set its own: the site's title, summary and card.
+  // No <title> here: every page sets its own (see PageTitle), and a layout title would overwrite it.
+  openGraph: { type: 'website', siteName: SITE_NAME, locale: 'bn_BD', url: '/', title: 'Alhashor - হাদীস সম্ভার', images: [ogImage()] },
+  twitter: { card: 'summary_large_image', title: 'Alhashor - হাদীস সম্ভার', images: [{ url: ogImage().url, alt: SITE_NAME }] },
 };
 
 // The phone's browser bar follows the page colour, not black. Light is the default for everyone;

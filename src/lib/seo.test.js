@@ -69,8 +69,8 @@ describe('hadisMetadata', () => {
       title: metadata.title,
       description: metadata.description,
     });
-    expect(metadata.openGraph.images[0].url).toBe('https://islam.feeham.com/logo512.png');
-    expect(metadata.twitter).toMatchObject({ card: 'summary', title: metadata.title, description: metadata.description });
+    expect(metadata.openGraph.images[0].url).toBe('https://islam.feeham.com/og/islam.jpg');
+    expect(metadata.twitter).toMatchObject({ card: 'summary_large_image', title: metadata.title, description: metadata.description });
   });
 
   test('a hadis that exists is open to search engines', () => {

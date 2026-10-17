@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import BookPage from '../../../books/BookPage';
 import BookPageFallback from '../../../books/BookPageFallback';
 import { BOOKS } from '../../../lib/books';
+import { pageMetadata } from '../../../lib/seo';
 
 // The six books are known, so their pages are built once and served as plain files.
 export const generateStaticParams = () => BOOKS.map((book) => ({ book: book.slug }));
@@ -12,7 +13,7 @@ const bookOf = (slug) => BOOKS.find((book) => book.slug === slug);
 export async function generateMetadata({ params }) {
   const book = bookOf((await params).book);
   if (!book) return { title: 'পৃষ্ঠাটি পাওয়া যায়নি - Alhashor' };
-  return { title: `${book.full} - হাদীসের বই - Alhashor` };
+  return pageMetadata({ title: `${book.full} - হাদীসের বই - Alhashor`, path: `/books/${book.slug}` });
 }
 
 export default async function Page({ params }) {

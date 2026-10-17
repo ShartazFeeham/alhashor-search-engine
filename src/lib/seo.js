@@ -31,6 +31,23 @@ export function descriptionFor(text) {
   return `${kept.trimEnd()}…`;
 }
 
+// The link-preview picture: 1200 x 630, the same card for every page of the site.
+export const ogImage = () => ({ url: absoluteUrl('/og/islam.jpg'), width: 1200, height: 630, type: 'image/jpeg', alt: SITE_NAME });
+
+// The head tags of an ordinary page: its own title and description, canonical address and a
+// large link-preview card. `path` is the page's address on this site, e.g. "/daily".
+export function pageMetadata({ title, description, path }) {
+  const url = absoluteUrl(path);
+  const desc = description || undefined;
+  return {
+    title,
+    ...(desc && { description: desc }),
+    alternates: { canonical: url },
+    openGraph: { type: 'website', siteName: SITE_NAME, locale: 'bn_BD', url, title, ...(desc && { description: desc }), images: [ogImage()] },
+    twitter: { card: 'summary_large_image', title, ...(desc && { description: desc }), images: [{ url: ogImage().url, alt: SITE_NAME }] },
+  };
+}
+
 // The tags a hadis page puts in its HTML head: title, description, canonical address and the
 // link-preview (Open Graph and Twitter) tags. `text` is the hadis text, or null when the hadis
 // has no file (that page is kept out of search results), or undefined when it could not be read.
@@ -38,13 +55,12 @@ export function hadisMetadata(book, number, text) {
   const title = titleFor(book, number);
   const description = descriptionFor(text) || `${book.cite}, হাদীস নং ${formatNumber(number)}`;
   const url = absoluteUrl(hadisHref(book.id, number));
-  const image = { url: absoluteUrl('/logo512.png'), width: 512, height: 512, alt: SITE_NAME };
   const metadata = {
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { type: 'article', siteName: SITE_NAME, locale: 'bn_BD', url, title, description, images: [image] },
-    twitter: { card: 'summary', title, description, images: [image.url] },
+    openGraph: { type: 'article', siteName: SITE_NAME, locale: 'bn_BD', url, title, description, images: [ogImage()] },
+    twitter: { card: 'summary_large_image', title, description, images: [{ url: ogImage().url, alt: SITE_NAME }] },
   };
   if (text === null) metadata.robots = { index: false, follow: true };
   return metadata;

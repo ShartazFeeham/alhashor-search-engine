@@ -14,7 +14,7 @@ test('the description is the saying, and the preview tags and canonical address 
   expect(metadata.description.startsWith('তিনি বলেন, বর্তমান যুগের মুনাফিকরা')).toBe(true);
   expect(metadata.alternates.canonical).toBe('https://islam.feeham.com/hadis/bukhari/6628');
   expect(metadata.openGraph).toMatchObject({ type: 'article', url: 'https://islam.feeham.com/hadis/bukhari/6628', locale: 'bn_BD' });
-  expect(metadata.twitter.card).toBe('summary');
+  expect(metadata.twitter.card).toBe('summary_large_image');
 });
 
 test('a number with no file is titled as usual but kept out of search results', async () => {
